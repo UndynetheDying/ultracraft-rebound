@@ -27,6 +27,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
@@ -129,13 +130,18 @@ public class PacketRegistry
 				{
 					if(player.getOffHandStack().isIn(TagRegistry.PUNCH_FLAMES))
 						target.setFireTicks(100);
-					if (arm.isFeedbacker() && target instanceof MeleeInterruptable mp && (!(mp instanceof MobEntity) || ((MobEntity)mp).isAttacking()))
+					if (arm.isFeedbacker())
 					{
-						Ultracraft.freeze(player, 10);
-						target.damage(DamageSources.get(world, DamageSources.INTERRUPT, player), 6);
-						mp.onInterrupt(player);
-						world.playSound(null, player.getBlockPos(), SoundRegistry.GENERIC_INTERRUPT, SoundCategory.PLAYERS, 0.75f, 2f);
-						player.heal(4);
+						if(target instanceof MeleeInterruptable mp && (!(mp instanceof MobEntity) || ((MobEntity)mp).isAttacking()))
+						{
+							Ultracraft.freeze(player, 10);
+							target.damage(DamageSources.get(world, DamageSources.INTERRUPT, player), 6);
+							mp.onInterrupt(player);
+							world.playSound(null, player.getBlockPos(), SoundRegistry.GENERIC_INTERRUPT, SoundCategory.PLAYERS, 0.75f, 2f);
+							player.heal(4);
+						}
+						else if(target instanceof MinecartAccessor minecart)
+							minecart.parry(player);
 					}
 					else
 					{

@@ -43,6 +43,7 @@ public class DamageSources
 	public static final RegistryKey<DamageType> CANCER = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Ultracraft.MOD_ID, "cancer"));
 	public static final RegistryKey<DamageType> PIERCER = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Ultracraft.MOD_ID, "piercer"));
 	public static final RegistryKey<DamageType> CORE_EJECT = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Ultracraft.MOD_ID, "core_eject"));
+	public static final RegistryKey<DamageType> MINECART = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Ultracraft.MOD_ID, "minecart"));
 	public static final RegistryKey<DamageType> OBLITERATION = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Ultracraft.MOD_ID, "obliteration"));
 	public static final RegistryKey<DamageType> DEVOURED = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Ultracraft.MOD_ID, "devoured"));
 	

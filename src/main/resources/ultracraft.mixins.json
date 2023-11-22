@@ -10,6 +10,7 @@
     "HungerManagerMixin",
     "ItemEntityMixin",
     "LivingEntityMixin",
+    "MinecartMixin",
     "PlayerEntityMixin",
     "PlayerInteractEntityC2SPacketMixin",
     "PlayerInventoryMixin",

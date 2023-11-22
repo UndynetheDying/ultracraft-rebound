@@ -243,6 +243,7 @@
   "death.attack.piercer.item": "%1$s was pierced by %2$s using %3$s",
   "death.attack.core_eject": "%1$s was Core-Ejected by %2$s",
   "death.attack.core_eject.item": "%1$s was Core-Ejected by %2$s using %3$s",
+  "death.attack.minecart": "%1$s got ran over by %2$s",
   "death.attack.obliteration": "%1$s was utterly obliterated by %2$s",
   "death.attack.obliteration.item": "%1$s was utterly obliterated by %2$s using %3$s",
   "death.attack.devoured": "%1$s was devoured by %2$s",
