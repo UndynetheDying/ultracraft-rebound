@@ -1,17 +1,12 @@
 package absolutelyaya.ultracraft.item;
 
 import absolutelyaya.ultracraft.UltraComponents;
-import absolutelyaya.ultracraft.entity.projectile.NailEntity;
-import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
-import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Arm;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Vec3d;
@@ -36,26 +31,14 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 	@Override
 	public boolean onPrimaryFire(World world, PlayerEntity user, Vec3d userVelocity)
 	{
-		ItemStack stack = user.getMainHandStack();
-		if(isCanFirePrimary(user) && getNbt(user.getMainHandStack(), "nails") > 0)
+		if(!world.isClient)
 		{
-			user.playSound(SoundRegistry.NAILGUN_FIRE, 1f, 1.5f + user.getRandom().nextFloat() * 0.1f);
-			if(world.isClient)
-			{
-				super.onPrimaryFire(world, user, userVelocity);
-				return true;
-			}
-			NailEntity nail = new NailEntity(EntityRegistry.NAIL, world);
-			nail.setPosition(user.getEyePos().subtract(0, 0.25, 0).add(user.getRotationVector().rotateY((float)Math.toRadians(90))
-																			   .multiply(user.getMainArm().equals(Arm.RIGHT) ? -0.3 : 0.3)));
-			nail.setOwner(user);
-			nail.setVelocity(user, user.getPitch(), user.getYaw(), 0f, 2.5f, 7.5f);
-			world.spawnEntity(nail);
-			setNbt(stack, "nails", getNbt(stack, "nails") - 1);
-			return true;
+			ItemStack stack = user.getMainHandStack();
+			int heat = getNbt(stack, "heat");
+			if(heat < 100 && !(stack.isOf(ItemRegistry.OVERHEAT_NAILGUN) && getNbt(stack, "heatsinking") == 1))
+				setNbt(stack, "heat", heat + 1);
 		}
-		else
-			return false;
+		return super.onPrimaryFire(world, user, userVelocity);
 	}
 	
 	@Override
@@ -88,16 +71,25 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 	public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected)
 	{
 		super.inventoryTick(stack, world, entity, slot, selected);
+		boolean inactive = (!selected || (entity instanceof PlayerEntity player && !UltraComponents.WINGED_ENTITY.get(player).isPrimaryFiring()));
 		int nails = getNbt(stack, "nails");
-		if(nails < 100 && entity.age % 5 == 0 &&
-				   (!selected || (entity instanceof PlayerEntity player && !UltraComponents.WINGED_ENTITY.get(player).isPrimaryFiring()) || nails == 0))
+		if(nails < 100 && entity.age % 5 == 0 && (inactive || nails == 0))
 			setNbt(stack, "nails", nails + 1);
-	}
-	
-	@Override
-	public String getTopOverlayString(ItemStack stack)
-	{
-		return Formatting.GOLD + String.valueOf(getNbt(stack, "nails"));
+		int heat = getNbt(stack, "heat");
+		if(heat > 0  && entity.age % 3 == 0 && inactive)
+			setNbt(stack, "heat", heat - 1);
+		int heatsinkCD = getNbt(stack, "heatsink_cd");
+		int heatsinks = getNbt(stack, "heatsinks");
+		if(heatsinkCD > 0)
+			setNbt(stack, "heatsink_cd", heatsinkCD - 1);
+		if(heatsinkCD == 0)
+		{
+			setNbt(stack, "heatsinks", ++heatsinks);
+			if(heatsinks >= 2)
+				setNbt(stack, "heatsink_cd", -1);
+			else
+				setNbt(stack, "heatsink_cd", 160);
+		}
 	}
 	
 	@Override
@@ -128,6 +120,8 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 			return 100;
 		if(nbt.equals("magnets"))
 			return 3;
+		if(nbt.equals("heatsinks"))
+			return 2;
 		return 0;
 	}
 	

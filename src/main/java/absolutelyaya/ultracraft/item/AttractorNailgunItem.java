@@ -5,6 +5,8 @@ import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.rendering.item.AttractorNailgunRenderer;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.entity.projectile.MagnetEntity;
+import absolutelyaya.ultracraft.entity.projectile.NailEntity;
+import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
@@ -12,9 +14,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Arm;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.joml.Vector2i;
 import mod.azure.azurelib.animatable.GeoItem;
@@ -35,6 +39,32 @@ public class AttractorNailgunItem extends AbstractNailgunItem
 	{
 		super(settings);
 		SingletonGeoAnimatable.registerSyncedAnimatable(this);
+	}
+	
+	@Override
+	public boolean onPrimaryFire(World world, PlayerEntity user, Vec3d userVelocity)
+	{
+		ItemStack stack = user.getMainHandStack();
+		if(isCanFirePrimary(user) && getNbt(user.getMainHandStack(), "nails") > 0)
+		{
+			user.playSound(SoundRegistry.NAILGUN_FIRE, 1f, 1.5f + user.getRandom().nextFloat() * 0.1f);
+			if(world.isClient)
+			{
+				super.onPrimaryFire(world, user, userVelocity);
+				return true;
+			}
+			NailEntity nail = new NailEntity(EntityRegistry.NAIL, world);
+			nail.setPosition(user.getEyePos().subtract(0, 0.25, 0).add(user.getRotationVector().rotateY((float)Math.toRadians(90))
+																			   .multiply(user.getMainArm().equals(Arm.RIGHT) ? -0.3 : 0.3)));
+			nail.setOwner(user);
+			nail.setVelocity(user, user.getPitch(), user.getYaw(), 0f, 2.5f, 7.5f);
+			world.spawnEntity(nail);
+			setNbt(stack, "nails", getNbt(stack, "nails") - 1);
+			super.onPrimaryFire(world, user, userVelocity);
+			return true;
+		}
+		else
+			return false;
 	}
 	
 	@Override
@@ -117,6 +147,12 @@ public class AttractorNailgunItem extends AbstractNailgunItem
 	public AnimatableInstanceCache getAnimatableInstanceCache()
 	{
 		return cache;
+	}
+	
+	@Override
+	public String getTopOverlayString(ItemStack stack)
+	{
+		return Formatting.GOLD + String.valueOf(getNbt(stack, "nails"));
 	}
 	
 	@Override
