@@ -128,9 +128,6 @@ public class FlamethrowerItem extends AbstractWeaponItem implements GeoItem
 	{
 		if(!(user instanceof WingedPlayerEntity))
 			return;
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(user).getGunCooldownManager();
-		if(cdm.getCooldown(this, GunCooldownManager.PRIMARY) < 5)
-			cdm.setCooldown(this, getNbt(user.getMainHandStack(), "heat") > 200 ? 25 : 50, GunCooldownManager.PRIMARY);
 		if(!world.isClient)
 			triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(), "stop");
 		world.playSound(null, user.getBlockPos(), SoundRegistry.FLAMETHROWER_STOP, SoundCategory.PLAYERS, 1f, 1f);
