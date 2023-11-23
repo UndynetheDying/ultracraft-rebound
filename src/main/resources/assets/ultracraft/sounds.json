@@ -429,7 +429,7 @@
   },
   "misc.water_skim": {
     "sounds": [
-      {"name": "entity.salmon.ambient", "type": "event"}
+      {"name": "entity.salmon.flop", "type": "event"}
     ]
   },
   "misc.laugh": {

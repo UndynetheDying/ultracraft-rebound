@@ -120,8 +120,8 @@ public class PumpShotgunItem extends AbstractShotgunItem
 		{
 			winged.setBloodHealCooldown(10);
 			ExplosionHandler.explosion(user, world, user.getPos().add(user.getRotationVector()),
-					DamageSources.get(world, DamageSources.OVERCHARGE, user), 10, 0, 3, true, true);
-			user.damage(DamageSources.get(world, DamageSources.OVERCHARGE_SELF), 4);
+					DamageSources.get(world, DamageSources.OVERCHARGE, user), 15, 0, 3, true, true);
+			user.damage(DamageSources.get(world, DamageSources.OVERCHARGE_SELF), 10);
 		}
 		return true;
 	}
