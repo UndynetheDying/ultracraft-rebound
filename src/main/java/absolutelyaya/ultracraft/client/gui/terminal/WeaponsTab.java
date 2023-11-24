@@ -47,7 +47,8 @@ public class WeaponsTab extends Tab
 			new Identifier(Ultracraft.MOD_ID, "pump_shotgun")
 	};
 	static final Identifier[] NAILGUNS = new Identifier[]{
-			new Identifier(Ultracraft.MOD_ID, "attractor_nailgun")
+			new Identifier(Ultracraft.MOD_ID, "attractor_nailgun"),
+			new Identifier(Ultracraft.MOD_ID, "overheat_nailgun")
 	};
 	
 	Button returnButton = new Button(Button.RETURN_LABEL,
@@ -104,7 +105,7 @@ public class WeaponsTab extends Tab
 		{
 			case "revolver" -> progression.isUnlocked(REVOLVERS[0]) || progression.isUnlocked(REVOLVERS[1]) || progression.isUnlocked(REVOLVERS[2]);
 			case "shotgun" -> progression.isUnlocked(SHOTGUNS[0]) || progression.isUnlocked(SHOTGUNS[1]);
-			case "nailgun" -> progression.isUnlocked(NAILGUNS[0]);
+			case "nailgun" -> progression.isUnlocked(NAILGUNS[0]) || progression.isUnlocked(NAILGUNS[1]);
 			default -> false;
 		};
 	}

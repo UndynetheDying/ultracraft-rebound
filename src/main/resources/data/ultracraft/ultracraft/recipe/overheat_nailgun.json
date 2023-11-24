@@ -1,0 +1,11 @@
+{
+  "materials": [
+    { "item": "minecraft:iron_ingot", "count": 64 },
+    { "item": "minecraft:blaze_rod", "count": 16 },
+    { "item": "minecraft:diamond", "count": 4 },
+    { "item": "minecraft:netherite_scrap", "count": 1 }
+  ],
+  "result": "ultracraft:attractor_nailgun",
+  "extra-output": [],
+  "unlocks": []
+}

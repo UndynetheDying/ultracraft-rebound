@@ -7,6 +7,9 @@ import absolutelyaya.ultracraft.entity.other.StainedGlassWindow;
 import absolutelyaya.ultracraft.registry.GameruleRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
@@ -19,6 +22,8 @@ import org.joml.Vector3f;
 
 public class NailEntity extends ProjectileEntity implements ProjectileEntityAccessor, IIgnoreSharpshooter
 {
+	protected static final TrackedData<Boolean> HOT = DataTracker.registerData(NailEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+	
 	public NailEntity(EntityType<? extends ProjectileEntity> entityType, World world)
 	{
 		super(entityType, world);
@@ -27,7 +32,7 @@ public class NailEntity extends ProjectileEntity implements ProjectileEntityAcce
 	@Override
 	protected void initDataTracker()
 	{
-	
+		dataTracker.startTracking(HOT, false);
 	}
 	
 	@Override
@@ -61,6 +66,8 @@ public class NailEntity extends ProjectileEntity implements ProjectileEntityAcce
 		float amount = 0.3f;
 		entity.damage(DamageSources.get(getWorld(), DamageSources.NAIL, this, getOwner()),
 				amount * getWorld().getGameRules().getInt(GameruleRegistry.NAILGUN_DAMAGE));
+		if(isHot())
+			entity.setFireTicks(100);
 	}
 	
 	@Override
@@ -136,5 +143,15 @@ public class NailEntity extends ProjectileEntity implements ProjectileEntityAcce
 	public boolean shouldRender(double distance)
 	{
 		return true;
+	}
+	
+	public void setHot(boolean b)
+	{
+		dataTracker.set(HOT, b);
+	}
+	
+	public boolean isHot()
+	{
+		return dataTracker.get(HOT);
 	}
 }

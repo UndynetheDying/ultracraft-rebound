@@ -95,7 +95,7 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 	@Override
 	Item[] getVariants()
 	{
-		return new Item[] { ItemRegistry.ATTRACTOR_NAILGUN };
+		return new Item[] { ItemRegistry.ATTRACTOR_NAILGUN, ItemRegistry.OVERHEAT_NAILGUN };
 	}
 	
 	@Override

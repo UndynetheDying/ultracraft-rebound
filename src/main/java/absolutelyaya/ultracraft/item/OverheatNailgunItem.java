@@ -11,7 +11,6 @@ import mod.azure.azurelib.animatable.SingletonGeoAnimatable;
 import mod.azure.azurelib.animatable.client.RenderProvider;
 import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
 import mod.azure.azurelib.core.animatable.instance.SingletonAnimatableInstanceCache;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -55,13 +54,13 @@ public class OverheatNailgunItem extends AbstractNailgunItem
 			int heat = getNbt(stack, "heat");
 			if(!heatsinkActive)
 			{
-				fireNail(world, user);
+				fireNail(world, user, false);
 				cdm.setCooldown(this, (int)Math.floor(heat / 20f), GunCooldownManager.PRIMARY);
 			}
 			else
 			{
 				for (int i = 0; i < 5; i++)
-					fireNail(world, user);
+					fireNail(world, user, true);
 				if(heat > 0)
 					setNbt(stack, "heat", Math.max(heat - 5, 0));
 				else
@@ -74,7 +73,7 @@ public class OverheatNailgunItem extends AbstractNailgunItem
 			return false;
 	}
 	
-	void fireNail(World world, PlayerEntity user) //TODO: make heatsink nails set enemies on fire
+	void fireNail(World world, PlayerEntity user, boolean hot)
 	{
 		NailEntity nail = new NailEntity(EntityRegistry.NAIL, world);
 		nail.setPosition(user.getEyePos().subtract(0, 0.25, 0).add(user.getRotationVector().rotateY((float)Math.toRadians(90))
@@ -82,6 +81,7 @@ public class OverheatNailgunItem extends AbstractNailgunItem
 		nail.setOwner(user);
 		nail.setVelocity(user, user.getPitch(), user.getYaw(), 0f, 2.5f, 7.5f);
 		world.spawnEntity(nail);
+		nail.setHot(hot);
 	}
 	
 	@Override

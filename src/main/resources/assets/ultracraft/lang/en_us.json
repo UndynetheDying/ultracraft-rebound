@@ -360,6 +360,7 @@
   "message.ultracraft.blood-heal.ALWAYS": "§4Blood§r is Fuel.",
   "message.ultracraft.blood-heal.ONLY_HIVEL": "§4Blood§r is Fuel. (when in High Velocity Mode)",
   "message.ultracraft.blood-heal.NEVER": "§4Blood§r is NOT Fuel.",
+  "message.ultracraft.effectively-violent": "Violent Features are enabled.",
   "message.ultracraft.disabled-handswap": "Hand-Quick-Swapping is Disabled.",
   "message.ultracraft.disabled-slamstorage": "Slam Storage is Disabled.",
   "message.ultracraft.join-info": "§7You can disable this message in the mod config.",

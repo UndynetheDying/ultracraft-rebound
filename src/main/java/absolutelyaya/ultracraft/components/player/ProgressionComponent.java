@@ -28,6 +28,7 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 			add(new Identifier(Ultracraft.MOD_ID, "core_shotgun"));
 			add(new Identifier(Ultracraft.MOD_ID, "pump_shotgun"));
 			add(new Identifier(Ultracraft.MOD_ID, "attractor_nailgun"));
+			add(new Identifier(Ultracraft.MOD_ID, "overheat_nailgun"));
 			add(new Identifier(Ultracraft.MOD_ID, "feedbacker"));
 			add(new Identifier(Ultracraft.MOD_ID, "knuckleblaster"));
 		}
