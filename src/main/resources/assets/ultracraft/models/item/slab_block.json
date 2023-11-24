@@ -1,0 +1,60 @@
+{
+	"credit": "Made by Absolutelyaya",
+	"parent": "ultracraft:block/slab_block/1",
+	"overrides": [
+		{
+			"predicate": {
+				"ultracraft:number": 0.2
+			},
+			"model": "ultracraft:block/slab_block/2"
+		},
+		{
+			"predicate": {
+				"ultracraft:number": 0.3
+			},
+			"model": "ultracraft:block/slab_block/3"
+		},
+		{
+			"predicate": {
+				"ultracraft:number": 0.4
+			},
+			"model": "ultracraft:block/slab_block/4"
+		},
+		{
+			"predicate": {
+				"ultracraft:number": 0.5
+			},
+			"model": "ultracraft:block/slab_block/5"
+		},
+		{
+			"predicate": {
+				"ultracraft:number": 0.6
+			},
+			"model": "ultracraft:block/slab_block/6"
+		},
+		{
+			"predicate": {
+				"ultracraft:number": 0.7
+			},
+			"model": "ultracraft:block/slab_block/7"
+		},
+		{
+			"predicate": {
+				"ultracraft:number": 0.8
+			},
+			"model": "ultracraft:block/slab_block/8"
+		},
+		{
+			"predicate": {
+				"ultracraft:number": 0.9
+			},
+			"model": "ultracraft:block/slab_block/9"
+		},
+		{
+			"predicate": {
+				"ultracraft:number": 1.0
+			},
+			"model": "ultracraft:block/slab_block/10"
+		}
+	]
+}

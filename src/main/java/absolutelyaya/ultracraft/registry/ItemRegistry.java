@@ -226,6 +226,7 @@ public class ItemRegistry
 			content.add(BlockRegistry.ADORNED_RAILING.asItem());
 			content.add(StainedGlassWindowItem.getStack(false));
 			content.add(StainedGlassWindowItem.getStack(true));
+			content.add(BlockRegistry.SLAB_BLOCK.asItem());
 			content.add(BLOOD_BUCKET);
 			content.add(PIERCE_REVOLVER);
 			content.add(MARKSMAN_REVOLVER);
