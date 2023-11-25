@@ -6,6 +6,8 @@
   - Alt fire uses a "heatsink", firing 5 nails and consuming 5 "heat" per tick until heat is used up.
 - Removed cooldown caused by stopping to use the Flamethrower
 - Added Slab Blocks
+  - Work like redstone lamps with Numbers from 1-10
+- Malicious Face can now be summoned as a non-decaying corpse using `{decorative: 1b}`
 ## Settings & Gamerules
 ## Commands
 ## Tweaks

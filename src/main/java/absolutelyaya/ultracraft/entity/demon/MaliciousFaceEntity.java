@@ -37,7 +37,6 @@ import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.random.Random;
@@ -53,6 +52,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	protected static final TrackedData<Integer> ATTACK_COOLDOWN = DataTracker.registerData(MaliciousFaceEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Boolean> CRACKED = DataTracker.registerData(MaliciousFaceEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	protected static final TrackedData<Boolean> DEAD = DataTracker.registerData(MaliciousFaceEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+	protected static final TrackedData<Boolean> DECORATIVE = DataTracker.registerData(MaliciousFaceEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	protected static final TrackedData<Boolean> LANDED = DataTracker.registerData(MaliciousFaceEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	protected static final TrackedData<Boolean> WAS_INTERRUPTED = DataTracker.registerData(MaliciousFaceEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	protected static final TrackedData<Integer> CHARGE = DataTracker.registerData(MaliciousFaceEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -96,6 +96,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		dataTracker.startTracking(ATTACK_COOLDOWN, 100);
 		dataTracker.startTracking(CRACKED, false);
 		dataTracker.startTracking(DEAD, false);
+		dataTracker.startTracking(DECORATIVE, false);
 		dataTracker.startTracking(LANDED, false);
 		dataTracker.startTracking(WAS_INTERRUPTED, false);
 		dataTracker.startTracking(CHARGE, 0);
@@ -162,6 +163,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		super.writeCustomDataToNbt(nbt);
 		nbt.putBoolean("cracked", dataTracker.get(CRACKED));
 		nbt.putBoolean("dead", dataTracker.get(DEAD));
+		nbt.putBoolean("decorative", dataTracker.get(DECORATIVE));
 	}
 	
 	@Override
@@ -172,6 +174,11 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 			dataTracker.set(CRACKED, nbt.getBoolean("cracked"));
 		if(nbt.contains("dead"))
 			dataTracker.set(DEAD, nbt.getBoolean("dead"));
+		if(nbt.contains("decorative"))
+		{
+			dataTracker.set(DECORATIVE, nbt.getBoolean("decorative"));
+			drop();
+		}
 	}
 	
 	@Override
@@ -256,12 +263,14 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	public void tick()
 	{
 		super.tick();
-		if(dataTracker.get(DEAD))
+		if(dataTracker.get(DEAD) && !dataTracker.get(DECORATIVE))
 		{
 			deathTicks++;
 			if(deathTicks > 200)
 				kill();
 		}
+		if(!dataTracker.get(DEAD) && dataTracker.get(DECORATIVE))
+			dataTracker.set(DEAD, true);
 	}
 	
 	@Override
@@ -277,7 +286,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		{
 			if(source.isOf(DamageTypes.STARVE)) //starve because there's no way this damage would occur accidentally
 				setHealth(0);
-			if(source.isOf(DamageSources.POUND))
+			if(source.isOf(DamageSources.POUND) && !isInvulnerable())
 			{
 				setHealth(0);
 				for (int i = 0; i < 32; i++)
@@ -295,16 +304,21 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 			return false;
 		if(getHealth() - amount <= 0f && !dataTracker.get(DEAD))
 		{
-			dataTracker.set(DEAD, true);
-			setNoGravity(false);
-			setHealth(1);
-			setInvulnerable(true);
-			addVelocity(0f, 0.1f, 0f);
+			drop();
 			return false;
 		}
 		if(getHealth() - amount < getMaxHealth() / 2 && !dataTracker.get(CRACKED))
 			dataTracker.set(CRACKED, true);
 		return super.damage(source, amount);
+	}
+	
+	void drop()
+	{
+		dataTracker.set(DEAD, true);
+		setNoGravity(false);
+		setHealth(1);
+		setInvulnerable(true);
+		addVelocity(0f, 0.1f, 0f);
 	}
 	
 	@Override
@@ -318,7 +332,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	{
 		if(dataTracker.get(DEAD) && onGround)
 		{
-			if(!getWorld().isClient)
+			if(!getWorld().isClient && !dataTracker.get(DECORATIVE))
 			{
 				ShockwaveEntity shockwave = new ShockwaveEntity(EntityRegistry.SHOCKWAVE, getWorld());
 				shockwave.setPosition(getBlockPos().toCenterPos().add(0, 0.5, 0));
