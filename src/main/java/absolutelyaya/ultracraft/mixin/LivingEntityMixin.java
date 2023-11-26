@@ -7,6 +7,7 @@ import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
+import absolutelyaya.ultracraft.config.RegenSetting;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.DamageTypeTags;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
@@ -171,14 +172,14 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 			buf.writeBoolean(source.isOf(DamageSources.SHOTGUN));
 			ServerPlayNetworking.send((ServerPlayerEntity)player, PacketRegistry.BLEED_PACKET_ID, buf);
 		}
-		GameruleRegistry.RegenSetting healRule = getWorld().getGameRules().get(GameruleRegistry.BLOODHEAL).get();
-		if(!healRule.equals(GameruleRegistry.RegenSetting.NEVER))
+		RegenSetting healRule = getWorld().getGameRules().get(GameruleRegistry.BLOODHEAL).get();
+		if(!healRule.equals(RegenSetting.NEVER))
 		{
 			for (PlayerEntity player : heal)
 			{
 				if(!(player instanceof WingedPlayerEntity))
 					continue;
-				if((healRule.equals(GameruleRegistry.RegenSetting.ONLY_HIVEL) && !UltraComponents.WING_DATA.get(player).isActive()))
+				if((healRule.equals(RegenSetting.ONLY_HIVEL) && !UltraComponents.WING_DATA.get(player).isActive()))
 					continue;
 				float healing = amount * (source.isOf(DamageSources.SHOTGUN) ? 1f : 2.5f);
 				healing = Math.min(healing, lastHealth + getMaxHealth() * 2f);

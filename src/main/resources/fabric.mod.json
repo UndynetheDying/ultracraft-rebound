@@ -9,7 +9,8 @@
   ],
   "contact": {
     "issues": "https://github.com/absolutelyaya/ultracraft/issues",
-    "sources": "https://github.com/absolutelyaya/ultracraft"
+    "sources": "https://github.com/absolutelyaya/ultracraft",
+    "homepage": "https://absolutelyaya.neocities.org/"
   },
   "license": "MIT",
   "icon": "assets/ultracraft/icon.png",

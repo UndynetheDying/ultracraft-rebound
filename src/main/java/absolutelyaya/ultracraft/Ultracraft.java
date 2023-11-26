@@ -4,6 +4,8 @@ import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.command.Commands;
 import absolutelyaya.ultracraft.command.WhitelistCommand;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
+import absolutelyaya.ultracraft.config.ServerConfig;
+import absolutelyaya.ultracraft.config.Setting;
 import absolutelyaya.ultracraft.data.TerminalScreensaverManager;
 import absolutelyaya.ultracraft.data.UltraRecipeManager;
 import absolutelyaya.ultracraft.item.AbstractNailgunItem;
@@ -51,6 +53,7 @@ public class Ultracraft implements ModInitializer
 	public static boolean DYN_LIGHTS;
 	static int freezeTicks;
     static Map<UUID, Integer> supporterCache = new HashMap<>(), supporterCacheAdditions = new HashMap<>();
+    static ServerConfig config;
     
     @Override
     public void onInitialize()
@@ -107,11 +110,11 @@ public class Ultracraft implements ModInitializer
             ServerPlayerEntity player = networkHandler.player;
             GameruleRegistry.syncAll(player);
             UltraRecipeManager.sync(player);
-            GameruleRegistry.Setting hivel = player.getWorld().getGameRules().get(GameruleRegistry.HIVEL_MODE).get();
-            if(!hivel.equals(GameruleRegistry.Setting.FREE))
+            Setting hivel = player.getWorld().getGameRules().get(GameruleRegistry.HIVEL_MODE).get();
+            if(!hivel.equals(Setting.FREE))
             {
                 IWingDataComponent wings = UltraComponents.WING_DATA.get(player);
-                wings.setVisible(hivel.equals(GameruleRegistry.Setting.FORCE_ON));
+                wings.setVisible(hivel.equals(Setting.FORCE_ON));
                 wings.sync();
             }
         });
@@ -122,10 +125,24 @@ public class Ultracraft implements ModInitializer
                 if(player.getWorld().getGameRules().getBoolean(GameruleRegistry.START_WITH_PIERCER))
                     player.giveItemStack(ItemRegistry.PIERCE_REVOLVER.getDefaultStack());
         }));
+        ServerLifecycleEvents.SERVER_STARTING.register((server) -> {
+            loadServerConfig();
+        });
+        ServerLifecycleEvents.START_DATA_PACK_RELOAD.register((server, handler) -> {
+            loadServerConfig();
+        });
         
         FabricLoader.getInstance().getModContainer(MOD_ID).ifPresent(modContainer -> VERSION = modContainer.getMetadata().getVersion().getFriendlyString());
         FabricLoader.getInstance().getModContainer("lambdynlights").ifPresent(container -> DYN_LIGHTS = true);
         LOGGER.info("Ultracraft initialized.");
+    }
+    
+    void loadServerConfig()
+    {
+        if(config == null)
+            config = new ServerConfig();
+        else
+            config.load();
     }
     
     public static boolean isTimeFrozen()
@@ -138,7 +155,7 @@ public class Ultracraft implements ModInitializer
         if(player != null)
         {
             boolean freezeDisabled = player.getServer().isRemote() &&
-                                             player.getWorld().getGameRules().get(GameruleRegistry.TIME_STOP).get().equals(GameruleRegistry.Setting.FORCE_OFF);
+                                             player.getWorld().getGameRules().get(GameruleRegistry.TIME_STOP).get().equals(Setting.FORCE_OFF);
             PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
             buf.writeInt(ticks);
             buf.writeBoolean(freezeDisabled);
@@ -159,7 +176,7 @@ public class Ultracraft implements ModInitializer
         if(world != null)
         {
             boolean freezeDisabled = world.getServer().isRemote() &&
-                                             world.getGameRules().get(GameruleRegistry.TIME_STOP).get().equals(GameruleRegistry.Setting.FORCE_OFF);
+                                             world.getGameRules().get(GameruleRegistry.TIME_STOP).get().equals(Setting.FORCE_OFF);
             PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
             buf.writeInt(ticks);
             buf.writeBoolean(freezeDisabled);

@@ -29,6 +29,10 @@ import absolutelyaya.ultracraft.client.sound.MovingSwordsmachineSoundInstance;
 import absolutelyaya.ultracraft.client.sound.MovingWindSoundInstance;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
+import absolutelyaya.ultracraft.config.GraffitiSetting;
+import absolutelyaya.ultracraft.config.ProjectileBoostSetting;
+import absolutelyaya.ultracraft.config.RegenSetting;
+import absolutelyaya.ultracraft.config.Setting;
 import absolutelyaya.ultracraft.entity.machine.SwordsmachineEntity;
 import absolutelyaya.ultracraft.entity.projectile.ThrownMachineSwordEntity;
 import absolutelyaya.ultracraft.particle.*;
@@ -92,11 +96,11 @@ public class UltracraftClient implements ClientModInitializer
 	public static ClientHitscanHandler HITSCAN_HANDLER;
 	public static TrailRenderer TRAIL_RENDERER;
 	public static boolean REPLACE_MENU_MUSIC = true, APPLY_ENTITY_POSES, GRAFFITI_WHITELISTED = true, SODIUM = true, IRIS = false;
-	static GameruleRegistry.Setting HiVelOption = GameruleRegistry.Setting.FREE;
-	static GameruleRegistry.Setting TimeFreezeOption = GameruleRegistry.Setting.FORCE_ON;
-	static GameruleRegistry.RegenSetting bloodRegen = GameruleRegistry.RegenSetting.ALWAYS;
-	static GameruleRegistry.ProjectileBoostSetting projBoost = GameruleRegistry.ProjectileBoostSetting.LIMITED;
-	static GameruleRegistry.GraffitiSetting GraffitiOption = GameruleRegistry.GraffitiSetting.ALLOW_ALL;
+	static Setting HiVelOption = Setting.FREE;
+	static Setting TimeFreezeOption = Setting.FORCE_ON;
+	static RegenSetting bloodRegen = RegenSetting.ALWAYS;
+	static ProjectileBoostSetting projBoost = ProjectileBoostSetting.LIMITED;
+	static GraffitiSetting GraffitiOption = GraffitiSetting.ALLOW_ALL;
 	static boolean disableHandswap = false, slamStorage = true, fallDamage = false, drowning = false, effectivelyViolent = false, wasMovementSoundsEnabled, parryChaining, supporter = false, joinInfoPending, terminalProt;
 	public static int jumpBoost, speed, gravityReduction;
 	static float screenblood;
@@ -106,7 +110,7 @@ public class UltracraftClient implements ClientModInitializer
 	static Optional<Boolean> forcedHivel = Optional.empty();
 	
 	static UltraHudRenderer hudRenderer;
-	static ConfigHolder<Ultraconfig> config;
+	static ConfigHolder<ClientConfig> config;
 	
 	@Override
 	public void onInitializeClient()
@@ -114,7 +118,7 @@ public class UltracraftClient implements ClientModInitializer
 		SODIUM = FabricLoader.getInstance().getModContainer("sodium").isPresent();
 		IRIS = FabricLoader.getInstance().getModContainer("iris").isPresent();
 		
-		config = AutoConfig.register(Ultraconfig.class, GsonConfigSerializer::new);
+		config = AutoConfig.register(ClientConfig.class, GsonConfigSerializer::new);
 		KeybindRegistry.register();
 		
 		//EntityRenderers
@@ -367,14 +371,14 @@ public class UltracraftClient implements ClientModInitializer
 		if(client.player == null)
 			return;
 		client.player.sendMessage(Text.translatable("message.ultracraft.join-info-header"));
-		if(!HiVelOption.equals(GameruleRegistry.Setting.FREE))
+		if(!HiVelOption.equals(Setting.FREE))
 			client.player.sendMessage(Text.translatable("message.ultracraft.hi-vel-forced",
-					HiVelOption.equals(GameruleRegistry.Setting.FORCE_ON) ? Text.translatable("options.on") : Text.translatable("options.off")));
+					HiVelOption.equals(Setting.FORCE_ON) ? Text.translatable("options.on") : Text.translatable("options.off")));
 		else
 			client.player.sendMessage(Text.translatable("message.ultracraft.hi-vel-free"));
 		if(client.getServer() != null && client.getServer().isRemote())
 			client.player.sendMessage(Text.translatable("message.ultracraft.freeze-forced",
-					TimeFreezeOption.equals(GameruleRegistry.Setting.FORCE_ON) ? Text.translatable("options.on") : Text.translatable("options.off")));
+					TimeFreezeOption.equals(Setting.FORCE_ON) ? Text.translatable("options.on") : Text.translatable("options.off")));
 		client.player.sendMessage(Text.translatable("message.ultracraft.attributes", speed, jumpBoost,
 				MathHelper.clamp(gravityReduction * 10, 0, 99)).append("%"));
 		client.player.sendMessage(Text.translatable("message.ultracraft.blood-heal." + bloodRegen.name()));
@@ -420,8 +424,8 @@ public class UltracraftClient implements ClientModInitializer
 		if(player == null)
 			return;
 		IWingDataComponent wings = UltraComponents.WING_DATA.get(player);
-		GameruleRegistry.Setting option = HiVelOption;
-		if(option.equals(GameruleRegistry.Setting.FREE))
+		Setting option = HiVelOption;
+		if(option.equals(Setting.FREE))
 		{
 			setHiVel(!wings.isActive(), false);
 			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
@@ -433,7 +437,7 @@ public class UltracraftClient implements ClientModInitializer
 		else
 			player.sendMessage(
 					Text.translatable("message.ultracraft.hi-vel-forced",
-									Text.translatable(option.equals(GameruleRegistry.Setting.FORCE_ON) ? "options.on" : "options.off")), true);
+									Text.translatable(option.equals(Setting.FORCE_ON) ? "options.on" : "options.off")), true);
 	}
 	
 	public static boolean isSlamStorageEnabled()
@@ -463,7 +467,7 @@ public class UltracraftClient implements ClientModInitializer
 		}
 	}
 	
-	public static Ultraconfig getConfig()
+	public static ClientConfig getConfig()
 	{
 		return config.get();
 	}
@@ -477,22 +481,22 @@ public class UltracraftClient implements ClientModInitializer
 	{
 		switch (data)
 		{
-			case 0 -> onExternalRuleUpdate(GameruleRegistry.PROJ_BOOST, (projBoost = GameruleRegistry.ProjectileBoostSetting.values()[value]).name());
+			case 0 -> onExternalRuleUpdate(GameruleRegistry.PROJ_BOOST, (projBoost = ProjectileBoostSetting.values()[value]).name());
 			case 1 ->
 			{
-				onExternalRuleUpdate(GameruleRegistry.HIVEL_MODE, (HiVelOption = GameruleRegistry.Setting.values()[value]).name());
-				if(HiVelOption != GameruleRegistry.Setting.FREE)
-					forcedHivel = Optional.of(HiVelOption == GameruleRegistry.Setting.FORCE_ON);
+				onExternalRuleUpdate(GameruleRegistry.HIVEL_MODE, (HiVelOption = Setting.values()[value]).name());
+				if(HiVelOption != Setting.FREE)
+					forcedHivel = Optional.of(HiVelOption == Setting.FORCE_ON);
 				else
 					forcedHivel = Optional.empty();
 			}
-			case 2 -> onExternalRuleUpdate(GameruleRegistry.TIME_STOP, (TimeFreezeOption = GameruleRegistry.Setting.values()[value]).name());
+			case 2 -> onExternalRuleUpdate(GameruleRegistry.TIME_STOP, (TimeFreezeOption = Setting.values()[value]).name());
 			case 3 -> onExternalRuleUpdate(GameruleRegistry.DISABLE_HANDSWAP, disableHandswap = value == 1);
 			case 4 -> onExternalRuleUpdate(GameruleRegistry.HIVEL_JUMP_BOOST, jumpBoost = value);
 			case 5 -> onExternalRuleUpdate(GameruleRegistry.SLAM_STORAGE, slamStorage = value == 1);
 			case 6 -> onExternalRuleUpdate(GameruleRegistry.HIVEL_FALLDAMAGE, fallDamage = value == 1);
 			case 7 -> onExternalRuleUpdate(GameruleRegistry.HIVEL_DROWNING, drowning = value == 1);
-			case 8 -> onExternalRuleUpdate(GameruleRegistry.BLOODHEAL, (bloodRegen = GameruleRegistry.RegenSetting.values()[value]).name());
+			case 8 -> onExternalRuleUpdate(GameruleRegistry.BLOODHEAL, (bloodRegen = RegenSetting.values()[value]).name());
 			case 9 -> onExternalRuleUpdate(GameruleRegistry.HIVEL_SPEED, speed = value);
 			case 10 -> onExternalRuleUpdate(GameruleRegistry.HIVEL_SLOWFALL, gravityReduction = value);
 			case 11 -> onExternalRuleUpdate(GameruleRegistry.EFFECTIVELY_VIOLENT, effectivelyViolent = value == 1);
@@ -503,7 +507,7 @@ public class UltracraftClient implements ClientModInitializer
 			case 16 -> onExternalRuleUpdate(GameruleRegistry.REVOLVER_DAMAGE, value);
 			case 17 -> onExternalRuleUpdate(GameruleRegistry.INVINCIBILITY, value);
 			case 18 -> onExternalRuleUpdate(GameruleRegistry.TERMINAL_PROT, terminalProt = value == 1);
-			case 19 -> onExternalRuleUpdate(GameruleRegistry.GRAFFITI, (GraffitiOption = GameruleRegistry.GraffitiSetting.values()[value]).name());
+			case 19 -> onExternalRuleUpdate(GameruleRegistry.GRAFFITI, (GraffitiOption = GraffitiSetting.values()[value]).name());
 			case 20 -> onExternalRuleUpdate(GameruleRegistry.FLAMETHROWER_GRIEF, value == 1);
 			case 21 -> onExternalRuleUpdate(GameruleRegistry.SHOTGUN_DAMAGE, value);
 			case 22 -> onExternalRuleUpdate(GameruleRegistry.NAILGUN_DAMAGE, value);

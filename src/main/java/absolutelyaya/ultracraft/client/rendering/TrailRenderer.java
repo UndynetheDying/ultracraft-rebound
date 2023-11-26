@@ -1,7 +1,7 @@
 package absolutelyaya.ultracraft.client.rendering;
 
 import absolutelyaya.ultracraft.client.RenderLayers;
-import absolutelyaya.ultracraft.client.Ultraconfig;
+import absolutelyaya.ultracraft.client.ClientConfig;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 
 public class TrailRenderer
 {
-	static final Ultraconfig config = UltracraftClient.getConfig();
+	static final ClientConfig config = UltracraftClient.getConfig();
 	static final Map<UUID, Trail> trails = new HashMap<>();
 	static final Map<UUID, Trail> newTrails = new HashMap<>();
 	static final List<UUID> deletionQueue = new ArrayList<>();

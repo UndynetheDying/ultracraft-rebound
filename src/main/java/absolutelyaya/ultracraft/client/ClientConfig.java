@@ -14,7 +14,7 @@ import java.util.UUID;
 @SuppressWarnings("CanBeFinal")
 @Config(name = Ultracraft.MOD_ID)
 @Config.Gui.Background("minecraft:textures/block/stone_bricks.png")
-public class Ultraconfig implements ConfigData
+public class ClientConfig implements ConfigData
 {
 	@ConfigEntry.Gui.Tooltip
 	public boolean serverJoinInfo = true;

@@ -1,7 +1,7 @@
 package absolutelyaya.ultracraft.mixin.client.gui;
 
 import absolutelyaya.ultracraft.Ultracraft;
-import absolutelyaya.ultracraft.client.Ultraconfig;
+import absolutelyaya.ultracraft.client.ClientConfig;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.screen.IntroScreen;
 import absolutelyaya.ultracraft.client.gui.widget.TitleBGButton;
@@ -40,7 +40,7 @@ public abstract class TitleScreenMixin extends Screen
     @Shadow public abstract boolean mouseClicked(double mouseX, double mouseY, int button);
     
     @Shadow private @Nullable SplashTextRenderer splashText;
-    private static final Ultraconfig config = UltracraftClient.getConfig();
+    private static final ClientConfig config = UltracraftClient.getConfig();
     private static final Identifier BG_ICON_TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/misc/bg_icons.png");
     RotatingCubeMapRenderer ultraBG, defaultBG, limboBG;
     SoundInstance wind;

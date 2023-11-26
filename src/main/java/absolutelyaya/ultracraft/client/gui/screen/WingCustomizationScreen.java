@@ -3,7 +3,7 @@ package absolutelyaya.ultracraft.client.gui.screen;
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WidgetAccessor;
-import absolutelyaya.ultracraft.client.Ultraconfig;
+import absolutelyaya.ultracraft.client.ClientConfig;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.widget.WingColorSelectionWidget;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
@@ -324,7 +324,7 @@ public class WingCustomizationScreen extends Screen
 		if(client.player != null)
 			client.player.setPitch(prevPitch);
 		MenuOpen = false;
-		Ultraconfig config = UltracraftClient.getConfig();
+		ClientConfig config = UltracraftClient.getConfig();
 		config.wingColors[0] = new Vec3d(UltracraftClient.getWingColors()[0]);
 		config.wingColors[1] = new Vec3d(UltracraftClient.getWingColors()[1]);
 		config.wingPreset = UltracraftClient.wingPreset;

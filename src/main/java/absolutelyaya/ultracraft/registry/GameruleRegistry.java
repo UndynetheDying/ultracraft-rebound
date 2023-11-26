@@ -3,6 +3,10 @@ package absolutelyaya.ultracraft.registry;
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
+import absolutelyaya.ultracraft.config.GraffitiSetting;
+import absolutelyaya.ultracraft.config.ProjectileBoostSetting;
+import absolutelyaya.ultracraft.config.RegenSetting;
+import absolutelyaya.ultracraft.config.Setting;
 import com.chocohead.mm.api.ClassTinkerers;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
@@ -206,34 +210,5 @@ public class GameruleRegistry
 	public static void register()
 	{
 	
-	}
-	
-	public enum Setting
-	{
-		FORCE_ON,
-		FORCE_OFF,
-		FREE
-	}
-	
-	public enum RegenSetting
-	{
-		ALWAYS,
-		ONLY_HIVEL,
-		NEVER
-	}
-	
-	public enum ProjectileBoostSetting
-	{
-		ALLOW_ALL,
-		LIMITED,
-		ENTITY_TAG,
-		DISALLOW
-	}
-	
-	public enum GraffitiSetting
-	{
-		ALLOW_ALL,
-		ONLY_ADMINS,
-		DISALLOW
 	}
 }

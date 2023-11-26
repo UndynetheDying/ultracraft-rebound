@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.client.gui.screen;
 
-import absolutelyaya.ultracraft.client.Ultraconfig;
+import absolutelyaya.ultracraft.client.ClientConfig;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -10,7 +10,7 @@ import net.minecraft.text.Text;
 
 public class EpilepsyPopupScreen extends InfoPopupScreen
 {
-	Ultraconfig config;
+	ClientConfig config;
 	
 	public EpilepsyPopupScreen(Screen parent)
 	{

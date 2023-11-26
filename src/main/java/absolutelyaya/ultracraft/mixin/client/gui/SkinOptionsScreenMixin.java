@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.mixin.client.gui;
 
-import absolutelyaya.ultracraft.client.Ultraconfig;
+import absolutelyaya.ultracraft.client.ClientConfig;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.screen.WingCustomizationScreen;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
@@ -33,7 +33,7 @@ public abstract class SkinOptionsScreenMixin extends GameOptionsScreen
 	@Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/option/SkinOptionsScreen;addDrawableChild(Lnet/minecraft/client/gui/Element;)Lnet/minecraft/client/gui/Element;", ordinal = 2), locals = LocalCapture.CAPTURE_FAILHARD)
 	void onInit(CallbackInfo ci, int i)
 	{
-		Ultraconfig config = UltracraftClient.getConfig();
+		ClientConfig config = UltracraftClient.getConfig();
 		addDrawableChild(
 				CyclingButtonWidget.onOffBuilder(config.armVisible).build(width / 2 - 155, height / 6 + 24 * ((i - 2) >> 1), 150, 20,
 						Text.translatable("screen.ultracraft.arm-visibility"),
