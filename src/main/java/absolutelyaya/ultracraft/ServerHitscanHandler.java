@@ -4,13 +4,13 @@ import absolutelyaya.ultracraft.accessor.EntityAccessor;
 import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.HitscanDamageSource;
 import absolutelyaya.ultracraft.entity.other.AbstractOrbEntity;
 import absolutelyaya.ultracraft.entity.other.BackTank;
 import absolutelyaya.ultracraft.entity.projectile.IIgnoreSharpshooter;
 import absolutelyaya.ultracraft.entity.projectile.ThrownCoinEntity;
-import absolutelyaya.ultracraft.registry.GameruleRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.util.AutoAimUtil;
 import io.netty.buffer.Unpooled;
@@ -123,10 +123,10 @@ public class ServerHitscanHandler
 		return !(entity instanceof ProjectileEntity || entity instanceof AbstractOrbEntity);
 	}
 	
-	static float getDamageMultipier(World world, byte type)
+	static float getDamageMultipier(byte type)
 	{
 		if(type == NORMAL || type == REVOLVER_PIERCE || type == COIN_RICOCHET || type == SHARPSHOOTER)
-			return world.getGameRules().getInt(GameruleRegistry.REVOLVER_DAMAGE);
+			return ServerConfig.INSTANCE.revolverDamage.getValue();
 		return 1f;
 	}
 	
@@ -142,7 +142,7 @@ public class ServerHitscanHandler
 	
 	public static void performBouncingHitscan(Hitscan scan)
 	{
-		HitscanResult lastResult = scan.damageMult(getDamageMultipier(scan.owner.getWorld(), scan.type)).perform();
+		HitscanResult lastResult = scan.damageMult(getDamageMultipier(scan.type)).perform();
 		if(scan.bounces < scan.maxBounces)
 		{
 			if(lastResult.finalHit != null)
@@ -288,7 +288,7 @@ public class ServerHitscanHandler
 					continue;
 				//hit the last pierced enemy with up to 10 of the remaining pierce shots. A Pierce revolver shot that hits just one enemy, will damage it 3 times.
 				for (int j = 0; j < Math.min(10, i == entities.size() - 1 && maxHits < 16 ? maxHits + 1 : 1); j++)
-					e.damage(damageSource, damage * getDamageMultipier(world, type));
+					e.damage(damageSource, damage * getDamageMultipier(type));
 				if(explodeProjectile && e instanceof ProjectileEntity proj && !(e instanceof IIgnoreSharpshooter || e instanceof ThrownCoinEntity))
 				{
 					ExplosionHandler.explosion(owner, world, proj.getPos(), DamageSources.get(world, DamageTypes.EXPLOSION, owner), 5f, 1f, 5f, true);

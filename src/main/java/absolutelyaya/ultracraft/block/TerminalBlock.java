@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.block;
 
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.item.TerminalItem;
 import absolutelyaya.ultracraft.registry.BlockRegistry;
 import absolutelyaya.ultracraft.registry.GameruleRegistry;
@@ -99,7 +100,7 @@ public class TerminalBlock extends BlockWithEntity
 		if(world.getBlockState(pos).isOf(BlockRegistry.TERMINAL_DISPLAY))
 		{
 			BlockEntity be = world.getBlockEntity(pos);
-			if(be instanceof TerminalBlockEntity terminal && world.getGameRules().getBoolean(GameruleRegistry.TERMINAL_PROT) && terminal.isCannotBreak(player))
+			if(be instanceof TerminalBlockEntity terminal && ServerConfig.INSTANCE.terminalProtection.getValue() && terminal.isCannotBreak(player))
 				return;
 			world.getBlockState(pos).getBlock().onBreak(world, pos, state, player);
 			world.setBlockState(pos, Blocks.AIR.getDefaultState());
@@ -121,7 +122,7 @@ public class TerminalBlock extends BlockWithEntity
 		Direction dir = state.get(HALF).equals(DoubleBlockHalf.LOWER) ? Direction.UP : Direction.DOWN;
 		pos = pos.offset(dir, 1);
 		BlockEntity be = world.getBlockEntity(pos);
-		if(be instanceof TerminalBlockEntity terminal && player.getWorld().getGameRules().getBoolean(GameruleRegistry.TERMINAL_PROT) &&
+		if(be instanceof TerminalBlockEntity terminal && ServerConfig.INSTANCE.terminalProtection.getValue() &&
 				   !terminal.isOwner(player.getUuid()))
 			return 0f;
 		return super.calcBlockBreakingDelta(state, player, world, pos);
@@ -133,7 +134,7 @@ public class TerminalBlock extends BlockWithEntity
 		Direction dir = state.get(HALF).equals(DoubleBlockHalf.LOWER) ? Direction.UP : Direction.DOWN;
 		pos = pos.offset(dir, 1);
 		BlockEntity be = world.getBlockEntity(pos);
-		if(be instanceof TerminalBlockEntity terminal && world.getGameRules().getBoolean(GameruleRegistry.TERMINAL_PROT) && !terminal.isOwner(player.getUuid()))
+		if(be instanceof TerminalBlockEntity terminal && ServerConfig.INSTANCE.terminalProtection.getValue() && !terminal.isOwner(player.getUuid()))
 		{
 			if(!world.isClient)
 				player.sendMessage(Text.translatable("message.ultracraft.terminal-prot"));

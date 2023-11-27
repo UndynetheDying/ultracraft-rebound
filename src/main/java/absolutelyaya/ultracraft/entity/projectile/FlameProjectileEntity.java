@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.entity.projectile;
 
 import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
@@ -122,7 +123,7 @@ public class FlameProjectileEntity extends ThrownItemEntity implements Projectil
 		
 		World world = getWorld();
 		if(age > 2 && !world.isClient && griefing && world.getGameRules().getBoolean(GameRules.DO_FIRE_TICK) &&
-				    world.getGameRules().getBoolean(GameruleRegistry.FLAMETHROWER_GRIEF) && world.getBlockState(getBlockPos()).isAir() && random.nextInt(5) == 0)
+				   ServerConfig.INSTANCE.flamethrowerGrief.getValue() && world.getBlockState(getBlockPos()).isAir() && random.nextInt(5) == 0)
 			world.setBlockState(getBlockPos(), Block.postProcessState(Blocks.FIRE.getDefaultState(), world, getBlockPos()));
 	}
 	

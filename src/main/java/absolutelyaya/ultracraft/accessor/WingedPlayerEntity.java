@@ -17,9 +17,9 @@ public interface WingedPlayerEntity
 	
 	Vec3d getSlideDir();
 	
-	void updateSpeedGamerule();
+	void updateSpeedConfig();
 	
-	void updateSpeedGamerule(boolean wingsActive);
+	void updateSpeedConfig(boolean wingsActive);
 	
 	boolean hasJustJumped();
 	

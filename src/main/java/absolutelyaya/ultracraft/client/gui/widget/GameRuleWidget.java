@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.client.gui.widget;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WidgetAccessor;
+import absolutelyaya.ultracraft.config.ConfigEntry;
 import absolutelyaya.ultracraft.util.RenderingUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
@@ -33,7 +34,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class GameRuleWidget<T extends GameRules.Key<?>> extends ClickableWidget implements Element, Drawable, Selectable
+public class GameRuleWidget<T extends ConfigEntry<?>> extends ClickableWidget implements Element, Drawable, Selectable
 {
 	static final Identifier ICONS = new Identifier(Ultracraft.MOD_ID, "textures/gui/gamerule_icons.png");
 	
@@ -55,10 +56,10 @@ public class GameRuleWidget<T extends GameRules.Key<?>> extends ClickableWidget 
 		renderer = MinecraftClient.getInstance().textRenderer;
 		switch(type)
 		{
-			case BOOL -> valueWidget = new CheckboxWidget(getX() + 178, getY() + 14, 20, 20, Text.empty(), Boolean.parseBoolean(rules.getString(rule.getName())));
+			case BOOL -> valueWidget = new CheckboxWidget(getX() + 178, getY() + 14, 20, 20, Text.empty(), Boolean.parseBoolean(rules.getString(rule.getId())));
 			case INT -> {
 				valueWidget = new TextFieldWidget(renderer, getX() + 151, getY() + 15, 46, 18, Text.empty());
-				((TextFieldWidget)valueWidget).setText(rules.getString(rule.getName()));
+				((TextFieldWidget)valueWidget).setText(rules.getString(rule.getId()));
 			}
 		}
 		this.icon = idx + 1;
@@ -73,7 +74,7 @@ public class GameRuleWidget<T extends GameRules.Key<?>> extends ClickableWidget 
 		this.cycleValues = values;
 		this.type = ValueType.CYCLE;
 		renderer = MinecraftClient.getInstance().textRenderer;
-		valueWidget = CyclingButtonWidget.builder(o -> Text.of((String)o)).values(values).initially(rules.getString(rule.getName()))
+		valueWidget = CyclingButtonWidget.builder(o -> Text.of((String)o)).values(values).initially(rules.getString(rule.getId()))
 							  .omitKeyText().build(getX() + 130, getY() + 14, 68, 20, Text.empty());
 		this.icon = idx + 1;
 		BGTexture = pickBG();
@@ -87,7 +88,7 @@ public class GameRuleWidget<T extends GameRules.Key<?>> extends ClickableWidget 
 		this.cycleValues = Arrays.stream(values).map(Enum::name).toArray(String[]::new);
 		this.type = ValueType.CYCLE;
 		renderer = MinecraftClient.getInstance().textRenderer;
-		valueWidget = CyclingButtonWidget.builder(o -> Text.of((String)o)).values(cycleValues).initially(rules.getString(rule.getName()))
+		valueWidget = CyclingButtonWidget.builder(o -> Text.of((String)o)).values(cycleValues).initially(rules.getString(rule.getId()))
 							  .omitKeyText().build(getX() + 130, getY() + 14, 68, 20, Text.empty());
 		this.icon = idx + 1;
 		BGTexture = pickBG();
@@ -220,8 +221,8 @@ public class GameRuleWidget<T extends GameRules.Key<?>> extends ClickableWidget 
 	{
 		if(value.length() == 0)
 			return;
-		rules.putString(rule.getName(), value);
-		MinecraftClient.getInstance().player.networkHandler.sendChatCommand(String.format("gamerule %s %s", rule.getName(), value));
+		rules.putString(rule.getId(), value);
+		MinecraftClient.getInstance().player.networkHandler.sendChatCommand(String.format("gamerule %s %s", rule.getId(), value));
 	}
 	
 	public void stateUpdate()
@@ -229,11 +230,11 @@ public class GameRuleWidget<T extends GameRules.Key<?>> extends ClickableWidget 
 		switch(type)
 		{
 			case BOOL -> {
-				if(((CheckboxWidget)valueWidget).isChecked() != Boolean.parseBoolean(rules.getString(rule.getName())))
+				if(((CheckboxWidget)valueWidget).isChecked() != Boolean.parseBoolean(rules.getString(rule.getId())))
 					((CheckboxWidget)valueWidget).onPress();
 			}
-			case INT -> ((TextFieldWidget)valueWidget).setText(rules.getString(rule.getName()));
-			case CYCLE -> ((CyclingButtonWidget)valueWidget).setValue(rules.getString(rule.getName()));
+			case INT -> ((TextFieldWidget)valueWidget).setText(rules.getString(rule.getId()));
+			case CYCLE -> ((CyclingButtonWidget)valueWidget).setValue(rules.getString(rule.getId()));
 		}
 	}
 	

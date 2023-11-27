@@ -11,6 +11,7 @@ import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.data.UltraRecipeManager;
 import absolutelyaya.ultracraft.entity.projectile.AbstractSkewerEntity;
@@ -27,7 +28,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
@@ -35,7 +35,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
@@ -162,7 +161,7 @@ public class PacketRegistry
 				
 				//Projectile Parry
 				//Fetch all Parry Candidate Projectiles
-				boolean chainingAllowed = world.getGameRules().getBoolean(GameruleRegistry.PARRY_CHAINING);
+				boolean chainingAllowed = ServerConfig.INSTANCE.parryChaining.getValue();
 				Vec3d pos = player.getEyePos();
 				Box check = new Box(pos.x - 0.3f, pos.y - 0.3f, pos.z - 0.3f,
 						pos.x + 0.3f, pos.y + 0.3f, pos.z + 0.3f)
@@ -285,7 +284,7 @@ public class PacketRegistry
 			{
 				wings.setVisible(wingsActive);
 				wings.sync();
-				((WingedPlayerEntity)player).updateSpeedGamerule();
+				((WingedPlayerEntity)player).updateSpeedConfig();
 				if(whitelisted)
 					return;
 				PacketByteBuf cbuf = new PacketByteBuf(Unpooled.buffer());

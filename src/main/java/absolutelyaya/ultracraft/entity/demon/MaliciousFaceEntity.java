@@ -7,6 +7,7 @@ import absolutelyaya.ultracraft.accessor.Enrageable;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.accessor.MeleeInterruptable;
 import absolutelyaya.ultracraft.client.UltracraftClient;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.entity.AbstractUltraFlyingEntity;
 import absolutelyaya.ultracraft.entity.other.ShockwaveEntity;
@@ -117,7 +118,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 				getWorld().addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, Blocks.CHISELED_STONE_BRICKS.getDefaultState()),
 						x, y, z, 0f, 0f, 0f);
 			}
-			if(getWorld().getDifficulty().equals(Difficulty.HARD) || getWorld().getGameRules().getBoolean(GameruleRegistry.EFFECTIVELY_VIOLENT))
+			if(getWorld().getDifficulty().equals(Difficulty.HARD) || ServerConfig.INSTANCE.effectivelyViolent.getValue())
 				playSound(SoundRegistry.GENERIC_ENRAGE, 1.5f, 0.9f);
 		}
 		else if(data.equals(LANDED) && dataTracker.get(LANDED))
@@ -386,9 +387,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	
 	public boolean isEnraged()
 	{
-		if(getWorld().isClient)
-			return isCracked() && (getWorld().getDifficulty().equals(Difficulty.HARD) || UltracraftClient.isViolentFeaturesEnabled(getWorld()));
-		return isCracked() && (getWorld().getDifficulty().equals(Difficulty.HARD) || getWorld().getGameRules().getBoolean(GameruleRegistry.EFFECTIVELY_VIOLENT));
+		return isCracked() && (getWorld().getDifficulty().equals(Difficulty.HARD) || ServerConfig.INSTANCE.effectivelyViolent.getValue());
 	}
 	
 	@Override

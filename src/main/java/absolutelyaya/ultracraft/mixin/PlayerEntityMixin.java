@@ -8,6 +8,7 @@ import absolutelyaya.ultracraft.block.TerminalBlockEntity;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.DamageTypeTags;
 import absolutelyaya.ultracraft.entity.other.BackTank;
@@ -29,7 +30,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -114,7 +114,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	{
 		if(UltraComponents.WINGED_ENTITY.get(this).isDashing() && !source.isIn(DamageTypeTags.UNDODGEABLE))
 			cir.setReturnValue(false);
-		if(isWingsActive() && source.isOf(DamageTypes.FALL) && ((!getWorld().isClient && !getWorld().getGameRules().get(GameruleRegistry.HIVEL_FALLDAMAGE).get()) ||
+		if(isWingsActive() && source.isOf(DamageTypes.FALL) && (!ServerConfig.INSTANCE.hivelFallDamage.getValue() ||
 				   getSteppingBlockState().getBlock() instanceof FluidBlock))
 			cir.setReturnValue(false);
 	}
@@ -127,7 +127,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 			if(source.isOf(DamageSources.GUN) || source.isOf(DamageSources.SHOTGUN))
 				timeUntilRegen = 9;
 			else
-				timeUntilRegen = 11 + getWorld().getGameRules().getInt(GameruleRegistry.INVINCIBILITY);
+				timeUntilRegen = 11 + ServerConfig.INSTANCE.iFrames.getValue();
 		}
 		UltraComponents.WINGED_ENTITY.get(this).setBloodHealCooldown(4);
 	}
@@ -164,18 +164,18 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	{
 		Multimap<EntityAttribute, EntityAttributeModifier> speedMod = HashMultimap.create();
 		speedMod.put(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier(UUID.fromString("9c92fac8-0018-11ee-be56-0242ac120002"), "spd_up",
-				0.2f * getWorld().getGameRules().getInt(GameruleRegistry.HIVEL_SPEED), EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+				ServerConfig.INSTANCE.hivelSpeed.getValue() - 1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
 		return speedMod;
 	}
 	
 	@Override
-	public void updateSpeedGamerule()
+	public void updateSpeedConfig()
 	{
-		updateSpeedGamerule(isWingsActive());
+		updateSpeedConfig(isWingsActive());
 	}
 	
 	@Override
-	public void updateSpeedGamerule(boolean wingsActive)
+	public void updateSpeedConfig(boolean wingsActive)
 	{
 		if(curSpeedMod != null)
 			getAttributes().removeModifiers(curSpeedMod);
@@ -348,7 +348,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	@Override
 	public boolean canBreatheInWater()
 	{
-		return isWingsActive() && !getWorld().getGameRules().getBoolean(GameruleRegistry.HIVEL_DROWNING);
+		return isWingsActive() && !ServerConfig.INSTANCE.hivelDrowning.getValue();
 	}
 	
 	@Override

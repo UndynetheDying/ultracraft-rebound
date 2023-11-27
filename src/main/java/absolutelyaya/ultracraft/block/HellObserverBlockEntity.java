@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.block;
 
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import absolutelyaya.ultracraft.registry.GameruleRegistry;
 import net.minecraft.block.Block;
@@ -58,7 +59,7 @@ public class HellObserverBlockEntity extends BlockEntity
 	public static void tick(World world, BlockPos pos, BlockState state, HellObserverBlockEntity observer)
 	{
 		observer.tick++;
-		if(observer.tick % world.getGameRules().getInt(GameruleRegistry.HELL_OBSERVER_INTERVAL) != 0)
+		if(observer.tick % ServerConfig.INSTANCE.hellObserverInterval.getValue() != 0)
 			return;
 		Vec3i size = observer.checkDimensions;
 		Vec3i offset = observer.getCheckOffset();

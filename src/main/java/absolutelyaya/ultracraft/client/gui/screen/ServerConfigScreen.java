@@ -3,11 +3,7 @@ package absolutelyaya.ultracraft.client.gui.screen;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WidgetAccessor;
 import absolutelyaya.ultracraft.client.gui.widget.GameRuleWidget;
-import absolutelyaya.ultracraft.config.GraffitiSetting;
-import absolutelyaya.ultracraft.config.ProjectileBoostSetting;
-import absolutelyaya.ultracraft.config.RegenSetting;
-import absolutelyaya.ultracraft.config.Setting;
-import absolutelyaya.ultracraft.registry.GameruleRegistry;
+import absolutelyaya.ultracraft.config.*;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -17,7 +13,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.GameRules;
 import org.joml.Vector2i;
 
 import java.util.ArrayList;
@@ -45,32 +40,33 @@ public class ServerConfigScreen extends Screen
 		ruleWidgets.forEach(this::remove);
 		ruleWidgets.clear();
 		Vector2i pos = new Vector2i(width / 2 - 100, 40);
-		addRule(GameruleRegistry.PROJ_BOOST, pos, ProjectileBoostSetting.values());
-		addRule(GameruleRegistry.HIVEL_MODE, pos, Setting.values());
-		addRule(GameruleRegistry.TIME_STOP, pos, new String[] { Setting.FORCE_ON.toString(), Setting.FORCE_OFF.toString() });
-		addRule(GameruleRegistry.DISABLE_HANDSWAP, pos, GameRuleWidget.ValueType.BOOL);
-		addRule(GameruleRegistry.HIVEL_JUMP_BOOST, pos, GameRuleWidget.ValueType.INT);
-		addRule(GameruleRegistry.SLAM_STORAGE, pos, GameRuleWidget.ValueType.BOOL);
-		addRule(GameruleRegistry.HIVEL_FALLDAMAGE, pos, GameRuleWidget.ValueType.BOOL);
-		addRule(GameruleRegistry.HIVEL_DROWNING, pos, GameRuleWidget.ValueType.BOOL);
-		addRule(GameruleRegistry.BLOODHEAL, pos, RegenSetting.values());
-		addRule(GameruleRegistry.HIVEL_SPEED, pos, GameRuleWidget.ValueType.INT);
-		addRule(GameruleRegistry.HIVEL_SLOWFALL, pos, GameRuleWidget.ValueType.INT);
-		addRule(GameruleRegistry.EFFECTIVELY_VIOLENT, pos, GameRuleWidget.ValueType.BOOL);
-		addRule(GameruleRegistry.EXPLOSION_DAMAGE, pos, GameRuleWidget.ValueType.BOOL);
-		addRule(GameruleRegistry.SM_SAFE_LEDGES, pos, GameRuleWidget.ValueType.BOOL);
-		addRule(GameruleRegistry.PARRY_CHAINING, pos, GameRuleWidget.ValueType.BOOL);
-		addRule(GameruleRegistry.TNT_PRIMING, pos, GameRuleWidget.ValueType.BOOL);
-		addRule(GameruleRegistry.REVOLVER_DAMAGE, pos, GameRuleWidget.ValueType.INT);
-		addRule(GameruleRegistry.INVINCIBILITY, pos, GameRuleWidget.ValueType.INT);
-		addRule(GameruleRegistry.TERMINAL_PROT, pos, GameRuleWidget.ValueType.BOOL);
-		addRule(GameruleRegistry.GRAFFITI, pos, GraffitiSetting.values());
-		addRule(GameruleRegistry.FLAMETHROWER_GRIEF, pos, GameRuleWidget.ValueType.BOOL);
-		addRule(GameruleRegistry.SHOTGUN_DAMAGE, pos, GameRuleWidget.ValueType.INT);
-		addRule(GameruleRegistry.NAILGUN_DAMAGE, pos, GameRuleWidget.ValueType.INT);
-		addRule(GameruleRegistry.HELL_OBSERVER_INTERVAL, pos, GameRuleWidget.ValueType.INT);
-		addRule(GameruleRegistry.START_WITH_PIERCER, pos, GameRuleWidget.ValueType.BOOL);
-		addRule(GameruleRegistry.BLOOD_SATURATION, pos, GameRuleWidget.ValueType.BOOL);
+		ServerConfig config = ServerConfig.INSTANCE;
+		addRule(config.projboost, pos, ProjectileBoostSetting.values());
+		addRule(config.hivel, pos, Setting.values());
+		addRule(config.timestop, pos, new String[] { Setting.FORCE_ON.toString(), Setting.FORCE_OFF.toString() });
+		addRule(config.disableHandswap, pos, GameRuleWidget.ValueType.BOOL);
+		addRule(config.hivelJumpBoost, pos, GameRuleWidget.ValueType.INT);
+		addRule(config.slamStorage, pos, GameRuleWidget.ValueType.BOOL);
+		addRule(config.hivelFallDamage, pos, GameRuleWidget.ValueType.BOOL);
+		addRule(config.hivelDrowning, pos, GameRuleWidget.ValueType.BOOL);
+		addRule(config.bloodHeal, pos, RegenSetting.values());
+		addRule(config.hivelSpeed, pos, GameRuleWidget.ValueType.INT);
+		addRule(config.hivelGravity, pos, GameRuleWidget.ValueType.INT);
+		addRule(config.effectivelyViolent, pos, GameRuleWidget.ValueType.BOOL);
+		addRule(config.explosionBlockBreaking, pos, GameRuleWidget.ValueType.BOOL);
+		addRule(config.smSafeLedges, pos, GameRuleWidget.ValueType.BOOL);
+		addRule(config.parryChaining, pos, GameRuleWidget.ValueType.BOOL);
+		addRule(config.tntPriming, pos, GameRuleWidget.ValueType.BOOL);
+		addRule(config.revolverDamage, pos, GameRuleWidget.ValueType.INT);
+		addRule(config.iFrames, pos, GameRuleWidget.ValueType.INT);
+		addRule(config.terminalProtection, pos, GameRuleWidget.ValueType.BOOL);
+		addRule(config.graffiti, pos, GraffitiSetting.values());
+		addRule(config.flamethrowerGrief, pos, GameRuleWidget.ValueType.BOOL);
+		addRule(config.shotgunDamage, pos, GameRuleWidget.ValueType.INT);
+		addRule(config.nailgunDamage, pos, GameRuleWidget.ValueType.INT);
+		addRule(config.hellObserverInterval, pos, GameRuleWidget.ValueType.INT);
+		//addRule(GameruleRegistry.START_WITH_PIERCER, pos, GameRuleWidget.ValueType.BOOL);
+		addRule(config.bloodSaturation, pos, GameRuleWidget.ValueType.BOOL);
 		
 		boolean b = false;
 		if(simplistic != null)
@@ -79,17 +75,17 @@ public class ServerConfigScreen extends Screen
 				Text.translatable("screen.ultracraft.server.config-menu.simplistic"), b));
 	}
 	
-	<K extends GameRules.Key<?>> void addRule(K key, Vector2i pos, String[] values)
+	<K extends ConfigEntry<?>> void addRule(K key, Vector2i pos, String[] values)
 	{
 		ruleWidgets.add(addDrawableChild(new GameRuleWidget<>(rules, pos, key, values, ruleWidgets.size())));
 	}
 	
-	<K extends GameRules.Key<?>> void addRule(K key, Vector2i pos, Enum<?>[] values)
+	<K extends ConfigEntry<?>> void addRule(K key, Vector2i pos, Enum<?>[] values)
 	{
 		ruleWidgets.add(addDrawableChild(new GameRuleWidget<>(rules, pos, key, values, ruleWidgets.size())));
 	}
 	
-	<K extends GameRules.Key<?>> void addRule(K key, Vector2i pos, GameRuleWidget.ValueType valueType)
+	<K extends ConfigEntry<?>> void addRule(K key, Vector2i pos, GameRuleWidget.ValueType valueType)
 	{
 		ruleWidgets.add(addDrawableChild(new GameRuleWidget<>(rules, pos, key, valueType, ruleWidgets.size())));
 	}
@@ -127,9 +123,9 @@ public class ServerConfigScreen extends Screen
 		return super.mouseScrolled(mouseX, mouseY, amount);
 	}
 	
-	public <T extends GameRules.Key<?>> void onExternalRuleUpdate(T rule, String value)
+	public <T extends ConfigEntry<?>> void onExternalRuleUpdate(T rule, String value)
 	{
-		rules.putString(rule.getName(), value);
+		rules.putString(rule.getId(), value);
 		ruleWidgets.forEach(GameRuleWidget::stateUpdate);
 	}
 	

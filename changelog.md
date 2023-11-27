@@ -9,6 +9,7 @@
   - Work like redstone lamps with Numbers from 1-10
 - Malicious Face can now be summoned as a non-decaying corpse using `{decorative: 1b}`
 ## Settings & Gamerules
+- Removed almost all gamerules (only remaining is `ultra-startWithPiercer`)
 ## Commands
 ## Tweaks
 - Buffed overpump damage towards others (10 Dmg -> 15 Dmg)

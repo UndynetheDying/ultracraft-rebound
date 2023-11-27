@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.entity.projectile;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.entity.other.StainedGlassWindow;
 import absolutelyaya.ultracraft.registry.GameruleRegistry;
@@ -65,7 +66,7 @@ public class NailEntity extends ProjectileEntity implements ProjectileEntityAcce
 		super.onEntityHit(entityHitResult);
 		float amount = 0.3f;
 		entity.damage(DamageSources.get(getWorld(), DamageSources.NAIL, this, getOwner()),
-				amount * getWorld().getGameRules().getInt(GameruleRegistry.NAILGUN_DAMAGE));
+				amount * ServerConfig.INSTANCE.shotgunDamage.getValue());
 		if(isHot())
 			entity.setFireTicks(100);
 	}

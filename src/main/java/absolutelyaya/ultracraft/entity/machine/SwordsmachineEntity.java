@@ -6,6 +6,7 @@ import absolutelyaya.ultracraft.accessor.ITrailEnjoyer;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.accessor.MeleeInterruptable;
 import absolutelyaya.ultracraft.client.UltracraftClient;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.entity.EnemySoundType;
@@ -594,7 +595,7 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 	public void move(MovementType movementType, Vec3d movement)
 	{
 		BlockHitResult hit = getWorld().raycast(new RaycastContext(getPos(), getPos().subtract(0, 2, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, this));
-		if(getWorld().getGameRules().getBoolean(GameruleRegistry.SM_SAFE_LEDGES) && !hit.getType().equals(HitResult.Type.MISS))
+		if(ServerConfig.INSTANCE.smSafeLedges.getValue() && !hit.getType().equals(HitResult.Type.MISS))
 		{
 			for (int x = -1; x <= 1; x++)
 			{

@@ -31,7 +31,7 @@ public interface LivingEntityAccessor
 	
 	float getRecoil();
 	
-	int getGravityReduction();
+	float getGravityModifier();
 	
 	boolean isRicochetHittable();
 	

@@ -28,13 +28,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
@@ -133,8 +133,14 @@ public class ClientPacketRegistry
 			UltraHudRenderer.onCatchFish(buf.readItemStack());
 		}));
 		ClientPlayNetworking.registerGlobalReceiver(PacketRegistry.SYNC_RULE_PACKET_ID, ((client, handler, buf, sender) -> {
-			byte b = buf.readByte();
-			UltracraftClient.syncGameRule(b, buf.readInt());
+			String id = buf.readString();
+			byte type = buf.readByte();
+			switch(type)
+			{
+				default -> UltracraftClient.syncConfigEntry(id, buf.readInt());
+				case NbtElement.FLOAT_TYPE -> UltracraftClient.syncConfigEntry(id, buf.readFloat());
+				case NbtElement.BYTE_TYPE -> UltracraftClient.syncConfigEntry(id, buf.readBoolean());
+			}
 		}));
 		ClientPlayNetworking.registerGlobalReceiver(PacketRegistry.ENTITY_TRAIL_PACKET_ID, ((client, handler, buf, sender) -> {
 			Entity e = client.world.getEntityById(buf.readInt());

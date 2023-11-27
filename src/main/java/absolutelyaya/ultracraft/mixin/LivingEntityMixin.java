@@ -8,6 +8,7 @@ import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
 import absolutelyaya.ultracraft.config.RegenSetting;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.DamageTypeTags;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
@@ -35,6 +36,7 @@ import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.apache.logging.log4j.core.jmx.Server;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
@@ -172,7 +174,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 			buf.writeBoolean(source.isOf(DamageSources.SHOTGUN));
 			ServerPlayNetworking.send((ServerPlayerEntity)player, PacketRegistry.BLEED_PACKET_ID, buf);
 		}
-		RegenSetting healRule = getWorld().getGameRules().get(GameruleRegistry.BLOODHEAL).get();
+		RegenSetting healRule = (RegenSetting)ServerConfig.INSTANCE.bloodHeal.getValue();
 		if(!healRule.equals(RegenSetting.NEVER))
 		{
 			for (PlayerEntity player : heal)
@@ -186,7 +188,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 				if(source.isIn(DamageTypeTags.MELEE))
 					healing /= 3.5f;
 				UltraComponents.WINGED_ENTITY.get(player).bloodHeal(healing);
-				if(getWorld().getGameRules().getBoolean(GameruleRegistry.BLOOD_SATURATION))
+				if(ServerConfig.INSTANCE.bloodSaturation.getValue())
 					player.getHungerManager().add((int)healing, 1f);
 			}
 		}
@@ -198,8 +200,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 		if(isAffectedByMovementRules())
 		{
 			if(!getWorld().isClient)
-				cir.setReturnValue(cir.getReturnValue() + 0.1f * Math.max(getWorld().getGameRules().getInt(GameruleRegistry.HIVEL_JUMP_BOOST) +
-						(isTouchingWater() ? 0.5f : 0f), 0));
+				cir.setReturnValue(cir.getReturnValue() + 0.1f * Math.max(ServerConfig.INSTANCE.hivelJumpBoost.getValue() + (isTouchingWater() ? 0.5f : 0f), 0));
 		}
 	}
 	
@@ -266,8 +267,8 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	{
 		if(!(isAffectedByMovementRules()) || (((Object)this instanceof PlayerEntity player) && player.getAbilities().flying) || touchingWater)
 			return value;
-		int val = (getWorld().isClient ? getGravityReduction() : getWorld().getGameRules().get(GameruleRegistry.HIVEL_SLOWFALL).get());
-		return Math.max(value * (1f - 0.1f * val), 0.01f);
+		float val = (getWorld().isClient ? getGravityModifier() : ServerConfig.INSTANCE.hivelGravity.getValue());
+		return Math.max(value - (value * (1f - val)), 0.01f);
 	}
 	
 	@ModifyVariable(method = "computeFallDamage", ordinal = 2, at = @At("STORE"))
@@ -275,8 +276,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	{
 		if(!(this instanceof WingedPlayerEntity winged && UltraComponents.WING_DATA.get(winged).isActive()))
 			return value;
-		return value + ((getWorld().getGameRules().get(GameruleRegistry.HIVEL_JUMP_BOOST).get() + 1) *
-								(1f + (getWorld().getGameRules().get(GameruleRegistry.HIVEL_SLOWFALL).get() / 2f)));
+		return value + ((ServerConfig.INSTANCE.hivelJumpBoost.getValue() + 1) * ServerConfig.INSTANCE.hivelGravity.getValue());
 	}
 	
 	@ModifyVariable(method = "computeFallDamage", ordinal = 1, at = @At("LOAD"), argsOnly = true)

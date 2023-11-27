@@ -3,6 +3,7 @@ package absolutelyaya.ultracraft.entity.projectile;
 import absolutelyaya.ultracraft.ExplosionHandler;
 import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
 import absolutelyaya.ultracraft.client.UltracraftClient;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.GameruleRegistry;
@@ -94,7 +95,7 @@ public class ShotgunPelletEntity extends HellBulletEntity implements ProjectileE
 		boolean parried = ((ProjectileEntityAccessor)this).isParried();
 		if(!entity.getClass().equals(ignore))
 			entity.damage(DamageSources.get(getWorld(), DamageSources.SHOTGUN, getOwner()),
-					damage * getWorld().getGameRules().getInt(GameruleRegistry.SHOTGUN_DAMAGE));
+					damage * ServerConfig.INSTANCE.shotgunDamage.getValue());
 		if(parried)
 			onParriedCollision(entityHitResult);
 	}

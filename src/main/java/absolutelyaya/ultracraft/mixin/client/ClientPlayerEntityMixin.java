@@ -10,6 +10,7 @@ import absolutelyaya.ultracraft.client.gui.screen.WingCustomizationScreen;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.StatusEffectRegistry;
@@ -201,7 +202,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			{
 				if(jumping && (grounded || coyote > 0))
 				{
-					setVelocity(slideDir.multiply(1f + 0.05 * UltracraftClient.speed).multiply(slideVelocity * 1.25));
+					setVelocity(slideDir.multiply(1f + 0.05 * ServerConfig.INSTANCE.hivelSpeed.getValue()).multiply(slideVelocity * 1.25));
 					addVelocity(0, baseJumpVel, 0);
 					winged.setIgnoreSlowdown(true); //don't slow down from air friction during movement tech
 				}
@@ -217,7 +218,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			{
 				if(isSprinting() != lastSprinting)
 					sendSprintingPacket();
-				setVelocity(slideDir.multiply(1f + 0.2 * UltracraftClient.speed).multiply(slideVelocity / 1.2f).add(0f, getVelocity().y, 0f));
+				setVelocity(slideDir.multiply(1f + 0.2 * ServerConfig.INSTANCE.hivelSpeed.getValue()).multiply(slideVelocity / 1.2f)
+									.add(0f, getVelocity().y, 0f));
 				ci.cancel();
 			}
 			//skim on liquids
@@ -290,7 +292,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			if(winged.isDashing())
 			{
 				float f = hasStatusEffect(StatusEffectRegistry.IMPALED) ? 0.05f : 1f;
-				setVelocity(dashDir.multiply(f + 0.2 * UltracraftClient.speed));
+				setVelocity(dashDir.multiply(f + 0.2 * ServerConfig.INSTANCE.hivelSpeed.getValue()));
 				ci.cancel();
 			}
 			//dash jump (preserves velocity)

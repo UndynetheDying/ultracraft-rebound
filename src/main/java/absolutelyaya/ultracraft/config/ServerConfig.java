@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.config;
 
 import absolutelyaya.ultracraft.Ultracraft;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 public class ServerConfig extends Config
 {
@@ -10,7 +11,7 @@ public class ServerConfig extends Config
 	public final EnumEntry<Setting> hivel = new EnumEntry<>("HiVelMode", Setting.FREE);
 	public final EnumEntry<Setting> timestop = new EnumEntry<>("TimeStop", Setting.FORCE_OFF).setValidOptions(new Setting[] {Setting.FORCE_ON, Setting.FORCE_OFF});
 	public final EnumEntry<RegenSetting> bloodHeal = new EnumEntry<>("BloodHeal", RegenSetting.ALWAYS);
-	public final EnumEntry<GraffitiSetting> graffitti = new EnumEntry<>("Graffitti", GraffitiSetting.ALLOW_ALL);
+	public final EnumEntry<GraffitiSetting> graffiti = new EnumEntry<>("Graffitti", GraffitiSetting.ALLOW_ALL);
 	public final BooleanEntry disableHandswap = new BooleanEntry("DisableHandswap", false);
 	public final BooleanEntry effectivelyViolent = new BooleanEntry("EffectivelyViolent", false);
 	public final BooleanEntry explosionBlockBreaking = new BooleanEntry("Explosion-BlockBreaking", true);
@@ -26,8 +27,8 @@ public class ServerConfig extends Config
 	public final BooleanEntry hivelFallDamage = new BooleanEntry("HiVel-FallDamage", false);
 	public final BooleanEntry hivelDrowning = new BooleanEntry("HiVel-Drowning", false);
 	public final BooleanEntry slamStorage = new BooleanEntry("SlamStorage", true);
-	public final IntegerEntry hivelSpeed = new IntegerEntry("HiVel-Speed", 2);
-	public final FloatEntry hivelGravity = (FloatEntry)new FloatEntry("HiVel-Gravity", 0.8f).setRange(0f, 1f);
+	public final FloatEntry hivelSpeed = new FloatEntry("HiVel-Speed", 1.4f);
+	public final FloatEntry hivelGravity = (FloatEntry)new FloatEntry("HiVel-Gravity", 0.5f).setRange(0f, 1f);
 	public final IntegerEntry iFrames = new IntegerEntry("Hivel-IFrames", 2);
 	//Weapon Damage
 	public final FloatEntry revolverDamage = (FloatEntry)new FloatEntry("RevolverDamage", 1f).setRange(0f, Float.MAX_VALUE);
@@ -44,7 +45,7 @@ public class ServerConfig extends Config
 		entries.add(hivel);
 		entries.add(timestop);
 		entries.add(bloodHeal);
-		entries.add(graffitti);
+		entries.add(graffiti);
 		entries.add(disableHandswap);
 		entries.add(effectivelyViolent);
 		entries.add(explosionBlockBreaking);
@@ -95,5 +96,11 @@ public class ServerConfig extends Config
 	{
 		super.load();
 		Ultracraft.LOGGER.info("Ultracraft Server Config Loaded.");
+	}
+	
+	@Override
+	public void syncAll(ServerPlayerEntity player)
+	{
+		super.syncAll(player);
 	}
 }

@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft;
 
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.registry.GameruleRegistry;
@@ -106,9 +107,9 @@ public class ExplosionHandler
 		}
 		Entity exploder = source.getSource();
 		GameRules rules = world.getGameRules();
-		if(breakBlocks && rules.getBoolean(GameruleRegistry.EXPLOSION_DAMAGE) && (exploder instanceof PlayerEntity || rules.getBoolean(GameRules.DO_MOB_GRIEFING)))
+		if(breakBlocks && ServerConfig.INSTANCE.explosionBlockBreaking.getValue() && (exploder instanceof PlayerEntity || rules.getBoolean(GameRules.DO_MOB_GRIEFING)))
 		{
-			boolean tntPriming = rules.getBoolean(GameruleRegistry.TNT_PRIMING);
+			boolean tntPriming = ServerConfig.INSTANCE.tntPriming.getValue();
 			BlockPos center = new BlockPos((int)Math.floor(pos.x), (int)Math.floor(pos.y), (int)Math.floor(pos.z));
 			for (int y = (int)(-radius); y <= radius; y++)
 			{

@@ -3,9 +3,9 @@ package absolutelyaya.ultracraft.command;
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.config.Setting;
 import absolutelyaya.ultracraft.entity.machine.DestinyBondSwordsmachineEntity;
-import absolutelyaya.ultracraft.registry.GameruleRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import com.chocohead.mm.api.ClassTinkerers;
 import com.mojang.brigadier.Command;
@@ -118,7 +118,7 @@ public class Commands
 	{
 		int ticks = context.getArgument("ticks", Integer.class);
 		String senderName = context.getSource().getPlayer().getName().getString();
-		if(context.getSource().getWorld().getGameRules().get(GameruleRegistry.TIME_STOP).get().equals(Setting.FORCE_OFF))
+		if(ServerConfig.INSTANCE.timestop.getValue().equals(Setting.FORCE_OFF))
 			context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.time-freeze.fail"), false);
 		else
 		{

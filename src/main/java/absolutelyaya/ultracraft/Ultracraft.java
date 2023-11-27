@@ -18,7 +18,6 @@ import com.mojang.logging.LogUtils;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -29,6 +28,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Item;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.stat.Stats;
@@ -105,12 +105,11 @@ public class Ultracraft implements ModInitializer
             });
         });
         
-        ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((serverPlayer, lastWorld, newWorld) -> GameruleRegistry.syncAll(serverPlayer));
         ServerPlayConnectionEvents.JOIN.register((networkHandler, sender, server) -> {
             ServerPlayerEntity player = networkHandler.player;
-            GameruleRegistry.syncAll(player);
+            config.syncAll(player);
             UltraRecipeManager.sync(player);
-            Setting hivel = player.getWorld().getGameRules().get(GameruleRegistry.HIVEL_MODE).get();
+            Setting hivel = (Setting)config.hivel.getValue();
             if(!hivel.equals(Setting.FREE))
             {
                 IWingDataComponent wings = UltraComponents.WING_DATA.get(player);
@@ -125,24 +124,21 @@ public class Ultracraft implements ModInitializer
                 if(player.getWorld().getGameRules().getBoolean(GameruleRegistry.START_WITH_PIERCER))
                     player.giveItemStack(ItemRegistry.PIERCE_REVOLVER.getDefaultStack());
         }));
-        ServerLifecycleEvents.SERVER_STARTING.register((server) -> {
-            loadServerConfig();
-        });
-        ServerLifecycleEvents.START_DATA_PACK_RELOAD.register((server, handler) -> {
-            loadServerConfig();
-        });
+        ServerLifecycleEvents.SERVER_STARTING.register(this::loadServerConfig);
+        ServerLifecycleEvents.START_DATA_PACK_RELOAD.register((server, handler) -> loadServerConfig(server));
         
         FabricLoader.getInstance().getModContainer(MOD_ID).ifPresent(modContainer -> VERSION = modContainer.getMetadata().getVersion().getFriendlyString());
         FabricLoader.getInstance().getModContainer("lambdynlights").ifPresent(container -> DYN_LIGHTS = true);
         LOGGER.info("Ultracraft initialized.");
     }
     
-    void loadServerConfig()
+    void loadServerConfig(MinecraftServer server)
     {
         if(config == null)
             config = new ServerConfig();
         else
             config.load();
+        config.syncAll(server);
     }
     
     public static boolean isTimeFrozen()
@@ -154,8 +150,7 @@ public class Ultracraft implements ModInitializer
     {
         if(player != null)
         {
-            boolean freezeDisabled = player.getServer().isRemote() &&
-                                             player.getWorld().getGameRules().get(GameruleRegistry.TIME_STOP).get().equals(Setting.FORCE_OFF);
+            boolean freezeDisabled = player.getServer().isRemote() && ServerConfig.INSTANCE.timestop.getValue().equals(Setting.FORCE_OFF);
             PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
             buf.writeInt(ticks);
             buf.writeBoolean(freezeDisabled);
@@ -175,8 +170,7 @@ public class Ultracraft implements ModInitializer
     {
         if(world != null)
         {
-            boolean freezeDisabled = world.getServer().isRemote() &&
-                                             world.getGameRules().get(GameruleRegistry.TIME_STOP).get().equals(Setting.FORCE_OFF);
+            boolean freezeDisabled = world.getServer().isRemote() && ServerConfig.INSTANCE.timestop.getValue().equals(Setting.FORCE_OFF);
             PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
             buf.writeInt(ticks);
             buf.writeBoolean(freezeDisabled);
