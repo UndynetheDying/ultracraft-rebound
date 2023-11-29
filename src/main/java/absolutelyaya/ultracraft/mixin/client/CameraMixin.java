@@ -237,6 +237,7 @@ public abstract class CameraMixin
 						(float)Math.sin(shakeTime + strength * 2.13f) * strength),
 				pitch + MathHelper.lerpAngleDegrees(tickDelta * 2f, 0,
 						(float)Math.sin(shakeTime + 1.43f + strength * 1.71f) * strength / 1.4f));
-		setPos(pos.x, pos.y, pos.z - strength / 8f);
+		Vec3d dir = new Vec3d(0f, 0f, -1).rotateX((float)Math.toRadians(-pitch)).rotateY((float)Math.toRadians(-yaw));
+		setPos(pos.add(dir.multiply(strength / 4f)));
 	}
 }
