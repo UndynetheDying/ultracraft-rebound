@@ -9,7 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import mod.azure.azurelib.animatable.GeoItem;
 import mod.azure.azurelib.core.animation.AnimatableManager;
@@ -26,19 +25,6 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 	public AbstractNailgunItem(Settings settings)
 	{
 		super(settings, 0.5f, 15f);
-	}
-	
-	@Override
-	public boolean onPrimaryFire(World world, PlayerEntity user, Vec3d userVelocity)
-	{
-		if(!world.isClient)
-		{
-			ItemStack stack = user.getMainHandStack();
-			int heat = getNbt(stack, "heat");
-			if(heat < 100 && !(stack.isOf(ItemRegistry.OVERHEAT_NAILGUN) && getNbt(stack, "heatsinking") == 1))
-				setNbt(stack, "heat", heat + 1);
-		}
-		return super.onPrimaryFire(world, user, userVelocity);
 	}
 	
 	@Override
@@ -78,6 +64,9 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 		int heat = getNbt(stack, "heat");
 		if(heat > 0  && entity.age % 3 == 0 && inactive)
 			setNbt(stack, "heat", heat - 1);
+		else if(!inactive && entity.age % 2 == 0)
+			if(heat < 100 && !(stack.isOf(ItemRegistry.OVERHEAT_NAILGUN) && getNbt(stack, "heatsinking") == 1))
+				setNbt(stack, "heat", heat + 1);
 		int heatsinkCD = getNbt(stack, "heatsink_cd");
 		int heatsinks = getNbt(stack, "heatsinks");
 		if(heatsinkCD > 0)

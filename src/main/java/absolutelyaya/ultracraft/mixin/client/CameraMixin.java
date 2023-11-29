@@ -54,6 +54,9 @@ public abstract class CameraMixin
 	@Shadow private Entity focusedEntity;
 	@Shadow private boolean thirdPerson;
 	@Shadow private float pitch;
+	
+	@Shadow protected abstract void setPos(double x, double y, double z);
+	
 	Vec3d curOffset;
 	float curYaw, baseYaw, curPitch, shakeTime;
 	boolean wasWingCustomizationOpen, wasFocusedOnTerminal;
@@ -234,5 +237,6 @@ public abstract class CameraMixin
 						(float)Math.sin(shakeTime + strength * 2.13f) * strength),
 				pitch + MathHelper.lerpAngleDegrees(tickDelta * 2f, 0,
 						(float)Math.sin(shakeTime + 1.43f + strength * 1.71f) * strength / 1.4f));
+		setPos(pos.x, pos.y, pos.z - strength / 8f);
 	}
 }

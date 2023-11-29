@@ -14,7 +14,6 @@ import absolutelyaya.ultracraft.damage.DamageTypeTags;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.entity.IAntiCheeseBoss;
 import absolutelyaya.ultracraft.entity.machine.V2Entity;
-import absolutelyaya.ultracraft.registry.GameruleRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import io.netty.buffer.Unpooled;
@@ -36,7 +35,6 @@ import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.apache.logging.log4j.core.jmx.Server;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
@@ -127,6 +125,13 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	@Inject(method = "damage", at = @At("RETURN"), cancellable = true)
 	void onDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir)
 	{
+		if(source.isOf(DamageSources.NAIL) || (source.isOf(DamageSources.SHARPSHOOTER) && !((Object)this instanceof PlayerEntity)))
+		{
+			timeUntilRegen = 4;
+			lastDamageTaken = 0f;
+			cir.setReturnValue(true);
+			return;
+		}
 		if(!cir.getReturnValue() || getWorld().isClient)
 			return;
 		if(source.isOf(DamageSources.RICOCHET))
@@ -148,11 +153,6 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 			return;
 		if(source.isOf(DamageSources.GUN) || source.isOf(DamageSources.SHOTGUN))
 			timeUntilRegen = 9;
-		if(source.isOf(DamageSources.NAIL) || (source.isOf(DamageSources.SHARPSHOOTER) && !((Object)this instanceof PlayerEntity)))
-		{
-			timeUntilRegen = 9;
-			lastDamageTaken = 0f;
-		}
 		if(source.isOf(DamageSources.SWORDSMACHINE))
 			timeUntilRegen = 12;
 	}
@@ -174,7 +174,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 			buf.writeBoolean(source.isOf(DamageSources.SHOTGUN));
 			ServerPlayNetworking.send((ServerPlayerEntity)player, PacketRegistry.BLEED_PACKET_ID, buf);
 		}
-		RegenSetting healRule = (RegenSetting)ServerConfig.INSTANCE.bloodHeal.getValue();
+		RegenSetting healRule = ServerConfig.INSTANCE.bloodHeal.getValue();
 		if(!healRule.equals(RegenSetting.NEVER))
 		{
 			for (PlayerEntity player : heal)

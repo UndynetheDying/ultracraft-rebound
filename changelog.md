@@ -8,13 +8,16 @@
 - Added Slab Blocks
   - Work like redstone lamps with Numbers from 1-10
 - Malicious Face can now be summoned as a non-decaying corpse using `{decorative: 1b}`
+- Added Screenshake
 ## Settings & Gamerules
 - Removed almost all gamerules (only remaining is `ultra-startWithPiercer`)
+- Added Option to disable Screenshake
 ## Commands
 ## Tweaks
 - Buffed overpump damage towards others (10 Dmg -> 15 Dmg)
 ## Minor Changes
 - Fixed water skimming not playing sounds
 - Removed the "vents" MOTD from the non-essential resources
+- Skyblocks no longer allow mobs to spawn on them naturally
 ## Resource Changes
 ## API Changes
