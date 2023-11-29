@@ -24,6 +24,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -105,6 +106,7 @@ public class ExplosionHandler
 				}
 			});
 		}
+		emitScreenshake(world, pos, radius * 2f, damage, damage * 0.8f);
 		Entity exploder = source.getSource();
 		GameRules rules = world.getGameRules();
 		if(breakBlocks && ServerConfig.INSTANCE.explosionBlockBreaking.getValue() && (exploder instanceof PlayerEntity || rules.getBoolean(GameRules.DO_MOB_GRIEFING)))
@@ -138,5 +140,15 @@ public class ExplosionHandler
 				}
 			}
 		}
+	}
+	
+	public static void emitScreenshake(World world, Vec3d pos, float radius, float strength, float falloff)
+	{
+		Box box = new Box(pos.subtract(radius, radius, radius), pos.add(radius, radius, radius));
+		world.getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), box, e -> true).forEach(e -> {
+			float dist = (float)pos.distanceTo(e.getPos()) / radius;
+			float str = Math.max(strength - dist * falloff, 0f);
+			Ultracraft.screenshake(e, str);
+		});
 	}
 }

@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
+import absolutelyaya.ultracraft.client.ClientConfig;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.screen.TerminalScreen;
 import absolutelyaya.ultracraft.client.gui.screen.WingCustomizationScreen;
@@ -99,12 +100,14 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	
 	@Shadow public abstract boolean isMainPlayer();
 	
+	@Shadow public abstract void setClientPermissionLevel(int clientPermissionLevel);
+	
 	Vec3d dashDir = Vec3d.ZERO;
 	Vec3d slideDir = Vec3d.ZERO;
 	boolean slamming, lastSlamming, strongGroundPound, lastJumping, lastSprintPressed, lastTouchedWater, wasHiVel, slamStored,
 			slideStartedSideways;
 	int slamTicks, slamCooldown, slamJumpTimer = -1, slideTicks, wallJumps = 3, coyote, disableJumpTicks, jumpTicks, slidePreservationTicks;
-	float slideVelocity = 0.33f;
+	float slideVelocity = 0.33f, screenshake = 0f;
 	final float baseJumpVel = 0.42f;
 	TerminalBlockEntity focusedTerminal;
 	
@@ -619,5 +622,19 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 				client.setScreen(null);
 		}
 		this.focusedTerminal = terminal;
+	}
+	
+	@Override
+	public float getScreenShake()
+	{
+		return screenshake;
+	}
+	
+	@Override
+	public void addScreenshake(float val)
+	{
+		ClientConfig config = UltracraftClient.getConfig();
+		if(config.screenshake)
+			screenshake += config.safeVFX ? Math.min(val / 5f, 1f) : val;
 	}
 }

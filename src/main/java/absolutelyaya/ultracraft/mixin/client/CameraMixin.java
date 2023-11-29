@@ -53,8 +53,9 @@ public abstract class CameraMixin
 	@Shadow private BlockView area;
 	@Shadow private Entity focusedEntity;
 	@Shadow private boolean thirdPerson;
+	@Shadow private float pitch;
 	Vec3d curOffset;
-	float curYaw, baseYaw, curPitch;
+	float curYaw, baseYaw, curPitch, shakeTime;
 	boolean wasWingCustomizationOpen, wasFocusedOnTerminal;
 	
 	@Inject(method = "update", at = @At("HEAD"), cancellable = true)
@@ -128,6 +129,18 @@ public abstract class CameraMixin
 					offset = hitResult.getPos().subtract(getPos()).add(rotationize(new Vec3d(0f, 0f, 0.2f * (flip ? -1 : 1))));
 				setPos(new Vec3d(pos.x + offset.x, pos.y + offset.y, pos.z + offset.z));
 			}
+		}
+		if(focusedEntity instanceof WingedPlayerEntity winged)
+		{
+			if(winged.getScreenShake() > 0.05f)
+			{
+				if(shakeTime == 0)
+					shakeTime = focusedEntity.getWorld().getRandom().nextFloat() * 6f;
+				applyScreenShake(tickDelta, winged.getScreenShake());
+				winged.addScreenshake(-tickDelta * winged.getScreenShake() / 5f);
+			}
+			else
+				shakeTime = 0f;
 		}
 	}
 	
@@ -212,5 +225,14 @@ public abstract class CameraMixin
 			curOffset = curOffset.lerp(offset, tickDelta / 4f);
 			setPos(curOffset);
 		}
+	}
+	
+	void applyScreenShake(float tickDelta, float strength)
+	{
+		shakeTime += tickDelta + strength * 0.65f;
+		setRotation(yaw + MathHelper.lerpAngleDegrees(tickDelta * 4f, 0,
+						(float)Math.sin(shakeTime + strength * 2.13f) * strength),
+				pitch + MathHelper.lerpAngleDegrees(tickDelta * 2f, 0,
+						(float)Math.sin(shakeTime + 1.43f + strength * 1.71f) * strength / 1.4f));
 	}
 }

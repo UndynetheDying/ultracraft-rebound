@@ -32,4 +32,8 @@ public interface WingedPlayerEntity
 	void setBackTank(BackTank tank);
 	
 	BackTank getBacktank();
+	
+	float getScreenShake();
+	
+	void addScreenshake(float val);
 }

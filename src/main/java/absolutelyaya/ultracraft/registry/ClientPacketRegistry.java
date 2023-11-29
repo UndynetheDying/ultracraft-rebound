@@ -7,6 +7,7 @@ import absolutelyaya.ultracraft.ExplosionHandler;
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.ITrailEnjoyer;
+import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.screen.HellObserverScreen;
 import absolutelyaya.ultracraft.client.gui.screen.ServerConfigScreen;
@@ -328,6 +329,13 @@ public class ClientPacketRegistry
 			BlockPos pos = buf.readBlockPos();
 			MinecraftClient.getInstance().execute(() -> {
 				MinecraftClient.getInstance().setScreen(new HellObserverScreen(pos));
+			});
+		})));
+		ClientPlayNetworking.registerGlobalReceiver(SCREENSHAKE_PACKET_ID, (((client, handler, buf, responseSender) -> {
+			float strength = buf.readFloat();
+			MinecraftClient.getInstance().execute(() -> {
+				if(MinecraftClient.getInstance().player instanceof WingedPlayerEntity winged)
+					winged.addScreenshake(strength);
 			});
 		})));
 	}

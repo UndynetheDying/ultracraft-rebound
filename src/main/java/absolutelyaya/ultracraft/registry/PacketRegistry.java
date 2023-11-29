@@ -25,7 +25,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.BellBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -103,6 +102,7 @@ public class PacketRegistry
 	public static final Identifier HIVEL_WHITELIST_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "hivel_whitelist");
 	public static final Identifier GRAFFITI_WHITELIST_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "graffiti_whitelist");
 	public static final Identifier HELL_OBSERVER_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "hell_observer");
+	public static final Identifier SCREENSHAKE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "screenshake");
 	
 	public static void registerC2S()
 	{

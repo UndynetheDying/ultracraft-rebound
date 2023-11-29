@@ -644,5 +644,8 @@
   "text.autoconfig.ultracraft.option.ultraHudFixed.@Tooltip": "Prevents the Ultrahud from moving // \"following\" the view",
 
   "text.autoconfig.ultracraft.option.deathScreen": "Ultrakill Death Screen",
-  "text.autoconfig.ultracraft.option.deathScreen.@Tooltip": "Replaces the Death Screen with the one from Ultrakill"
+  "text.autoconfig.ultracraft.option.deathScreen.@Tooltip": "Replaces the Death Screen with the one from Ultrakill",
+
+  "text.autoconfig.ultracraft.option.screenshake": "Screenshake",
+  "text.autoconfig.ultracraft.option.screenshake.@Tooltip": "Whether Firing Weapons or nearby Explosions cause your screen to shake"
 }

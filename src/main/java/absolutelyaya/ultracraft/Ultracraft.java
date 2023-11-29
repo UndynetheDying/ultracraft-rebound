@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft;
 
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
+import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.command.Commands;
 import absolutelyaya.ultracraft.command.WhitelistCommand;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
@@ -26,6 +27,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
@@ -242,5 +244,17 @@ public class Ultracraft implements ModInitializer
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(200.0f));
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(flip * -135.0f));
         matrices.translate(flip * 5.6f, 0.0f, 0.0f);
+    }
+    
+    public static void screenshake(PlayerEntity player, float strength)
+    {
+        if(player.getWorld().isClient && player instanceof WingedPlayerEntity winged)
+            winged.addScreenshake(strength);
+        else if(player instanceof ServerPlayerEntity serverPlayer)
+        {
+            PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+            buf.writeFloat(strength);
+            ServerPlayNetworking.send(serverPlayer, PacketRegistry.SCREENSHAKE_PACKET_ID, buf);
+        }
     }
 }

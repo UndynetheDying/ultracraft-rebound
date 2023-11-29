@@ -57,6 +57,8 @@ public class ClientConfig implements ConfigData
 	@ConfigEntry.BoundedDiscrete(min = 0, max = 45)
 	public int slideTilt = 4;
 	@ConfigEntry.Gui.Tooltip
+	public boolean screenshake = true;
+	@ConfigEntry.Gui.Tooltip
 	public boolean movementSounds = true;
 	@ConfigEntry.Category("blood")
 	@ConfigEntry.Gui.Tooltip

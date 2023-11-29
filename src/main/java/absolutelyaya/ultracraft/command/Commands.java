@@ -11,6 +11,7 @@ import com.chocohead.mm.api.ClassTinkerers;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
@@ -60,7 +61,8 @@ public class Commands
 				.then(literal("freeze").then(argument("ticks", integer(1)).executes(Commands::executeFreeze)))
 				.then(literal("unfreeze").executes(Commands::executeUnfreeze)))
 			.then(literal("debug").requires(source -> source.hasPermissionLevel(2))
-				.then(literal("ricoshot_warn").then(argument("pos", Vec3ArgumentType.vec3()).executes(Commands::executeDebugRicoshotWarn))))
+				.then(literal("ricoshot_warn").then(argument("pos", Vec3ArgumentType.vec3()).executes(Commands::executeDebugRicoshotWarn)))
+				.then(literal("screenshake").then(argument("strength", FloatArgumentType.floatArg()).executes(Commands::executeDebugScreenshake))))
 			.then(literal("progression").requires(source -> source.hasPermissionLevel(2))
 				.then(argument("list", string()).suggests(Commands::progressionListTypeProvider)
 					.then(literal("list").then(argument("target", player()).executes(Commands::executeProgressionList)))
@@ -320,6 +322,13 @@ public class Commands
 		CommandBossBar bossBar = BossBarCommand.getBossBar(context);
 		bossBar.setStyle(ClassTinkerers.getEnum(BossBar.Style.class, "ULTRA"));
 		context.getSource().sendFeedback(() -> Text.translatable("commands.bossbar.set.style.success", bossBar.toHoverableText()), true);
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int executeDebugScreenshake(CommandContext<ServerCommandSource> context)
+	{
+		ServerPlayerEntity player = context.getSource().getPlayer();
+		Ultracraft.screenshake(player, context.getArgument("strength", Float.class));
 		return Command.SINGLE_SUCCESS;
 	}
 }
