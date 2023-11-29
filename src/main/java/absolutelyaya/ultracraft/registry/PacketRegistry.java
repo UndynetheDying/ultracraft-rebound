@@ -7,10 +7,12 @@ import absolutelyaya.ultracraft.block.HellObserverBlockEntity;
 import absolutelyaya.ultracraft.block.IPunchableBlock;
 import absolutelyaya.ultracraft.block.PedestalBlock;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
+import absolutelyaya.ultracraft.client.gui.screen.ServerConfigScreen;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.config.EnumEntry;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.data.UltraRecipeManager;
@@ -30,6 +32,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -72,6 +75,7 @@ public class PacketRegistry
 	public static final Identifier ARM_CYCLE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "arm_cycle");
 	public static final Identifier ARM_VISIBLE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "arm_visible");
 	public static final Identifier PUNCH_PRESSED_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "punch_pressed");
+	public static final Identifier SYNC_CONFIG_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "sync_config_c2s");
 	
 	public static final Identifier FREEZE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "freeze");
 	public static final Identifier HITSCAN_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "scan");
@@ -79,7 +83,7 @@ public class PacketRegistry
 	public static final Identifier BLEED_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "bleed");
 	public static final Identifier SET_GUNCD_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "set_gcd");
 	public static final Identifier CATCH_FISH_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "fish");
-	public static final Identifier SYNC_RULE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "sync_rule");
+	public static final Identifier SYNC_CONFIG_S2C_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "sync_config_s2c");
 	public static final Identifier ENTITY_TRAIL_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "entity_trail");
 	public static final Identifier GROUND_POUND_S2C_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "ground_pound_s2c");
 	public static final Identifier EXPLOSION_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "explosion");
@@ -498,6 +502,17 @@ public class PacketRegistry
 		ServerPlayNetworking.registerGlobalReceiver(PUNCH_PRESSED_PACKET_ID, (server, player, handler, buf, sender) -> {
 			boolean v = buf.readBoolean();
 			server.execute(() -> UltraComponents.ARMS.get(player).setPunchPressed(v));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.SYNC_CONFIG_C2S_PACKET_ID, (server, player, handler, buf, sender) -> {
+			String id = buf.readString();
+			byte type = buf.readByte();
+			switch(type)
+			{
+				default -> ServerConfig.onChanged(server, ServerConfig.INSTANCE.set(id, buf.readInt()));
+				case 69 -> ServerConfig.onChanged(server, ServerConfig.INSTANCE.set((EnumEntry<?>)ServerConfig.INSTANCE.getEntry(id), buf.readInt()));
+				case NbtElement.FLOAT_TYPE -> ServerConfig.onChanged(server, ServerConfig.INSTANCE.set(id, buf.readFloat()));
+				case NbtElement.BYTE_TYPE -> ServerConfig.onChanged(server, ServerConfig.INSTANCE.set(id, buf.readBoolean()));
+			}
 		});
 	}
 	

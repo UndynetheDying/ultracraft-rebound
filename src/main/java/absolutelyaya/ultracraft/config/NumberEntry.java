@@ -24,4 +24,14 @@ public abstract class NumberEntry <T extends Number> extends ConfigEntry<T>
 		this.max = max;
 		return this;
 	}
+	
+	public T getMin()
+	{
+		return min;
+	}
+	
+	public T getMax()
+	{
+		return max;
+	}
 }

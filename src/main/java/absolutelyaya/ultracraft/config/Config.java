@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.registry.PacketRegistry;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
@@ -97,25 +98,14 @@ public abstract class Config
 	
 	public static <V> void onChanged(ServerPlayerEntity player, ConfigEntry<V> entry)
 	{
-		V value = entry.getValue();
-		Class<?> clazz = value.getClass();
-		if (clazz.equals(Integer.class))
-			onChanged(player, entry.getId(), (int)value);
-		if (clazz.equals(Boolean.class))
-			onChanged(player, entry.getId(), (boolean)value);
-		if (clazz.equals(Float.class))
-			onChanged(player, entry.getId(), (float)value);
-	}
-	
-	public static void onChanged(MinecraftServer server, String id, int val)
-	{
-		server.getPlayerManager().getPlayerList().forEach(p -> {
-			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-			buf.writeString(id);
-			buf.writeByte(NbtElement.INT_TYPE);
-			buf.writeInt(val);
-			ServerPlayNetworking.send(p, PacketRegistry.SYNC_RULE_PACKET_ID, buf);
-		});
+		if(entry instanceof EnumEntry<?> v)
+			onChanged(player, v.getId(), v.getValue());
+		else if(entry instanceof IntegerEntry v)
+			onChanged(player, v.getId(), v.getValue());
+		else if(entry instanceof BooleanEntry v)
+			onChanged(player, v.getId(), v.getValue());
+		else if(entry instanceof FloatEntry v)
+			onChanged(player, v.getId(), v.getValue());
 	}
 	
 	public static void onChanged(ServerPlayerEntity player, String id, boolean val)
@@ -124,7 +114,7 @@ public abstract class Config
 		buf.writeString(id);
 		buf.writeByte(NbtElement.BYTE_TYPE);
 		buf.writeBoolean(val);
-		ServerPlayNetworking.send(player, PacketRegistry.SYNC_RULE_PACKET_ID, buf);
+		ServerPlayNetworking.send(player, PacketRegistry.SYNC_CONFIG_S2C_PACKET_ID, buf);
 	}
 	
 	public static void onChanged(ServerPlayerEntity player, String id, int val)
@@ -133,7 +123,7 @@ public abstract class Config
 		buf.writeString(id);
 		buf.writeByte(NbtElement.INT_TYPE);
 		buf.writeInt(val);
-		ServerPlayNetworking.send(player, PacketRegistry.SYNC_RULE_PACKET_ID, buf);
+		ServerPlayNetworking.send(player, PacketRegistry.SYNC_CONFIG_S2C_PACKET_ID, buf);
 	}
 	
 	public static void onChanged(ServerPlayerEntity player, String id, float val)
@@ -142,13 +132,21 @@ public abstract class Config
 		buf.writeString(id);
 		buf.writeByte(NbtElement.FLOAT_TYPE);
 		buf.writeFloat(val);
-		ServerPlayNetworking.send(player, PacketRegistry.SYNC_RULE_PACKET_ID, buf);
+		ServerPlayNetworking.send(player, PacketRegistry.SYNC_CONFIG_S2C_PACKET_ID, buf);
+	}
+	
+	public static void onChanged(ServerPlayerEntity player, String id, Enum<?> val)
+	{
+		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeString(id);
+		buf.writeByte(69);
+		buf.writeInt(val.ordinal());
+		ServerPlayNetworking.send(player, PacketRegistry.SYNC_CONFIG_S2C_PACKET_ID, buf);
 	}
 	
 	public void syncAll(ServerPlayerEntity player)
 	{
 		entries.forEach(i -> onChanged(player, i));
-		
 	}
 	
 	public void syncAll(MinecraftServer server)
@@ -163,6 +161,18 @@ public abstract class Config
 			if(i != null && i.getId().equals(entry.id))
 				entry.setValue(value);
 		}
+		save();
+	}
+	
+	public EnumEntry<?> set(EnumEntry<?> entry, int ordinal)
+	{
+		for (ConfigEntry<?> i : entries)
+		{
+			if(i != null && i.getId().equals(entry.id))
+				entry.setValue(ordinal);
+		}
+		save();
+		return entry;
 	}
 	
 	public <V> ConfigEntry<V> set(String id, V value)
@@ -175,6 +185,7 @@ public abstract class Config
 				{
 					ConfigEntry<V> vEntry = ((ConfigEntry<V>)entry);
 					vEntry.setValue(value);
+					save();
 					return vEntry;
 				}
 				catch (Exception e)
@@ -184,6 +195,22 @@ public abstract class Config
 				}
 			}
 		}
+		return null;
+	}
+	
+	public NbtCompound getAsNBT()
+	{
+		NbtCompound nbt = new NbtCompound();
+		for (ConfigEntry<?> entry : entries)
+			nbt.putString(entry.getId(), entry.getValue().toString());
+		return nbt;
+	}
+	
+	public ConfigEntry<?> getEntry(String id)
+	{
+		for (ConfigEntry<?> entry : entries)
+			if(entry.id.equals(id))
+				return entry;
 		return null;
 	}
 }

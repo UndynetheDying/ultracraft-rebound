@@ -132,12 +132,13 @@ public class ClientPacketRegistry
 		ClientPlayNetworking.registerGlobalReceiver(PacketRegistry.CATCH_FISH_PACKET_ID, ((client, handler, buf, sender) -> {
 			UltraHudRenderer.onCatchFish(buf.readItemStack());
 		}));
-		ClientPlayNetworking.registerGlobalReceiver(PacketRegistry.SYNC_RULE_PACKET_ID, ((client, handler, buf, sender) -> {
+		ClientPlayNetworking.registerGlobalReceiver(PacketRegistry.SYNC_CONFIG_S2C_PACKET_ID, ((client, handler, buf, sender) -> {
 			String id = buf.readString();
 			byte type = buf.readByte();
 			switch(type)
 			{
 				default -> UltracraftClient.syncConfigEntry(id, buf.readInt());
+				case 69 -> UltracraftClient.syncConfigEntry(id, buf.readInt());
 				case NbtElement.FLOAT_TYPE -> UltracraftClient.syncConfigEntry(id, buf.readFloat());
 				case NbtElement.BYTE_TYPE -> UltracraftClient.syncConfigEntry(id, buf.readBoolean());
 			}

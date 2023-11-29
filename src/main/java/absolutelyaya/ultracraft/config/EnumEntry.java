@@ -9,6 +9,7 @@ public class EnumEntry<E extends Enum<E>> extends ConfigEntry<Enum<E>>
 	{
 		super(id, defaultValue);
 		valueClass = defaultValue.getDeclaringClass();
+		options = valueClass.getEnumConstants();
 	}
 	
 	@Override
@@ -38,5 +39,23 @@ public class EnumEntry<E extends Enum<E>> extends ConfigEntry<Enum<E>>
 			if(v.equals(option))
 				return true;
 		return false;
+	}
+	
+	@Override
+	public E getValue()
+	{
+		return valueClass.cast(super.getValue());
+	}
+	
+	@Override
+	public void setValue(Enum<E> value)
+	{
+		super.setValue(value);
+	}
+	
+	public EnumEntry<?> setValue(int i)
+	{
+		super.setValue(getValidOptions()[i]);
+		return this;
 	}
 }

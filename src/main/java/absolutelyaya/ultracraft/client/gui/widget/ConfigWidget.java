@@ -2,9 +2,13 @@ package absolutelyaya.ultracraft.client.gui.widget;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WidgetAccessor;
+import absolutelyaya.ultracraft.client.gui.screen.ServerConfigScreen;
 import absolutelyaya.ultracraft.config.ConfigEntry;
+import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.util.RenderingUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -13,12 +17,11 @@ import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.CheckboxWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.CyclingButtonWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -26,19 +29,16 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
-import net.minecraft.world.GameRules;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
-public class GameRuleWidget<T extends ConfigEntry<?>> extends ClickableWidget implements Element, Drawable, Selectable
+public class ConfigWidget<T extends ConfigEntry<?>> extends ClickableWidget implements Element, Drawable, Selectable
 {
 	static final Identifier ICONS = new Identifier(Ultracraft.MOD_ID, "textures/gui/gamerule_icons.png");
 	
-	final NbtCompound rules;
 	final T rule;
 	final ValueType type;
 	final int icon;
@@ -47,17 +47,16 @@ public class GameRuleWidget<T extends ConfigEntry<?>> extends ClickableWidget im
 	Drawable valueWidget;
 	Identifier BGTexture;
 	
-	public GameRuleWidget(NbtCompound rules, Vector2i pos, T rule, ValueType type, int idx)
+	public ConfigWidget(NbtCompound rules, Vector2i pos, T rule, ValueType type, int idx)
 	{
 		super(pos.x, pos.y + 38 * idx, 200, 36, Text.empty());
-		this.rules = rules;
 		this.rule = rule;
 		this.type = type;
 		renderer = MinecraftClient.getInstance().textRenderer;
 		switch(type)
 		{
 			case BOOL -> valueWidget = new CheckboxWidget(getX() + 178, getY() + 14, 20, 20, Text.empty(), Boolean.parseBoolean(rules.getString(rule.getId())));
-			case INT -> {
+			case INT, FLOAT -> {
 				valueWidget = new TextFieldWidget(renderer, getX() + 151, getY() + 15, 46, 18, Text.empty());
 				((TextFieldWidget)valueWidget).setText(rules.getString(rule.getId()));
 			}
@@ -66,10 +65,9 @@ public class GameRuleWidget<T extends ConfigEntry<?>> extends ClickableWidget im
 		BGTexture = pickBG();
 	}
 	
-	public GameRuleWidget(NbtCompound rules, Vector2i pos, T rule, String[] values, int idx)
+	public ConfigWidget(NbtCompound rules, Vector2i pos, T rule, String[] values, int idx)
 	{
 		super(pos.x, pos.y + 38 * idx, 200, 36, Text.empty());
-		this.rules = rules;
 		this.rule = rule;
 		this.cycleValues = values;
 		this.type = ValueType.CYCLE;
@@ -80,10 +78,9 @@ public class GameRuleWidget<T extends ConfigEntry<?>> extends ClickableWidget im
 		BGTexture = pickBG();
 	}
 	
-	public GameRuleWidget(NbtCompound rules, Vector2i pos, T rule, Enum<?>[] values, int idx)
+	public ConfigWidget(NbtCompound rules, Vector2i pos, T rule, Enum<?>[] values, int idx)
 	{
 		super(pos.x, pos.y + 38 * idx, 200, 36, Text.empty());
-		this.rules = rules;
 		this.rule = rule;
 		this.cycleValues = Arrays.stream(values).map(Enum::name).toArray(String[]::new);
 		this.type = ValueType.CYCLE;
@@ -96,19 +93,19 @@ public class GameRuleWidget<T extends ConfigEntry<?>> extends ClickableWidget im
 	
 	Identifier pickBG()
 	{
-		int bg = new Random().nextInt(100);
-		if(bg == 0)
-			return new Identifier("textures/block/diamond_ore.png");
-		else if(bg < 5)
-			return new Identifier("textures/block/lapis_ore.png");
-		else if(bg < 12)
-			return new Identifier("textures/block/gold_ore.png");
-		else if(bg < 25)
-			return new Identifier("textures/block/iron_ore.png");
-		else if(bg < 50)
-			return new Identifier("textures/block/coal_ore.png");
-		else
-			return new Identifier("textures/block/stone.png");
+		//int bg = new Random().nextInt(100);
+		//if(bg == 0)
+		//	return new Identifier("textures/block/diamond_ore.png");
+		//else if(bg < 5)
+		//	return new Identifier("textures/block/lapis_ore.png");
+		//else if(bg < 12)
+		//	return new Identifier("textures/block/gold_ore.png");
+		//else if(bg < 25)
+		//	return new Identifier("textures/block/iron_ore.png");
+		//else if(bg < 50)
+		//	return new Identifier("textures/block/coal_ore.png");
+		//else
+		return new Identifier("textures/block/stone.png");
 	}
 	
 	public void render(DrawContext context, int mouseX, int mouseY, float delta, boolean simplistic)
@@ -132,7 +129,7 @@ public class GameRuleWidget<T extends ConfigEntry<?>> extends ClickableWidget im
 		int controlWidth = switch(type)
 		{
 			case BOOL -> 22;
-			case INT -> 52;
+			case INT, FLOAT -> 52;
 			case CYCLE -> 72;
 		};
 		Text fullText = Text.translatable(rule.getTranslationKey() + ".description");
@@ -188,7 +185,7 @@ public class GameRuleWidget<T extends ConfigEntry<?>> extends ClickableWidget im
 			else if(valueWidget instanceof CyclingButtonWidget<?> cycler)
 				text = cycler.getValue().toString();
 			if(text.length() > 0)
-				setRule(text);
+				setRuleClient(text);
 		}
 		return b || super.mouseClicked(mouseX, mouseY, button);
 	}
@@ -198,7 +195,7 @@ public class GameRuleWidget<T extends ConfigEntry<?>> extends ClickableWidget im
 	{
 		boolean b = ((Element)valueWidget).keyPressed(keyCode, scanCode, modifiers);
 		if(valueWidget instanceof TextFieldWidget text && type.equals(ValueType.INT) && keyCode == 259)
-			setRule(text.getText());
+			setRuleClient(text.getText());
 		return b;
 	}
 	
@@ -206,27 +203,62 @@ public class GameRuleWidget<T extends ConfigEntry<?>> extends ClickableWidget im
 	public boolean charTyped(char chr, int modifiers)
 	{
 		boolean b = false;
-		if(chr >= 48 && chr <= 57)
+		if(chr >= 48 && chr <= 57 || (type.equals(ValueType.FLOAT) && chr == '.'))
 			b = ((Element)valueWidget).charTyped(chr, modifiers);
 		if(b)
 		{
 			String text = ((TextFieldWidget)valueWidget).getText();
-			if(text.length() > 0 && Integer.parseInt(text) > 0)
-				setRule(text);
+			if(!(type.equals(ValueType.FLOAT) && Float.parseFloat(text) > 0) && !((type.equals(ValueType.INT) && Integer.parseInt(text) > 0)))
+				return b;
+			if(text.length() > 0)
+				setRuleClient(text);
 		}
 		return b;
 	}
 	
-	void setRule(String value)
+	void setRuleClient(String value)
 	{
 		if(value.length() == 0)
 			return;
-		rules.putString(rule.getId(), value);
-		MinecraftClient.getInstance().player.networkHandler.sendChatCommand(String.format("gamerule %s %s", rule.getId(), value));
+		ServerConfigScreen.getRules().putString(rule.getId(), value);
+		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeString(rule.getId());
+		switch(type)
+		{
+			case CYCLE -> {
+				buf.writeByte(69);
+				for (int i = 0; i < cycleValues.length; i++)
+				{
+					if(cycleValues[i].equals(value))
+					{
+						buf.writeInt(i);
+						break;
+					}
+				}
+			}
+			case INT -> {
+				buf.writeByte(NbtElement.INT_TYPE);
+				try
+				{
+					buf.writeInt(Integer.parseInt(value));
+				}
+				catch(NumberFormatException ignored) {}
+			}
+			case BOOL -> {
+				buf.writeByte(NbtElement.BYTE_TYPE);
+				buf.writeBoolean(Boolean.parseBoolean(value));
+			}
+			case FLOAT -> {
+				buf.writeByte(NbtElement.FLOAT_TYPE);
+				buf.writeFloat(Float.parseFloat(value));
+			}
+		}
+		ClientPlayNetworking.send(PacketRegistry.SYNC_CONFIG_C2S_PACKET_ID, buf);
 	}
 	
 	public void stateUpdate()
 	{
+		NbtCompound rules = ServerConfigScreen.getRules();
 		switch(type)
 		{
 			case BOOL -> {
@@ -234,7 +266,7 @@ public class GameRuleWidget<T extends ConfigEntry<?>> extends ClickableWidget im
 					((CheckboxWidget)valueWidget).onPress();
 			}
 			case INT -> ((TextFieldWidget)valueWidget).setText(rules.getString(rule.getId()));
-			case CYCLE -> ((CyclingButtonWidget)valueWidget).setValue(rules.getString(rule.getId()));
+			case CYCLE -> ((CyclingButtonWidget)valueWidget).setValue(cycleValues[Integer.parseInt(rules.getString(rule.getId()))]);
 		}
 	}
 	
@@ -274,10 +306,16 @@ public class GameRuleWidget<T extends ConfigEntry<?>> extends ClickableWidget im
 		context.drawText(textRenderer, text, x, y, 0xffffffff, false);
 	}
 	
+	public <R extends ConfigEntry<?>> boolean isRule(R rule)
+	{
+		return this.rule.getId().equals(rule.getId());
+	}
+	
 	public enum ValueType
 	{
 		BOOL,
 		INT,
+		FLOAT,
 		CYCLE
 	}
 }

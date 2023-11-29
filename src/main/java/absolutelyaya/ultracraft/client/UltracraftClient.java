@@ -414,7 +414,7 @@ public class UltracraftClient implements ClientModInitializer
 		if(player == null)
 			return;
 		IWingDataComponent wings = UltraComponents.WING_DATA.get(player);
-		Setting option = (Setting)ServerConfig.INSTANCE.hivel.getValue();
+		Setting option = ServerConfig.INSTANCE.hivel.getValue();
 		if(option.equals(Setting.FREE))
 		{
 			setHiVel(!wings.isActive(), false);
@@ -470,10 +470,14 @@ public class UltracraftClient implements ClientModInitializer
 	public static void syncConfigEntry(String id, int value)
 	{
 		ServerConfig config = ServerConfig.INSTANCE;
-		onExternalRuleUpdate(config.set(id, value), value);
+		ConfigEntry<?> entry = config.getEntry(id);
+		if(entry instanceof EnumEntry<?> enumEntry)
+			onExternalRuleUpdate(enumEntry.setValue(value), value);
+		else
+			onExternalRuleUpdate(config.set(id, value), value);
 		if(id.equals("HiVelMode"))
 		{
-			Setting hivel = (Setting)config.hivel.getValue();
+			Setting hivel = Setting.values()[value];
 			if(hivel != Setting.FREE)
 				forcedHivel = Optional.of(hivel == Setting.FORCE_ON);
 			else
@@ -505,6 +509,13 @@ public class UltracraftClient implements ClientModInitializer
 		ServerConfig.INSTANCE.set(rule, value);
 		if(ServerConfigScreen.INSTANCE != null)
 			ServerConfigScreen.INSTANCE.onExternalRuleUpdate(rule, value.toString());
+	}
+	
+	static void onExternalRuleUpdate(EnumEntry<?> rule, int value)
+	{
+		ServerConfig.INSTANCE.set(rule, value);
+		if(ServerConfigScreen.INSTANCE != null)
+			ServerConfigScreen.INSTANCE.onExternalRuleUpdate(rule, String.valueOf(value));
 	}
 	
 	public static ShaderProgram getWingsColoredShaderProgram()

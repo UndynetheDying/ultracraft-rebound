@@ -81,7 +81,7 @@ public class Commands
 	static int executeConfig(CommandContext<ServerCommandSource> context)
 	{
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-		buf.writeNbt(context.getSource().getWorld().getGameRules().toNbt());
+		buf.writeNbt(ServerConfig.INSTANCE.getAsNBT());
 		ServerPlayNetworking.send(context.getSource().getPlayer(), PacketRegistry.OPEN_SERVER_CONFIG_MENU_PACKET_ID, buf);
 		return Command.SINGLE_SUCCESS;
 	}

@@ -109,7 +109,7 @@ public class Ultracraft implements ModInitializer
             ServerPlayerEntity player = networkHandler.player;
             config.syncAll(player);
             UltraRecipeManager.sync(player);
-            Setting hivel = (Setting)config.hivel.getValue();
+            Setting hivel = config.hivel.getValue();
             if(!hivel.equals(Setting.FREE))
             {
                 IWingDataComponent wings = UltraComponents.WING_DATA.get(player);
