@@ -7,7 +7,6 @@ import absolutelyaya.ultracraft.block.HellObserverBlockEntity;
 import absolutelyaya.ultracraft.block.IPunchableBlock;
 import absolutelyaya.ultracraft.block.PedestalBlock;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
-import absolutelyaya.ultracraft.client.gui.screen.ServerConfigScreen;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
@@ -26,6 +25,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.BellBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -510,7 +510,12 @@ public class PacketRegistry
 			{
 				default -> ServerConfig.onChanged(server, ServerConfig.INSTANCE.set(id, buf.readInt()));
 				case 69 -> ServerConfig.onChanged(server, ServerConfig.INSTANCE.set((EnumEntry<?>)ServerConfig.INSTANCE.getEntry(id), buf.readInt()));
-				case NbtElement.FLOAT_TYPE -> ServerConfig.onChanged(server, ServerConfig.INSTANCE.set(id, buf.readFloat()));
+				case NbtElement.FLOAT_TYPE -> {
+					float v = buf.readFloat();
+					ServerConfig.onChanged(server, ServerConfig.INSTANCE.set(id, v));
+					if(id.equals(ServerConfig.INSTANCE.hivelSpeed.getId()))
+						server.getPlayerManager().getPlayerList().forEach(p -> ((WingedPlayerEntity)p).updateSpeedConfig());
+				}
 				case NbtElement.BYTE_TYPE -> ServerConfig.onChanged(server, ServerConfig.INSTANCE.set(id, buf.readBoolean()));
 			}
 		});

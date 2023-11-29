@@ -475,7 +475,7 @@ public class UltracraftClient implements ClientModInitializer
 			onExternalRuleUpdate(enumEntry.setValue(value), value);
 		else
 			onExternalRuleUpdate(config.set(id, value), value);
-		if(id.equals("HiVelMode"))
+		if(id.equals(config.hivel.getId()))
 		{
 			Setting hivel = Setting.values()[value];
 			if(hivel != Setting.FREE)
@@ -483,6 +483,8 @@ public class UltracraftClient implements ClientModInitializer
 			else
 				forcedHivel = Optional.empty();
 		}
+		if(id.equals(config.hivelSpeed.getId()))
+			((WingedPlayerEntity)MinecraftClient.getInstance().player).updateSpeedConfig();
 	}
 	
 	public static void syncConfigEntry(String id, float value)

@@ -99,48 +99,48 @@ public abstract class Config
 	public static <V> void onChanged(ServerPlayerEntity player, ConfigEntry<V> entry)
 	{
 		if(entry instanceof EnumEntry<?> v)
-			onChanged(player, v.getId(), v.getValue());
+			onChanged(player, v);
 		else if(entry instanceof IntegerEntry v)
-			onChanged(player, v.getId(), v.getValue());
+			onChanged(player, v);
 		else if(entry instanceof BooleanEntry v)
-			onChanged(player, v.getId(), v.getValue());
+			onChanged(player, v);
 		else if(entry instanceof FloatEntry v)
-			onChanged(player, v.getId(), v.getValue());
+			onChanged(player, v);
 	}
 	
-	public static void onChanged(ServerPlayerEntity player, String id, boolean val)
+	public static void onChanged(ServerPlayerEntity player, BooleanEntry entry)
 	{
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-		buf.writeString(id);
+		buf.writeString(entry.getId());
 		buf.writeByte(NbtElement.BYTE_TYPE);
-		buf.writeBoolean(val);
+		buf.writeBoolean(entry.getValue());
 		ServerPlayNetworking.send(player, PacketRegistry.SYNC_CONFIG_S2C_PACKET_ID, buf);
 	}
 	
-	public static void onChanged(ServerPlayerEntity player, String id, int val)
+	public static void onChanged(ServerPlayerEntity player, IntegerEntry entry)
 	{
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-		buf.writeString(id);
+		buf.writeString(entry.getId());
 		buf.writeByte(NbtElement.INT_TYPE);
-		buf.writeInt(val);
+		buf.writeInt(entry.getValue());
 		ServerPlayNetworking.send(player, PacketRegistry.SYNC_CONFIG_S2C_PACKET_ID, buf);
 	}
 	
-	public static void onChanged(ServerPlayerEntity player, String id, float val)
+	public static void onChanged(ServerPlayerEntity player, FloatEntry entry)
 	{
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-		buf.writeString(id);
+		buf.writeString(entry.getId());
 		buf.writeByte(NbtElement.FLOAT_TYPE);
-		buf.writeFloat(val);
+		buf.writeFloat(entry.getValue());
 		ServerPlayNetworking.send(player, PacketRegistry.SYNC_CONFIG_S2C_PACKET_ID, buf);
 	}
 	
-	public static void onChanged(ServerPlayerEntity player, String id, Enum<?> val)
+	public static void onChanged(ServerPlayerEntity player, EnumEntry<?> entry)
 	{
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-		buf.writeString(id);
+		buf.writeString(entry.getId());
 		buf.writeByte(69);
-		buf.writeInt(val.ordinal());
+		buf.writeInt(entry.getValue().ordinal());
 		ServerPlayNetworking.send(player, PacketRegistry.SYNC_CONFIG_S2C_PACKET_ID, buf);
 	}
 	
