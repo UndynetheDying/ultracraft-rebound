@@ -19,5 +19,6 @@
 - Fixed water skimming not playing sounds
 - Removed the "vents" MOTD from the non-essential resources
 - Skyblocks no longer allow mobs to spawn on them naturally
+- Stained Glass Windows can now be set to not drop an item when destroyed by giving them the NBT tag `{noDrop:1b}`
 ## Resource Changes
 ## API Changes
