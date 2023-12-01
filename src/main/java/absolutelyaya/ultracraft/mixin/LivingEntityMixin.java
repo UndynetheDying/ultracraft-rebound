@@ -11,11 +11,13 @@ import absolutelyaya.ultracraft.config.RegenSetting;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.DamageTypeTags;
+import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.entity.IAntiCheeseBoss;
 import absolutelyaya.ultracraft.entity.machine.V2Entity;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
+import absolutelyaya.ultracraft.style.StyleHandler;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -35,6 +37,7 @@ import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
@@ -80,6 +83,10 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	@Shadow public abstract float getHealth();
 	
 	@Shadow public abstract float getMaxHealth();
+	
+	@Shadow public abstract LivingEntity getLastAttacker();
+	
+	@Shadow public abstract @Nullable LivingEntity getAttacker();
 	
 	int punchDuration = 60;
 	Supplier<Boolean> canBleedSupplier = () -> true, takePunchKnockpackSupplier = this::isPushable; //TODO: add Sandy Enemies (eventually)
@@ -326,6 +333,19 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 			boss.resetFrustration();
 		if(damageSource.getSource() instanceof IAntiCheeseBoss boss)
 			boss.resetFrustration();
+	}
+	
+	@Inject(method = "damage", at = @At("RETURN"))
+	void onPostDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir)
+	{
+		LivingEntity attacker = getAttacker();
+		if(getWorld().isClient || !cir.getReturnValue() || getHealth() - amount <= 0f || !(attacker instanceof PlayerEntity playerAttacker))
+			return;
+		//on death
+		StyleBonusManager.getBonuses().forEach((id, bonus) -> {
+			if(bonus.check(getType(), source.getType()))
+				StyleHandler.applyStyleBonus(playerAttacker, bonus);
+		});
 	}
 	
 	void punchTick()
