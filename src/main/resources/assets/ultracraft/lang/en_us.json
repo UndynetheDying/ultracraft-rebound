@@ -528,9 +528,9 @@
   "pattern.ultracraft.galaxy": "Galaxy",
   "pattern.ultracraft.galaxy.flavor": "Because who doesn't like space radiation?",
 
-  "stylebonus.ultracraft.test": "ULTRAtest",
-  "stylebonus.ultracraft.ricoshot": "Ricoshot",
-  "stylebonus.ultracraft.explosion": "PUNCH HIM SO HARD HE EXPLODES",
+  "stylebonus.ultracraft.test": "+ULTRAtest",
+  "stylebonus.ultracraft.ricoshot": "+Ricoshot",
+  "stylebonus.ultracraft.explosion": "+PUNCH HIM SO HARD HE EXPLODES",
 
   "category.ultracraft": "Ultracraft",
   "key.ultracraft.hivel_toggle": "Toggle High Velocity Mode",

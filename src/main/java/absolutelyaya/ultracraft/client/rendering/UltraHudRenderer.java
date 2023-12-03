@@ -6,7 +6,9 @@ import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.ClientConfig;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
+import absolutelyaya.ultracraft.components.player.IStyleComponent;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
+import absolutelyaya.ultracraft.components.player.StyleComponent;
 import absolutelyaya.ultracraft.item.*;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.util.RenderingUtil;
@@ -21,6 +23,7 @@ import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BannerItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -42,10 +45,11 @@ public class UltraHudRenderer
 {
 	private static final ClientConfig config = UltracraftClient.getConfig();
 	final Identifier GUI_TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/ultrahud.png");
+	final Identifier STYLE_TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/style.png");
 	final Identifier WEAPONS_TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/weapon_icons.png");
 	final Identifier CROSSHAIR_TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/crosshair_stats.png");
 	float healthPercent, staminaPercent, absorptionPercent, yOffset;
-	static float fishTimer, coinTimer, coinRot = 0, coinRotDest = 0, wingHintDisplayTimer, whitelistHintDisplayTimer;
+	static float fishTimer, coinTimer, coinRot = 0, coinRotDest = 0, wingHintDisplayTimer, whitelistHintDisplayTimer, styleTimer;
 	static ItemStack lastCatch;
 	static int coinCombo;
 	final String[] fishMania = new String[] {"message.ultracraft.fish.mania1", "message.ultracraft.fish.mania2", "message.ultracraft.fish.mania3", "message.ultracraft.fish.mania4"};
@@ -99,6 +103,18 @@ public class UltraHudRenderer
 			matrices.pop();
 		}
 		
+		renderHotbar(matrices, client, cam, player, wingsActive, delta);
+		renderStyle(matrices, client, player, Math.max(delta, 0f), MathHelper.clamp(styleTimer, 0f, 1f));
+		
+		if(whitelistHintDisplayTimer > 0.001f)
+		{
+			whitelistHintDisplayTimer -= delta / 20f;
+		}
+	}
+	
+	public void renderHotbar(MatrixStack matrices, MinecraftClient client, Camera cam, ClientPlayerEntity player, boolean wingsActive, float delta)
+	{
+		matrices.push();
 		matrices.push();
 		boolean flip = player.getMainArm().equals(Arm.LEFT) ^ config.switchSides;
 		if(!UltracraftClient.getConfig().ultraHudFixed)
@@ -212,10 +228,61 @@ public class UltraHudRenderer
 					flip ? -150 : -50, 14, MathHelper.clamp(wingHintDisplayTimer, 0.05f, 1f), false);
 			wingHintDisplayTimer -= delta / 20f;
 		}
-		if(whitelistHintDisplayTimer > 0.001f)
+		matrices.pop();
+	}
+	
+	public void renderStyle(MatrixStack matrices, MinecraftClient client, ClientPlayerEntity player, float delta, float alpha)
+	{
+		RenderSystem.disableDepthTest();
+		matrices.push();
+		boolean flip = player.getMainArm().equals(Arm.LEFT) == config.switchSides;
+		if(!UltracraftClient.getConfig().ultraHudFixed)
 		{
-			whitelistHintDisplayTimer -= delta / 20f;
+			float h = MathHelper.lerp(delta, player.lastRenderPitch, player.renderPitch);
+			float i = MathHelper.lerp(delta, player.lastRenderYaw, player.renderYaw);
+			matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees((player.getPitch(delta) - h) * 0.15f));
+			matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((player.getYaw(delta) - i) * 0.05f));
 		}
+		matrices.translate(flip ? 60 : -48, 32, -50);
+		matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(flip ? -10 : 10));
+		
+		matrices.push();
+		RenderSystem.setShaderTexture(0, STYLE_TEXTURE);
+		matrices.translate(-24, -36, 0f);
+		int guiScale = client.options.getGuiScale().getValue();
+		if(guiScale == 0)
+			guiScale = 3;
+		float scale = guiScale * 0.2f;
+		matrices.scale(scale, scale, scale);
+		//main box
+		Matrix4f textureMatrix = new Matrix4f(matrices.peek().getPositionMatrix());
+		if(alpha > 0f)
+			RenderingUtil.drawTexture(textureMatrix, new Vector4f(0, 0, 64f, 64f), 0f,
+					new Vec2f(128f, 128f), new Vector4f(0f, 0f, 64f, 64f), alpha * 0.75f);
+		
+		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+		IStyleComponent style = UltraComponents.STYLE.get(player);
+		int count = style.getRecentBonuses().length;
+		if(style.getRecentBonuses() != null && count > 0)
+		{
+			matrices.scale(0.5f, -0.5f, -1f);
+			matrices.translate(flip ? 124 : 144, -100, 10);
+			if(alpha > 0f)
+			{
+				for (int i = 0; i < count; i++)
+				{
+					if(style.getRecentBonuses()[i] == null)
+						break;
+					Text t = Text.translatable(style.getRecentBonuses()[i]);
+					drawTextNoBG(matrices, t, flip ? -150 : -50, 18 + i * 10, alpha, false);
+				}
+			}
+			styleTimer = 10f;
+		}
+		else if(styleTimer > 0f)
+			styleTimer -= delta / 2f;
+		matrices.pop();
+		matrices.pop();
 	}
 	
 	public void renderExtras(float tickDelta)
@@ -381,6 +448,23 @@ public class UltraHudRenderer
 			client.textRenderer.draw(Text.of(lines[i]), x1, y1, Color.ofRGBA(1f, 1f, 1f, alpha).getColor(), false,
 					matrix, immediate, TextRenderer.TextLayerType.NORMAL, Color.ofRGBA(0f, 0f, 0f, 0.5f * alpha).getColor(), 15728880);
 			matrix.translate(0f, 0f, -0.1f);
+			client.textRenderer.draw(Text.of(lines[i]), x1, y1, Color.ofRGBA(1f, 1f, 1f, alpha).getColor(), false,
+					matrix, immediate, TextRenderer.TextLayerType.NORMAL, 0, 15728880);
+		}
+	}
+	
+	void drawTextNoBG(MatrixStack matrices, Text text, float x, float y, float alpha, boolean centered)
+	{
+		if(text == null)
+			return;
+		MinecraftClient client = MinecraftClient.getInstance();
+		VertexConsumerProvider.Immediate immediate = client.getBufferBuilders().getEntityVertexConsumers();
+		String[] lines = text.getString().split("\n");
+		for (int i = 0; i < lines.length; i++)
+		{
+			Matrix4f matrix = matrices.peek().getPositionMatrix();
+			float x1 = x - (centered ? client.textRenderer.getWidth(lines[i]) / 2f : 0);
+			float y1 = y + (client.textRenderer.fontHeight + 2) * i;
 			client.textRenderer.draw(Text.of(lines[i]), x1, y1, Color.ofRGBA(1f, 1f, 1f, alpha).getColor(), false,
 					matrix, immediate, TextRenderer.TextLayerType.NORMAL, 0, 15728880);
 		}

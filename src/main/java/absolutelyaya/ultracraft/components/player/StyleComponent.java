@@ -60,9 +60,9 @@ public class StyleComponent implements IStyleComponent
 	
 	void updateRecentBonuses()
 	{
-		recentBonuses = new String[8];
 		Queue<Pair<String, Long>> q = new ArrayDeque<>(bonusQueue);
-		for (int i = 0; i < Math.min(8, q.size()); i++)
+		recentBonuses = new String[Math.min(6, q.size())];
+		for (int i = 0; i < Math.min(6, q.size()); i++)
 			recentBonuses[i] = q.remove().getLeft();
 	}
 	
@@ -114,6 +114,7 @@ public class StyleComponent implements IStyleComponent
 			}
 			bonusQueue = q;
 		}
+		updateRecentBonuses();
 	}
 	
 	@Override
@@ -127,6 +128,7 @@ public class StyleComponent implements IStyleComponent
 			NbtCompound element = new NbtCompound();
 			element.putString("translation", p.getLeft());
 			element.putLong("time", p.getRight());
+			queue.add(element);
 		}
 		tag.put("bonusQueue", queue);
 	}
