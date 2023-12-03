@@ -17,7 +17,6 @@ import absolutelyaya.ultracraft.entity.IAntiCheeseBoss;
 import absolutelyaya.ultracraft.entity.machine.V2Entity;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
-import absolutelyaya.ultracraft.style.StyleHandler;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -339,12 +338,12 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	void onPostDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir)
 	{
 		LivingEntity attacker = getAttacker();
-		if(getWorld().isClient || !cir.getReturnValue() || getHealth() - amount <= 0f || !(attacker instanceof PlayerEntity playerAttacker))
+		if(getWorld().isClient || !cir.getReturnValue() || getHealth() - amount > 0f || !(attacker instanceof PlayerEntity playerAttacker))
 			return;
 		//on death
 		StyleBonusManager.getBonuses().forEach((id, bonus) -> {
-			if(bonus.check(getType(), source.getType()))
-				StyleHandler.applyStyleBonus(playerAttacker, bonus);
+			if(bonus.check(getWorld(), getType(), source.getType()))
+				UltraComponents.STYLE.get(playerAttacker).styleBonusGet(bonus);
 		});
 	}
 	

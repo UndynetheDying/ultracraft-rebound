@@ -1,6 +1,5 @@
 {
   "translation-key": "stylebonus.ultracraft.test",
   "score": 10,
-  "entity": "",
-  "damage": ""
+  "use-staleness": true
 }

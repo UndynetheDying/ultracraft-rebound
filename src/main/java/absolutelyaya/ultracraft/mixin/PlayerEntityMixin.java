@@ -64,6 +64,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	
 	@Shadow public abstract void incrementStat(Identifier stat);
 	
+	@Shadow protected abstract Vec3d adjustMovementForSneaking(Vec3d movement, MovementType type);
+	
 	Multimap<EntityAttribute, EntityAttributeModifier> curSpeedMod;
 	BackTank backtank;
 	
@@ -117,6 +119,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 		if(isWingsActive() && source.isOf(DamageTypes.FALL) && (!ServerConfig.INSTANCE.hivelFallDamage.getValue() ||
 				   getSteppingBlockState().getBlock() instanceof FluidBlock))
 			cir.setReturnValue(false);
+		if((cir.getReturnValue() == null || cir.getReturnValue()) && amount > 0)
+		{
+			if(getHealth() - amount <= 0)
+				UltraComponents.STYLE.get(this).resetScore();
+			else
+				UltraComponents.STYLE.get(this).takeDamage(amount);
+		}
 	}
 	
 	@Inject(method = "damage", at = @At("TAIL"))

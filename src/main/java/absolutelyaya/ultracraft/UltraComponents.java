@@ -24,6 +24,8 @@ public final class UltraComponents implements EntityComponentInitializer, LevelC
 			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "easter"), IEasterComponent.class);
 	public static final ComponentKey<IArmComponent> ARMS =
 			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "arms"), IArmComponent.class);
+	public static final ComponentKey<IStyleComponent> STYLE =
+			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "style"), IStyleComponent.class);
 	public static final ComponentKey<IUltraLevelComponent> GLOBAL =
 			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "global_data"), IUltraLevelComponent.class);
 	
@@ -35,6 +37,7 @@ public final class UltraComponents implements EntityComponentInitializer, LevelC
 		registry.registerForPlayers(PROGRESSION, ProgressionComponent::new, RespawnCopyStrategy.ALWAYS_COPY);
 		registry.registerForPlayers(EASTER, EasterComponent::new, RespawnCopyStrategy.ALWAYS_COPY);
 		registry.registerForPlayers(ARMS, ArmComponent::new, RespawnCopyStrategy.ALWAYS_COPY);
+		registry.registerForPlayers(STYLE, StyleComponent::new, RespawnCopyStrategy.NEVER_COPY);
 	}
 	
 	@Override

@@ -7,6 +7,7 @@ import absolutelyaya.ultracraft.command.WhitelistCommand;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.config.Setting;
+import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.data.TerminalScreensaverManager;
 import absolutelyaya.ultracraft.data.UltraRecipeManager;
 import absolutelyaya.ultracraft.item.AbstractNailgunItem;
@@ -77,6 +78,7 @@ public class Ultracraft implements ModInitializer
         StatisticRegistry.register();
         new UltraRecipeManager();
         new TerminalScreensaverManager();
+        new StyleBonusManager();
         
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
         

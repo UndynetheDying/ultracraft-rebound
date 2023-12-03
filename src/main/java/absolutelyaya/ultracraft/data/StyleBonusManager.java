@@ -4,16 +4,12 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.style.StyleBonus;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.damage.DamageType;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.DamageTypeTags;
-import net.minecraft.registry.tag.TagKey;
 import net.minecraft.resource.JsonDataLoader;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
@@ -25,11 +21,12 @@ import java.util.Map;
 
 public class StyleBonusManager extends JsonDataLoader
 {
+	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 	private static Map<Identifier, StyleBonus> bonuses = ImmutableMap.of();
 	
-	public StyleBonusManager(Gson gson)
+	public StyleBonusManager()
 	{
-		super(gson, "ultracraft/style");
+		super(GSON, "ultracraft/style");
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new SimpleSynchronousResourceReloadListener()
 		{
 			@Override
@@ -52,17 +49,17 @@ public class StyleBonusManager extends JsonDataLoader
 		ImmutableMap.Builder<Identifier, StyleBonus> builder = ImmutableMap.builder();
 		prepared.forEach((id, element) -> {
 			JsonObject json = element.getAsJsonObject();
-			StyleBonus bonus = new StyleBonus(JsonHelper.getString(json, "translation-key"), JsonHelper.getInt(json, "score"));
+			StyleBonus bonus = new StyleBonus(id, JsonHelper.getString(json, "translation-key"), JsonHelper.getInt(json, "score"));
 			if(json.has("entity"))
 				bonus.setEntityType(Registries.ENTITY_TYPE.get(Identifier.tryParse(JsonHelper.getString(json, "entity"))));
 			if(json.has("damage"))
-			{
-				String damageType = JsonHelper.getString(json, "damage");
-				//TODO: figure out how the fuck to get damage types from a string with no world
-			}
+				bonus.setDamageType(JsonHelper.getString(json, "damage"));
+			if(json.has("use-staleness"))
+				bonus.setUseStaleness(JsonHelper.getBoolean(json, "use-staleness"));
 			builder.put(id, bonus);
 		});
 		bonuses = builder.build();
+		Ultracraft.LOGGER.info("Loaded " + bonuses.size() + " Style Bonuses");
 	}
 	
 	public static Map<Identifier, StyleBonus> getBonuses()
