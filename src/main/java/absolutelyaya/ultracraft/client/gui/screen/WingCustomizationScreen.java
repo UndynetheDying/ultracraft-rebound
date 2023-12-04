@@ -335,7 +335,6 @@ public class WingCustomizationScreen extends Screen
 		
 		IWingDataComponent wings = UltraComponents.WING_DATA.get(client.player);
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-		buf.writeBoolean(wings.isActive());
 		buf.writeVector3f(wings.getColors()[0]);
 		buf.writeVector3f(wings.getColors()[1]);
 		buf.writeString(wings.getPattern());

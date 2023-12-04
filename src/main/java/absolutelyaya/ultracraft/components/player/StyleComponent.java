@@ -2,13 +2,17 @@ package absolutelyaya.ultracraft.components.player;
 
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
+import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.style.StyleBonus;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 
@@ -34,7 +38,7 @@ public class StyleComponent implements IStyleComponent
 	public void styleBonusGet(StyleBonus bonus)
 	{
 		bonusQueue.add(new Pair<>(bonus.getTranslationKey(), provider.getWorld().getTime()));
-		if(bonusQueue.size() <= 8)
+		if(bonusQueue.size() <= 6)
 			updateRecentBonuses();
 		if(bonus.isUseStaleness())
 		{
@@ -48,8 +52,24 @@ public class StyleComponent implements IStyleComponent
 				if(!key.equals(id) && getStaleness(id) > 0)
 					stalenessMap.put(key, Math.max(getStaleness(key) - 10, 0));
 		}
-		style += bonus.getScore();
-		sync();
+		if(!provider.getWorld().isClient)
+		{
+			style += bonus.getScore();
+			sync();
+			if(provider instanceof ServerPlayerEntity serverPlayer)
+			{
+				PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+				buf.writeString(bonus.getTranslationKey());
+				ServerPlayNetworking.send(serverPlayer, PacketRegistry.STYLE_BONUS_PACKET_ID, buf);
+			}
+		}
+	}
+	
+	@Override
+	public void clientStyleBonusGet(String key)
+	{
+		bonusQueue.add(new Pair<>(key, provider.getWorld().getTime()));
+		updateRecentBonuses();
 	}
 	
 	@Override
@@ -103,34 +123,12 @@ public class StyleComponent implements IStyleComponent
 	{
 		if(tag.contains("style", NbtElement.INT_TYPE))
 			style = tag.getInt("style");
-		if(tag.contains("bonusQueue", NbtElement.LIST_TYPE))
-		{
-			Queue<Pair<String, Long>> q = new ArrayDeque<>();
-			NbtList list = tag.getList("bonusQueue", NbtElement.COMPOUND_TYPE);
-			for (NbtElement nbtElement : list)
-			{
-				NbtCompound element = (NbtCompound) nbtElement;
-				q.add(new Pair<>(element.getString("translation"), element.getLong("time")));
-			}
-			bonusQueue = q;
-		}
-		updateRecentBonuses();
 	}
 	
 	@Override
 	public void writeToNbt(NbtCompound tag)
 	{
 		tag.putInt("style", style);
-		NbtList queue = new NbtList();
-		Queue<Pair<String, Long>> q = new ArrayDeque<>(bonusQueue);
-		for (Pair<String, Long> p : q)
-		{
-			NbtCompound element = new NbtCompound();
-			element.putString("translation", p.getLeft());
-			element.putLong("time", p.getRight());
-			queue.add(element);
-		}
-		tag.put("bonusQueue", queue);
 	}
 	
 	@Override

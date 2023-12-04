@@ -210,7 +210,6 @@ public class UltracraftClient implements ClientModInitializer
 			if(forcedHivel.isEmpty())
 				wings.setVisible(config.get().hivel);
 			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-			buf.writeBoolean(wings.isActive());
 			buf.writeVector3f(wings.getColors()[0]);
 			buf.writeVector3f(wings.getColors()[1]);
 			buf.writeString(wings.getPattern());

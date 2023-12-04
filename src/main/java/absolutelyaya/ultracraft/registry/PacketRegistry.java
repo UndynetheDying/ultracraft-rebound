@@ -103,6 +103,7 @@ public class PacketRegistry
 	public static final Identifier GRAFFITI_WHITELIST_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "graffiti_whitelist");
 	public static final Identifier HELL_OBSERVER_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "hell_observer");
 	public static final Identifier SCREENSHAKE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "screenshake");
+	public static final Identifier STYLE_BONUS_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "style");
 	
 	public static void registerC2S()
 	{
@@ -299,7 +300,6 @@ public class PacketRegistry
 			IWingDataComponent wings = UltraComponents.WING_DATA.get(player);
 			if(wings == null)
 				return;
-			boolean wingsActive = buf.readBoolean();
 			Vector3f wingColor = buf.readVector3f(), metalColor = buf.readVector3f();
 			String pattern = Ultracraft.checkSupporter(player.getUuid(), false) ? buf.readString() : "";
 			server.execute(() -> {

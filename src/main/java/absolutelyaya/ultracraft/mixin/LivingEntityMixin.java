@@ -83,8 +83,6 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	
 	@Shadow public abstract float getMaxHealth();
 	
-	@Shadow public abstract LivingEntity getLastAttacker();
-	
 	@Shadow public abstract @Nullable LivingEntity getAttacker();
 	
 	int punchDuration = 60;
@@ -338,6 +336,8 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	void onPostDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir)
 	{
 		LivingEntity attacker = getAttacker();
+		if(attacker == null && source.getAttacker() instanceof LivingEntity living)
+			attacker = living;
 		if(getWorld().isClient || !cir.getReturnValue() || getHealth() - amount > 0f || !(attacker instanceof PlayerEntity playerAttacker))
 			return;
 		//on death

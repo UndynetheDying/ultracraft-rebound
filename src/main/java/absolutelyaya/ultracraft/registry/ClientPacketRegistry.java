@@ -22,7 +22,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -77,7 +76,7 @@ public class ClientPacketRegistry
 			if(player == null || player.equals(client.player))
 				return;
 			Vec3d dir = new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
-			MinecraftClient.getInstance().execute(() -> {
+			client.execute(() -> {
 				Random rand = client.player.getRandom();
 				UltraComponents.WINGED_ENTITY.get(player).onDash();
 				Vec3d pos;
@@ -98,7 +97,7 @@ public class ClientPacketRegistry
 			double halfheight = buf.readDouble();
 			boolean shotgun = buf.readBoolean();
 			boolean water = client.player.getWorld().getFluidState(new BlockPos((int)pos.x, (int)pos.y, (int)pos.z)).isIn(FluidTags.WATER);
-			MinecraftClient.getInstance().execute(() -> {
+			client.execute(() -> {
 				Random rand = client.player.getRandom();
 				for (int i = 0; i < Math.min(3 * amount, 32); i++)
 				{
@@ -125,7 +124,7 @@ public class ClientPacketRegistry
 			Item item = buf.readItemStack().getItem();
 			int ticks = buf.readInt();
 			int idx = buf.readInt();
-			MinecraftClient.getInstance().execute(() -> {
+			client.execute(() -> {
 				if(client.player != null && item instanceof AbstractWeaponItem weapon)
 					UltraComponents.WINGED_ENTITY.get(client.player).getGunCooldownManager().setCooldown(weapon, ticks, idx);
 			});
@@ -150,7 +149,7 @@ public class ClientPacketRegistry
 			int data = buf.readInt();
 			if(e instanceof ITrailEnjoyer trailer)
 			{
-				MinecraftClient.getInstance().execute(() -> {
+				client.execute(() -> {
 					if(b)
 						trailer.addEntityTrail(data);
 					else
@@ -169,7 +168,7 @@ public class ClientPacketRegistry
 			BlockPos pos = buf.readBlockPos();
 			BlockState state = client.player.getWorld().getBlockState(pos);
 			boolean strong = buf.readBoolean();
-			MinecraftClient.getInstance().execute(() -> {
+			client.execute(() -> {
 				Random random = client.player.getRandom();
 				for (int i = 0; i < 32; i++)
 				{
@@ -188,7 +187,7 @@ public class ClientPacketRegistry
 				return;
 			Vec3d pos = new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
 			float radius = (float)buf.readDouble();
-			MinecraftClient.getInstance().execute(() -> {
+			client.execute(() -> {
 				ExplosionHandler.explosionClient((ClientWorld)client.player.getWorld(),
 						pos, radius);
 			});
@@ -200,7 +199,7 @@ public class ClientPacketRegistry
 			if(player == null)
 				return;
 			Vec3d velocity = player.getVelocity();
-			MinecraftClient.getInstance().execute(() -> {
+			client.execute(() -> {
 				if(player.getMainHandStack().getItem() instanceof AbstractWeaponItem gun)
 					gun.onPrimaryFire(player.getWorld(), player, velocity);
 			});
@@ -209,7 +208,7 @@ public class ClientPacketRegistry
 			if(client.player == null)
 				return;
 			Vector3f pos = buf.readVector3f();
-			MinecraftClient.getInstance().execute(() -> {
+			client.execute(() -> {
 				client.player.getWorld().addParticle(ParticleTypes.FLAME, pos.x, pos.y, pos.z, 0f, 0f, 0f);
 			});
 		}));
@@ -217,24 +216,24 @@ public class ClientPacketRegistry
 			if(client.player == null)
 				return;
 			Vec3d pos = new Vec3d(buf.readVector3f());
-			MinecraftClient.getInstance().execute(() -> client.player.getWorld().addParticle(ParticleRegistry.RIPPLE, pos.x, pos.y, pos.z, 0, 0, 0));
+			client.execute(() -> client.player.getWorld().addParticle(ParticleRegistry.RIPPLE, pos.x, pos.y, pos.z, 0, 0, 0));
 		}));
 		ClientPlayNetworking.registerGlobalReceiver(PacketRegistry.COIN_PUNCH_PACKET_ID, ((client, handler, buf, sender) -> {
 			if(client.player == null)
 				return;
 			int score = buf.readInt();
-			MinecraftClient.getInstance().execute(() -> UltraHudRenderer.onPunchCoin(score));
+			client.execute(() -> UltraHudRenderer.onPunchCoin(score));
 		}));
 		ClientPlayNetworking.registerGlobalReceiver(PacketRegistry.WORLD_INFO_PACKET_ID, ((client, handler, buf, sender) -> {
 			if(client.player == null)
 				return;
-			MinecraftClient.getInstance().execute(() -> UltracraftClient.sendJoinInfo(MinecraftClient.getInstance(), true));
+			client.execute(() -> UltracraftClient.sendJoinInfo(client, true));
 		}));
 		ClientPlayNetworking.registerGlobalReceiver(PacketRegistry.BLOCK_PLAYER_PACKET_ID, ((client, handler, buf, sender) -> {
 			if(client.player == null)
 				return;
 			UUID target = buf.readUuid();
-			MinecraftClient.getInstance().execute(() -> {
+			client.execute(() -> {
 				boolean b = UltracraftClient.getConfig().blockedPlayers.contains(target);
 				if(!b)
 				{
@@ -248,7 +247,7 @@ public class ClientPacketRegistry
 			if(client.player == null)
 				return;
 			UUID target = buf.readUuid();
-			MinecraftClient.getInstance().execute(() -> {
+			client.execute(() -> {
 				boolean b = UltracraftClient.getConfig().blockedPlayers.remove(target);
 				UltracraftClient.saveConfig();
 				client.player.sendMessage(Text.translatable("command.ultracraft.unblock.client-" + (b ? "success" : "fail")));
@@ -258,7 +257,7 @@ public class ClientPacketRegistry
 			if(client.player == null)
 				return;
 			NbtCompound rules = buf.readNbt();
-			MinecraftClient.getInstance().execute(() -> {
+			client.execute(() -> {
 				client.setScreen(new ServerConfigScreen(rules));
 			});
 		}));
@@ -267,7 +266,7 @@ public class ClientPacketRegistry
 				return;
 			Vector3f source = buf.readVector3f();
 			UUID target = buf.readUuid();
-			MinecraftClient.getInstance().execute(() -> {
+			client.execute(() -> {
 				if(client.player.getUuid().equals(target))
 					client.player.getWorld().addParticle(ParticleRegistry.RICOCHET_WARNING, source.x, source.y, source.z, 0, 0, 0);
 				else
@@ -299,7 +298,7 @@ public class ClientPacketRegistry
 			Vec3d pos = new Vec3d(buf.readVector3f());
 			double width = buf.readDouble();
 			double height = buf.readDouble();
-			MinecraftClient.getInstance().execute(() -> {
+			client.execute(() -> {
 				Random rand = client.player.getRandom();
 				for (int i = 0; i < 24; i++)
 				{
@@ -317,25 +316,31 @@ public class ClientPacketRegistry
 			UltraRecipeManager.setRecipes(builder.build());
 		})));
 		ClientPlayNetworking.registerGlobalReceiver(HIVEL_WHITELIST_PACKET_ID, (((client, handler, buf, responseSender) -> {
-			MinecraftClient.getInstance().execute(UltraHudRenderer::onWhitelistHint);
+			client.execute(UltraHudRenderer::onWhitelistHint);
 		})));
 		ClientPlayNetworking.registerGlobalReceiver(GRAFFITI_WHITELIST_PACKET_ID, (((client, handler, buf, responseSender) -> {
 			boolean b = buf.readBoolean();
-			MinecraftClient.getInstance().execute(() -> {
+			client.execute(() -> {
 				UltracraftClient.GRAFFITI_WHITELISTED = b;
 			});
 		})));
 		ClientPlayNetworking.registerGlobalReceiver(HELL_OBSERVER_PACKET_ID, (((client, handler, buf, responseSender) -> {
 			BlockPos pos = buf.readBlockPos();
-			MinecraftClient.getInstance().execute(() -> {
-				MinecraftClient.getInstance().setScreen(new HellObserverScreen(pos));
+			client.execute(() -> {
+				client.setScreen(new HellObserverScreen(pos));
 			});
 		})));
 		ClientPlayNetworking.registerGlobalReceiver(SCREENSHAKE_PACKET_ID, (((client, handler, buf, responseSender) -> {
 			float strength = buf.readFloat();
-			MinecraftClient.getInstance().execute(() -> {
-				if(MinecraftClient.getInstance().player instanceof WingedPlayerEntity winged)
+			client.execute(() -> {
+				if(client.player instanceof WingedPlayerEntity winged)
 					winged.addScreenshake(strength);
+			});
+		})));
+		ClientPlayNetworking.registerGlobalReceiver(STYLE_BONUS_PACKET_ID, (((client, handler, buf, responseSender) -> {
+			String key = buf.readString();
+			client.execute(() -> {
+				UltraComponents.STYLE.get(client.player).clientStyleBonusGet(key);
 			});
 		})));
 	}

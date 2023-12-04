@@ -10,6 +10,8 @@ public interface IStyleComponent extends ComponentV3, AutoSyncedComponent, Commo
 {
 	void styleBonusGet(StyleBonus bonus);
 	
+	void clientStyleBonusGet(String key);
+	
 	String[] getRecentBonuses();
 	
 	int getStaleness(Identifier id);
