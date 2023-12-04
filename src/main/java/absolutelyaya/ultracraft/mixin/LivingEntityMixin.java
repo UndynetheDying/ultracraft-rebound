@@ -332,15 +332,14 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 			boss.resetFrustration();
 	}
 	
-	@Inject(method = "damage", at = @At("RETURN"))
-	void onPostDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir)
+	@Inject(method = "onDeath", at = @At("HEAD"))
+	void onDeath(DamageSource source, CallbackInfo ci)
 	{
 		LivingEntity attacker = getAttacker();
 		if(attacker == null && source.getAttacker() instanceof LivingEntity living)
 			attacker = living;
-		if(getWorld().isClient || !cir.getReturnValue() || getHealth() - amount > 0f || !(attacker instanceof PlayerEntity playerAttacker))
+		if(!(attacker instanceof PlayerEntity playerAttacker))
 			return;
-		//on death
 		StyleBonusManager.getBonuses().forEach((id, bonus) -> {
 			if(bonus.check(getWorld(), getType(), source.getType()))
 				UltraComponents.STYLE.get(playerAttacker).styleBonusGet(bonus);

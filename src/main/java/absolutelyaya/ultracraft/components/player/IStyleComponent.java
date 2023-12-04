@@ -18,9 +18,15 @@ public interface IStyleComponent extends ComponentV3, AutoSyncedComponent, Commo
 	
 	int getScore();
 	
+	int getRank();
+	
 	void resetScore();
 	
 	void takeDamage(float damage);
 	
 	void sync();
+	
+	float getRankProgress();
+	
+	float getChain();
 }

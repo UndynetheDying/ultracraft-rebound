@@ -28,6 +28,7 @@ public class StyleComponent implements IStyleComponent
 	Queue<Pair<String, Long>> bonusQueue = new ArrayDeque<>();
 	String[] recentBonuses = new String[]{};
 	int style;
+	float chain;
 	
 	public StyleComponent(PlayerEntity provider)
 	{
@@ -38,8 +39,7 @@ public class StyleComponent implements IStyleComponent
 	public void styleBonusGet(StyleBonus bonus)
 	{
 		bonusQueue.add(new Pair<>(bonus.getTranslationKey(), provider.getWorld().getTime()));
-		if(bonusQueue.size() <= 6)
-			updateRecentBonuses();
+		updateRecentBonuses();
 		if(bonus.isUseStaleness())
 		{
 			ItemStack stack = provider.getMainHandStack();
@@ -55,6 +55,7 @@ public class StyleComponent implements IStyleComponent
 		if(!provider.getWorld().isClient)
 		{
 			style += bonus.getScore();
+			chain += bonus.getScore();
 			sync();
 			if(provider instanceof ServerPlayerEntity serverPlayer)
 			{
@@ -81,8 +82,8 @@ public class StyleComponent implements IStyleComponent
 	void updateRecentBonuses()
 	{
 		Queue<Pair<String, Long>> q = new ArrayDeque<>(bonusQueue);
-		recentBonuses = new String[Math.min(6, q.size())];
-		for (int i = 0; i < Math.min(6, q.size()); i++)
+		recentBonuses = new String[Math.min(7, q.size())];
+		for (int i = 0; i < Math.min(7, q.size()); i++)
 			recentBonuses[i] = q.remove().getLeft();
 	}
 	
@@ -102,6 +103,7 @@ public class StyleComponent implements IStyleComponent
 	public void resetScore()
 	{
 		style = 0;
+		chain = 0;
 		sync();
 	}
 	
@@ -109,7 +111,73 @@ public class StyleComponent implements IStyleComponent
 	public void takeDamage(float damage)
 	{
 		style = (int)Math.max(style - damage * 1.5f, 0);
+		chain = (int)Math.max(chain - damage * 1.5f, 0);
 		sync();
+	}
+	
+	@Override
+	public int getRank()
+	{
+		if(chain > getStyleForRank(7))
+			return 7;
+		else if(chain > getStyleForRank(6))
+			return 6;
+		else if(chain > getStyleForRank(5))
+			return 5;
+		else if(chain > getStyleForRank(4))
+			return 4;
+		else if(chain > getStyleForRank(3))
+			return 3;
+		else if(chain > getStyleForRank(2))
+			return 2;
+		else if(chain > getStyleForRank(1))
+			return 1;
+		return 0;
+	}
+	
+	int getStyleForRank(int rank)
+	{
+		return switch(rank)
+		{
+			default -> 0;
+			case 1 -> 200;
+			case 2 -> 400;
+			case 3 -> 500;
+			case 4 -> 700;
+			case 5 -> 850;
+			case 6 -> 1000;
+			case 7 -> 1500;
+		};
+	}
+	
+	float getChainDecay()
+	{
+		return switch(getRank())
+		{
+			default -> 1f;
+			case 1 -> 1.25f;
+			case 2 -> 1.5f;
+			case 3 -> 2f;
+			case 4 -> 3f;
+			case 5 -> 4f;
+			case 6 -> 6f;
+			case 7 -> 8f;
+		};
+	}
+	
+	@Override
+	public float getRankProgress()
+	{
+		if(getRank() == 7)
+			return 1f;
+		int sub = getStyleForRank(getRank());
+		return (chain - sub) / (getStyleForRank(getRank() + 1) - sub);
+	}
+	
+	@Override
+	public float getChain()
+	{
+		return chain;
 	}
 	
 	@Override
@@ -123,12 +191,15 @@ public class StyleComponent implements IStyleComponent
 	{
 		if(tag.contains("style", NbtElement.INT_TYPE))
 			style = tag.getInt("style");
+		if(tag.contains("chain", NbtElement.FLOAT_TYPE))
+			chain = tag.getFloat("chain");
 	}
 	
 	@Override
 	public void writeToNbt(NbtCompound tag)
 	{
 		tag.putInt("style", style);
+		tag.putFloat("chain", chain);
 	}
 	
 	@Override
@@ -139,5 +210,7 @@ public class StyleComponent implements IStyleComponent
 			bonusQueue.remove();
 			updateRecentBonuses();
 		}
+		if(chain > 0)
+			chain = Math.max(chain - getChainDecay() / 2f, 0);
 	}
 }

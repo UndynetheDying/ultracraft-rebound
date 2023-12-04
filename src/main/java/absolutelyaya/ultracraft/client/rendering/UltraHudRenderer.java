@@ -249,12 +249,22 @@ public class UltraHudRenderer
 		matrices.scale(scale, scale, scale);
 		//main box
 		Matrix4f textureMatrix = new Matrix4f(matrices.peek().getPositionMatrix());
+		IStyleComponent style = UltraComponents.STYLE.get(player);
 		if(alpha > 0f)
-			RenderingUtil.drawTexture(textureMatrix, new Vector4f(0, 0, 64f, 64f), 0f,
-					new Vec2f(128f, 128f), new Vector4f(0f, 0f, 64f, 64f), alpha * 0.75f);
+		{
+			RenderingUtil.drawTexture(textureMatrix, new Vector4f(0, 0, 64f, 76f), 0f,
+					new Vec2f(128f, 128f), new Vector4f(0f, 0f, 64f, 76f), alpha * 0.75f);
+			RenderingUtil.drawTexture(textureMatrix, new Vector4f(7f, 76f - 10f, 50f, 8f), 0f,
+					new Vec2f(128f, 128f), new Vector4f(65f, 16f + style.getRank() * 9f, 50f, 8f), alpha);
+			//progressBar
+			RenderingUtil.drawTexture(textureMatrix, new Vector4f(1, 76f - 16f, 62f, 4f), 0f,
+					new Vec2f(128f, 128f), new Vector4f(1f, 112f, 62f, 4f), alpha);
+			float progress = style.getRankProgress();
+			RenderingUtil.drawTexture(textureMatrix, new Vector4f(1, 76f - 16f, 62f * progress, 4f), 0f,
+					new Vec2f(128f, 128f), new Vector4f(1f, 108f, 62f * progress, 4f), alpha);
+		}
 		
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-		IStyleComponent style = UltraComponents.STYLE.get(player);
 		int count = style.getRecentBonuses().length;
 		if(style.getRecentBonuses() != null && count > 0)
 		{
@@ -267,11 +277,12 @@ public class UltraHudRenderer
 					if(style.getRecentBonuses()[i] == null)
 						break;
 					Text t = Text.translatable(style.getRecentBonuses()[i]);
-					drawTextNoBG(matrices, t, flip ? -150 : -50, 18 + i * 10, alpha, false);
+					drawTextNoBG(matrices, t, flip ? -150 : -50, 5 + i * 10, alpha, false);
 				}
 			}
-			styleTimer = 10f;
 		}
+		if(style.getChain() > 0)
+			styleTimer = 1f;
 		else if(styleTimer > 0f)
 			styleTimer -= delta / 2f;
 		matrices.pop();
