@@ -29,4 +29,6 @@ public interface IStyleComponent extends ComponentV3, AutoSyncedComponent, Commo
 	float getRankProgress();
 	
 	float getChain();
+	
+	float getMovementMultiplier();
 }

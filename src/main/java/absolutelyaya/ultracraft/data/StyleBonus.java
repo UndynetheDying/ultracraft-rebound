@@ -31,22 +31,19 @@ public class StyleBonus
 		return this;
 	}
 	
-	public StyleBonus setDamageType(String type)
+	public void setDamageType(String type)
 	{
 		this.damageType = type;
-		return this;
 	}
 	
-	public StyleBonus setUseStaleness(boolean b)
+	public void setUseStaleness(boolean b)
 	{
 		useStaleness = b;
-		return this;
 	}
 	
-	public StyleBonus setImpossible()
+	public void setImpossible()
 	{
 		impossible = true;
-		return this;
 	}
 	
 	public boolean isUseStaleness()

@@ -528,6 +528,7 @@
   "pattern.ultracraft.galaxy": "Galaxy",
   "pattern.ultracraft.galaxy.flavor": "Because who doesn't like space radiation?",
 
+  "stylebonus.ultracraft.movement-multiplier": "Multiplier: %sx",
   "stylebonus.ultracraft.test": "+ ULTRAtest",
   "stylebonus.ultracraft.kill": "+ KILL",
   "stylebonus.ultracraft.ricoshot": "§b+ RICOSHOT",

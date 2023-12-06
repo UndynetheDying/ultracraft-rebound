@@ -98,7 +98,8 @@ public class UltraHudRenderer
 		}
 		
 		renderHotbar(matrices, client, cam, player, wingsActive, delta);
-		renderStyle(matrices, client, player, Math.max(delta, 0f), MathHelper.clamp(styleTimer, 0f, 1f));
+		if(wings.isActive())
+			renderStyle(matrices, client, player, Math.max(delta, 0f), MathHelper.clamp(styleTimer, 0f, 1f));
 		
 		if(whitelistHintDisplayTimer > 0.001f)
 		{
@@ -296,10 +297,21 @@ public class UltraHudRenderer
 		
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		int count = style.getRecentBonuses().length;
+		matrices.push();
+		matrices.scale(0.5f, -0.5f, -1f);
+		matrices.translate(flip ? 124 : 144, -100, 10);
+		if(alpha > 0f)
+		{
+			matrices.push();
+			float f = style.getMovementMultiplier() / 3f;
+			float shake = Math.max(f - 0.5f, 0f) * 3;
+			matrices.translate((rand.nextFloat() - 0.5f) * shake, (rand.nextFloat() - 0.5f) * shake, 0f);
+			drawTextNoBG(matrices, Text.translatable("stylebonus.ultracraft.movement-multiplier",
+					String.format(java.util.Locale.US,"%.2f", style.getMovementMultiplier())), flip ? -150 : -50, 70, alpha, false);
+			matrices.pop();
+		}
 		if(style.getRecentBonuses() != null && count > 0)
 		{
-			matrices.scale(0.5f, -0.5f, -1f);
-			matrices.translate(flip ? 124 : 144, -100, 10);
 			if(alpha > 0f)
 			{
 				for (int i = 0; i < count; i++)
@@ -311,6 +323,7 @@ public class UltraHudRenderer
 				}
 			}
 		}
+		matrices.pop();
 		if(style.getChain() > 0 || style.getRecentBonuses().length > 0)
 			styleTimer = 1f;
 		else if(styleTimer > 0f)

@@ -30,7 +30,7 @@ public class StyleComponent implements IStyleComponent
 	Queue<Pair<String, Long>> bonusQueue = new ArrayDeque<>();
 	String[] recentBonuses = new String[]{};
 	int style;
-	float chain;
+	float chain, movementMultiplier = 1f;
 	boolean dirty;
 	
 	public StyleComponent(PlayerEntity provider)
@@ -42,7 +42,6 @@ public class StyleComponent implements IStyleComponent
 	public void styleBonusGet(StyleBonus bonus)
 	{
 		bonusQueue.add(new Pair<>(bonus.getTranslationKey(), provider.getWorld().getTime()));
-		updateRecentBonuses();
 		float score = bonus.getScore();
 		if(bonus.isUseStaleness())
 		{
@@ -100,8 +99,8 @@ public class StyleComponent implements IStyleComponent
 	void updateRecentBonuses()
 	{
 		Queue<Pair<String, Long>> q = new ArrayDeque<>(bonusQueue);
-		recentBonuses = new String[Math.min(7, q.size())];
-		for (int i = 0; i < Math.min(7, q.size()); i++)
+		recentBonuses = new String[Math.min(6, q.size())];
+		for (int i = 0; i < Math.min(6, q.size()); i++)
 			recentBonuses[i] = q.remove().getLeft();
 	}
 	
@@ -205,6 +204,12 @@ public class StyleComponent implements IStyleComponent
 	}
 	
 	@Override
+	public float getMovementMultiplier()
+	{
+		return movementMultiplier;
+	}
+	
+	@Override
 	public void readFromNbt(NbtCompound tag)
 	{
 		if(tag.contains("style", NbtElement.INT_TYPE))
@@ -254,5 +259,9 @@ public class StyleComponent implements IStyleComponent
 			UltraComponents.STYLE.sync(provider);
 			dirty = false;
 		}
+		if(UltraComponents.WING_DATA.get(provider).isActive() && (!provider.isOnGround()||provider.isSprinting()))
+			movementMultiplier = MathHelper.clamp(movementMultiplier + 0.126f, 1f, 3f);
+		else if(movementMultiplier > 0)
+			movementMultiplier = MathHelper.clamp(movementMultiplier - 0.126f, 1f, 3f);
 	}
 }
