@@ -2,10 +2,13 @@ package absolutelyaya.ultracraft.entity.demon;
 
 import absolutelyaya.goop.api.WaterHandling;
 import absolutelyaya.goop.particles.GoopDropParticleEffect;
+import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.Enrageable;
 import absolutelyaya.ultracraft.accessor.IAnimatedEnemy;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.damage.DamageSources;
+import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.entity.goal.TimedAttackGoal;
 import absolutelyaya.ultracraft.entity.other.ShockwaveEntity;
@@ -45,6 +48,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
@@ -224,6 +229,8 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		if(data.equals(ENRAGED))
 		{
 			left_arm.enabled = right_arm.enabled = mask.enabled = body3.enabled = false;
+			getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(32), i -> true)
+					.forEach(p -> UltraComponents.STYLE.get(p).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "enrage"))));
 		}
 		if(data.equals(HIDDEN) && !dataTracker.get(HIDDEN))
 			setAllMainPartsEnabled(true);

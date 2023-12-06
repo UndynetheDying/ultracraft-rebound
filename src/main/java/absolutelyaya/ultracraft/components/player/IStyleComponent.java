@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.components.player;
 
-import absolutelyaya.ultracraft.style.StyleBonus;
+import absolutelyaya.ultracraft.data.StyleBonus;
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
@@ -24,7 +24,7 @@ public interface IStyleComponent extends ComponentV3, AutoSyncedComponent, Commo
 	
 	void takeDamage(float damage);
 	
-	void sync();
+	void markDirty();
 	
 	float getRankProgress();
 	

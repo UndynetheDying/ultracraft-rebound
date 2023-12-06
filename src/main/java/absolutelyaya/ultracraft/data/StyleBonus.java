@@ -1,5 +1,6 @@
-package absolutelyaya.ultracraft.style;
+package absolutelyaya.ultracraft.data;
 
+import absolutelyaya.ultracraft.Ultracraft;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.registry.RegistryKeys;
@@ -15,7 +16,7 @@ public class StyleBonus
 	String damageType;
 	String translationKey;
 	int score;
-	boolean useStaleness = false;
+	boolean useStaleness = false, impossible = false;
 	
 	public StyleBonus(Identifier id, String translationKey, int score)
 	{
@@ -39,6 +40,12 @@ public class StyleBonus
 	public StyleBonus setUseStaleness(boolean b)
 	{
 		useStaleness = b;
+		return this;
+	}
+	
+	public StyleBonus setImpossible()
+	{
+		impossible = true;
 		return this;
 	}
 	
@@ -84,12 +91,23 @@ public class StyleBonus
 				return false;
 			}
 			else
-				return world.getDamageSources().registry.get(Identifier.tryParse(damageType)).equals(type);
+			{
+				DamageType t = world.getDamageSources().registry.get(Identifier.tryParse(damageType));
+				if(t != null)
+					return t.equals(type);
+				else
+				{
+					Ultracraft.LOGGER.error("Damagetype not found! " + id);
+					return false;
+				}
+			}
 		}
 	}
 	
 	public boolean check(World world, EntityType<?> entityType, DamageType damageType)
 	{
+		if(impossible)
+			return false;
 		return checkEntityType(entityType) && checkDamageType(world, damageType);
 	}
 }

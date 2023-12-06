@@ -1,0 +1,6 @@
+{
+  "translation-key": "stylebonus.ultracraft.fire",
+  "score": 10,
+  "damage": "#minecraft:is_fire",
+  "use-staleness": true
+}

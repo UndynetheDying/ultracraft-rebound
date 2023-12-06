@@ -26,6 +26,7 @@ import net.minecraft.item.BannerItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
@@ -252,16 +253,45 @@ public class UltraHudRenderer
 		IStyleComponent style = UltraComponents.STYLE.get(player);
 		if(alpha > 0f)
 		{
-			RenderingUtil.drawTexture(textureMatrix, new Vector4f(0, 0, 64f, 76f), 0f,
+			RenderingUtil.drawTexture(textureMatrix, new Vector4f(0f, 0f, 64f, 76f), 0f,
 					new Vec2f(128f, 128f), new Vector4f(0f, 0f, 64f, 76f), alpha * 0.75f);
 			RenderingUtil.drawTexture(textureMatrix, new Vector4f(7f, 76f - 10f, 50f, 8f), 0f,
-					new Vec2f(128f, 128f), new Vector4f(65f, 16f + style.getRank() * 9f, 50f, 8f), alpha);
+					new Vec2f(128f, 128f), new Vector4f(65f, 21f + style.getRank() * 9f, 50f, 8f), alpha);
 			//progressBar
-			RenderingUtil.drawTexture(textureMatrix, new Vector4f(1, 76f - 16f, 62f, 4f), 0f,
+			RenderingUtil.drawTexture(textureMatrix, new Vector4f(1f, 76f - 16f, 62f, 4f), 0f,
 					new Vec2f(128f, 128f), new Vector4f(1f, 112f, 62f, 4f), alpha);
 			float progress = style.getRankProgress();
-			RenderingUtil.drawTexture(textureMatrix, new Vector4f(1, 76f - 16f, 62f * progress, 4f), 0f,
+			RenderingUtil.drawTexture(textureMatrix, new Vector4f(1f, 76f - 16f, 62f * progress, 4f), 0f,
 					new Vec2f(128f, 128f), new Vector4f(1f, 108f, 62f * progress, 4f), alpha);
+			if(player.getMainHandStack().getItem() instanceof AbstractWeaponItem)
+			{
+				//stalenessBar
+				RenderingUtil.drawTexture(textureMatrix, new Vector4f(3f, 2f, 58f, 8f), 0f,
+						new Vec2f(128f, 128f), new Vector4f(3f, 100f, 58f, 8f), alpha);
+				int staleness = 150 - style.getStaleness(Registries.ITEM.getId(player.getMainHandStack().getItem()));
+				float stalePercent = MathHelper.clamp(staleness / 50f, 0f, 1f);
+				RenderingUtil.drawTexture(textureMatrix, new Vector4f(3f, 2f, 58f * stalePercent, 8f), 0f,
+						new Vec2f(128f, 128f), new Vector4f(3f, 92f, 58f * stalePercent, 8f), alpha);
+				float usedPercent = MathHelper.clamp(staleness / 50f - 1f, 0f, 1f);
+				RenderingUtil.drawTexture(textureMatrix, new Vector4f(3f, 2f, 58f * usedPercent, 8f), 0f,
+						new Vec2f(128f, 128f), new Vector4f(3f, 84f, 58f * usedPercent, 8f), alpha);
+				float freshPercent = MathHelper.clamp(staleness / 50f - 2f, 0f, 1f);
+				RenderingUtil.drawTexture(textureMatrix, new Vector4f(3f, 2f, 58f * freshPercent, 8f), 0f,
+						new Vec2f(128f, 128f), new Vector4f(3f, 76f, 58f * freshPercent, 8f), alpha);
+				
+				if(staleness > 100)
+					RenderingUtil.drawTexture(textureMatrix, new Vector4f(6f, 4f, 34f, 4f), 0f,
+							new Vec2f(128f, 128f), new Vector4f(65f, 1f, 34f, 4f), alpha);
+				else if(staleness > 50)
+					RenderingUtil.drawTexture(textureMatrix, new Vector4f(6f, 4f, 34f, 4f), 0f,
+							new Vec2f(128f, 128f), new Vector4f(65f, 6f, 34f, 4f), alpha);
+				else if(staleness > 0)
+					RenderingUtil.drawTexture(textureMatrix, new Vector4f(6f, 4f, 34f, 4f), 0f,
+							new Vec2f(128f, 128f), new Vector4f(65f, 11f, 34f, 4f), alpha);
+				else
+					RenderingUtil.drawTexture(textureMatrix, new Vector4f(6f, 4f, 34f, 4f), 0f,
+							new Vec2f(128f, 128f), new Vector4f(65f, 16f, 34f, 4f), alpha);
+			}
 		}
 		
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
@@ -281,7 +311,7 @@ public class UltraHudRenderer
 				}
 			}
 		}
-		if(style.getChain() > 0)
+		if(style.getChain() > 0 || style.getRecentBonuses().length > 0)
 			styleTimer = 1f;
 		else if(styleTimer > 0f)
 			styleTimer -= delta / 2f;

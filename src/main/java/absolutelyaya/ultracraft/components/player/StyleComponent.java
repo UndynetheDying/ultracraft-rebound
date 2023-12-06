@@ -3,18 +3,20 @@ package absolutelyaya.ultracraft.components.player;
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
-import absolutelyaya.ultracraft.style.StyleBonus;
+import absolutelyaya.ultracraft.data.StyleBonus;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;
@@ -29,6 +31,7 @@ public class StyleComponent implements IStyleComponent
 	String[] recentBonuses = new String[]{};
 	int style;
 	float chain;
+	boolean dirty;
 	
 	public StyleComponent(PlayerEntity provider)
 	{
@@ -40,23 +43,25 @@ public class StyleComponent implements IStyleComponent
 	{
 		bonusQueue.add(new Pair<>(bonus.getTranslationKey(), provider.getWorld().getTime()));
 		updateRecentBonuses();
+		float score = bonus.getScore();
 		if(bonus.isUseStaleness())
 		{
 			ItemStack stack = provider.getMainHandStack();
 			if(stack == null)
 				return;
 			Identifier id = Registries.ITEM.getId(stack.getItem());
+			score *= getStalenessMod(id);
 			if(stack.getItem() instanceof AbstractWeaponItem)
-				stalenessMap.put(id, getStaleness(id) + 5);
+				stalenessMap.put(id, MathHelper.clamp(getStaleness(id) + 5, 0, 150));
 			for (Identifier key : stalenessMap.keySet())
 				if(!key.equals(id) && getStaleness(id) > 0)
-					stalenessMap.put(key, Math.max(getStaleness(key) - 10, 0));
+					stalenessMap.put(key, MathHelper.clamp(getStaleness(key) - 10, 0, 150));
 		}
 		if(!provider.getWorld().isClient)
 		{
-			style += bonus.getScore();
-			chain += bonus.getScore();
-			sync();
+			style += score;
+			chain += score;
+			markDirty();
 			if(provider instanceof ServerPlayerEntity serverPlayer)
 			{
 				PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
@@ -77,6 +82,19 @@ public class StyleComponent implements IStyleComponent
 	public int getStaleness(Identifier id)
 	{
 		return stalenessMap.getOrDefault(id, 0);
+	}
+	
+	public float getStalenessMod(Identifier id)
+	{
+		int staleness = getStaleness(id);
+		if(staleness < 50)
+			return 1.5f;
+		else if(staleness < 100)
+			return 1.0f;
+		if(staleness < 150)
+			return 0.5f;
+		else
+			return 0f;
 	}
 	
 	void updateRecentBonuses()
@@ -104,7 +122,7 @@ public class StyleComponent implements IStyleComponent
 	{
 		style = 0;
 		chain = 0;
-		sync();
+		markDirty();
 	}
 	
 	@Override
@@ -112,7 +130,7 @@ public class StyleComponent implements IStyleComponent
 	{
 		style = (int)Math.max(style - damage * 1.5f, 0);
 		chain = (int)Math.max(chain - damage * 1.5f, 0);
-		sync();
+		markDirty();
 	}
 	
 	@Override
@@ -181,9 +199,9 @@ public class StyleComponent implements IStyleComponent
 	}
 	
 	@Override
-	public void sync()
+	public void markDirty()
 	{
-		UltraComponents.STYLE.sync(provider);
+		dirty = true;
 	}
 	
 	@Override
@@ -193,6 +211,17 @@ public class StyleComponent implements IStyleComponent
 			style = tag.getInt("style");
 		if(tag.contains("chain", NbtElement.FLOAT_TYPE))
 			chain = tag.getFloat("chain");
+		if(tag.contains("staleness", NbtElement.LIST_TYPE))
+		{
+			tag.getList("staleness", NbtElement.COMPOUND_TYPE).forEach(i -> {
+				if(i instanceof NbtCompound compound)
+				{
+					Identifier id = Identifier.tryParse(compound.getString("id"));
+					int score = compound.getInt("score");
+					stalenessMap.put(id, score);
+				}
+			});
+		}
 	}
 	
 	@Override
@@ -200,6 +229,14 @@ public class StyleComponent implements IStyleComponent
 	{
 		tag.putInt("style", style);
 		tag.putFloat("chain", chain);
+		NbtList list = new NbtList();
+		stalenessMap.forEach((id, i) -> {
+			NbtCompound element = new NbtCompound();
+			element.putString("id", id.toString());
+			element.putInt("score", i);
+			list.add(element);
+		});
+		tag.put("staleness", list);
 	}
 	
 	@Override
@@ -212,5 +249,10 @@ public class StyleComponent implements IStyleComponent
 		}
 		if(chain > 0)
 			chain = Math.max(chain - getChainDecay() / 2f, 0);
+		if(dirty)
+		{
+			UltraComponents.STYLE.sync(provider);
+			dirty = false;
+		}
 	}
 }

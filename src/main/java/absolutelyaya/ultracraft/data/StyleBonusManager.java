@@ -1,7 +1,6 @@
 package absolutelyaya.ultracraft.data;
 
 import absolutelyaya.ultracraft.Ultracraft;
-import absolutelyaya.ultracraft.style.StyleBonus;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -56,6 +55,8 @@ public class StyleBonusManager extends JsonDataLoader
 				bonus.setDamageType(JsonHelper.getString(json, "damage"));
 			if(json.has("use-staleness"))
 				bonus.setUseStaleness(JsonHelper.getBoolean(json, "use-staleness"));
+			if(json.has("impossible") && JsonHelper.getBoolean(json, "impossible"))
+				bonus.setImpossible();
 			builder.put(id, bonus);
 		});
 		bonuses = builder.build();

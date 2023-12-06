@@ -1,5 +1,5 @@
 {
   "translation-key": "stylebonus.ultracraft.explosion",
   "score": 10,
-  "damage": "#minecraft:is_explosion"
+  "damage": "minecraft:explosion"
 }

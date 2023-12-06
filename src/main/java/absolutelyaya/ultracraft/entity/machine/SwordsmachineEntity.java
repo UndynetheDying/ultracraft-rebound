@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.entity.machine;
 
+import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.Enrageable;
 import absolutelyaya.ultracraft.accessor.ITrailEnjoyer;
@@ -8,6 +9,7 @@ import absolutelyaya.ultracraft.accessor.MeleeInterruptable;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
+import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.entity.EnemySoundType;
 import absolutelyaya.ultracraft.entity.husk.AbstractHuskEntity;
@@ -370,6 +372,8 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 		dataTracker.set(ENRAGED_TICKS, 250);
 		dataTracker.set(ANIMATION, ANIMATION_ENRAGE);
 		playSound(SoundRegistry.SWORDSMACHINE_ENRAGE, 1f, 1f);
+		getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(32), i -> true)
+				.forEach(p -> UltraComponents.STYLE.get(p).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "enrage"))));
 	}
 	
 	private void setCurrentAttackTrail(byte attack)
