@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.data.StyleBonus;
+import absolutelyaya.ultracraft.registry.ScoreboardCriteria;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
@@ -201,6 +202,7 @@ public class StyleComponent implements IStyleComponent
 	public void markDirty()
 	{
 		dirty = true;
+		provider.getScoreboard().forEachScore(ScoreboardCriteria.STYLE, provider.getEntityName(), i -> i.setScore(style));
 	}
 	
 	@Override
