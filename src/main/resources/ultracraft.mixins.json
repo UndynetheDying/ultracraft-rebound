@@ -27,6 +27,7 @@
     "client.KeyboardInputMixin",
     "client.MinecraftClientMixin",
     "client.OtherClientPlayerMixin",
+    "client.gui.AccessibilityScreenMixin",
     "client.gui.BossbarHudMixin",
     "client.gui.ClickableWidgetMixin",
     "client.gui.DeathScreenMixin",
