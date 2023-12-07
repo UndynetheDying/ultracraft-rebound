@@ -107,7 +107,8 @@ public class HarpoonEntity extends AbstractSkewerEntity implements IIgnoreSharps
 				setReturning(true);
 				return;
 			}
-			victim.addStatusEffect(new StatusEffectInstance(StatusEffectRegistry.IMPALED, 10, 1), this);
+			if(victim instanceof LivingEntity living)
+				living.addStatusEffect(new StatusEffectInstance(StatusEffectRegistry.IMPALED, 10, 1), this);
 		}
 	}
 	

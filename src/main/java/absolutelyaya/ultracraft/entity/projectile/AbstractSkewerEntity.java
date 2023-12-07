@@ -4,9 +4,9 @@ import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.DamageTypeTags;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityStatuses;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
@@ -28,7 +28,7 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 	protected static final TrackedData<Integer> HEALTH = DataTracker.registerData(AbstractSkewerEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Integer> SHAKE = DataTracker.registerData(AbstractSkewerEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	
-	protected LivingEntity victim;
+	protected Entity victim;
 	protected int unmovingTicks;
 	
 	protected AbstractSkewerEntity(EntityType<? extends PersistentProjectileEntity> entityType, World world)
@@ -111,7 +111,7 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 		return super.getYaw();
 	}
 	
-	public LivingEntity getVictim()
+	public Entity getVictim()
 	{
 		return victim;
 	}
@@ -141,15 +141,13 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 	{
 		if(victim != null)
 			return;
-		if(entityHitResult.getEntity() instanceof LivingEntity living)
-		{
-			victim = living;
-			dataTracker.set(IMPACT_YAW, getYaw());
-			dataTracker.set(IMPACT_PITCH, getPitch());
-			living.damage(DamageSources.get(getWorld(), DamageSources.MAGNET, this, getOwner()), 3.5f);
-			if(this instanceof ProjectileEntityAccessor proj && proj.isParried())
-				proj.onParriedCollision(entityHitResult);
-		}
+		Entity entity = entityHitResult.getEntity();
+		victim = entity;
+		dataTracker.set(IMPACT_YAW, getYaw());
+		dataTracker.set(IMPACT_PITCH, getPitch());
+		entity.damage(DamageSources.get(getWorld(), DamageSources.MAGNET, this, getOwner()), 3.5f);
+		if(this instanceof ProjectileEntityAccessor proj && proj.isParried())
+			proj.onParriedCollision(entityHitResult);
 	}
 	
 	@Override
