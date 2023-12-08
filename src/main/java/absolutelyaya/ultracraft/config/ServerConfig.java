@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.config;
 
 import absolutelyaya.ultracraft.Ultracraft;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public class ServerConfig extends Config
@@ -22,22 +23,14 @@ public class ServerConfig extends Config
 	public final BooleanEntry flamethrowerGrief = new BooleanEntry("FlamethrowerGrief", false);
 	public final IntegerEntry hellObserverInterval = new IntegerEntry("HellObserverInterval", 5);
 	public final BooleanEntry bloodSaturation = new BooleanEntry("BloodSaturation", false);
-	//Hivel
-	public final IntegerEntry hivelJumpBoost = new IntegerEntry("HiVel-JumpBoost", 2);
-	public final BooleanEntry hivelFallDamage = new BooleanEntry("HiVel-FallDamage", false);
-	public final BooleanEntry hivelDrowning = new BooleanEntry("HiVel-Drowning", false);
-	public final BooleanEntry slamStorage = new BooleanEntry("SlamStorage", true);
-	public final FloatEntry hivelSpeed = new FloatEntry("HiVel-Speed", 1.4f);
-	public final FloatEntry hivelGravity = (FloatEntry)new FloatEntry("HiVel-Gravity", 0.5f).setRange(0f, 1f);
-	public final IntegerEntry iFrames = new IntegerEntry("HiVel-IFrames", 2);
 	//Weapon Damage
 	public final FloatEntry revolverDamage = (FloatEntry)new FloatEntry("RevolverDamage", 1f).setRange(0f, Float.MAX_VALUE);
 	public final FloatEntry shotgunDamage = (FloatEntry)new FloatEntry("ShotgunDamage", 1f).setRange(0f, Float.MAX_VALUE);
 	public final FloatEntry nailgunDamage = (FloatEntry)new FloatEntry("NailgunDamage", 1f).setRange(0f, Float.MAX_VALUE);
 	
-	public ServerConfig()
+	public ServerConfig(MinecraftServer server)
 	{
-		super();
+		super(server);
 		entries.add(new Comment(" ## ############################# ##  #"));
 		entries.add(new Comment("     Welcome to Config Zone"));
 		entries.add(new Comment(" ## ############################# ##  #"));
@@ -57,32 +50,20 @@ public class ServerConfig extends Config
 		entries.add(hellObserverInterval);
 		entries.add(bloodSaturation);
 		entries.add(new Comment(" ## ############################# ##  #"));
-		entries.add(new Comment("         High Velocity Mode"));
-		entries.add(new Comment(" ## ############################# ##  #"));
-		entries.add(hivelJumpBoost);
-		entries.add(new Comment("1.2 == 120% speed in hivel"));
-		entries.add(hivelSpeed);
-		entries.add(new Comment("0.8 == 80% gravity in hivel"));
-		entries.add(hivelGravity);
-		entries.add(hivelFallDamage);
-		entries.add(hivelDrowning);
-		entries.add(slamStorage);
-		entries.add(iFrames);
-		entries.add(new Comment(" ## ############################# ##  #"));
 		entries.add(new Comment("      Weapon Damage Multipliers"));
 		entries.add(new Comment(" ## ############################# ##  #"));
 		entries.add(revolverDamage);
 		entries.add(shotgunDamage);
 		entries.add(nailgunDamage);
 		
-		load();
+		load(server);
 		INSTANCE = this;
 	}
 	
 	@Override
 	protected String getExportPath()
 	{
-		return "config/ultracraft/";
+		return "ultracraft/";
 	}
 	
 	@Override
@@ -92,9 +73,9 @@ public class ServerConfig extends Config
 	}
 	
 	@Override
-	public void load()
+	public void load(MinecraftServer server)
 	{
-		super.load();
+		super.load(server);
 		Ultracraft.LOGGER.info("Ultracraft Server Config Loaded.");
 	}
 	

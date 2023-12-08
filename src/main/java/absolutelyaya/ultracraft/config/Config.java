@@ -10,6 +10,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.WorldSavePath;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -22,14 +23,20 @@ import java.util.Scanner;
 public abstract class Config
 {
 	public final List<ConfigEntry<?>> entries = new ArrayList<>();
+	final MinecraftServer server;
+	
+	public Config(MinecraftServer server)
+	{
+		this.server = server;
+	}
 	
 	protected abstract String getExportPath();
 	
 	protected abstract String getFileName();
 	
-	public void save()
+	public void save(MinecraftServer server)
 	{
-		Path gameDir = FabricLoader.getInstance().getGameDir();
+		Path gameDir = server.getSavePath(WorldSavePath.ROOT);
 		try
 		{
 			Path.of(gameDir.toString(), getExportPath()).toFile().mkdirs();
@@ -51,15 +58,13 @@ public abstract class Config
 		}
 	}
 	
-	public void load()
+	public void load(MinecraftServer server)
 	{
-		Path gameDir = FabricLoader.getInstance().getGameDir();
+		Path gameDir = server.getSavePath(WorldSavePath.ROOT);
 		Path path = Path.of(gameDir.toString(), getExportPath() + getFileName());
 		File file = new File(path.toUri());
 		if(!file.exists())
-		{
-			save();
-		}
+			save(server);
 		try (Scanner reader = new Scanner(file))
 		{
 			while(reader.hasNextLine())
@@ -161,7 +166,7 @@ public abstract class Config
 			if(i != null && i.getId().equals(entry.id))
 				entry.setValue(value);
 		}
-		save();
+		save(server);
 	}
 	
 	public EnumEntry<?> set(EnumEntry<?> entry, int ordinal)
@@ -171,7 +176,7 @@ public abstract class Config
 			if(i != null && i.getId().equals(entry.id))
 				entry.setValue(ordinal);
 		}
-		save();
+		save(server);
 		return entry;
 	}
 	
@@ -185,7 +190,7 @@ public abstract class Config
 				{
 					ConfigEntry<V> vEntry = ((ConfigEntry<V>)entry);
 					vEntry.setValue(value);
-					save();
+					save(server);
 					return vEntry;
 				}
 				catch (Exception e)

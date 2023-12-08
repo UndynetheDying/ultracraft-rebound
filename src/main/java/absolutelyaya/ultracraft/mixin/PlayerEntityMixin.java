@@ -8,7 +8,7 @@ import absolutelyaya.ultracraft.block.TerminalBlockEntity;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
-import absolutelyaya.ultracraft.config.ServerConfig;
+import absolutelyaya.ultracraft.config.HivelConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.DamageTypeTags;
 import absolutelyaya.ultracraft.entity.other.BackTank;
@@ -116,7 +116,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	{
 		if(UltraComponents.WINGED_ENTITY.get(this).isDashing() && !source.isIn(DamageTypeTags.UNDODGEABLE))
 			cir.setReturnValue(false);
-		if(isWingsActive() && source.isOf(DamageTypes.FALL) && (!ServerConfig.INSTANCE.hivelFallDamage.getValue() ||
+		if(isWingsActive() && source.isOf(DamageTypes.FALL) && (!HivelConfig.INSTANCE.hivelFallDamage.getValue() ||
 				   getSteppingBlockState().getBlock() instanceof FluidBlock))
 			cir.setReturnValue(false);
 		if((cir.getReturnValue() == null || cir.getReturnValue()) && amount > 0)
@@ -136,7 +136,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 			if(source.isOf(DamageSources.GUN) || source.isOf(DamageSources.SHOTGUN))
 				timeUntilRegen = 9;
 			else
-				timeUntilRegen = 11 + ServerConfig.INSTANCE.iFrames.getValue();
+				timeUntilRegen = 11 + HivelConfig.INSTANCE.iFrames.getValue();
 		}
 		UltraComponents.WINGED_ENTITY.get(this).setBloodHealCooldown(4);
 	}
@@ -173,7 +173,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	{
 		Multimap<EntityAttribute, EntityAttributeModifier> speedMod = HashMultimap.create();
 		speedMod.put(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier(UUID.fromString("9c92fac8-0018-11ee-be56-0242ac120002"), "spd_up",
-				ServerConfig.INSTANCE.hivelSpeed.getValue() - 1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+				HivelConfig.INSTANCE.hivelSpeed.getValue() - 1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
 		return speedMod;
 	}
 	
@@ -357,7 +357,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	@Override
 	public boolean canBreatheInWater()
 	{
-		return isWingsActive() && !ServerConfig.INSTANCE.hivelDrowning.getValue();
+		return isWingsActive() && !HivelConfig.INSTANCE.hivelDrowning.getValue();
 	}
 	
 	@Override

@@ -13,6 +13,7 @@ import absolutelyaya.ultracraft.components.player.IArmComponent;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.config.EnumEntry;
+import absolutelyaya.ultracraft.config.HivelConfig;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
@@ -520,7 +521,7 @@ public class PacketRegistry
 				case NbtElement.FLOAT_TYPE -> {
 					float v = buf.readFloat();
 					ServerConfig.onChanged(server, ServerConfig.INSTANCE.set(id, v));
-					if(id.equals(ServerConfig.INSTANCE.hivelSpeed.getId()))
+					if(id.equals(HivelConfig.INSTANCE.hivelSpeed.getId()))
 						server.getPlayerManager().getPlayerList().forEach(p -> ((WingedPlayerEntity)p).updateSpeedConfig());
 				}
 				case NbtElement.BYTE_TYPE -> ServerConfig.onChanged(server, ServerConfig.INSTANCE.set(id, buf.readBoolean()));

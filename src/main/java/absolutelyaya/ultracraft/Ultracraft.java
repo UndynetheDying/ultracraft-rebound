@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.command.Commands;
 import absolutelyaya.ultracraft.command.WhitelistCommand;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
+import absolutelyaya.ultracraft.config.HivelConfig;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.config.Setting;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
@@ -57,6 +58,7 @@ public class Ultracraft implements ModInitializer
 	static int freezeTicks;
     static Map<UUID, Integer> supporterCache = new HashMap<>(), supporterCacheAdditions = new HashMap<>();
     static ServerConfig config;
+    static HivelConfig hivelConfig;
     
     @Override
     public void onInitialize()
@@ -139,10 +141,14 @@ public class Ultracraft implements ModInitializer
     void loadServerConfig(MinecraftServer server)
     {
         if(config == null)
-            config = new ServerConfig();
+            config = new ServerConfig(server);
         else
-            config.load();
+            config.load(server);
         config.syncAll(server);
+        if(hivelConfig == null)
+            hivelConfig = new HivelConfig(server);
+        else
+            hivelConfig.load(server);
     }
     
     public static boolean isTimeFrozen()

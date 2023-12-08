@@ -7,6 +7,7 @@ import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
+import absolutelyaya.ultracraft.config.HivelConfig;
 import absolutelyaya.ultracraft.config.RegenSetting;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
@@ -204,7 +205,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 		if(isAffectedByMovementRules())
 		{
 			if(!getWorld().isClient)
-				cir.setReturnValue(cir.getReturnValue() + 0.1f * Math.max(ServerConfig.INSTANCE.hivelJumpBoost.getValue() + (isTouchingWater() ? 0.5f : 0f), 0));
+				cir.setReturnValue(cir.getReturnValue() + 0.1f * Math.max(HivelConfig.INSTANCE.hivelJumpBoost.getValue() + (isTouchingWater() ? 0.5f : 0f), 0));
 		}
 	}
 	
@@ -271,7 +272,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	{
 		if(!(isAffectedByMovementRules()) || (((Object)this instanceof PlayerEntity player) && player.getAbilities().flying) || touchingWater)
 			return value;
-		float val = (getWorld().isClient ? getGravityModifier() : ServerConfig.INSTANCE.hivelGravity.getValue());
+		float val = (getWorld().isClient ? getGravityModifier() : HivelConfig.INSTANCE.hivelGravity.getValue());
 		return Math.max(value - (value * (1f - val)), 0.01f);
 	}
 	
@@ -280,7 +281,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	{
 		if(!(this instanceof WingedPlayerEntity winged && UltraComponents.WING_DATA.get(winged).isActive()))
 			return value;
-		return value + ((ServerConfig.INSTANCE.hivelJumpBoost.getValue() + 1) * ServerConfig.INSTANCE.hivelGravity.getValue());
+		return value + ((HivelConfig.INSTANCE.hivelJumpBoost.getValue() + 1) * HivelConfig.INSTANCE.hivelGravity.getValue());
 	}
 	
 	@ModifyVariable(method = "computeFallDamage", ordinal = 1, at = @At("LOAD"), argsOnly = true)

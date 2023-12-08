@@ -41,32 +41,32 @@ public class ServerConfigScreen extends Screen
 		ruleWidgets.clear();
 		Vector2i pos = new Vector2i(width / 2 - 100, 40);
 		ServerConfig config = ServerConfig.INSTANCE;
-		addRule(config.projboost, pos, ProjectileBoostSetting.values());
-		addRule(config.hivel, pos, Setting.values());
-		addRule(config.timestop, pos, new String[] { Setting.FORCE_ON.toString(), Setting.FORCE_OFF.toString() });
-		addRule(config.disableHandswap, pos, ConfigWidget.ValueType.BOOL);
-		addRule(config.hivelJumpBoost, pos, ConfigWidget.ValueType.INT);
-		addRule(config.slamStorage, pos, ConfigWidget.ValueType.BOOL);
-		addRule(config.hivelFallDamage, pos, ConfigWidget.ValueType.BOOL);
-		addRule(config.hivelDrowning, pos, ConfigWidget.ValueType.BOOL);
-		addRule(config.bloodHeal, pos, RegenSetting.values());
-		addRule(config.hivelSpeed, pos, ConfigWidget.ValueType.FLOAT);
-		addRule(config.hivelGravity, pos, ConfigWidget.ValueType.FLOAT);
-		addRule(config.effectivelyViolent, pos, ConfigWidget.ValueType.BOOL);
-		addRule(config.explosionBlockBreaking, pos, ConfigWidget.ValueType.BOOL);
-		addRule(config.smSafeLedges, pos, ConfigWidget.ValueType.BOOL);
-		addRule(config.parryChaining, pos, ConfigWidget.ValueType.BOOL);
-		addRule(config.tntPriming, pos, ConfigWidget.ValueType.BOOL);
-		addRule(config.revolverDamage, pos, ConfigWidget.ValueType.FLOAT);
-		addRule(config.iFrames, pos, ConfigWidget.ValueType.INT);
-		addRule(config.terminalProtection, pos, ConfigWidget.ValueType.BOOL);
-		addRule(config.graffiti, pos, GraffitiSetting.values());
-		addRule(config.flamethrowerGrief, pos, ConfigWidget.ValueType.BOOL);
-		addRule(config.shotgunDamage, pos, ConfigWidget.ValueType.FLOAT);
-		addRule(config.nailgunDamage, pos, ConfigWidget.ValueType.FLOAT);
-		addRule(config.hellObserverInterval, pos, ConfigWidget.ValueType.INT);
+		addRule(config.projboost, pos, ProjectileBoostSetting.values(), 0);
+		addRule(config.hivel, pos, Setting.values(), 1);
+		addRule(config.timestop, pos, new String[] { Setting.FORCE_ON.toString(), Setting.FORCE_OFF.toString() }, 2);
+		addRule(config.disableHandswap, pos, ConfigWidget.ValueType.BOOL, 3);
+		//addRule(config.hivelJumpBoost, pos, ConfigWidget.ValueType.INT, 4);
+		//addRule(config.slamStorage, pos, ConfigWidget.ValueType.BOOL, 5);
+		//addRule(config.hivelFallDamage, pos, ConfigWidget.ValueType.BOOL, 6);
+		//addRule(config.hivelDrowning, pos, ConfigWidget.ValueType.BOOL, 7);
+		addRule(config.bloodHeal, pos, RegenSetting.values(), 8);
+		//addRule(config.hivelSpeed, pos, ConfigWidget.ValueType.FLOAT, 9);
+		//addRule(config.hivelGravity, pos, ConfigWidget.ValueType.FLOAT, 10);
+		addRule(config.effectivelyViolent, pos, ConfigWidget.ValueType.BOOL, 11);
+		addRule(config.explosionBlockBreaking, pos, ConfigWidget.ValueType.BOOL, 12);
+		addRule(config.smSafeLedges, pos, ConfigWidget.ValueType.BOOL, 13);
+		addRule(config.parryChaining, pos, ConfigWidget.ValueType.BOOL, 14);
+		addRule(config.tntPriming, pos, ConfigWidget.ValueType.BOOL, 15);
+		addRule(config.revolverDamage, pos, ConfigWidget.ValueType.FLOAT, 16);
+		//addRule(config.iFrames, pos, ConfigWidget.ValueType.INT, 17);
+		addRule(config.terminalProtection, pos, ConfigWidget.ValueType.BOOL, 18);
+		addRule(config.graffiti, pos, GraffitiSetting.values(), 19);
+		addRule(config.flamethrowerGrief, pos, ConfigWidget.ValueType.BOOL, 20);
+		addRule(config.shotgunDamage, pos, ConfigWidget.ValueType.FLOAT, 21);
+		addRule(config.nailgunDamage, pos, ConfigWidget.ValueType.FLOAT, 22);
+		addRule(config.hellObserverInterval, pos, ConfigWidget.ValueType.INT, 23);
 		//addRule(GameruleRegistry.START_WITH_PIERCER, pos, GameRuleWidget.ValueType.BOOL);
-		addRule(config.bloodSaturation, pos, ConfigWidget.ValueType.BOOL);
+		addRule(config.bloodSaturation, pos, ConfigWidget.ValueType.BOOL, 24);
 		
 		boolean b = false;
 		if(simplistic != null)
@@ -75,19 +75,19 @@ public class ServerConfigScreen extends Screen
 				Text.translatable("screen.ultracraft.server.config-menu.simplistic"), b));
 	}
 	
-	<K extends ConfigEntry<?>> void addRule(K key, Vector2i pos, String[] values)
+	<K extends ConfigEntry<?>> void addRule(K key, Vector2i pos, String[] values, int iconIdx)
 	{
-		ruleWidgets.add(addDrawableChild(new ConfigWidget<>(rules, pos, key, values, ruleWidgets.size())));
+		ruleWidgets.add(addDrawableChild(new ConfigWidget<>(rules, pos, key, values, iconIdx)));
 	}
 	
-	<K extends ConfigEntry<?>> void addRule(K key, Vector2i pos, Enum<?>[] values)
+	<K extends ConfigEntry<?>> void addRule(K key, Vector2i pos, Enum<?>[] values, int iconIdx)
 	{
-		ruleWidgets.add(addDrawableChild(new ConfigWidget<>(rules, pos, key, values, ruleWidgets.size())));
+		ruleWidgets.add(addDrawableChild(new ConfigWidget<>(rules, pos, key, values, iconIdx)));
 	}
 	
-	<K extends ConfigEntry<?>> void addRule(K key, Vector2i pos, ConfigWidget.ValueType valueType)
+	<K extends ConfigEntry<?>> void addRule(K key, Vector2i pos, ConfigWidget.ValueType valueType, int iconIdx)
 	{
-		ruleWidgets.add(addDrawableChild(new ConfigWidget<>(rules, pos, key, valueType, ruleWidgets.size())));
+		ruleWidgets.add(addDrawableChild(new ConfigWidget<>(rules, pos, key, valueType, iconIdx)));
 	}
 	
 	@Override

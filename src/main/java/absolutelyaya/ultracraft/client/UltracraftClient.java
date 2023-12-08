@@ -357,6 +357,7 @@ public class UltracraftClient implements ClientModInitializer
 	public static void sendJoinInfo(MinecraftClient client, boolean manual)
 	{
 		ServerConfig sConfig = ServerConfig.INSTANCE;
+		HivelConfig hivelConfig = HivelConfig.INSTANCE;
 		if(client.player == null || sConfig == null)
 			return;
 		client.player.sendMessage(Text.translatable("message.ultracraft.join-info-header"));
@@ -368,19 +369,19 @@ public class UltracraftClient implements ClientModInitializer
 		if(client.getServer() != null && client.getServer().isRemote())
 			client.player.sendMessage(Text.translatable("message.ultracraft.freeze-forced",
 					sConfig.timestop.getValue().equals(Setting.FORCE_ON) ? Text.translatable("options.on") : Text.translatable("options.off")));
-		client.player.sendMessage(Text.translatable("message.ultracraft.attributes", sConfig.hivelSpeed.getValue(), sConfig.hivel.getValue(),
-				(sConfig.hivelGravity.getValue() * 100f)).append("%"));
+		client.player.sendMessage(Text.translatable("message.ultracraft.attributes", hivelConfig.hivelSpeed.getValue(), sConfig.hivel.getValue(),
+				(hivelConfig.hivelGravity.getValue() * 100f)).append("%"));
 		client.player.sendMessage(Text.translatable("message.ultracraft.blood-heal." + sConfig.bloodHeal.getValue().name()));
-		if(sConfig.hivelFallDamage.getValue())
+		if(hivelConfig.hivelFallDamage.getValue())
 			client.player.sendMessage(Text.translatable("message.ultracraft.fall-damage"));
-		if(sConfig.hivelDrowning.getValue())
+		if(hivelConfig.hivelDrowning.getValue())
 			client.player.sendMessage(Text.translatable("message.ultracraft.drowning"));
 		if(config.get().detailedJoinInfo || manual)
 		{
 			client.player.sendMessage(Text.translatable("message.ultracraft.projectile-boost." + ServerConfig.INSTANCE.projboost.getValue().name()));
 			if(sConfig.disableHandswap.getValue())
 				client.player.sendMessage(Text.translatable("message.ultracraft.disabled-handswap"));
-			if(!sConfig.slamStorage.getValue())
+			if(!hivelConfig.slamStorage.getValue())
 				client.player.sendMessage(Text.translatable("message.ultracraft.disabled-slamstorage"));
 			if(sConfig.effectivelyViolent.getValue())
 				client.player.sendMessage(Text.translatable("message.ultracraft.effectively-violent"));
@@ -431,7 +432,7 @@ public class UltracraftClient implements ClientModInitializer
 	
 	public static boolean isSlamStorageEnabled()
 	{
-		return ServerConfig.INSTANCE.slamStorage.getValue();
+		return HivelConfig.INSTANCE.slamStorage.getValue();
 	}
 	
 	public static boolean isViolentFeaturesEnabled(World world)
@@ -482,7 +483,7 @@ public class UltracraftClient implements ClientModInitializer
 			else
 				forcedHivel = Optional.empty();
 		}
-		if(id.equals(config.hivelSpeed.getId()))
+		if(id.equals(HivelConfig.INSTANCE.hivelSpeed.getId()))
 			((WingedPlayerEntity)MinecraftClient.getInstance().player).updateSpeedConfig();
 	}
 	
