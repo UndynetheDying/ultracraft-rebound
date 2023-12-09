@@ -50,6 +50,13 @@ public class KeybindRegistry
 			new KeyBinding("key.ultracraft.arm_cycle", InputUtil.Type.KEYSYM,
 					GLFW.GLFW_KEY_G, "category.ultracraft"));
 	
+	public static final KeyBinding DASH = KeyBindingHelper.registerKeyBinding(
+			new KeyBinding("key.ultracraft.dash", InputUtil.Type.KEYSYM,
+					GLFW.GLFW_KEY_LEFT_SHIFT, "category.ultracraft"));
+	public static final KeyBinding SLIDE = KeyBindingHelper.registerKeyBinding(
+			new KeyBinding("key.ultracraft.slide", InputUtil.Type.KEYSYM,
+					GLFW.GLFW_KEY_LEFT_CONTROL, "category.ultracraft"));
+	
 	static boolean hivelPressed = false, punchPressed = false, wingCustomizationPressed = false, weaponCyclePressed = false, armCyclePressed = false;
 	
 	public static void register()

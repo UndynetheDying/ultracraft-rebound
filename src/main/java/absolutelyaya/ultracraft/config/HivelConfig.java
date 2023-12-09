@@ -28,11 +28,11 @@ public class HivelConfig extends Config
 		entries.add(hivelFallDamage);
 		entries.add(hivelDrowning);
 		entries.add(slamStorage);
+		entries.add(iFrames);
 		entries.add(new Comment(" ## ############################# ##  #"));
 		entries.add(new Comment("         Advanced Config"));
 		entries.add(new Comment(" ## ############################# ##  #"));
-		entries.add(iFrames);
-		
+		//TODO
 		INSTANCE = this;
 	}
 	

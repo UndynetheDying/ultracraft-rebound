@@ -387,12 +387,11 @@ public class PacketRegistry
 				return;
 			Vec3d pos = new Vec3d(buf.readVector3f());
 			Vec3d vel = new Vec3d(buf.readVector3f());
-			boolean justJumped = buf.readBoolean();
 			server.execute(() -> {
 				ThrownCoinEntity coin = ThrownCoinEntity.spawn(player, player.getWorld());
 				coin.setPos(pos.x, pos.y, pos.z);
 				coin.setVelocity(player, player.getPitch(), player.getYaw(), 0.0F, 0.5f, 0f);
-				coin.addVelocity(vel.multiply(1f, justJumped ? 0.25f : 0.75f, 1f));
+				coin.addVelocity(vel.multiply(1f, 0.75f, 1f));
 				coin.addVelocity(0f, 0.3f, 0f);
 				coin.setPosition(coin.getPos().add(vel));
 				player.getWorld().spawnEntity(coin);
