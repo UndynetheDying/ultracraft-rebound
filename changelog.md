@@ -9,6 +9,8 @@
   - Work like redstone lamps with Numbers from 1-10
 - Malicious Face can now be summoned as a non-decaying corpse using `{decorative: 1b}`
 - Added Screenshake
+- Fixed Keybind conflicts making only one action mapped to that key execute
+  - Not even my fault, like I'm fixing an issue on Mojangs end here
 ## Settings & Gamerules
 - Removed almost all gamerules (only remaining is `ultra-startWithPiercer`)
 - Added Option to disable Screenshake

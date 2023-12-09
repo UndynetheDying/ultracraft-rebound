@@ -107,7 +107,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			airDrag = 0.91f, slamDamageMargin = 0.25f, strongSlamImpactVelocity = 1f, strongSlamImpactMargin = 3f, slamJumpVelocityMultiplier = 1.5f,
 			slamDiveVelocity = 1.5f, slamStoreJumpVelocityMultiplier = 4.5f, slamStoreDiveVelocity = 4f, slamTickVelocityBonus = 0.05f, slamSlideVelocity = 0.66f,
 			slamStoreSlideVelocity = 1f, skimUpwardsVelocityMultiplier = 0.75f, wallSlideVelocity = 0.2f, wallJumpHorizontalVelocity = 0.33f,
-			groundCheckDistance = 0.1f;
+			groundCheckDistance = 0.1f, dashGroundStopVelocityMultiplier = 0.05f;
 	TerminalBlockEntity focusedTerminal;
 	
 	public void initMovementConfig(HivelConfig config)
@@ -201,7 +201,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 				else if(slipAndSlide > dashSlipAndSlideThreshold)
 					setVelocity(dashDir.multiply(Math.min(slipAndSlide - dashSlipAndSlideReduction, dashSlipAndSlideThreshold)));
 				else
-					setVelocity(Vec3d.ZERO);
+					setVelocity(dashDir.multiply(dashGroundStopVelocityMultiplier));
 				ci.cancel();
 			}
 			
@@ -240,8 +240,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			lastOnGround = isOnGround();
 			wasDashing = dashing;
 			wasSliding = sliding;
-			if(isSneaking())
-				setSneaking(false);
 		}
 		else
 		{
@@ -413,6 +411,14 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		if(activeHand != null && getStackInHand(activeHand).getItem() instanceof AbstractWeaponItem)
 			return false;
 		return isUsingItem();
+	}
+	
+	@Inject(method = "isSneaking", at = @At("HEAD"), cancellable = true)
+	void onIsSneaking(CallbackInfoReturnable<Boolean> cir)
+	{
+		IWingDataComponent wings = UltraComponents.WING_DATA.get(this);
+		if(wings.isActive())
+			cir.setReturnValue(false);
 	}
 	
 	@Override

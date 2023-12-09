@@ -8,3 +8,4 @@ accessible class net/minecraft/client/render/BackgroundRenderer$StatusEffectFogM
 accessible class net/minecraft/client/render/BackgroundRenderer$FogData
 accessible field net/minecraft/entity/projectile/ProjectileEntity owner Lnet/minecraft/entity/Entity;
 accessible class net/minecraft/client/texture/ResourceTexture$TextureData
+accessible field net/minecraft/client/option/KeyBinding boundKey Lnet/minecraft/client/util/InputUtil$Key;

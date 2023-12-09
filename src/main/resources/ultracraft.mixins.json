@@ -24,6 +24,7 @@
     "client.ClientBossBarMixin",
     "client.ClientLivingEntityMixin",
     "client.ClientPlayerEntityMixin",
+    "client.KeybindMixin",
     "client.KeyboardInputMixin",
     "client.MinecraftClientMixin",
     "client.OtherClientPlayerMixin",
