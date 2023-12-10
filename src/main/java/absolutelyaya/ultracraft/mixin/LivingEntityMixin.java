@@ -7,6 +7,7 @@ import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
+import absolutelyaya.ultracraft.components.player.IHivelComponent;
 import absolutelyaya.ultracraft.config.HivelConfig;
 import absolutelyaya.ultracraft.config.RegenSetting;
 import absolutelyaya.ultracraft.config.ServerConfig;
@@ -205,7 +206,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 		if(isAffectedByMovementRules())
 		{
 			if(!getWorld().isClient)
-				cir.setReturnValue(cir.getReturnValue() + 0.1f * Math.max(HivelConfig.INSTANCE.hivelJumpBoost.getValue() + (isTouchingWater() ? 0.5f : 0f), 0));
+				cir.setReturnValue(cir.getReturnValue() + 0.1f * Math.max(HivelConfig.INSTANCE.jumpBoost.getValue() + (isTouchingWater() ? 0.5f : 0f), 0));
 		}
 	}
 	
@@ -223,11 +224,13 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	@Inject(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;shouldSwimInFluids()Z", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	void onTravel(Vec3d movementInput, CallbackInfo ci, double d, boolean bl, FluidState fluidState)
 	{
+		//custom water physics
 		if(!(this instanceof WingedPlayerEntity winged && UltraComponents.WING_DATA.get(winged).isActive()) || ((PlayerEntity)winged).getAbilities().flying)
 			return;
 		if(!isTouchingWater() || shouldSwimInFluids() || canWalkOnFluid(fluidState))
 			return;
-		float f = isSprinting() ? 0.9F : getBaseMovementSpeedMultiplier();
+		IHivelComponent hivel = UltraComponents.HIVEL.get(winged);
+		float f = hivel.isSliding() ? 0.9F : getBaseMovementSpeedMultiplier();
 		float g = 0.03f;
 		if(fluidState.isIn(FluidTags.WATER))
 		{
@@ -249,7 +252,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 		Vec3d vec3d = getVelocity();
 		if (horizontalCollision && isClimbing())
 			vec3d = new Vec3d(vec3d.x, 0.2, vec3d.z);
-		if(UltraComponents.WINGED_ENTITY.get(winged).shouldIgnoreSlowdown())
+		if(hivel.shouldIgnoreSlowdown())
 			f = 0.9f;
 		setVelocity(vec3d.multiply(f, 1f, f));
 		setVelocity(fluidMovement(d, getVelocity().y <= 0f, getVelocity()));
@@ -259,12 +262,12 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	}
 	
 	@ModifyConstant(method = "travel", constant = @Constant(floatValue = 0.91f))
-	float modifyDrag(float val)
+	float modifySlowdown(float val)
 	{
 		if(!(this instanceof WingedPlayerEntity winged && UltraComponents.WING_DATA.get(winged).isActive()) ||
-				   ((PlayerEntity)winged).getAbilities().flying || !UltraComponents.WINGED_ENTITY.get(winged).shouldIgnoreSlowdown())
+				   ((PlayerEntity)winged).getAbilities().flying || !UltraComponents.HIVEL.get(winged).shouldIgnoreSlowdown())
 			return val;
-		return 0.925f;
+		return HivelConfig.INSTANCE.drag.getValue();
 	}
 	
 	@ModifyVariable(method = "travel", ordinal = 0, at = @At("STORE"))
@@ -272,7 +275,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	{
 		if(!(isAffectedByMovementRules()) || (((Object)this instanceof PlayerEntity player) && player.getAbilities().flying) || touchingWater)
 			return value;
-		float val = (getWorld().isClient ? getGravityModifier() : HivelConfig.INSTANCE.hivelGravity.getValue());
+		float val = (getWorld().isClient ? getGravityModifier() : HivelConfig.INSTANCE.gravity.getValue());
 		return Math.max(value - (value * (1f - val)), 0.01f);
 	}
 	
@@ -281,7 +284,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	{
 		if(!(this instanceof WingedPlayerEntity winged && UltraComponents.WING_DATA.get(winged).isActive()))
 			return value;
-		return value + ((HivelConfig.INSTANCE.hivelJumpBoost.getValue() + 1) * HivelConfig.INSTANCE.hivelGravity.getValue());
+		return value + ((HivelConfig.INSTANCE.jumpBoost.getValue() + 1) * HivelConfig.INSTANCE.gravity.getValue());
 	}
 	
 	@ModifyVariable(method = "computeFallDamage", ordinal = 1, at = @At("LOAD"), argsOnly = true)
@@ -295,7 +298,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	@Inject(method = "computeFallDamage", at = @At("RETURN"), cancellable = true)
 	private void onComputeFallDamage(float fallDistance, float damageMultiplier, CallbackInfoReturnable<Integer> cir)
 	{
-		if(!(this instanceof WingedPlayerEntity winged && UltraComponents.WING_DATA.get(winged).isActive()) && isSprinting())
+		if(!(this instanceof WingedPlayerEntity winged && UltraComponents.HIVEL.get(winged).isSliding()))
 			cir.setReturnValue(0);
 	}
 	
@@ -320,7 +323,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	@Inject(method = "canWalkOnFluid", at = @At("HEAD"), cancellable = true)
 	void onCanWalkOnFluid(FluidState state, CallbackInfoReturnable<Boolean> cir)
 	{
-		if(this instanceof WingedPlayerEntity winged && UltraComponents.WING_DATA.get(winged).isActive() && isSprinting())
+		if(this instanceof WingedPlayerEntity winged && UltraComponents.HIVEL.get(winged).isSliding())
 			cir.setReturnValue(true);
 	}
 	
@@ -462,7 +465,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 					DamageSources.KNUCKLE_BLAST, player), 1f, 0.75f, 6, false);
 		else
 		{
-			if((UltraComponents.WING_DATA.get(player).isActive() && player.isSprinting()))
+			if((UltraComponents.HIVEL.get(player).isSliding()))
 				PlayerAnimator.playAnimation(player, player.getMainArm().equals(Arm.LEFT) ? PlayerAnimator.SLIDE_KNUCKLE_BLAST_FLIPPED : PlayerAnimator.SLIDE_KNUCKLE_BLAST,
 						0, false, false);
 			else

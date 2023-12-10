@@ -15,45 +15,9 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	
 	byte getWingState();
 	
-	void onDash();
-	
-	void cancelDash();
-	
-	void onDashJump();
-	
-	boolean isDashing();
-	
-	boolean wasDashing();
-	
-	boolean wasDashing(int i);
-	
-	int getDashingTicks();
-	
-	float getStamina();
-	
-	boolean consumeStamina();
-	
-	void replenishStamina(int i);
-	
-	void setSlamming(boolean b);
-	
-	boolean isSlamming();
-	
-	boolean shouldIgnoreSlowdown();
-	
-	void setIgnoreSlowdown(boolean b);
-	
-	void setSlideDir(Vec3d dir);
-	
-	Vec3d getSlideDir();
-	
 	void bloodHeal(float val);
 	
 	void setBloodHealCooldown(int ticks);
-	
-	void setAirControlIncreased(boolean b);
-	
-	boolean isAirControlIncreased();
 	
 	void setSharpshooterCooldown(int val);
 	
@@ -63,14 +27,8 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	
 	boolean isPrimaryFiring();
 	
-	AbstractWeaponItem getLastPrimaryWeapon();
-	
 	@NotNull
 	GunCooldownManager getGunCooldownManager();
-	
-	float getSlamDamageCooldown();
-	
-	void setSlamDamageCooldown(int i);
 	
 	int getMagnets();
 	

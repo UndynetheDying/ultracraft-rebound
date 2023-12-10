@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.mixin.client;
 
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
+import absolutelyaya.ultracraft.components.player.IHivelComponent;
 import absolutelyaya.ultracraft.registry.ParticleRegistry;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.MinecraftClient;
@@ -18,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(OtherClientPlayerEntity.class)
 public abstract class OtherClientPlayerMixin extends PlayerEntity implements WingedPlayerEntity
 {
-	boolean wasSprinting = false, wasDashing = false;
+	boolean wasSliding = false, wasDashing = false;
 	Vec3d lastSlidePos = new Vec3d(0f, 0f, 0f), lastDashPos = new Vec3d(0, 0, 0);
 	
 	public OtherClientPlayerMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile)
@@ -31,7 +32,8 @@ public abstract class OtherClientPlayerMixin extends PlayerEntity implements Win
 	{
 		World world = MinecraftClient.getInstance().world;
 		MinecraftClient.getInstance().execute(() -> {
-			if(UltraComponents.WINGED_ENTITY.get(this).getDashingTicks() >= -1)
+			IHivelComponent hivel = UltraComponents.HIVEL.get(this);
+			if(hivel.getDashingTicks() >= -1)
 			{
 				if(!wasDashing)
 				{
@@ -46,12 +48,12 @@ public abstract class OtherClientPlayerMixin extends PlayerEntity implements Win
 				world.addParticle(ParticleRegistry.DASH, true, pos.x, pos.y, pos.z, particleVel.x, particleVel.y, particleVel.z);
 				lastDashPos = getPos();
 			}
-			if(isSprinting() && UltraComponents.WING_DATA.get(this).isActive())
+			if(hivel.isSliding())
 			{
-				if(!wasSprinting)
+				if(!wasSliding)
 				{
 					lastSlidePos = getPos();
-					wasSprinting = true;
+					wasSliding = true;
 					return;
 				}
 				Vec3d slideDir = getPos().subtract(lastSlidePos);
@@ -61,8 +63,8 @@ public abstract class OtherClientPlayerMixin extends PlayerEntity implements Win
 				world.addParticle(ParticleRegistry.SLIDE, true, pos.x, pos.y + 0.1, pos.z, particleVel.x, particleVel.y, particleVel.z);
 				lastSlidePos = getPos();
 			}
-			wasSprinting = isSprinting();
-			wasDashing = UltraComponents.WINGED_ENTITY.get(this).getDashingTicks() >= -1;
+			wasSliding = hivel.isSliding();
+			wasDashing = hivel.getDashingTicks() >= -1;
 		});
 	}
 }

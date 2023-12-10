@@ -1,27 +1,21 @@
 package absolutelyaya.ultracraft.components.player;
 
+import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
-import absolutelyaya.ultracraft.registry.SoundRegistry;
-import absolutelyaya.ultracraft.registry.StatusEffectRegistry;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
-import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 
 public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSyncedComponent
 {
 	PlayerEntity provider;
 	GunCooldownManager gunCDM;
-	boolean slamming, ignoreSlowdown, primaryFiring, airControlIncreased;
+	boolean primaryFiring;
 	byte wingState, lastState;
-	int dashingTicks = -2, slamDamageCooldown, bloodHealCooldown, sharpshooterCooldown, magnets;
-	float stamina, lastStamina;
+	int bloodHealCooldown, sharpshooterCooldown, magnets;
 	AbstractWeaponItem lastPrimaryWeapon;
 	
 	public WingedPlayerComponent(PlayerEntity provider)
@@ -43,11 +37,12 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	@Override
 	public void updateWingState()
 	{
-		if(isDashing())
+		IHivelComponent hivel = UltraComponents.HIVEL.get(provider);
+		if(hivel.isDashing())
 			setWingState((byte)0);
-		else if (provider.isSprinting())
+		else if (hivel.isSliding())
 			setWingState((byte)2);
-		else if ((wingState == 0 && provider.isOnGround()) || (wingState == 2 && !provider.isSprinting()))
+		else if ((wingState == 0 && provider.isOnGround()) || (wingState == 2 && !hivel.isSliding()))
 			setWingState((byte)1);
 	}
 	
@@ -55,113 +50,6 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	public byte getWingState()
 	{
 		return wingState;
-	}
-	
-	@Override
-	public void onDash()
-	{
-		dashingTicks = 3;
-		provider.getWorld().playSound(null, provider.getBlockPos(), SoundRegistry.DASH, SoundCategory.PLAYERS, 0.75f, 1.6f);
-	}
-	
-	@Override
-	public void cancelDash()
-	{
-		dashingTicks = -2;
-	}
-	
-	@Override
-	public void onDashJump()
-	{
-		dashingTicks = -2;
-		provider.getWorld().playSound(null, provider.getBlockPos(), SoundRegistry.DASH_JUMP, SoundCategory.PLAYERS, 0.75f, 1.6f);
-	}
-	
-	@Override
-	public boolean isDashing()
-	{
-		return dashingTicks > 0;
-	}
-	
-	@Override
-	public boolean wasDashing()
-	{
-		return dashingTicks + 1 >= 0;
-	}
-	
-	@Override
-	public boolean wasDashing(int i)
-	{
-		return dashingTicks + i >= 0;
-	}
-	
-	@Override
-	public int getDashingTicks()
-	{
-		return dashingTicks;
-	}
-	
-	@Override
-	public float getStamina()
-	{
-		return stamina;
-	}
-	
-	@Override
-	public boolean consumeStamina()
-	{
-		if(provider.isCreative())
-			return true;
-		if(stamina >= 30)
-		{
-			stamina = Math.max(stamina - 30, 0);
-			return true;
-		}
-		else
-			provider.playSound(SoundRegistry.NO_STAMINA, 0.5f, 1.8f);
-		return false;
-	}
-	
-	@Override
-	public void replenishStamina(int i)
-	{
-		stamina = Math.min(stamina + 30 * i, 90);
-	}
-	
-	@Override
-	public void setSlamming(boolean b)
-	{
-		slamming = b;
-	}
-	
-	@Override
-	public boolean isSlamming()
-	{
-		return slamming;
-	}
-	
-	@Override
-	public boolean shouldIgnoreSlowdown()
-	{
-		return ignoreSlowdown;
-	}
-	
-	@Override
-	public void setIgnoreSlowdown(boolean b)
-	{
-		ignoreSlowdown = b;
-	}
-	
-	@Override
-	public void setSlideDir(Vec3d dir)
-	{
-	
-	}
-	
-	@Override
-	public Vec3d getSlideDir()
-	{
-		return null;
 	}
 	
 	@Override
@@ -175,18 +63,6 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	public void setBloodHealCooldown(int ticks)
 	{
 		bloodHealCooldown = ticks;
-	}
-	
-	@Override
-	public void setAirControlIncreased(boolean b)
-	{
-		airControlIncreased = b;
-	}
-	
-	@Override
-	public boolean isAirControlIncreased()
-	{
-		return airControlIncreased;
 	}
 	
 	@Override
@@ -230,27 +106,9 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	}
 	
 	@Override
-	public AbstractWeaponItem getLastPrimaryWeapon()
-	{
-		return lastPrimaryWeapon;
-	}
-	
-	@Override
 	public @NotNull GunCooldownManager getGunCooldownManager()
 	{
 		return gunCDM;
-	}
-	
-	@Override
-	public float getSlamDamageCooldown()
-	{
-		return slamDamageCooldown;
-	}
-	
-	@Override
-	public void setSlamDamageCooldown(int i)
-	{
-		slamDamageCooldown = i;
 	}
 	
 	public void setMagnets(int i)
@@ -280,22 +138,10 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	{
 		if(!Ultracraft.isTimeFrozen())
 			gunCDM.tickCooldowns();
-		if(dashingTicks > -60)
-			dashingTicks--;
-		if(slamDamageCooldown > 0)
-			slamDamageCooldown--;
 		if(bloodHealCooldown > 0)
 			bloodHealCooldown--;
 		if(sharpshooterCooldown > 0)
 			sharpshooterCooldown--;
 		updateWingState();
-		StatusEffectInstance chilled = provider.getStatusEffect(StatusEffectRegistry.CHILLED);
-		if(stamina < 90 && !provider.isSprinting() && !(chilled != null && provider.age % (chilled.getAmplifier() + 1) != 0))
-		{
-			lastStamina = stamina;
-			stamina += 1.5f; // TODO: make this configurable
-			if(lastStamina % 30f > stamina % 30f)
-				provider.playSound(SoundRegistry.STAMINA_REGEN, 0.2f, 1f + stamina / 30f * 0.1f);
-		}
 	}
 }

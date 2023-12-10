@@ -22,7 +22,7 @@ public class MovingSlideSoundInstance extends MovingPlayerSoundInstance
 		x = owner.getX();
 		y = owner.getY();
 		z = owner.getZ();
-		if(UltraComponents.WING_DATA.get(owner).isActive() && owner.isSprinting() && owner.isOnGround())
+		if(UltraComponents.WING_DATA.get(owner).isActive() && UltraComponents.HIVEL.get(owner).isSliding() && owner.isOnGround())
 		{
 			float speed = (float)owner.getVelocity().length();
 			pitch = speed * 4f;

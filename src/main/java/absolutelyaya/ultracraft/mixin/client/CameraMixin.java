@@ -7,7 +7,6 @@ import absolutelyaya.ultracraft.block.TerminalBlockEntity;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.screen.HellObserverScreen;
 import absolutelyaya.ultracraft.client.gui.screen.WingCustomizationScreen;
-import absolutelyaya.ultracraft.components.player.IWingDataComponent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.entity.Entity;
@@ -54,8 +53,6 @@ public abstract class CameraMixin
 	@Shadow private Entity focusedEntity;
 	@Shadow private boolean thirdPerson;
 	@Shadow private float pitch;
-	
-	@Shadow protected abstract void setPos(double x, double y, double z);
 	
 	Vec3d curOffset;
 	float curYaw, baseYaw, curPitch, shakeTime;
@@ -123,8 +120,7 @@ public abstract class CameraMixin
 		if(thirdPerson && f > 0f)
 		{
 			boolean flip = player.getMainArm().equals(Arm.LEFT);
-			IWingDataComponent winged = UltraComponents.WING_DATA.get(player);
-			if(winged.isActive() && player.isSprinting())
+			if(UltraComponents.HIVEL.get(player).isSliding())
 			{
 				Vec3d offset = rotationize(new Vec3d(1.5f * f, f, -1.5f * f * (flip ? -1 : 1)));
 				HitResult hitResult = area.raycast(new RaycastContext(getPos(), getPos().add(offset), RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, focusedEntity));

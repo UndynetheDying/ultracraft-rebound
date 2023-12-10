@@ -4,10 +4,10 @@ import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.EntityAccessor;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
+import absolutelyaya.ultracraft.components.player.IHivelComponent;
 import absolutelyaya.ultracraft.registry.ParticleRegistry;
 import absolutelyaya.ultracraft.registry.TagRegistry;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
@@ -43,6 +43,10 @@ public abstract class EntityMixin implements EntityAccessor
 	
 	@Shadow public abstract boolean isAlive();
 	
+	@Shadow public abstract void setVelocity(Vec3d velocity);
+	
+	@Shadow public abstract Vec3d getVelocity();
+	
 	Supplier<Boolean> isTargettableSupplier = this::isAlive;
 	Supplier<Vec3d> relativeTargetPointSupplier = () -> getBoundingBox().getCenter();
 	Function<Entity, Integer> targetPriorityFunction = entity -> 0;
@@ -64,8 +68,7 @@ public abstract class EntityMixin implements EntityAccessor
 	@ModifyArgs(method = "updateVelocity", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;movementInputToVelocity(Lnet/minecraft/util/math/Vec3d;FF)Lnet/minecraft/util/math/Vec3d;"))
 	public void onConvertMovementInputToVel(Args args)
 	{
-		if(getWorld().isClient() && this instanceof WingedPlayerEntity winged && UltraComponents.WING_DATA.get(winged).isActive() &&
-				   winged instanceof PlayerEntity p && p.isSprinting())
+		if(getWorld().isClient() && this instanceof WingedPlayerEntity winged && UltraComponents.HIVEL.get(winged).isSliding())
 		{
 			float slideDirRot = (float)Math.toDegrees(Math.atan2(winged.getSlideDir().z, winged.getSlideDir().x));
 			float cappedYaw = ((float)args.get(2) + 90f) % 360f;
@@ -76,6 +79,19 @@ public abstract class EntityMixin implements EntityAccessor
 			args.set(2, slideDirRot - 90f);
 		}
 	}
+	
+	//@Inject(method = "updateVelocity", at = @At("TAIL"))
+	//void onAfterUpdateVelocity(float speed, Vec3d movementInput, CallbackInfo ci)
+	//{
+	//	if(!(this instanceof WingedPlayerEntity))
+	//		return;
+	//	IHivelComponent hivel = UltraComponents.HIVEL.get(this);
+	//	if(hivel.shouldIgnoreSlowdown())
+	//	{
+	//		float y = (float)getVelocity().y;
+	//		setVelocity(getVelocity().multiply(1f, 0f, 1f).normalize().multiply(hivel.getMaxNoSlowdownVelocity()).add(0f, y, 0f));
+	//	}
+	//}
 	
 	@ModifyArg(method = "onSwimmingStart", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;addParticle(Lnet/minecraft/particle/ParticleEffect;DDDDDD)V"))
 	ParticleEffect onSwimmingStart(ParticleEffect effect)

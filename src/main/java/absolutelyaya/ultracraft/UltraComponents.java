@@ -26,6 +26,8 @@ public final class UltraComponents implements EntityComponentInitializer, LevelC
 			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "arms"), IArmComponent.class);
 	public static final ComponentKey<IStyleComponent> STYLE =
 			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "style"), IStyleComponent.class);
+	public static final ComponentKey<IHivelComponent> HIVEL =
+			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "hivel"), IHivelComponent.class);
 	public static final ComponentKey<IUltraLevelComponent> GLOBAL =
 			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "global_data"), IUltraLevelComponent.class);
 	
@@ -38,6 +40,7 @@ public final class UltraComponents implements EntityComponentInitializer, LevelC
 		registry.registerForPlayers(EASTER, EasterComponent::new, RespawnCopyStrategy.ALWAYS_COPY);
 		registry.registerForPlayers(ARMS, ArmComponent::new, RespawnCopyStrategy.ALWAYS_COPY);
 		registry.registerForPlayers(STYLE, StyleComponent::new, RespawnCopyStrategy.NEVER_COPY);
+		registry.registerForPlayers(HIVEL, HivelComponent::new, RespawnCopyStrategy.NEVER_COPY);
 	}
 	
 	@Override

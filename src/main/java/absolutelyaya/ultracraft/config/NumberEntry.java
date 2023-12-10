@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.config;
 
-public abstract class NumberEntry <T extends Number> extends ConfigEntry<T>
+public abstract class NumberEntry <T extends Number & Comparable<T>> extends ConfigEntry<T>
 {
 	protected T min, max;
 	
@@ -33,5 +33,17 @@ public abstract class NumberEntry <T extends Number> extends ConfigEntry<T>
 	public T getMax()
 	{
 		return max;
+	}
+	
+	@Override
+	public T getValue()
+	{
+		T v = super.getValue();
+		if(getMax() != null && v.compareTo(getMax()) > 0)
+			return getMax();
+		else if(getMin() != null && v.compareTo(getMin()) < 0)
+			return getMin();
+		else
+			return v;
 	}
 }

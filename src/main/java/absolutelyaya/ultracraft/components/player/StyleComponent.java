@@ -261,7 +261,7 @@ public class StyleComponent implements IStyleComponent
 			UltraComponents.STYLE.sync(provider);
 			dirty = false;
 		}
-		if(UltraComponents.WING_DATA.get(provider).isActive() && (!provider.isOnGround()||provider.isSprinting()))
+		if(UltraComponents.WING_DATA.get(provider).isActive() && (!provider.isOnGround() || UltraComponents.HIVEL.get(provider).isSliding()))
 			movementMultiplier = MathHelper.clamp(movementMultiplier + 0.126f, 1f, 3f);
 		else if(movementMultiplier > 0)
 			movementMultiplier = MathHelper.clamp(movementMultiplier - 0.126f, 1f, 3f);

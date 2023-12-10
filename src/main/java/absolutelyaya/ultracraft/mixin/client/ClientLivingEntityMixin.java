@@ -4,7 +4,6 @@ import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.config.HivelConfig;
-import absolutelyaya.ultracraft.config.ServerConfig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -30,7 +29,7 @@ public abstract class ClientLivingEntityMixin implements LivingEntityAccessor
 	float modifySlowdown(float constant)
 	{
 		if(this instanceof WingedPlayerEntity winged && winged instanceof ClientPlayerEntity)
-			return UltraComponents.WINGED_ENTITY.get(winged).shouldIgnoreSlowdown() ? 1f : constant;
+			return UltraComponents.HIVEL.get(winged).shouldIgnoreSlowdown() ? 1f : constant;
 		else
 			return constant;
 	}
@@ -39,7 +38,7 @@ public abstract class ClientLivingEntityMixin implements LivingEntityAccessor
 	void onGetJumpVelocity(CallbackInfoReturnable<Float> cir)
 	{
 		if(this instanceof WingedPlayerEntity winged && UltraComponents.WING_DATA.get(winged).isActive())
-			cir.setReturnValue(cir.getReturnValue() + 0.1f * Math.max(HivelConfig.INSTANCE.hivelJumpBoost.getValue(), 0));
+			cir.setReturnValue(cir.getReturnValue() + 0.1f * Math.max(HivelConfig.INSTANCE.jumpBoost.getValue(), 0));
 	}
 	
 	@Override
@@ -53,6 +52,6 @@ public abstract class ClientLivingEntityMixin implements LivingEntityAccessor
 	@Override
 	public float getGravityModifier()
 	{
-		return HivelConfig.INSTANCE.hivelGravity.getValue();
+		return HivelConfig.INSTANCE.gravity.getValue();
 	}
 }

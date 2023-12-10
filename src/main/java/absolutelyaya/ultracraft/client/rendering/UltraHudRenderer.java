@@ -81,7 +81,7 @@ public class UltraHudRenderer
 		RenderSystem.enableBlend();
 		
 		healthPercent = MathHelper.lerp(delta, healthPercent, player.getHealth() / player.getMaxHealth());
-		staminaPercent = MathHelper.lerp(delta, staminaPercent, UltraComponents.WINGED_ENTITY.get(player).getStamina() / 90f);
+		staminaPercent = MathHelper.lerp(delta, staminaPercent, UltraComponents.HIVEL.get(player).getStamina() / 90f);
 		absorptionPercent = MathHelper.lerp(delta, absorptionPercent, Math.min(player.getAbsorptionAmount() / 20f, 1f));
 		//Crosshair
 		if(config.ultraHudCrosshair)

@@ -6,8 +6,8 @@ import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
+import absolutelyaya.ultracraft.components.player.IHivelComponent;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
-import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.config.HivelConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.DamageTypeTags;
@@ -31,9 +31,10 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.*;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -91,9 +92,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 		boolean hiVelMode = UltraComponents.WING_DATA.get(winged).isActive();
 		if(hiVelMode)
 		{
-			if(UltraComponents.WINGED_ENTITY.get(winged).isDashing())
+			IHivelComponent hivel = UltraComponents.HIVEL.get(winged);
+			if(hivel.isDashing())
 				setPose(ClassTinkerers.getEnum(EntityPose.class, "DASH"));
-			else if(isSprinting())
+			else if(hivel.isSliding())
 				setPose(ClassTinkerers.getEnum(EntityPose.class, "SLIDE"));
 			else
 				setPose(entityPose);
@@ -114,9 +116,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	@Inject(method = "damage", at = @At("HEAD"), cancellable = true)
 	void onDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir)
 	{
-		if(UltraComponents.WINGED_ENTITY.get(this).isDashing() && !source.isIn(DamageTypeTags.UNDODGEABLE))
+		if(UltraComponents.HIVEL.get(this).isDashing() && !source.isIn(DamageTypeTags.UNDODGEABLE))
 			cir.setReturnValue(false);
-		if(isWingsActive() && source.isOf(DamageTypes.FALL) && (!HivelConfig.INSTANCE.hivelFallDamage.getValue() ||
+		if(isWingsActive() && source.isOf(DamageTypes.FALL) && (!HivelConfig.INSTANCE.fallDamage.getValue() ||
 				   getSteppingBlockState().getBlock() instanceof FluidBlock))
 			cir.setReturnValue(false);
 		if((cir.getReturnValue() == null || cir.getReturnValue()) && amount > 0)
@@ -173,7 +175,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	{
 		Multimap<EntityAttribute, EntityAttributeModifier> speedMod = HashMultimap.create();
 		speedMod.put(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier(UUID.fromString("9c92fac8-0018-11ee-be56-0242ac120002"), "spd_up",
-				HivelConfig.INSTANCE.hivelSpeed.getValue() - 1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+				HivelConfig.INSTANCE.speed.getValue() - 1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
 		return speedMod;
 	}
 	
@@ -203,26 +205,29 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	@Override
 	public void startSlam()
 	{
-		UltraComponents.WINGED_ENTITY.get(this).setSlamming(true);
+		UltraComponents.HIVEL.get(this).setSlamming(true);
 	}
 	
 	@Override
 	public void endSlam(boolean strong)
 	{
-		IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(this);
-		winged.setSlamming(false);
+		IHivelComponent hivel = UltraComponents.HIVEL.get(this);
+		hivel.setSlamming(false);
 		if(!isOnGround())
 			return;
 		getWorld().playSound(null, getBlockPos(), SoundRegistry.SLAM, SoundCategory.PLAYERS,
 				strong ? 1f : 0.75f, strong ? 0.75f : 1.25f);
-		getWorld().getOtherEntities(this, getBoundingBox().expand(0f, 1f, 0f).offset(0f, -0.5f, 0f)).forEach(e ->
-				e.damage(DamageSources.get(getWorld(), DamageSources.POUND, this), winged.getSlamDamageCooldown() > 0 ? 1 : 6));
-		winged.setSlamDamageCooldown(30);
+		HivelConfig config = HivelConfig.INSTANCE;
+		float f = config.slamDamageMargin.getValue();
+		getWorld().getOtherEntities(this, getBoundingBox().expand(f, 1f, f).offset(0f, -0.5f, 0f)).forEach(e ->
+				e.damage(DamageSources.get(getWorld(), DamageSources.POUND, this), hivel.getSlamDamageCooldown() > 0 ? 1 : 6));
+		hivel.setSlamDamageCooldown(30);
 		if(!strong)
 			return;
-		getWorld().getOtherEntities(this, getBoundingBox().expand(3f, 0.5f, 3f)).forEach(e -> {
+		f = config.strongSlamImpactMargin.getValue();
+		getWorld().getOtherEntities(this, getBoundingBox().expand(f, 0.5f, f)).forEach(e -> {
 			if((e instanceof LivingEntityAccessor l) && l.takePunchKnockback())
-				e.addVelocity(0f, 1f, 0f);
+				e.addVelocity(0f, config.strongSlamImpactVelocity.getValue(), 0f);
 		});
 		World world = getWorld();
 		if(!world.isClient)
@@ -241,6 +246,32 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 		}
 	}
 	
+	public boolean isGrounded(float distance)
+	{
+		if(isBlockHit(groundCheck(getPos(), distance)))
+			return true;
+		Box box = getBoundingBox();
+		float y = (float)box.getMin(Direction.Axis.Y);
+		if(isBlockHit(groundCheck(new Vec3d(box.getMin(Direction.Axis.X), y, box.getMin(Direction.Axis.Z)), distance)))
+			return true;
+		if(isBlockHit(groundCheck(new Vec3d(box.getMax(Direction.Axis.X) - 0.05, y, box.getMin(Direction.Axis.Z)), distance)))
+			return true;
+		if(isBlockHit(groundCheck(new Vec3d(box.getMin(Direction.Axis.X), y, box.getMax(Direction.Axis.Z) - 0.05), distance)))
+			return true;
+		return isBlockHit(groundCheck(new Vec3d(box.getMax(Direction.Axis.X) - 0.05, y, box.getMax(Direction.Axis.Z) - 0.05), distance));
+	}
+	
+	BlockHitResult groundCheck(Vec3d start, float distance)
+	{
+		return getWorld().raycast(new RaycastContext(start, start.subtract(0, distance, 0),
+				RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, this));
+	}
+	
+	boolean isBlockHit(BlockHitResult hit)
+	{
+		return hit != null && hit.getType().equals(HitResult.Type.BLOCK);
+	}
+	
 	@Inject(method = "tick", at = @At("TAIL"))
 	void onTick(CallbackInfo ci)
 	{
@@ -251,7 +282,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	@Inject(method = "tickMovement", at = @At("TAIL"))
 	void onTickMovement(CallbackInfo ci)
 	{
-		if(UltraComponents.WINGED_ENTITY.get(this).getDashingTicks() >= -1)
+		IHivelComponent hivel = UltraComponents.HIVEL.get(this);
+		if(hivel.getDashingTicks() >= -1)
 		{
 			Vec3d dir = getVelocity();
 			Vec3d particleVel = new Vec3d(-dir.x, 0, -dir.z).multiply(random.nextDouble() * 0.33 + 0.1);
@@ -259,7 +291,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 					random.nextDouble() * getHeight(), (random.nextDouble() - 0.5) * getWidth()).add(dir.multiply(0.25));
 			getWorld().addParticle(ParticleRegistry.DASH, true, pos.x, pos.y, pos.z, particleVel.x, particleVel.y, particleVel.z);
 		}
-		if(isSprinting() && isWingsActive())
+		if(hivel.isSliding())
 		{
 			Vec3d dir = getVelocity().multiply(1.0, 0.0, 1.0).normalize();
 			Vec3d particleVel = new Vec3d(-dir.x, -dir.y, -dir.z).multiply(random.nextDouble() * 0.1 + 0.025);
@@ -267,7 +299,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 			getWorld().addParticle(ParticleRegistry.SLIDE, true, pos.x, pos.y + 0.1, pos.z, particleVel.x, particleVel.y, particleVel.z);
 			incrementStat(StatisticRegistry.SLIDE);
 		}
-		if(UltraComponents.WINGED_ENTITY.get(this).isSlamming())
+		if(hivel.isSlamming())
 		{
 			Vec3d particleVel = new Vec3d(0, 1, 0);
 			for (int i = 0; i < random.nextInt(4) + 8; i++)
@@ -303,8 +335,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	@ModifyConstant(method = "getOffGroundSpeed", constant = @Constant(floatValue = 0.02f))
 	float modifyAirControl(float val)
 	{
-		if(isWingsActive() && UltraComponents.WINGED_ENTITY.get(this).isAirControlIncreased())
-			return 0.05f;
+		if(isWingsActive() && UltraComponents.HIVEL.get(this).isAirControlIncreased())
+			return 0.05f; //TODO: get from hivel config
 		else
 			return val;
 	}
@@ -357,7 +389,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	@Override
 	public boolean canBreatheInWater()
 	{
-		return isWingsActive() && !HivelConfig.INSTANCE.hivelDrowning.getValue();
+		return isWingsActive() && !HivelConfig.INSTANCE.drowning.getValue();
 	}
 	
 	@Override

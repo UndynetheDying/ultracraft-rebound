@@ -78,7 +78,7 @@ public class ClientPacketRegistry
 			Vec3d dir = new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
 			client.execute(() -> {
 				Random rand = client.player.getRandom();
-				UltraComponents.WINGED_ENTITY.get(player).onDash();
+				UltraComponents.HIVEL.get(player).onDash();
 				Vec3d pos;
 				for (int i = 0; i < 5; i++)
 				{
@@ -159,7 +159,7 @@ public class ClientPacketRegistry
 			else
 				Ultracraft.LOGGER.warn("Received invalid Packet data: [entity_trail] -> Target entity isn't a TrailEnjoyer!" );
 		}));
-		ClientPlayNetworking.registerGlobalReceiver(PacketRegistry.GROUND_POUND_S2C_PACKET_ID, ((client, handler, buf, sender) -> {
+		ClientPlayNetworking.registerGlobalReceiver(PacketRegistry.SLAM_S2C_PACKET_ID, ((client, handler, buf, sender) -> {
 			if(client.player == null)
 				return;
 			PlayerEntity player = client.world.getPlayerByUuid(buf.readUuid());
@@ -277,7 +277,7 @@ public class ClientPacketRegistry
 		ClientPlayNetworking.registerGlobalReceiver(REPLENISH_STAMINA_PACKET_ID, (client, handler, buf, sender) -> {
 			int i = buf.readInt();
 			client.execute(() -> {
-				UltraComponents.WINGED_ENTITY.get(client.player).replenishStamina(i);
+				UltraComponents.HIVEL.get(client.player).replenishStamina(i);
 			});
 		});
 		ClientPlayNetworking.registerGlobalReceiver(ANIMATION_S2C_PACKET_ID, (client, handler, buf, sender) -> {

@@ -11,6 +11,8 @@
 - Added Screenshake
 - Fixed Keybind conflicts making only one action mapped to that key execute
   - Not even my fault, like I'm fixing an issue on Mojangs end here
+- Rewrote Hivel Movement
+  - no more hard coded values; you can customize everything in detail using a config file.
 ## Settings & Gamerules
 - Removed almost all gamerules (only remaining is `ultra-startWithPiercer`)
 - Added Option to disable Screenshake

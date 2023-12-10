@@ -29,7 +29,7 @@ public class MovingWindSoundInstance extends MovingPlayerSoundInstance
 		y = owner.getY();
 		z = owner.getZ();
 		float speed = (float)owner.getVelocity().length();
-		if(UltraComponents.WINGED_ENTITY.get(owner).isSlamming())
+		if(UltraComponents.HIVEL.get(owner).isSlamming())
 		{
 			pitch = 1f;
 			desiredVolume = 0.75f;

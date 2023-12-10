@@ -59,7 +59,7 @@ public class PacketRegistry
 	public static final Identifier SEND_WING_STATE_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "set_winged_state_c2s");
 	public static final Identifier SEND_WING_DATA_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "set_winged_data_c2s");
 	public static final Identifier DASH_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "dash_c2s");
-	public static final Identifier GROUND_POUND_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "ground_pound_c2s");
+	public static final Identifier SLAM_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "slam_c2s");
 	public static final Identifier REQUEST_WINGED_DATA_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "request_wing_data");
 	public static final Identifier SKIM_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "skim_c2s");
 	public static final Identifier THROW_COIN_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "throw_coin");
@@ -87,7 +87,7 @@ public class PacketRegistry
 	public static final Identifier CATCH_FISH_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "fish");
 	public static final Identifier SYNC_CONFIG_S2C_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "sync_config_s2c");
 	public static final Identifier ENTITY_TRAIL_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "entity_trail");
-	public static final Identifier GROUND_POUND_S2C_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "ground_pound_s2c");
+	public static final Identifier SLAM_S2C_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "slam_s2c");
 	public static final Identifier EXPLOSION_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "explosion");
 	public static final Identifier PRIMARY_SHOT_S2C_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "primary_shot_s2c");
 	public static final Identifier DEBUG_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "debug");
@@ -327,11 +327,11 @@ public class PacketRegistry
 			for (ServerPlayerEntity p : ((ServerWorld)player.getWorld()).getPlayers())
 				ServerPlayNetworking.send(p, DASH_S2C_PACKET_ID, buf);
 			server.execute(() -> {
-				UltraComponents.WINGED_ENTITY.get(player).onDash();
+				UltraComponents.HIVEL.get(player).onDash();
 				player.incrementStat(StatisticRegistry.DASH);
 			});
 		});
-		ServerPlayNetworking.registerGlobalReceiver(GROUND_POUND_C2S_PACKET_ID, (server, player, handler, buf, sender) -> {
+		ServerPlayNetworking.registerGlobalReceiver(SLAM_C2S_PACKET_ID, (server, player, handler, buf, sender) -> {
 			boolean start = buf.readBoolean();
 			boolean strong = buf.readBoolean();
 			server.execute(() -> {
@@ -350,7 +350,7 @@ public class PacketRegistry
 				cbuf.writeBlockPos(player.getSteppingPos());
 				cbuf.writeBoolean(strong);
 				for (ServerPlayerEntity p : ((ServerWorld)player.getWorld()).getPlayers())
-					ServerPlayNetworking.send(p, GROUND_POUND_S2C_PACKET_ID, cbuf);
+					ServerPlayNetworking.send(p, SLAM_S2C_PACKET_ID, cbuf);
 			});
 		});
 		ServerPlayNetworking.registerGlobalReceiver(REQUEST_WINGED_DATA_PACKET_ID, (server, player, handler, buf, sender) -> {
@@ -520,7 +520,7 @@ public class PacketRegistry
 				case NbtElement.FLOAT_TYPE -> {
 					float v = buf.readFloat();
 					ServerConfig.onChanged(server, ServerConfig.INSTANCE.set(id, v));
-					if(id.equals(HivelConfig.INSTANCE.hivelSpeed.getId()))
+					if(id.equals(HivelConfig.INSTANCE.speed.getId()))
 						server.getPlayerManager().getPlayerList().forEach(p -> ((WingedPlayerEntity)p).updateSpeedConfig());
 				}
 				case NbtElement.BYTE_TYPE -> ServerConfig.onChanged(server, ServerConfig.INSTANCE.set(id, buf.readBoolean()));
