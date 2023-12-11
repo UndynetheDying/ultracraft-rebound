@@ -162,6 +162,12 @@ public class HivelComponent implements IHivelComponent
 	}
 	
 	@Override
+	public void setMaxNoSlowdownVelocity(float maxNoSlowdownVelocity)
+	{
+		this.maxNoSlowdownVelocity = maxNoSlowdownVelocity;
+	}
+	
+	@Override
 	public void markDirty()
 	{
 		dirty = true;

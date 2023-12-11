@@ -80,18 +80,21 @@ public abstract class EntityMixin implements EntityAccessor
 		}
 	}
 	
-	//@Inject(method = "updateVelocity", at = @At("TAIL"))
-	//void onAfterUpdateVelocity(float speed, Vec3d movementInput, CallbackInfo ci)
-	//{
-	//	if(!(this instanceof WingedPlayerEntity))
-	//		return;
-	//	IHivelComponent hivel = UltraComponents.HIVEL.get(this);
-	//	if(hivel.shouldIgnoreSlowdown())
-	//	{
-	//		float y = (float)getVelocity().y;
-	//		setVelocity(getVelocity().multiply(1f, 0f, 1f).normalize().multiply(hivel.getMaxNoSlowdownVelocity()).add(0f, y, 0f));
-	//	}
-	//}
+	@Inject(method = "updateVelocity", at = @At("TAIL"))
+	void onAfterUpdateVelocity(float speed, Vec3d movementInput, CallbackInfo ci)
+	{
+		if(!(this instanceof WingedPlayerEntity))
+			return;
+		IHivelComponent hivel = UltraComponents.HIVEL.get(this);
+		if(hivel.shouldIgnoreSlowdown())
+		{
+			float y = (float)getVelocity().y;
+			float s = (float)getVelocity().horizontalLength();
+			if(s < hivel.getMaxNoSlowdownVelocity())
+				hivel.setMaxNoSlowdownVelocity(s);
+			setVelocity(getVelocity().multiply(1f, 0f, 1f).normalize().multiply(hivel.getMaxNoSlowdownVelocity()).add(0f, y, 0f));
+		}
+	}
 	
 	@ModifyArg(method = "onSwimmingStart", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;addParticle(Lnet/minecraft/particle/ParticleEffect;DDDDDD)V"))
 	ParticleEffect onSwimmingStart(ParticleEffect effect)

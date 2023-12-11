@@ -48,5 +48,7 @@ public interface IHivelComponent extends ComponentV3, AutoSyncedComponent, Commo
 	
 	float getMaxNoSlowdownVelocity();
 	
+	void setMaxNoSlowdownVelocity(float f);
+	
 	void markDirty();
 }

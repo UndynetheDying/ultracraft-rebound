@@ -88,6 +88,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	
 	@Shadow protected abstract boolean isCamera();
 	
+	@Shadow public abstract void sendMessage(Text message);
+	
 	Vec3d dashDir = Vec3d.ZERO;
 	Vec3d slideDir = Vec3d.ZERO;
 	boolean grounded, dashPressed, wasDashPressed, slidePressed, wasSlidePressed, slamming, wasSlamming, strongSlam, slamStored, wasJumping, wasHivel, slideStartedSideways;
@@ -96,8 +98,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			slamDisableJumpTicks = 8;
 	float screenshake = 0f, slideVelocity;
 	float hivelSpeed, slamVelocity = 2, baseSlideVelocity = 0.33f, baseJumpVelocity = 0.42f, dashVelocity = 1f, skeweredDashVelocity = 0.05f,
-			dashCancelVelocityMultiplier = 0.3f, dashSlipAndSlideThreshold = 0.6f, dashSlipAndSlideReduction = 0.5f, dashAirStopVelocityMultiplier = 0.3f,
-			skeweredDashAirStopVelocityMultiplier = 0.03f, slideJumpSpeedBonus = 0.025f, slideSpeedSoftCap = 0.99f, slideSlowdownMultiplier = 0.995f,
+			dashSlipAndSlideThreshold = 0.6f, dashSlipAndSlideReduction = 0.5f, dashAirStopVelocityMultiplier = 0.3f,
+			skeweredDashAirStopVelocityMultiplier = 0.03f, slideJumpSpeedBonus = 0.025f, slideSpeedSoftCap = 0.99f, slideSlowdownMultiplier = 0.95f,
 			airDrag = 0.91f, slamDamageMargin = 0.25f, strongSlamImpactVelocity = 1f, strongSlamImpactMargin = 3f, slamJumpVelocityMultiplier = 1.5f,
 			slamDiveVelocity = 1.5f, slamStoreJumpVelocityMultiplier = 4.5f, slamStoreDiveVelocity = 4f, slamTickVelocityBonus = 0.05f, slamSlideVelocity = 0.66f,
 			slamStoreSlideVelocity = 1f, skimUpwardsVelocityMultiplier = 0.75f, wallSlideVelocity = 0.2f, wallJumpHorizontalVelocity = 0.33f,
@@ -197,6 +199,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 					setVelocity(dashDir.multiply(0.3));
 				addVelocity(0f, getJumpVelocity() * 0.5f, 0f);
 				hivel.setIgnoreSlowdown(true);
+				slideVelocity = dashVelocity;
 				if(isMainPlayer())
 					PlayerAnimator.playAnimation(client.player, forwardSpeed >= 0 ? PlayerAnimator.DASH_FORWARD : PlayerAnimator.DASH_BACK, 5, false);
 				ci.cancel();
@@ -328,6 +331,12 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			wasDashPressed = dashPressed;
 			wasSlidePressed = slidePressed;
 			grounded = newGrounded;
+			if(curSlidePreservationTicks > 0 && !hivel.isSliding())
+			{
+				curSlidePreservationTicks--;
+				if(curSlidePreservationTicks == 0)
+					slideVelocity = baseSlideVelocity;
+			}
 			ci.cancel();
 		}
 		else
@@ -392,12 +401,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 				curSlamCooldown--;
 			if(slamJumpTimer > 0)
 				slamJumpTimer--;
-			if(curSlidePreservationTicks > 0)
-			{
-				curSlidePreservationTicks--;
-				if(curSlidePreservationTicks == 0)
-					slideVelocity = baseSlideVelocity;
-			}
 		}
 	}
 	

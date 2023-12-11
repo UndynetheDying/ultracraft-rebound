@@ -7,9 +7,11 @@ import absolutelyaya.ultracraft.block.TerminalBlockEntity;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.screen.HellObserverScreen;
 import absolutelyaya.ultracraft.client.gui.screen.WingCustomizationScreen;
+import com.chocohead.mm.api.ClassTinkerers;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Arm;
 import net.minecraft.util.hit.HitResult;
@@ -23,6 +25,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Camera.class)
@@ -141,6 +144,16 @@ public abstract class CameraMixin
 			else
 				shakeTime = 0f;
 		}
+	}
+	
+	@ModifyArg(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/Camera;setPos(DDD)V"), index = 1)
+	double modifyUpdateDeltaTime(double y)
+	{
+		EntityPose slide = ClassTinkerers.getEnum(EntityPose.class, "SLIDE");
+		if(!(focusedEntity instanceof PlayerEntity player) || !player.getPose().equals(slide))
+			return y;
+		float tickDelta = MinecraftClient.getInstance().getTickDelta();
+		return MathHelper.lerp(tickDelta, focusedEntity.prevY, focusedEntity.getY()) + focusedEntity.getEyeHeight(slide);
 	}
 	
 	Vec3d rotationize(Vec3d vec) //aka apply rotation
