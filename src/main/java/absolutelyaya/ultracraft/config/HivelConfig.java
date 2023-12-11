@@ -14,7 +14,8 @@ public class HivelConfig extends Config
 	public final FloatEntry gravity = (FloatEntry)new FloatEntry("Gravity", 0.5f).setRange(0f, 1f);
 	public final IntegerEntry iFrames = new IntegerEntry("IFrames", 2);
 	public final FloatEntry drag = new FloatEntry("MoveTechSlowdown", 1f);
-	public final IntegerEntry dashTicks = new IntegerEntry("DashTicks", 3);
+	public final FloatEntry dragVelocitySoftcap = new FloatEntry("MoveTechVelocitySoftcap", 0.4f);
+	public final IntegerEntry dashTicks = new IntegerEntry("DashTicks", 4);
 	public final FloatEntry staminaRegen = new FloatEntry("StaminaRegeneration", 1.5f);
 	public final FloatEntry slamDamageMargin = new FloatEntry("SlamDamageMargin", 0.25f);
 	public final FloatEntry strongSlamImpactMargin = new FloatEntry("StrongSlamImpactMargin", 3f);
@@ -45,6 +46,7 @@ public class HivelConfig extends Config
 		entries.add(new Comment(" ## ############################# ##  #"));
 		entries.add(new Comment("Internally known as \"drag\". legacy value: 0.925"));
 		entries.add(drag);
+		entries.add(dragVelocitySoftcap);
 		entries.add(dashTicks);
 		entries.add(staminaRegen);
 		entries.add(slamDamageMargin);

@@ -140,7 +140,8 @@ public class HivelComponent implements IHivelComponent
 	@Override
 	public boolean isAirControlIncreased()
 	{
-		return airControlIncreased;
+		IWingDataComponent wings = UltraComponents.WING_DATA.get(provider);
+		return wings.isActive();
 	}
 	
 	@Override

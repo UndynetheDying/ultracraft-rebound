@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.EntityAccessor;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.components.player.IHivelComponent;
+import absolutelyaya.ultracraft.config.HivelConfig;
 import absolutelyaya.ultracraft.registry.ParticleRegistry;
 import absolutelyaya.ultracraft.registry.TagRegistry;
 import net.minecraft.entity.Entity;
@@ -90,7 +91,7 @@ public abstract class EntityMixin implements EntityAccessor
 		{
 			float y = (float)getVelocity().y;
 			float s = (float)getVelocity().horizontalLength();
-			if(s < hivel.getMaxNoSlowdownVelocity())
+			if(s < hivel.getMaxNoSlowdownVelocity() || s < HivelConfig.INSTANCE.dragVelocitySoftcap.getValue())
 				hivel.setMaxNoSlowdownVelocity(s);
 			setVelocity(getVelocity().multiply(1f, 0f, 1f).normalize().multiply(hivel.getMaxNoSlowdownVelocity()).add(0f, y, 0f));
 		}
