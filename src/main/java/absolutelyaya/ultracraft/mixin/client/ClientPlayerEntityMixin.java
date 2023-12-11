@@ -172,7 +172,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 					if(isMainPlayer())
 						PlayerAnimator.playAnimation(client.player, PlayerAnimator.SLAM_IMPACT, 0, false);
 				}
-				ci.cancel();
 			}
 			//coyote ticker
 			if(!grounded && coyote <= coyoteThreshold)
@@ -180,17 +179,11 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			
 			//dash
 			if(!hivel.isDashing() && dashPressed && !wasDashPressed)
-			{
 				tryDash();
-				ci.cancel();
-			}
 			//dash velocity
 			boolean isSkewered = hasStatusEffect(StatusEffectRegistry.IMPALED);
 			if(hivel.isDashing())
-			{
 				setVelocity(dashDir.multiply(isSkewered ? skeweredDashVelocity : dashVelocity));
-				ci.cancel();
-			}
 			//dash jump
 			if(hivel.wasDashing() && canJump() && jumping && !wasJumping)
 			{
@@ -202,7 +195,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 				slideVelocity = dashVelocity;
 				if(isMainPlayer())
 					PlayerAnimator.playAnimation(client.player, forwardSpeed >= 0 ? PlayerAnimator.DASH_FORWARD : PlayerAnimator.DASH_BACK, 5, false);
-				ci.cancel();
 			}
 			//dash end velocity
 			if(hivel.wasDashing() && !hivel.isDashing())
@@ -214,7 +206,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 					setVelocity(dashDir.multiply(Math.min(slipAndSlide - dashSlipAndSlideReduction, dashSlipAndSlideThreshold)));
 				else
 					setVelocity(dashDir.multiply(dashGroundStopVelocityMultiplier));
-				ci.cancel();
 			}
 			
 			//slide
@@ -228,6 +219,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 					strongSlam = true;
 					hivel.setSliding(false);
 					hivel.setIgnoreSlowdown(false);
+					hivel.setAirControlIncreased(false);
 					if(isMainPlayer())
 						PlayerAnimator.playAnimation(client.player, PlayerAnimator.SLAM_LOOP, 5, false);
 				}
@@ -255,11 +247,11 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			if(slamJumpTimer > 0 && jumping && !wasJumping)
 			{
 				slamJumpTimer = -1;
-				if(client.options.sprintKey.isPressed() && !strongSlam) //Dive / Ultradive
+				if(slidePressed && !strongSlam) //Dive / Ultradive
 				{
-					hivel.setIgnoreSlowdown(true);
 					setVelocity(Vec3d.fromPolar(0, getYaw()).multiply(slamStored ? slamStoreDiveVelocity : slamDiveVelocity)
 										.add(0, getJumpVelocity(), 0));
+					hivel.setIgnoreSlowdown(true);
 					if(isMainPlayer())
 						PlayerAnimator.playAnimation(client.player,
 								slamStored ? PlayerAnimator.SLAMSTORE_DIVE : PlayerAnimator.SLAM_DIVE, 0, false);
@@ -273,7 +265,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 				}
 				slamStored = false;
 				slamTicks = 0;
-				ci.cancel();
 			}
 			//slide tick
 			if(hivel.isSliding())
@@ -291,12 +282,30 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 				setSliding(slidePressed && !slamming && moved && !jumping, hivel.isSliding()); //stop slide
 				if(!grounded)
 					slideTicks = 0;
-				ci.cancel();
 			}
 			
-			//stop ignoring slowdown
-			if((verticalCollision && grounded) && hivel.shouldIgnoreSlowdown() && !hivel.isDashing())
+			//wall sliding
+			ArrayList<VoxelShape> touchingWalls = new ArrayList<>();
+			//x and z axis are checked seperately because we don't want diagonal false-positives
+			getWorld().getBlockCollisions(this, getBoundingBox().expand(0.1f, 0, 0f)).forEach(touchingWalls::add); //x-axis wall check
+			getWorld().getBlockCollisions(this, getBoundingBox().expand(0f, 0, 0.1f)).forEach(touchingWalls::add); //z-axis wall check
+			boolean isTouchingWall = touchingWalls.size() > 0;
+			if(!slamming && !hivel.isSliding() && isTouchingWall && !grounded)
+			{
+				Vec3d vel = getVelocity();
+				setVelocity(new Vec3d(vel.x, Math.max(vel.y, -0.2), vel.z));
+			}
+			//wall jump
+			if(wallJumps > 0 && !isGrounded(0.5f) && jumping && !wasJumping && !lastOnGround && isTouchingWall &&
+					   (UltracraftClient.isSlamStorageEnabled() || !slamming) && !hivel.isSliding())
+				wallJump(touchingWalls, hivel);
+			
+			//stop ignoring slowdown and increasing slowdown
+			if((verticalCollision && grounded) && !hivel.isDashing())
+			{
+				hivel.setAirControlIncreased(true);
 				hivel.setIgnoreSlowdown(false);
+			}
 			
 			//update movement data
 			if(true)
@@ -356,7 +365,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		return disableJumpTicks == 0 && (grounded || coyote < coyoteThreshold);
 	}
 	
-	void wallJump(ArrayList<VoxelShape> touchingWalls, IHivelComponent hivel, CallbackInfo ci)
+	void wallJump(ArrayList<VoxelShape> touchingWalls, IHivelComponent hivel)
 	{
 		Vec3d vel = new Vec3d(0, 0, 0);
 		Optional<Integer> X = Optional.empty();
@@ -366,7 +375,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			Optional<Vec3d> opos = shape.getClosestPointTo(getPos());
 			if(opos.isEmpty())
 				continue;
-			Vec3d v = unhorizontalize(getPos().multiply(1, 0, 1).subtract(opos.get().multiply(1, 0, 1)).normalize());
+			Vec3d v = getMainAxisDir(getPos().multiply(1, 0, 1).subtract(opos.get().multiply(1, 0, 1)).normalize());
 			if(X.isPresent() && v.z != 0 && Math.abs(X.get() - opos.get().x) < 1f)
 				continue;
 			if(Z.isPresent() && v.x != 0 && Math.abs(Z.get() - opos.get().z) < 1f)
@@ -378,15 +387,15 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			vel = vel.add(v);
 		}
 		vel = new Vec3d(MathHelper.clamp(vel.x, -1f, 1f), 0, MathHelper.clamp(vel.z, -1f, 1f));
-		setVelocity(vel.normalize().multiply(0.33));
-		addVelocity(0f, getJumpVelocity(), 0f);
+		setVelocity(vel.normalize().multiply(wallJumpHorizontalVelocity));
+		addVelocity(0f, getJumpVelocity() * 0.75f, 0f);
 		if(slamming && UltracraftClient.isSlamStorageEnabled())
 			slamStored = true;
 		if(!isCreative())
 			curWallJumps--;
-		hivel.setIgnoreSlowdown(false);
+		//hivel.setIgnoreSlowdown(true);
+		// TODO: improve ignoreslowdown further; it should be possible to increase spead while under a certain max value
 		hivel.setAirControlIncreased(true);
-		ci.cancel();
 	}
 	
 	@Inject(method = "tickNewAi", at = @At("RETURN"))
@@ -411,8 +420,9 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			WingCustomizationScreen.Instance.close();
 	}
 	
-	Vec3d unhorizontalize(Vec3d in)
+	Vec3d getMainAxisDir(Vec3d in)
 	{
+		//turns a relative position into a normalized direction on a single axis
 		return Math.abs(in.x) > Math.abs(in.z) ? new Vec3d(in.x > 0f ? 1f : -1f, 0f, 0f) : new Vec3d(0f, 0f, in.z > 0f ? 1f : -1f);
 	}
 	
