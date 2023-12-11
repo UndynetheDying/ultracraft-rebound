@@ -65,11 +65,11 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 		if(heat > 0  && entity.age % 3 == 0 && inactive)
 			setNbt(stack, "heat", heat - 1);
 		else if(!inactive && entity.age % 2 == 0)
-			if(heat < 100 && !(stack.isOf(ItemRegistry.OVERHEAT_NAILGUN) && getNbt(stack, "heatsinking") == 1))
-				setNbt(stack, "heat", heat + 1);
+			if(heat < 100 && !(stack.isOf(ItemRegistry.OVERHEAT_NAILGUN) && getNbt(stack, "heatsinking") == 1) && getNbt(stack, "heatsinks") > 0)
+				setNbt(stack, "heat", Math.min(heat + 2, 100));
 		int heatsinkCD = getNbt(stack, "heatsink_cd");
 		int heatsinks = getNbt(stack, "heatsinks");
-		if(heatsinkCD > 0)
+		if(heatsinkCD > 0 && (inactive || heatsinks > 0))
 			setNbt(stack, "heatsink_cd", heatsinkCD - 1);
 		if(heatsinkCD == 0)
 		{
