@@ -130,15 +130,15 @@ public class Ultracraft implements ModInitializer
                 if(player.getWorld().getGameRules().getBoolean(GameruleRegistry.START_WITH_PIERCER))
                     player.giveItemStack(ItemRegistry.PIERCE_REVOLVER.getDefaultStack());
         }));
-        ServerLifecycleEvents.SERVER_STARTING.register(this::loadServerConfig);
-        ServerLifecycleEvents.START_DATA_PACK_RELOAD.register((server, handler) -> loadServerConfig(server));
+        ServerLifecycleEvents.SERVER_STARTING.register(this::loadConfig);
+        ServerLifecycleEvents.START_DATA_PACK_RELOAD.register((server, handler) -> loadConfig(server));
         
         FabricLoader.getInstance().getModContainer(MOD_ID).ifPresent(modContainer -> VERSION = modContainer.getMetadata().getVersion().getFriendlyString());
         FabricLoader.getInstance().getModContainer("lambdynlights").ifPresent(container -> DYN_LIGHTS = true);
         LOGGER.info("Ultracraft initialized.");
     }
     
-    void loadServerConfig(MinecraftServer server)
+    void loadConfig(MinecraftServer server)
     {
         if(config == null)
             config = new ServerConfig(server);
@@ -149,6 +149,7 @@ public class Ultracraft implements ModInitializer
             hivelConfig = new HivelConfig(server);
         else
             hivelConfig.load(server);
+        hivelConfig.syncAll(server);
     }
     
     public static boolean isTimeFrozen()

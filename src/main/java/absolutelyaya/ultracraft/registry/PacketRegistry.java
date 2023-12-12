@@ -13,6 +13,7 @@ import absolutelyaya.ultracraft.components.player.IArmComponent;
 import absolutelyaya.ultracraft.components.player.IHivelComponent;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.config.Config;
 import absolutelyaya.ultracraft.config.EnumEntry;
 import absolutelyaya.ultracraft.config.HivelConfig;
 import absolutelyaya.ultracraft.config.ServerConfig;
@@ -88,6 +89,7 @@ public class PacketRegistry
 	public static final Identifier SET_GUNCD_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "set_gcd");
 	public static final Identifier CATCH_FISH_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "fish");
 	public static final Identifier SYNC_CONFIG_S2C_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "sync_config_s2c");
+	public static final Identifier FINISH_SYNC_CONFIG_S2C_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "finish_sync_config_s2c");
 	public static final Identifier ENTITY_TRAIL_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "entity_trail");
 	public static final Identifier SLAM_S2C_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "slam_s2c");
 	public static final Identifier EXPLOSION_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "explosion");
@@ -513,19 +515,21 @@ public class PacketRegistry
 			server.execute(() -> UltraComponents.ARMS.get(player).setPunchPressed(v));
 		});
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.SYNC_CONFIG_C2S_PACKET_ID, (server, player, handler, buf, sender) -> {
-			String id = buf.readString();
+			String configId = buf.readString();
+			String rule = buf.readString();
 			byte type = buf.readByte();
+			Config config = Config.getFromID(configId);
 			switch(type)
 			{
-				default -> ServerConfig.onChanged(server, ServerConfig.INSTANCE.set(id, buf.readInt()));
-				case 69 -> ServerConfig.onChanged(server, ServerConfig.INSTANCE.set((EnumEntry<?>)ServerConfig.INSTANCE.getEntry(id), buf.readInt()));
+				default -> ServerConfig.onChanged(server, configId, config.set(rule, buf.readInt()));
+				case 69 -> ServerConfig.onChanged(server, configId, config.set((EnumEntry<?>)config.getEntry(rule), buf.readInt()));
 				case NbtElement.FLOAT_TYPE -> {
 					float v = buf.readFloat();
-					ServerConfig.onChanged(server, ServerConfig.INSTANCE.set(id, v));
-					if(id.equals(HivelConfig.INSTANCE.speed.getId()))
+					ServerConfig.onChanged(server, configId, config.set(rule, v));
+					if(rule.equals(HivelConfig.INSTANCE.speed.getId()))
 						server.getPlayerManager().getPlayerList().forEach(p -> ((WingedPlayerEntity)p).updateSpeedConfig());
 				}
-				case NbtElement.BYTE_TYPE -> ServerConfig.onChanged(server, ServerConfig.INSTANCE.set(id, buf.readBoolean()));
+				case NbtElement.BYTE_TYPE -> ServerConfig.onChanged(server, configId, config.set(rule, buf.readBoolean()));
 			}
 		});
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.HIVEL_DATA_PACKET_ID, (server, player, handler, buf, sender) -> {

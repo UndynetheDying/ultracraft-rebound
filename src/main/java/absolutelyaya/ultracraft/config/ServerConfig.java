@@ -30,7 +30,7 @@ public class ServerConfig extends Config
 	
 	public ServerConfig(MinecraftServer server)
 	{
-		super(server);
+		super(server, "server");
 		entries.add(new Comment(" ## ############################# ##  #"));
 		entries.add(new Comment("     Welcome to Config Zone"));
 		entries.add(new Comment(" ## ############################# ##  #"));
@@ -77,11 +77,5 @@ public class ServerConfig extends Config
 	{
 		super.load(server);
 		Ultracraft.LOGGER.info("Ultracraft Server Config Loaded.");
-	}
-	
-	@Override
-	public void syncAll(ServerPlayerEntity player)
-	{
-		super.syncAll(player);
 	}
 }

@@ -4,7 +4,6 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
@@ -16,18 +15,26 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public abstract class Config
 {
+	static final Map<String, Config> configMap = new HashMap<>();
+	
 	public final List<ConfigEntry<?>> entries = new ArrayList<>();
 	final MinecraftServer server;
+	final String id;
 	
-	public Config(MinecraftServer server)
+	public Config(MinecraftServer server, String id)
 	{
 		this.server = server;
+		this.id = id;
+		configMap.put(id, this);
+	}
+	
+	public static Config getFromID(String configID)
+	{
+		return configMap.get(configID);
 	}
 	
 	protected abstract String getExportPath();
@@ -96,53 +103,57 @@ public abstract class Config
 		}
 	}
 	
-	public static <V> void onChanged(MinecraftServer server, ConfigEntry<V> entry)
+	public static <V> void onChanged(MinecraftServer server, String configID, ConfigEntry<V> entry)
 	{
-		server.getPlayerManager().getPlayerList().forEach(p -> onChanged(p, entry));
+		server.getPlayerManager().getPlayerList().forEach(p -> onChanged(p, configID, entry));
 	}
 	
-	public static <V> void onChanged(ServerPlayerEntity player, ConfigEntry<V> entry)
+	public static <V> void onChanged(ServerPlayerEntity player, String configId, ConfigEntry<V> entry)
 	{
 		if(entry instanceof EnumEntry<?> v)
-			onChanged(player, v);
+			onChanged(player, configId, v);
 		else if(entry instanceof IntegerEntry v)
-			onChanged(player, v);
+			onChanged(player, configId, v);
 		else if(entry instanceof BooleanEntry v)
-			onChanged(player, v);
+			onChanged(player, configId, v);
 		else if(entry instanceof FloatEntry v)
-			onChanged(player, v);
+			onChanged(player, configId, v);
 	}
 	
-	public static void onChanged(ServerPlayerEntity player, BooleanEntry entry)
+	public static void onChanged(ServerPlayerEntity player, String configId, BooleanEntry entry)
 	{
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeString(configId);
 		buf.writeString(entry.getId());
 		buf.writeByte(NbtElement.BYTE_TYPE);
 		buf.writeBoolean(entry.getValue());
 		ServerPlayNetworking.send(player, PacketRegistry.SYNC_CONFIG_S2C_PACKET_ID, buf);
 	}
 	
-	public static void onChanged(ServerPlayerEntity player, IntegerEntry entry)
+	public static void onChanged(ServerPlayerEntity player, String configId, IntegerEntry entry)
 	{
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeString(configId);
 		buf.writeString(entry.getId());
 		buf.writeByte(NbtElement.INT_TYPE);
 		buf.writeInt(entry.getValue());
 		ServerPlayNetworking.send(player, PacketRegistry.SYNC_CONFIG_S2C_PACKET_ID, buf);
 	}
 	
-	public static void onChanged(ServerPlayerEntity player, FloatEntry entry)
+	public static void onChanged(ServerPlayerEntity player, String configId, FloatEntry entry)
 	{
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeString(configId);
 		buf.writeString(entry.getId());
 		buf.writeByte(NbtElement.FLOAT_TYPE);
 		buf.writeFloat(entry.getValue());
 		ServerPlayNetworking.send(player, PacketRegistry.SYNC_CONFIG_S2C_PACKET_ID, buf);
 	}
 	
-	public static void onChanged(ServerPlayerEntity player, EnumEntry<?> entry)
+	public static void onChanged(ServerPlayerEntity player, String configId, EnumEntry<?> entry)
 	{
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeString(configId);
 		buf.writeString(entry.getId());
 		buf.writeByte(69);
 		buf.writeInt(entry.getValue().ordinal());
@@ -151,7 +162,11 @@ public abstract class Config
 	
 	public void syncAll(ServerPlayerEntity player)
 	{
-		entries.forEach(i -> onChanged(player, i));
+		entries.forEach(i -> onChanged(player, id, i));
+		
+		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeString(id);
+		ServerPlayNetworking.send(player, PacketRegistry.FINISH_SYNC_CONFIG_S2C_PACKET_ID, buf);
 	}
 	
 	public void syncAll(MinecraftServer server)

@@ -99,7 +99,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	int slamCooldown = 5, slamJumpWindow = 4, coyoteThreshold = 4, slidePreservationTicks = 5, slideSlowdownTicks = 20, wallJumps = 3,
 			slamDisableJumpTicks = 8;
 	float screenshake = 0f, slideVelocity;
-	float hivelSpeed, slamVelocity = 2, baseSlideVelocity = 0.33f, baseJumpVelocity = 0.42f, dashVelocity = 1f, skeweredDashVelocity = 0.05f,
+	float hivelSpeed, slamVelocity = 2f, baseSlideVelocity = 0.35f, baseJumpVelocity = 0.42f, dashVelocity = 1f, skeweredDashVelocity = 0.05f,
 			dashSlipAndSlideThreshold = 0.6f, dashSlipAndSlideReduction = 0.5f, dashAirStopVelocityMultiplier = 0.3f,
 			skeweredDashAirStopVelocityMultiplier = 0.03f, slideJumpSpeedBonus = 0.025f, slideSpeedSoftCap = 0.99f, slideSlowdownMultiplier = 0.95f,
 			slamJumpVelocityMultiplier = 1.5f, slamDiveVelocity = 1.5f, slamStoreJumpVelocityMultiplier = 4.5f, slamStoreDiveVelocity = 2.5f,
@@ -109,10 +109,47 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			slamDiveVerticalVelocityMultiplier = 0.6f, dashJumpVerticalVelocityMultiplier = 0.5f, slideJumpVerticalVelocityMultiplier = 0.55f;
 	TerminalBlockEntity focusedTerminal;
 	
+	@Override
 	public void initMovementConfig(HivelConfig config)
 	{
-		//TODO
+		slamCooldown = config.slamCooldown.getValue();
+		slamJumpWindow = config.slamJumpWindow.getValue();
+		coyoteThreshold = config.coyoteThreshold.getValue();
+		slidePreservationTicks = config.slidePreservationTicks.getValue();
+		slideSlowdownTicks = config.slideSlowdownTicks.getValue();
+		wallJumps = config.wallJumps.getValue();
+		slamDisableJumpTicks = config.slamDisableJumpTicks.getValue();
 		hivelSpeed = config.speed.getValue();
+		slamVelocity = config.slamVelocity.getValue();
+		baseSlideVelocity = config.baseSlideVelocity.getValue();
+		baseJumpVelocity = config.baseJumpVelocity.getValue();
+		dashVelocity = config.dashVelocity.getValue();
+		skeweredDashVelocity = config.skeweredDashVelocity.getValue();
+		dashSlipAndSlideThreshold = config.dashSlipAndSlideThreshold.getValue();
+		dashSlipAndSlideReduction = config.dashSlipAndSlideReduction.getValue();
+		dashAirStopVelocityMultiplier = config.dashAirStopVelocityMultiplier.getValue();
+		skeweredDashAirStopVelocityMultiplier = config.skeweredDashAirStopVelocityMultiplier.getValue();
+		slideJumpSpeedBonus = config.slideJumpSpeedBonus.getValue();
+		slideSpeedSoftCap = config.slideSpeedSoftCap.getValue();
+		slideSlowdownMultiplier = config.slideSlowdownMultiplier.getValue();
+		slamJumpVelocityMultiplier = config.slamJumpVelocityMultiplier.getValue();
+		slamDiveVelocity = config.slamDiveVelocity.getValue();
+		slamStoreJumpVelocityMultiplier = config.slamStoreJumpVelocityMultiplier.getValue();
+		slamStoreDiveVelocity = config.slamStoreDiveVelocity.getValue();
+		slamTickVelocityBonus = config.slamTickVelocityBonus.getValue();
+		slamSlideVelocity = config.slamSlideVelocity.getValue();
+		slamStoreSlideVelocity = config.slamStoreSlideVelocity.getValue();
+		skimUpwardsVelocityMultiplier = config.skimUpwardsVelocityMultiplier.getValue();
+		wallSlideVelocity = config.wallSlideVelocity.getValue();
+		wallJumpHorizontalVelocity = config.wallJumpHorizontalVelocity.getValue();
+		wallJumpVerticalVelocityMultiplier = config.wallJumpVerticalVelocityMultiplier.getValue();
+		groundCheckDistance = config.groundCheckDistance.getValue();
+		dashGroundStopVelocityMultiplier = config.dashGroundStopVelocityMultiplier.getValue();
+		slideStartGroundTolerance = config.slideStartGroundTolerance.getValue();
+		slamDiveVerticalVelocityMultiplier = config.slamDiveVerticalVelocityMultiplier.getValue();
+		dashJumpVerticalVelocityMultiplier = config.dashJumpVerticalVelocityMultiplier.getValue();
+		slideJumpVerticalVelocityMultiplier = config.slideJumpVerticalVelocityMultiplier.getValue();
+		Ultracraft.LOGGER.info("initialized Hivel Movement");
 	}
 	
 	void tryDash()

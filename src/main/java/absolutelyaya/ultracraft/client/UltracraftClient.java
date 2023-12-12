@@ -467,15 +467,20 @@ public class UltracraftClient implements ClientModInitializer
 		config.save();
 	}
 	
-	public static void syncConfigEntry(String id, int value)
+	public static void syncConfigEntry(String configID, String rule, int value)
 	{
-		ServerConfig config = ServerConfig.INSTANCE;
-		ConfigEntry<?> entry = config.getEntry(id);
+		Config config = Config.getFromID(configID);
+		if(config == null)
+		{
+			Ultracraft.LOGGER.error(String.format("no config with id '%s' found", configID));
+			return;
+		}
+		ConfigEntry<?> entry = config.getEntry(rule);
 		if(entry instanceof EnumEntry<?> enumEntry)
 			onExternalRuleUpdate(enumEntry.setValue(value), value);
 		else
-			onExternalRuleUpdate(config.set(id, value), value);
-		if(id.equals(config.hivel.getId()))
+			onExternalRuleUpdate(config.set(rule, value), value);
+		if(config instanceof ServerConfig serverConfig && rule.equals(serverConfig.hivel.getId()))
 		{
 			Setting hivel = Setting.values()[value];
 			if(hivel != Setting.FREE)
@@ -483,23 +488,47 @@ public class UltracraftClient implements ClientModInitializer
 			else
 				forcedHivel = Optional.empty();
 		}
-		if(id.equals(HivelConfig.INSTANCE.speed.getId()))
+		if(config instanceof HivelConfig hivelConfig && rule.equals(hivelConfig.speed.getId()))
 			((WingedPlayerEntity)MinecraftClient.getInstance().player).updateSpeedConfig();
 	}
 	
-	public static void syncConfigEntry(String id, float value)
+	public static void syncConfigEntry(String configID, String id, float value)
 	{
-		ServerConfig config = ServerConfig.INSTANCE;
+		Config config = Config.getFromID(configID);
+		if(config == null)
+		{
+			Ultracraft.LOGGER.error(String.format("no config with id '%s' found", configID));
+			return;
+		}
 		config.set(id, value);
 	}
 	
-	public static void syncConfigEntry(String id, boolean value)
+	public static void syncConfigEntry(String configID, String id, boolean value)
 	{
-		ServerConfig config = ServerConfig.INSTANCE;
+		Config config = Config.getFromID(configID);
+		if(config == null)
+		{
+			Ultracraft.LOGGER.error(String.format("no config with id '%s' found", configID));
+			return;
+		}
 		config.set(id, value);
 	}
 	
-	public static void ServerSyncFinished() //TODO: make the join info work again
+	public static void finishSyncingConfig(String configID)
+	{
+		Config config = Config.getFromID(configID);
+		if(config == null)
+		{
+			Ultracraft.LOGGER.error(String.format("no config with id '%s' found", configID));
+			return;
+		}
+		if(config instanceof ServerConfig)
+			serverSyncFinished();
+		if(config instanceof HivelConfig hivel && MinecraftClient.getInstance().player instanceof WingedPlayerEntity winged)
+			winged.initMovementConfig(hivel);
+	}
+	
+	public static void serverSyncFinished()
 	{
 		if(joinInfoPending)
 			sendJoinInfo(MinecraftClient.getInstance(), false);

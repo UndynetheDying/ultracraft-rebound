@@ -133,15 +133,20 @@ public class ClientPacketRegistry
 			UltraHudRenderer.onCatchFish(buf.readItemStack());
 		}));
 		ClientPlayNetworking.registerGlobalReceiver(PacketRegistry.SYNC_CONFIG_S2C_PACKET_ID, ((client, handler, buf, sender) -> {
-			String id = buf.readString();
+			String configId = buf.readString();
+			String ruleId = buf.readString();
 			byte type = buf.readByte();
 			switch(type)
 			{
-				default -> UltracraftClient.syncConfigEntry(id, buf.readInt());
-				case 69 -> UltracraftClient.syncConfigEntry(id, buf.readInt());
-				case NbtElement.FLOAT_TYPE -> UltracraftClient.syncConfigEntry(id, buf.readFloat());
-				case NbtElement.BYTE_TYPE -> UltracraftClient.syncConfigEntry(id, buf.readBoolean());
+				default -> UltracraftClient.syncConfigEntry(configId, ruleId, buf.readInt());
+				case 69 -> UltracraftClient.syncConfigEntry(configId, ruleId, buf.readInt());
+				case NbtElement.FLOAT_TYPE -> UltracraftClient.syncConfigEntry(configId, ruleId, buf.readFloat());
+				case NbtElement.BYTE_TYPE -> UltracraftClient.syncConfigEntry(configId, ruleId, buf.readBoolean());
 			}
+		}));
+		ClientPlayNetworking.registerGlobalReceiver(FINISH_SYNC_CONFIG_S2C_PACKET_ID, ((client, handler, buf, sender) -> {
+			String configId = buf.readString();
+			UltracraftClient.finishSyncingConfig(configId);
 		}));
 		ClientPlayNetworking.registerGlobalReceiver(PacketRegistry.ENTITY_TRAIL_PACKET_ID, ((client, handler, buf, sender) -> {
 			Entity e = client.world.getEntityById(buf.readInt());

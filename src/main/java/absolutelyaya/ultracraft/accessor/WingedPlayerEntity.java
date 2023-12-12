@@ -1,11 +1,13 @@
 package absolutelyaya.ultracraft.accessor;
 
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
+import absolutelyaya.ultracraft.config.HivelConfig;
 import absolutelyaya.ultracraft.entity.other.BackTank;
 import net.minecraft.util.math.Vec3d;
 
 public interface WingedPlayerEntity
 {
+	void initMovementConfig(HivelConfig config);
 	
 	Vec3d[] getWingPose();
 	
