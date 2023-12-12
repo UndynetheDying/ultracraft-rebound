@@ -202,6 +202,8 @@ public class UltracraftClient implements ClientModInitializer
 		WorldRenderEvents.END.register((context) -> hudRenderer.render(context.tickDelta(), context.camera()));
 		
 		ClientPlayConnectionEvents.INIT.register((handler, client) -> {
+			new ServerConfig(null);
+			new HivelConfig(null);
 			if(config.get().serverJoinInfo)
 				joinInfoPending = true;
 		});

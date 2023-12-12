@@ -44,6 +44,8 @@ public abstract class Config
 	
 	public void save(MinecraftServer server)
 	{
+		if(server == null)
+			return;
 		Path gameDir = server.getSavePath(WorldSavePath.ROOT);
 		try
 		{
@@ -68,6 +70,8 @@ public abstract class Config
 	
 	public void load(MinecraftServer server)
 	{
+		if(server == null)
+			return;
 		Path gameDir = server.getSavePath(WorldSavePath.ROOT);
 		Path path = Path.of(gameDir.toString(), getExportPath() + getFileName());
 		File file = new File(path.toUri());
