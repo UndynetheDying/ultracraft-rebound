@@ -18,7 +18,6 @@ public abstract class KeybindMixin
 {
 	@Shadow public InputUtil.Key boundKey;
 	@Shadow @Final private static Map<String, KeyBinding> KEYS_BY_ID;
-	@Shadow @Final private static Map<InputUtil.Key, KeyBinding> KEY_TO_BINDINGS;
 	
 	@Shadow public abstract boolean equals(KeyBinding other);
 	
@@ -42,23 +41,29 @@ public abstract class KeybindMixin
 			binds.put(bind.boundKey, bind);
 	}
 	
-	@Inject(method = "setKeyPressed", at = @At(value = "TAIL"))
+	@Inject(method = "setKeyPressed", at = @At(value = "HEAD"), cancellable = true)
 	private static void onSetKeyPressed(InputUtil.Key key, boolean pressed, CallbackInfo ci)
 	{
+		if(binds.get(key).size() <= 1)
+			return;
 		for (KeyBinding i : binds.get(key))
 		{
 			if(i != null)
 				((KeybindMixin)(Object)i).setPressed(pressed);
 		}
+		ci.cancel();
 	}
 	
-	@Inject(method = "onKeyPressed", at = @At(value = "TAIL"))
+	@Inject(method = "onKeyPressed", at = @At(value = "HEAD"), cancellable = true)
 	private static void onKeyPressed(InputUtil.Key key, CallbackInfo ci)
 	{
+		if(binds.get(key).size() <= 1)
+			return;
 		for (KeyBinding i : binds.get(key))
 		{
 			if(i != null)
 				((KeybindMixin)(Object)i).timesPressed++;
 		}
+		ci.cancel();
 	}
 }
