@@ -518,7 +518,10 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		else
 			slideVelocity = baseSlideVelocity;
 		slideTicks = 0;
-		curSlidePreservationTicks = -1;
+		if(sliding)
+			curSlidePreservationTicks = -1;
+		else
+			curSlidePreservationTicks = slidePreservationTicks;
 	}
 	
 	boolean isUnSolid(BlockPos pos)
