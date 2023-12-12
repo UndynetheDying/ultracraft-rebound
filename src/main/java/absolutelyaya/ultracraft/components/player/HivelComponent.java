@@ -2,11 +2,16 @@ package absolutelyaya.ultracraft.components.player;
 
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.config.HivelConfig;
+import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import absolutelyaya.ultracraft.registry.StatusEffectRegistry;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.sound.SoundCategory;
 
 public class HivelComponent implements IHivelComponent
@@ -26,6 +31,7 @@ public class HivelComponent implements IHivelComponent
 	public void setSliding(boolean v)
 	{
 		sliding = v;
+		dirty = true;
 	}
 	
 	@Override
@@ -110,6 +116,7 @@ public class HivelComponent implements IHivelComponent
 	public void setSlamming(boolean b)
 	{
 		slamming = b;
+		dirty = true;
 	}
 	
 	@Override
@@ -129,6 +136,7 @@ public class HivelComponent implements IHivelComponent
 	{
 		ignoreSlowdown = b;
 		maxNoSlowdownVelocity = (float)provider.getVelocity().horizontalLength();
+		dirty = true;
 	}
 	
 	@Override
@@ -177,13 +185,21 @@ public class HivelComponent implements IHivelComponent
 	@Override
 	public void readFromNbt(NbtCompound tag)
 	{
-	
+		if(tag.contains("sliding", NbtElement.BYTE_TYPE))
+			sliding = tag.getBoolean("sliding");
+		if(tag.contains("slamming", NbtElement.BYTE_TYPE))
+			slamming = tag.getBoolean("slamming");
+		if(tag.contains("ignoreSlowdown", NbtElement.BYTE_TYPE))
+			ignoreSlowdown = tag.getBoolean("ignoreSlowdown");
 	}
 	
 	@Override
 	public void writeToNbt(NbtCompound tag)
 	{
-	
+		tag.putBoolean("sliding", sliding);
+		tag.putBoolean("slamming", slamming);
+		tag.putBoolean("ignoreSlowdown", ignoreSlowdown);
+		//tag.putBoolean("airControlIncreased", airControlIncreased);
 	}
 	
 	@Override
@@ -204,7 +220,16 @@ public class HivelComponent implements IHivelComponent
 		}
 		if(dirty)
 		{
-			UltraComponents.HIVEL.sync(provider);
+			if(provider.getWorld().isClient)
+			{
+				PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+				buf.writeBoolean(sliding);
+				buf.writeBoolean(slamming);
+				buf.writeBoolean(ignoreSlowdown);
+				ClientPlayNetworking.send(PacketRegistry.HIVEL_DATA_PACKET_ID, buf);
+			}
+			else
+				UltraComponents.HIVEL.sync(provider);
 			dirty = false;
 		}
 	}

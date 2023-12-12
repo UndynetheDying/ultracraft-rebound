@@ -10,6 +10,7 @@ import absolutelyaya.ultracraft.block.PedestalBlock;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
+import absolutelyaya.ultracraft.components.player.IHivelComponent;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.config.EnumEntry;
@@ -78,6 +79,7 @@ public class PacketRegistry
 	public static final Identifier ARM_VISIBLE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "arm_visible");
 	public static final Identifier PUNCH_PRESSED_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "punch_pressed");
 	public static final Identifier SYNC_CONFIG_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "sync_config_c2s");
+	public static final Identifier HIVEL_DATA_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "slide");
 	
 	public static final Identifier FREEZE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "freeze");
 	public static final Identifier HITSCAN_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "scan");
@@ -525,6 +527,17 @@ public class PacketRegistry
 				}
 				case NbtElement.BYTE_TYPE -> ServerConfig.onChanged(server, ServerConfig.INSTANCE.set(id, buf.readBoolean()));
 			}
+		});
+		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.HIVEL_DATA_PACKET_ID, (server, player, handler, buf, sender) -> {
+			boolean sliding = buf.readBoolean();
+			boolean slamming = buf.readBoolean();
+			boolean ignoreSlowdown = buf.readBoolean();
+			server.execute(() -> {
+				IHivelComponent hivel = UltraComponents.HIVEL.get(player);
+				hivel.setSliding(sliding);
+				hivel.setSlamming(slamming);
+				hivel.setIgnoreSlowdown(ignoreSlowdown);
+			});
 		});
 	}
 	
