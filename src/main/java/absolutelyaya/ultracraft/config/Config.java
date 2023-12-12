@@ -8,6 +8,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.WorldSavePath;
 
@@ -171,7 +172,9 @@ public abstract class Config
 	
 	public void syncAll(MinecraftServer server)
 	{
-		server.getPlayerManager().getPlayerList().forEach(this::syncAll);
+		PlayerManager manager = server.getPlayerManager();
+		if(manager != null)
+			manager.getPlayerList().forEach(this::syncAll);
 	}
 	
 	public <V> void set(ConfigEntry<V> entry, V value)

@@ -57,6 +57,8 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 	public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected)
 	{
 		super.inventoryTick(stack, world, entity, slot, selected);
+		if(world.isClient)
+			return;
 		boolean inactive = (!selected || (entity instanceof PlayerEntity player && !UltraComponents.WINGED_ENTITY.get(player).isPrimaryFiring()));
 		int nails = getNbt(stack, "nails");
 		if(nails < 100 && entity.age % 5 == 0 && (inactive || nails == 0))

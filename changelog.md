@@ -25,5 +25,6 @@
 - Skyblocks no longer allow mobs to spawn on them naturally
 - Stained Glass Windows can now be set to not drop an item when destroyed by giving them the NBT tag `{noDrop:1b}`
 - Fixed World Join Message not displaying
+- improved display of rapidly changing weapon overlays
 ## Resource Changes
 ## API Changes
