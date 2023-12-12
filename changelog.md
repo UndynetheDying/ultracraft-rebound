@@ -24,5 +24,6 @@
 - Removed the "vents" MOTD from the non-essential resources
 - Skyblocks no longer allow mobs to spawn on them naturally
 - Stained Glass Windows can now be set to not drop an item when destroyed by giving them the NBT tag `{noDrop:1b}`
+- Fixed World Join Message not displaying
 ## Resource Changes
 ## API Changes

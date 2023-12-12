@@ -201,6 +201,10 @@ public class UltracraftClient implements ClientModInitializer
 		hudRenderer = new UltraHudRenderer();
 		WorldRenderEvents.END.register((context) -> hudRenderer.render(context.tickDelta(), context.camera()));
 		
+		ClientPlayConnectionEvents.INIT.register((handler, client) -> {
+			if(config.get().serverJoinInfo)
+				joinInfoPending = true;
+		});
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
 			refreshSupporter();
 			IWingDataComponent wings = UltraComponents.WING_DATA.get(client.player);
@@ -219,8 +223,6 @@ public class UltracraftClient implements ClientModInitializer
 			ClientPlayNetworking.send(PacketRegistry.ARM_VISIBLE_PACKET_ID, buf);
 			if(config.get().showEpilepsyWarning)
 				MinecraftClient.getInstance().setScreen(new EpilepsyPopupScreen(null));
-			if(config.get().serverJoinInfo)
-				joinInfoPending = true;
 		});
 		
 		ClientEntityEvents.ENTITY_LOAD.register((entity, clientWorld) -> {
@@ -328,6 +330,8 @@ public class UltracraftClient implements ClientModInitializer
 				sound.play(new MovingWindSoundInstance(player));
 			}
 			wasMovementSoundsEnabled = config.get().movementSounds;
+			if(joinInfoPending)
+				serverSyncFinished();
 		});
 		//Block Layers
 		FluidRenderHandlerRegistry.INSTANCE.register(FluidRegistry.STILL_BLOOD, FluidRegistry.Flowing_BLOOD,
@@ -354,12 +358,13 @@ public class UltracraftClient implements ClientModInitializer
 		refreshSupporter();
 	}
 	
-	public static void sendJoinInfo(MinecraftClient client, boolean manual)
+	public static boolean sendJoinInfo(MinecraftClient client, boolean manual)
 	{
 		ServerConfig sConfig = ServerConfig.INSTANCE;
 		HivelConfig hivelConfig = HivelConfig.INSTANCE;
+		System.out.println(client.player + " " + sConfig);
 		if(client.player == null || sConfig == null)
-			return;
+			return false;
 		client.player.sendMessage(Text.translatable("message.ultracraft.join-info-header"));
 		if(!sConfig.hivel.getValue().equals(Setting.FREE))
 			client.player.sendMessage(Text.translatable("message.ultracraft.hi-vel-forced",
@@ -369,7 +374,7 @@ public class UltracraftClient implements ClientModInitializer
 		if(client.getServer() != null && client.getServer().isRemote())
 			client.player.sendMessage(Text.translatable("message.ultracraft.freeze-forced",
 					sConfig.timestop.getValue().equals(Setting.FORCE_ON) ? Text.translatable("options.on") : Text.translatable("options.off")));
-		client.player.sendMessage(Text.translatable("message.ultracraft.attributes", hivelConfig.speed.getValue(), sConfig.hivel.getValue(),
+		client.player.sendMessage(Text.translatable("message.ultracraft.attributes", hivelConfig.speed.getValue(), hivelConfig.jumpBoost.getValue(),
 				(hivelConfig.gravity.getValue() * 100f)).append("%"));
 		client.player.sendMessage(Text.translatable("message.ultracraft.blood-heal." + sConfig.bloodHeal.getValue().name()));
 		if(hivelConfig.fallDamage.getValue())
@@ -391,6 +396,7 @@ public class UltracraftClient implements ClientModInitializer
 		if(!manual)
 			client.player.sendMessage(Text.translatable("message.ultracraft.join-info"));
 		client.player.sendMessage(Text.translatable("========================================="));
+		return true;
 	}
 	
 	public static void addBlood(float f)
@@ -530,9 +536,8 @@ public class UltracraftClient implements ClientModInitializer
 	
 	public static void serverSyncFinished()
 	{
-		if(joinInfoPending)
-			sendJoinInfo(MinecraftClient.getInstance(), false);
-		joinInfoPending = false;
+		if(joinInfoPending && sendJoinInfo(MinecraftClient.getInstance(), false))
+			joinInfoPending = false;
 	}
 	
 	static <V, T extends ConfigEntry<V>> void onExternalRuleUpdate(T rule, V value)
