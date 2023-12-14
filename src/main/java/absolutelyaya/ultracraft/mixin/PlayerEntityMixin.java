@@ -336,7 +336,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	float modifyAirControl(float val)
 	{
 		if(isWingsActive() && UltraComponents.HIVEL.get(this).isAirControlIncreased())
-			return 0.05f; //TODO: get from hivel config
+			return HivelConfig.INSTANCE.offGroundSpeed.getValue();
 		else
 			return val;
 	}

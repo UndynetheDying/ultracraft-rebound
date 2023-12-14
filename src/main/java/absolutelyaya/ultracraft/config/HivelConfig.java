@@ -50,7 +50,7 @@ public class HivelConfig extends Config
 	public final FloatEntry slamStoreSlideVelocity = new FloatEntry("slamStoreSlideVelocity", 1f);
 	public final FloatEntry skimUpwardsVelocityMultiplier = new FloatEntry("skimUpwardsVelocityMultiplier", 0.75f);
 	public final FloatEntry wallSlideVelocity = new FloatEntry("wallSlideVelocity", 0.2f);
-	public final FloatEntry wallJumpHorizontalVelocity = new FloatEntry("wallJumpHorizontalVelocity", 0.33f);
+	public final FloatEntry wallJumpHorizontalVelocity = new FloatEntry("wallJumpHorizontalVelocity", 0.25f);
 	public final FloatEntry wallJumpVerticalVelocityMultiplier = new FloatEntry("wallJumpVerticalVelocityMultiplier", 0.8f);
 	public final FloatEntry groundCheckDistance = new FloatEntry("groundCheckDistance", 0.1f);
 	public final FloatEntry dashGroundStopVelocityMultiplier = new FloatEntry("dashGroundStopVelocityMultiplier", 0.05f);
@@ -58,6 +58,7 @@ public class HivelConfig extends Config
 	public final FloatEntry slamDiveVerticalVelocityMultiplier = new FloatEntry("slamDiveVerticalVelocityMultiplier", 0.6f);
 	public final FloatEntry dashJumpVerticalVelocityMultiplier = new FloatEntry("dashJumpVerticalVelocityMultiplier", 0.5f);
 	public final FloatEntry slideJumpVerticalVelocityMultiplier = new FloatEntry("slideJumpVerticalVelocityMultiplier", 0.55f);
+	public final FloatEntry offGroundSpeed = new FloatEntry("offGroundSpeed", 0.035f);
 	
 	public HivelConfig(MinecraftServer server)
 	{
@@ -139,6 +140,8 @@ public class HivelConfig extends Config
 		entries.add(strongSlamImpactMargin);
 		entries.add(strongSlamImpactVelocity);
 		entries.add(baseJumpVelocity);
+		entries.add(new Comment("Hivel Default: 0.035, Vanilla Default 0.02"));
+		entries.add(offGroundSpeed);
 		
 		load(server);
 		INSTANCE = this;
