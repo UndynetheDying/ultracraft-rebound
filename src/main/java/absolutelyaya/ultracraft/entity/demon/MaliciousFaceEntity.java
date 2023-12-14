@@ -8,7 +8,6 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.Enrageable;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.accessor.MeleeInterruptable;
-import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
@@ -16,7 +15,6 @@ import absolutelyaya.ultracraft.entity.AbstractUltraFlyingEntity;
 import absolutelyaya.ultracraft.entity.other.ShockwaveEntity;
 import absolutelyaya.ultracraft.entity.projectile.HellBulletEntity;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
-import absolutelyaya.ultracraft.registry.GameruleRegistry;
 import absolutelyaya.ultracraft.registry.ParticleRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.block.BlockState;
@@ -185,8 +183,13 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 			dataTracker.set(DEAD, nbt.getBoolean("dead"));
 		if(nbt.contains("decorative"))
 		{
-			dataTracker.set(DECORATIVE, nbt.getBoolean("decorative"));
-			drop();
+			boolean b = nbt.getBoolean("decorative");
+			dataTracker.set(DECORATIVE, b);
+			if(b)
+			{
+				drop();
+				setInvulnerable(true);
+			}
 		}
 	}
 	
@@ -287,15 +290,15 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	{
 		if(source.isIn(DamageTypeTags.IS_EXPLOSION))
 			return false;
-		if(source.isOf(DamageSources.POUND))
-			amount *= 2;
+		if(source.isOf(DamageSources.SLAM))
+			amount *= 3.5;
 		if(source.isOf(DamageSources.CHARGEBACK))
 			amount = 999;
 		if(dataTracker.get(DEAD))
 		{
 			if(source.isOf(DamageTypes.STARVE)) //starve because there's no way this damage would occur accidentally
 				setHealth(0);
-			if(source.isOf(DamageSources.POUND) && !isInvulnerable())
+			if(source.isOf(DamageSources.SLAM) && !isInvulnerable())
 			{
 				setHealth(0);
 				for (int i = 0; i < 32; i++)
@@ -326,7 +329,6 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		dataTracker.set(DEAD, true);
 		setNoGravity(false);
 		setHealth(1);
-		setInvulnerable(true);
 		addVelocity(0f, 0.1f, 0f);
 	}
 	

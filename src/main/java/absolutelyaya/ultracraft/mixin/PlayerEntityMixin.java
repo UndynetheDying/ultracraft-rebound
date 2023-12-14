@@ -220,7 +220,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 		HivelConfig config = HivelConfig.INSTANCE;
 		float f = config.slamDamageMargin.getValue();
 		getWorld().getOtherEntities(this, getBoundingBox().expand(f, 1f, f).offset(0f, -0.5f, 0f)).forEach(e ->
-				e.damage(DamageSources.get(getWorld(), DamageSources.POUND, this), hivel.getSlamDamageCooldown() > 0 ? 1 : 6));
+				e.damage(DamageSources.get(getWorld(), DamageSources.SLAM, this), hivel.getSlamDamageCooldown() > 0 ? 1 : 6));
 		hivel.setSlamDamageCooldown(30);
 		if(!strong)
 			return;

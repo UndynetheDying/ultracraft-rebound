@@ -27,8 +27,10 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.network.PacketByteBuf;
@@ -36,6 +38,7 @@ import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.*;
 import net.minecraft.util.shape.VoxelShape;
@@ -90,6 +93,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	@Shadow public abstract void sendMessage(Text message, boolean overlay);
 	
 	@Shadow protected abstract boolean isCamera();
+	
+	@Shadow public abstract void dismountVehicle();
 	
 	Vec3d dashDir = Vec3d.ZERO;
 	Vec3d slideDir = Vec3d.ZERO;
@@ -203,15 +208,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 				coyote = 0;
 				curWallJumps = wallJumps;
 				curSlidePreservationTicks = slidePreservationTicks;
-				if(slamming) //slam impact
-				{
-					slamming = false;
-					slamJumpTimer = slamJumpWindow;
-					curSlamCooldown = slamCooldown;
-					slideVelocity = slamStored ? slamStoreSlideVelocity : slamSlideVelocity;
-					if(isMainPlayer())
-						PlayerAnimator.playAnimation(client.player, PlayerAnimator.SLAM_IMPACT, 0, false);
-				}
 			}
 			//coyote ticker
 			if(!grounded && coyote <= coyoteThreshold)
@@ -298,6 +294,15 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 				slamStored = false;
 				slamTicks = 0;
 			}
+			if(slamming && verticalCollision && getVelocity().y < 0f) //slam impact
+			{
+				slamming = false;
+				slamJumpTimer = slamJumpWindow;
+				curSlamCooldown = slamCooldown;
+				slideVelocity = slamStored ? slamStoreSlideVelocity : slamSlideVelocity;
+				if(isMainPlayer())
+					PlayerAnimator.playAnimation(client.player, PlayerAnimator.SLAM_IMPACT, 0, false);
+			}
 			//slam velocity
 			if(slamming)
 			{
@@ -373,7 +378,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 				ticksSinceLastPositionPacketSent = 0;
 				lastYaw = getYaw();
 				autoJumpEnabled = client.options.getAutoJump().getValue();
-				//lastTouchedWater = getWorld().getBlockState(posToBlock(getPos().subtract(0f, 0.1, 0f))).getBlock() instanceof FluidBlock;
 				//slam impact
 				if(wasSlamming != slamming)
 				{
