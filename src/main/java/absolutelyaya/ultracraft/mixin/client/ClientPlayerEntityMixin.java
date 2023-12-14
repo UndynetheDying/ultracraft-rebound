@@ -27,10 +27,8 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.network.PacketByteBuf;
@@ -38,7 +36,6 @@ import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.*;
 import net.minecraft.util.shape.VoxelShape;
@@ -322,12 +319,18 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 					setVelocity(slideDir.multiply(Math.min(slideVelocity + slideJumpSpeedBonus, slideSpeedSoftCap)));
 					addVelocity(0, getJumpVelocity() * slideJumpVerticalVelocityMultiplier, 0);
 					hivel.setIgnoreSlowdown(true);
+					curSlidePreservationTicks = -1;
 				}
 				else //slide velocity
 					setVelocity(slideDir.multiply(slideVelocity).add(0f, getVelocity().y, 0f));
 				boolean moved = new Vec3d(lastX, lastBaseY, lastZ).distanceTo(getPos()) > slideVelocity / 2f || Ultracraft.isTimeFrozen() || slideTicks < 1;
 				slideTicks++;
-				setSliding(slidePressed && !slamming && moved && !jumping, hivel.isSliding()); //stop slide
+				if(!(slidePressed && !slamming && moved && !jumping))
+				{
+					setSliding(false, hivel.isSliding()); //stop slide
+					if(!jumping)
+						curSlidePreservationTicks = slidePreservationTicks;
+				}
 				if(!grounded)
 					slideTicks = 0;
 			}
@@ -524,8 +527,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		slideTicks = 0;
 		if(sliding)
 			curSlidePreservationTicks = -1;
-		else
-			curSlidePreservationTicks = slidePreservationTicks;
+		//else
+		//	curSlidePreservationTicks = slidePreservationTicks;
 	}
 	
 	boolean isUnSolid(BlockPos pos)

@@ -30,7 +30,7 @@ public class HivelConfig extends Config
 	public final FloatEntry strongSlamImpactMargin = new FloatEntry("StrongSlamImpactMargin", 3f);
 	public final FloatEntry strongSlamImpactVelocity = new FloatEntry("StrongSlamImpactVelocity", 1f);
 	public final FloatEntry slamVelocity = new FloatEntry("slamVelocity", 2f);
-	public final FloatEntry baseSlideVelocity = new FloatEntry("baseSlideVelocity", 0.35f);
+	public final FloatEntry baseSlideVelocity = new FloatEntry("baseSlideVelocity", 0.4f);
 	public final FloatEntry baseJumpVelocity = new FloatEntry("baseJumpVelocity", 0.42f);
 	public final FloatEntry dashVelocity = new FloatEntry("dashVelocity", 1f);
 	public final FloatEntry skeweredDashVelocity = new FloatEntry("skeweredDashVelocity", 0.05f);
