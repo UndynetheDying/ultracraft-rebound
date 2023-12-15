@@ -6,10 +6,6 @@ import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
 
 public interface IHivelComponent extends ComponentV3, AutoSyncedComponent, CommonTickingComponent
 {
-	void setSliding(boolean v);
-	
-	boolean isSliding();
-	
 	void onDash();
 	
 	void cancelDash();
@@ -29,10 +25,6 @@ public interface IHivelComponent extends ComponentV3, AutoSyncedComponent, Commo
 	boolean consumeStamina();
 	
 	void replenishStamina(int i);
-	
-	void setSlamming(boolean b);
-	
-	boolean isSlamming();
 	
 	boolean shouldIgnoreSlowdown();
 	

@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.mixin.client.render;
 
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.components.player.IHivelComponent;
 import net.minecraft.client.MinecraftClient;
@@ -36,7 +37,7 @@ public class GameRendererMixin
 		if(client.player == null)
 			return;
 		IHivelComponent hivel = UltraComponents.HIVEL.get(client.player);
-		if(hivel.isSliding() || hivel.isDashing())
+		if(client.player instanceof WingedPlayerEntity winged && winged.isSliding() || hivel.isDashing())
 			ci.cancel();
 		if(Ultracraft.isTimeFrozen())
 			ci.cancel();
@@ -47,8 +48,7 @@ public class GameRendererMixin
 	{
 		float f = UltracraftClient.getConfig().slideTilt;
 		ClientPlayerEntity player = MinecraftClient.getInstance().player;
-		IHivelComponent hivel = UltraComponents.HIVEL.get(player);
-		if(hivel.isSliding() && player != null && !camera.isThirdPerson() && f > 0)
+		if(player instanceof WingedPlayerEntity winged && winged.isSliding() && player != null && !camera.isThirdPerson() && f > 0)
 		{
 			float side = MinecraftClient.getInstance().player.input.movementSideways;
 			slideViewTilt = MathHelper.lerp(tickDelta, slideViewTilt, f * -side);

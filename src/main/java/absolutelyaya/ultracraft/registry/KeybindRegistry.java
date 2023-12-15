@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.registry;
 
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
+import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.block.IPunchableBlock;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.screen.WingCustomizationScreen;
@@ -86,7 +87,7 @@ public class KeybindRegistry
 				{
 					boolean flip = player.getMainArm().equals(Arm.LEFT);
 					int anim;
-					if((UltraComponents.HIVEL.get(player).isSliding()))
+					if(player instanceof WingedPlayerEntity winged && winged.isSliding())
 						anim = flip ? PlayerAnimator.SLIDE_PUNCH_FLIPPED : PlayerAnimator.SLIDE_PUNCH;
 					else
 						anim = flip ? PlayerAnimator.PUNCH_FLIPPED : PlayerAnimator.PUNCH;

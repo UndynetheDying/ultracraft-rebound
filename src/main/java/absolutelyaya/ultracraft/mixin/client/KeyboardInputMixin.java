@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.mixin.client;
 
 import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.input.KeyboardInput;
@@ -17,7 +18,7 @@ public abstract class KeyboardInputMixin extends Input
 	void onTick(boolean slowDown, float f, CallbackInfo ci)
 	{
 		PlayerEntity player = MinecraftClient.getInstance().player;
-		if(player != null && UltraComponents.HIVEL.get(player).isSliding())
+		if(player instanceof WingedPlayerEntity winged && winged.isSliding())
 			movementForward = 0f;
 	}
 }

@@ -533,13 +533,9 @@ public class PacketRegistry
 			}
 		});
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.HIVEL_DATA_PACKET_ID, (server, player, handler, buf, sender) -> {
-			boolean sliding = buf.readBoolean();
-			boolean slamming = buf.readBoolean();
 			boolean ignoreSlowdown = buf.readBoolean();
 			server.execute(() -> {
 				IHivelComponent hivel = UltraComponents.HIVEL.get(player);
-				hivel.setSliding(sliding);
-				hivel.setSlamming(slamming);
 				hivel.setIgnoreSlowdown(ignoreSlowdown);
 			});
 		});

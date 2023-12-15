@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.components.player;
 
 import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.config.HivelConfig;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
@@ -18,26 +19,13 @@ public class HivelComponent implements IHivelComponent
 {
 	private final PlayerEntity provider;
 	
-	boolean sliding, slamming, ignoreSlowdown, airControlIncreased, dirty;
+	boolean ignoreSlowdown, airControlIncreased, dirty;
 	float stamina, lastStamina, staminaRegen = 1.5f, maxNoSlowdownVelocity;
 	int dashingTicks = -2, slamDamageCooldown;
 	
 	public HivelComponent(PlayerEntity provider)
 	{
 		this.provider = provider;
-	}
-	
-	@Override
-	public void setSliding(boolean v)
-	{
-		sliding = v;
-		dirty = true;
-	}
-	
-	@Override
-	public boolean isSliding()
-	{
-		return UltraComponents.WING_DATA.get(provider).isActive() && sliding;
 	}
 	
 	@Override
@@ -113,19 +101,6 @@ public class HivelComponent implements IHivelComponent
 	}
 	
 	@Override
-	public void setSlamming(boolean b)
-	{
-		slamming = b;
-		dirty = true;
-	}
-	
-	@Override
-	public boolean isSlamming()
-	{
-		return slamming;
-	}
-	
-	@Override
 	public boolean shouldIgnoreSlowdown()
 	{
 		return ignoreSlowdown;
@@ -185,10 +160,6 @@ public class HivelComponent implements IHivelComponent
 	@Override
 	public void readFromNbt(NbtCompound tag)
 	{
-		if(tag.contains("sliding", NbtElement.BYTE_TYPE))
-			sliding = tag.getBoolean("sliding");
-		if(tag.contains("slamming", NbtElement.BYTE_TYPE))
-			slamming = tag.getBoolean("slamming");
 		if(tag.contains("ignoreSlowdown", NbtElement.BYTE_TYPE))
 			ignoreSlowdown = tag.getBoolean("ignoreSlowdown");
 	}
@@ -196,8 +167,6 @@ public class HivelComponent implements IHivelComponent
 	@Override
 	public void writeToNbt(NbtCompound tag)
 	{
-		tag.putBoolean("sliding", sliding);
-		tag.putBoolean("slamming", slamming);
 		tag.putBoolean("ignoreSlowdown", ignoreSlowdown);
 		//tag.putBoolean("airControlIncreased", airControlIncreased);
 	}
@@ -210,7 +179,8 @@ public class HivelComponent implements IHivelComponent
 		if(slamDamageCooldown > 0)
 			slamDamageCooldown--;
 		StatusEffectInstance chilled = provider.getStatusEffect(StatusEffectRegistry.CHILLED);
-		if(stamina < 90 && !isSliding() && !(chilled != null && provider.age % (chilled.getAmplifier() + 1) != 0))
+		if(stamina < 90 && !(provider instanceof WingedPlayerEntity winged && winged.isSliding()) &&
+				   !(chilled != null && provider.age % (chilled.getAmplifier() + 1) != 0))
 		{
 			lastStamina = stamina;
 			stamina += staminaRegen;
@@ -223,8 +193,6 @@ public class HivelComponent implements IHivelComponent
 			if(provider.getWorld().isClient)
 			{
 				PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-				buf.writeBoolean(sliding);
-				buf.writeBoolean(slamming);
 				buf.writeBoolean(ignoreSlowdown);
 				ClientPlayNetworking.send(PacketRegistry.HIVEL_DATA_PACKET_ID, buf);
 			}

@@ -182,7 +182,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			setVelocity(dir);
 			dashDir = dir;
 			hivel.onDash();
-			if(hivel.isSliding())
+			if(isSliding())
 				setSliding(false, true);
 		}
 	}
@@ -250,19 +250,19 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 					slamTicks = 0;
 					slamming = true;
 					strongSlam = true;
-					hivel.setSliding(false);
+					setSliding(false);
 					hivel.setIgnoreSlowdown(false);
 					hivel.setAirControlIncreased(false);
 					if(isMainPlayer())
 						PlayerAnimator.playAnimation(client.player, PlayerAnimator.SLAM_LOOP, 5, false);
 				}
-				else if(!jumping && !hivel.isDashing() && !hivel.isSliding()) //start slide if possible
+				else if(!jumping && !hivel.isDashing() && !isSliding()) //start slide if possible
 				{
 					BlockPos pos = posToBlock(getPos().add(Vec3d.fromPolar(0f, getYaw()).normalize()));
-					setSliding((isGrounded(slideStartGroundTolerance) || verticalCollision) && isUnSolid(pos), hivel.isSliding());
+					setSliding((isGrounded(slideStartGroundTolerance) || verticalCollision) && isUnSolid(pos), isSliding());
 				}
-				else if(hivel.isSliding()) //cancel slide cause it's not even possible rn
-					hivel.setSliding(false);
+				else if(isSliding()) //cancel slide cause it's not even possible rn
+					setSliding(false);
 			}
 			//cancel strong slam
 			if(strongSlam && !slidePressed)
@@ -276,7 +276,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 					setVelocity(Vec3d.fromPolar(0, getYaw()).multiply(slamStored ? slamStoreDiveVelocity : slamDiveVelocity)
 										.add(0, getJumpVelocity() * slamDiveVerticalVelocityMultiplier, 0));
 					hivel.setIgnoreSlowdown(true);
-					hivel.setSliding(false);
+					setSliding(false);
 					if(isMainPlayer())
 						PlayerAnimator.playAnimation(client.player,
 								slamStored ? PlayerAnimator.SLAMSTORE_DIVE : PlayerAnimator.SLAM_DIVE, 0, false);
@@ -312,7 +312,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 					disableJumpTicks = slamDisableJumpTicks;
 			}
 			//slide tick
-			if(hivel.isSliding())
+			if(isSliding())
 			{
 				if(jumping && !wasJumping && canJump()) //slide jump
 				{
@@ -327,7 +327,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 				slideTicks++;
 				if(!(slidePressed && !slamming && moved && !jumping))
 				{
-					setSliding(false, hivel.isSliding()); //stop slide
+					setSliding(false, isSliding()); //stop slide
 					if(!jumping)
 						curSlidePreservationTicks = slidePreservationTicks;
 				}
@@ -338,7 +338,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			//skim on liquids
 			BlockPos belowPos = posToBlock(getPos().subtract(0f, 0.1f, 0f));
 			FluidState fluidBelow = getWorld().getBlockState(belowPos).getFluidState();
-			if(hivel.isSliding() && !fluidBelow.getFluid().equals(Fluids.EMPTY) && !fluidBelow.isIn(TagRegistry.UNSKIMMABLE_FLUIDS) &&
+			if(isSliding() && !fluidBelow.getFluid().equals(Fluids.EMPTY) && !fluidBelow.isIn(TagRegistry.UNSKIMMABLE_FLUIDS) &&
 					   getWorld().getFluidState(belowPos.up()).getFluid().equals(Fluids.EMPTY))
 			{
 				Vec3d vel = getVelocity();
@@ -354,14 +354,14 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			getWorld().getBlockCollisions(this, getBoundingBox().expand(0.1f, 0, 0f)).forEach(touchingWalls::add); //x-axis wall check
 			getWorld().getBlockCollisions(this, getBoundingBox().expand(0f, 0, 0.1f)).forEach(touchingWalls::add); //z-axis wall check
 			boolean isTouchingWall = touchingWalls.size() > 0;
-			if(!slamming && !hivel.isSliding() && isTouchingWall && !grounded)
+			if(!slamming && !isSliding() && isTouchingWall && !grounded)
 			{
 				Vec3d vel = getVelocity();
 				setVelocity(new Vec3d(vel.x, Math.max(vel.y, -wallSlideVelocity), vel.z));
 			}
 			//wall jump
 			if(curWallJumps > 0 && !isGrounded(0.5f) && jumping && !wasJumping && !lastOnGround && isTouchingWall &&
-					   (UltracraftClient.isSlamStorageEnabled() || !slamming) && !hivel.isSliding())
+					   (UltracraftClient.isSlamStorageEnabled() || !slamming) && !isSliding())
 				wallJump(touchingWalls, hivel);
 			
 			//stop ignoring slowdown and increasing slowdown
@@ -396,14 +396,14 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 				}
 				wasSlamming = slamming;
 			}
-			if(hivel.isSliding() && slideVelocity > baseSlideVelocity && slideTicks > slideSlowdownTicks)
+			if(isSliding() && slideVelocity > baseSlideVelocity && slideTicks > slideSlowdownTicks)
 				slideVelocity = Math.max(baseSlideVelocity, slideVelocity * slideSlowdownMultiplier);
 			wasJumping = jumping;
 			lastOnGround = isOnGround();
 			wasDashPressed = dashPressed;
 			wasSlidePressed = slidePressed;
 			grounded = newGrounded;
-			if(curSlidePreservationTicks > 0 && !hivel.isSliding())
+			if(curSlidePreservationTicks > 0 && !isSliding())
 			{
 				curSlidePreservationTicks--;
 				if(curSlidePreservationTicks == 0)
@@ -415,7 +415,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		{
 			if (hivel.shouldIgnoreSlowdown())
 				hivel.setIgnoreSlowdown(false);
-			if((!wasHivel || getAbilities().flying || isSpectator()) && hivel.isSliding())
+			if((!wasHivel || getAbilities().flying || isSpectator()) && isSliding())
 				setSliding(false, true);
 			if(slamming)
 				cancelSlam();
@@ -503,7 +503,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		if(sliding == last)
 			return;
 		IHivelComponent hivel = UltraComponents.HIVEL.get(this);
-		hivel.setSliding(sliding);
+		setSliding(sliding);
 		if(sliding && !last)
 		{
 			Vec2f movementDir = input.getMovementInput();
@@ -602,7 +602,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	void onCanSprint(CallbackInfoReturnable<Boolean> cir)
 	{
 		IHivelComponent hivel = UltraComponents.HIVEL.get(this);
-		if((hivel.isSliding() && !isOnGround()) || hivel.isDashing())
+		if((isSliding() && !isOnGround()) || hivel.isDashing())
 			cir.setReturnValue(false);
 	}
 	

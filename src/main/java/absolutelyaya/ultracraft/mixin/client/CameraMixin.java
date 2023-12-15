@@ -123,7 +123,7 @@ public abstract class CameraMixin
 		if(thirdPerson && f > 0f)
 		{
 			boolean flip = player.getMainArm().equals(Arm.LEFT);
-			if(UltraComponents.HIVEL.get(player).isSliding())
+			if(player instanceof WingedPlayerEntity winged && winged.isSliding())
 			{
 				Vec3d offset = rotationize(new Vec3d(1.5f * f, f, -1.5f * f * (flip ? -1 : 1)));
 				HitResult hitResult = area.raycast(new RaycastContext(getPos(), getPos().add(offset), RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, focusedEntity));

@@ -69,7 +69,7 @@ public abstract class EntityMixin implements EntityAccessor
 	@ModifyArgs(method = "updateVelocity", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;movementInputToVelocity(Lnet/minecraft/util/math/Vec3d;FF)Lnet/minecraft/util/math/Vec3d;"))
 	public void onConvertMovementInputToVel(Args args)
 	{
-		if(getWorld().isClient() && this instanceof WingedPlayerEntity winged && UltraComponents.HIVEL.get(winged).isSliding())
+		if(getWorld().isClient() && this instanceof WingedPlayerEntity winged && winged.isSliding())
 		{
 			float slideDirRot = (float)Math.toDegrees(Math.atan2(winged.getSlideDir().z, winged.getSlideDir().x));
 			float cappedYaw = ((float)args.get(2) + 90f) % 360f;

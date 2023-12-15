@@ -48,7 +48,7 @@ public abstract class OtherClientPlayerMixin extends PlayerEntity implements Win
 				world.addParticle(ParticleRegistry.DASH, true, pos.x, pos.y, pos.z, particleVel.x, particleVel.y, particleVel.z);
 				lastDashPos = getPos();
 			}
-			if(hivel.isSliding())
+			if(isSliding())
 			{
 				if(!wasSliding)
 				{
@@ -63,7 +63,7 @@ public abstract class OtherClientPlayerMixin extends PlayerEntity implements Win
 				world.addParticle(ParticleRegistry.SLIDE, true, pos.x, pos.y + 0.1, pos.z, particleVel.x, particleVel.y, particleVel.z);
 				lastSlidePos = getPos();
 			}
-			wasSliding = hivel.isSliding();
+			wasSliding = isSliding();
 			wasDashing = hivel.getDashingTicks() >= -1;
 		});
 	}

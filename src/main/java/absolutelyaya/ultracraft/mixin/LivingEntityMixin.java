@@ -230,7 +230,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 		if(!isTouchingWater() || shouldSwimInFluids() || canWalkOnFluid(fluidState))
 			return;
 		IHivelComponent hivel = UltraComponents.HIVEL.get(winged);
-		float f = hivel.isSliding() ? 0.9F : getBaseMovementSpeedMultiplier();
+		float f = winged.isSliding() ? 0.9F : getBaseMovementSpeedMultiplier();
 		float g = 0.03f;
 		if(fluidState.isIn(FluidTags.WATER))
 		{
@@ -298,7 +298,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	@Inject(method = "computeFallDamage", at = @At("RETURN"), cancellable = true)
 	private void onComputeFallDamage(float fallDistance, float damageMultiplier, CallbackInfoReturnable<Integer> cir)
 	{
-		if(!(this instanceof WingedPlayerEntity winged && UltraComponents.HIVEL.get(winged).isSliding()))
+		if(!(this instanceof WingedPlayerEntity winged && winged.isSliding()))
 			cir.setReturnValue(0);
 	}
 	
@@ -323,7 +323,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	@Inject(method = "canWalkOnFluid", at = @At("HEAD"), cancellable = true)
 	void onCanWalkOnFluid(FluidState state, CallbackInfoReturnable<Boolean> cir)
 	{
-		if(this instanceof WingedPlayerEntity winged && UltraComponents.HIVEL.get(winged).isSliding())
+		if(this instanceof WingedPlayerEntity winged && winged.isSliding())
 			cir.setReturnValue(true);
 	}
 	
@@ -465,7 +465,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 					DamageSources.KNUCKLE_BLAST, player), 1f, 0.75f, 6, false);
 		else
 		{
-			if((UltraComponents.HIVEL.get(player).isSliding()))
+			if(player instanceof WingedPlayerEntity winged && winged.isSliding())
 				PlayerAnimator.playAnimation(player, player.getMainArm().equals(Arm.LEFT) ? PlayerAnimator.SLIDE_KNUCKLE_BLAST_FLIPPED : PlayerAnimator.SLIDE_KNUCKLE_BLAST,
 						0, false, false);
 			else
