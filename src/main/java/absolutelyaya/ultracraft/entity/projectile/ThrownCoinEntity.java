@@ -269,7 +269,7 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 					if (dataTracker.get(CHARGEBACK))
 					{
 						ServerHitscanHandler.sendPacket((ServerWorld) getWorld(), getPos(), closest.getEyePos(), hitscanType);
-						closest.damage(DamageSources.get(getWorld(), DamageSources.CHARGEBACK, chargebackCauser), chargebackCauser == closest ? Float.MAX_VALUE : damage);
+						closest.damage(DamageSources.get(getWorld(), DamageSources.CHARGEBACK, getOwner(), chargebackCauser), chargebackCauser == closest ? Float.MAX_VALUE : damage);
 						ExplosionHandler.explosion(getOwner(), getWorld(), closest.getPos(),
 								DamageSources.get(getWorld(), DamageTypes.EXPLOSION, this, getOwner()), 10, 0f, 5.5f, true);
 						Ultracraft.freeze((ServerWorld) getWorld(), 5);

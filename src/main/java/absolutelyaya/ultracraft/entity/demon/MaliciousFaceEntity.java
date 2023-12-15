@@ -123,8 +123,10 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 			if(getWorld().getDifficulty().equals(Difficulty.HARD) || ServerConfig.INSTANCE.effectivelyViolent.getValue())
 			{
 				playSound(SoundRegistry.GENERIC_ENRAGE, 1.5f, 0.9f);
-				getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(32), i -> true)
-						.forEach(p -> UltraComponents.STYLE.get(p).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "enrage"))));
+				if(!getWorld().isClient)
+					getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(32), i -> true)
+							.forEach(p -> UltraComponents.STYLE.get(p)
+												  .styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "enrage"))));
 			}
 		}
 		else if(data.equals(LANDED) && dataTracker.get(LANDED))
@@ -317,6 +319,16 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		if(getHealth() - amount <= 0f && !dataTracker.get(DEAD))
 		{
 			drop();
+			LivingEntity attacker = getAttacker();
+			if(!(attacker instanceof PlayerEntity) && source.getSource() instanceof LivingEntity living)
+				attacker = living;
+			if(attacker instanceof PlayerEntity playerAttacker)
+			{
+				StyleBonusManager.getBonuses().forEach((id, bonus) -> {
+					if(bonus.check(getWorld(), getType(), source.getType()))
+						UltraComponents.STYLE.get(playerAttacker).styleBonusGet(bonus);
+				});
+			}
 			return false;
 		}
 		if(getHealth() - amount < getMaxHealth() / 2 && !dataTracker.get(CRACKED))
