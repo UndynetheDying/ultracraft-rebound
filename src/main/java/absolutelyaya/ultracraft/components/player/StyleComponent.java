@@ -29,7 +29,6 @@ public class StyleComponent implements IStyleComponent
 	final PlayerEntity provider;
 	Map<Identifier, Integer> stalenessMap = new HashMap<>();
 	Queue<Pair<String, Long>> bonusQueue = new ArrayDeque<>();
-	String[] recentBonuses = new String[]{};
 	int style;
 	float chain, movementMultiplier = 1f;
 	boolean dirty;
@@ -75,7 +74,6 @@ public class StyleComponent implements IStyleComponent
 	public void clientStyleBonusGet(String key)
 	{
 		bonusQueue.add(new Pair<>(key, provider.getWorld().getTime()));
-		updateRecentBonuses();
 	}
 	
 	@Override
@@ -97,18 +95,10 @@ public class StyleComponent implements IStyleComponent
 			return 0f;
 	}
 	
-	void updateRecentBonuses()
-	{
-		Queue<Pair<String, Long>> q = new ArrayDeque<>(bonusQueue);
-		recentBonuses = new String[Math.min(6, q.size())];
-		for (int i = 0; i < Math.min(6, q.size()); i++)
-			recentBonuses[i] = q.remove().getLeft();
-	}
-	
 	@Override
-	public String[] getRecentBonuses()
+	public Queue<Pair<String, Long>> getBonusQueue()
 	{
-		return recentBonuses;
+		return bonusQueue;
 	}
 	
 	@Override
@@ -250,10 +240,7 @@ public class StyleComponent implements IStyleComponent
 	public void tick()
 	{
 		if(bonusQueue.size() > 0 && provider.getWorld().getTime() - bonusQueue.peek().getRight() > 60)
-		{
 			bonusQueue.remove();
-			updateRecentBonuses();
-		}
 		if(chain > 0)
 			chain = Math.max(chain - getChainDecay() / 2f, 0);
 		if(dirty)

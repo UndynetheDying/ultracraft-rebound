@@ -31,6 +31,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec2f;
@@ -296,7 +297,7 @@ public class UltraHudRenderer
 		}
 		
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-		int count = style.getRecentBonuses().length;
+		int count = Math.min(style.getBonusQueue().size(), 6);
 		matrices.push();
 		matrices.scale(0.5f, -0.5f, -1f);
 		matrices.translate(flip ? 124 : 144, -100, 10);
@@ -310,21 +311,23 @@ public class UltraHudRenderer
 					String.format(java.util.Locale.US,"%.2f", style.getMovementMultiplier())), flip ? -150 : -50, 70, alpha, false);
 			matrices.pop();
 		}
-		if(style.getRecentBonuses() != null && count > 0)
+		if(style.getBonusQueue() != null && count > 0)
 		{
 			if(alpha > 0f)
 			{
-				for (int i = 0; i < count; i++)
+				int i = count;
+				for (Pair<String, Long> p : style.getBonusQueue())
 				{
-					if(style.getRecentBonuses()[i] == null)
+					if(p == null || i <= 0)
 						break;
-					Text t = Text.translatable(style.getRecentBonuses()[i]);
-					drawTextNoBG(matrices, t, flip ? -150 : -50, 5 + i * 10, alpha, false);
+					Text t = Text.translatable(p.getLeft());
+					drawTextNoBG(matrices, t, flip ? -150 : -50, 5 + (i - 1) * 10, alpha, false);
+					i--;
 				}
 			}
 		}
 		matrices.pop();
-		if(style.getChain() > 0 || style.getRecentBonuses().length > 0)
+		if(style.getChain() > 0 || style.getBonusQueue().size() > 0)
 			styleTimer = 1f;
 		else if(styleTimer > 0f)
 			styleTimer -= delta / 2f;
