@@ -26,7 +26,7 @@ import static net.minecraft.server.command.CommandManager.literal;
 public class WhitelistCommand
 {
 	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-		dispatcher.register(literal("ultrawhitelist").requires(source -> source.hasPermissionLevel(2)).requires(ServerCommandSource::isExecutedByPlayer)
+		dispatcher.register(literal("ultrawhitelist").requires(source -> source.hasPermissionLevel(2))
 									.then(argument("list", string()).suggests(WhitelistCommand::whitelistProvider).executes(WhitelistCommand::executeWhitelistCheck)
 												  .then(argument("state", string()).suggests(WhitelistCommand::whitelistToggleProvider).executes(WhitelistCommand::executeWhitelistToggle))
 												  .then(literal("list").executes(WhitelistCommand::executeWhitelistList))
