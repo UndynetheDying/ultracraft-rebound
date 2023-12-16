@@ -27,8 +27,9 @@
 - Skyblocks no longer allow mobs to spawn on them naturally
 - Stained Glass Windows can now be set to not drop an item when destroyed by giving them the NBT tag `{noDrop:1b}`
 - Fixed World Join Message not displaying
-- improved display of rapidly changing weapon overlays
-- the cancerous Rodent glows now with LambDynamicLights installed
-- added decorated pots to `fragile` blocktag
+- Improved display of rapidly changing weapon overlays
+- The cancerous Rodent glows now with LambDynamicLights installed
+- Added decorated pots to `fragile` blocktag
+- Fixed Hell Spawner Spawn Egg Rendering
 ## Resource Changes
 ## API Changes
