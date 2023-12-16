@@ -14,9 +14,13 @@
 - Rewrote Hivel Movement
   - no more hard coded values; you can customize everything in detail using a config file.
 - Greater Filth will not enrage anymore without a Target
-## Settings & Gamerules
+## Settings & Config
 - Removed almost all gamerules (only remaining is `ultra-startWithPiercer`)
 - Added Option to disable Screenshake
+- Added new Config System
+  - /ultracraft config still works, but all hivel related entries have been moved.
+  - config files are found under `saves/<world>/ultracraft/`
+- Added Config to allow for the overpump self-damage being dodgeable (default: false)
 ## Commands
 - ultrawhitelist can now be used by non-players
 - fixed time unfreeze command not clearing the time freeze VFX on Clients

@@ -59,6 +59,7 @@ public class ServerConfigScreen extends Screen
 		addRule(config.nailgunDamage, pos, ConfigWidget.ValueType.FLOAT, 22);
 		addRule(config.hellObserverInterval, pos, ConfigWidget.ValueType.INT, 23);
 		addRule(config.bloodSaturation, pos, ConfigWidget.ValueType.BOOL, 24);
+		addRule(config.dodgeableOverpump, pos, ConfigWidget.ValueType.BOOL, 25);
 		
 		boolean b = false;
 		if(simplistic != null)

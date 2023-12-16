@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.rendering.item.PumpShotgunRenderer;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
@@ -13,7 +14,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Vec3d;
@@ -121,7 +121,8 @@ public class PumpShotgunItem extends AbstractShotgunItem
 			winged.setBloodHealCooldown(10);
 			ExplosionHandler.explosion(user, world, user.getPos().add(user.getRotationVector()),
 					DamageSources.get(world, DamageSources.OVERCHARGE, user), 15, 0, 3, true, true);
-			user.damage(DamageSources.get(world, DamageSources.OVERCHARGE_SELF), 10);
+			if(!(ServerConfig.INSTANCE.dodgeableOverpump.getValue() && UltraComponents.HIVEL.get(user).isDashing()))
+				user.damage(DamageSources.get(world, DamageSources.OVERCHARGE_SELF), 10);
 		}
 		return true;
 	}

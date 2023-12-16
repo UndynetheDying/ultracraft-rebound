@@ -2,7 +2,6 @@ package absolutelyaya.ultracraft.config;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
 
 public class ServerConfig extends Config
 {
@@ -23,6 +22,7 @@ public class ServerConfig extends Config
 	public final BooleanEntry flamethrowerGrief = new BooleanEntry("FlamethrowerGrief", false);
 	public final IntegerEntry hellObserverInterval = new IntegerEntry("HellObserverInterval", 5);
 	public final BooleanEntry bloodSaturation = new BooleanEntry("BloodSaturation", false);
+	public final BooleanEntry dodgeableOverpump = new BooleanEntry("DodgeableOverpump", false);
 	//Weapon Damage
 	public final FloatEntry revolverDamage = (FloatEntry)new FloatEntry("RevolverDamage", 1f).setRange(0f, Float.MAX_VALUE);
 	public final FloatEntry shotgunDamage = (FloatEntry)new FloatEntry("ShotgunDamage", 1f).setRange(0f, Float.MAX_VALUE);
@@ -49,6 +49,7 @@ public class ServerConfig extends Config
 		entries.add(flamethrowerGrief);
 		entries.add(hellObserverInterval);
 		entries.add(bloodSaturation);
+		entries.add(dodgeableOverpump);
 		entries.add(new Comment(" ## ############################# ##  #"));
 		entries.add(new Comment("      Weapon Damage Multipliers"));
 		entries.add(new Comment(" ## ############################# ##  #"));
