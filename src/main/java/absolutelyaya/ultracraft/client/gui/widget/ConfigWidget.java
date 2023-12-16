@@ -49,7 +49,7 @@ public class ConfigWidget<T extends ConfigEntry<?>> extends ClickableWidget impl
 	
 	public ConfigWidget(NbtCompound rules, Vector2i pos, T rule, ValueType type, int idx)
 	{
-		super(pos.x, pos.y + 38 * idx, 200, 36, Text.empty());
+		super(pos.x, pos.y, 200, 36, Text.empty());
 		this.rule = rule;
 		this.type = type;
 		renderer = MinecraftClient.getInstance().textRenderer;
@@ -67,7 +67,7 @@ public class ConfigWidget<T extends ConfigEntry<?>> extends ClickableWidget impl
 	
 	public ConfigWidget(NbtCompound rules, Vector2i pos, T rule, String[] values, int idx)
 	{
-		super(pos.x, pos.y + 38 * idx, 200, 36, Text.empty());
+		super(pos.x, pos.y, 200, 36, Text.empty());
 		this.rule = rule;
 		this.cycleValues = values;
 		this.type = ValueType.CYCLE;
@@ -80,7 +80,7 @@ public class ConfigWidget<T extends ConfigEntry<?>> extends ClickableWidget impl
 	
 	public ConfigWidget(NbtCompound rules, Vector2i pos, T rule, Enum<?>[] values, int idx)
 	{
-		super(pos.x, pos.y + 38 * idx, 200, 36, Text.empty());
+		super(pos.x, pos.y, 200, 36, Text.empty());
 		this.rule = rule;
 		this.cycleValues = Arrays.stream(values).map(Enum::name).toArray(String[]::new);
 		this.type = ValueType.CYCLE;
