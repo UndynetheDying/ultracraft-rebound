@@ -39,6 +39,7 @@ public class ConfigWidget<T extends ConfigEntry<?>> extends ClickableWidget impl
 {
 	static final Identifier ICONS = new Identifier(Ultracraft.MOD_ID, "textures/gui/gamerule_icons.png");
 	
+	final String parentId;
 	final T rule;
 	final ValueType type;
 	final int icon;
@@ -47,9 +48,10 @@ public class ConfigWidget<T extends ConfigEntry<?>> extends ClickableWidget impl
 	Drawable valueWidget;
 	Identifier BGTexture;
 	
-	public ConfigWidget(NbtCompound rules, Vector2i pos, T rule, ValueType type, int idx)
+	public ConfigWidget(NbtCompound rules, Vector2i pos, T rule, ValueType type, int idx, String parentId)
 	{
 		super(pos.x, pos.y, 200, 36, Text.empty());
+		this.parentId = parentId;
 		this.rule = rule;
 		this.type = type;
 		renderer = MinecraftClient.getInstance().textRenderer;
@@ -65,9 +67,10 @@ public class ConfigWidget<T extends ConfigEntry<?>> extends ClickableWidget impl
 		BGTexture = pickBG();
 	}
 	
-	public ConfigWidget(NbtCompound rules, Vector2i pos, T rule, String[] values, int idx)
+	public ConfigWidget(NbtCompound rules, Vector2i pos, T rule, String[] values, int idx, String parentId)
 	{
 		super(pos.x, pos.y, 200, 36, Text.empty());
+		this.parentId = parentId;
 		this.rule = rule;
 		this.cycleValues = values;
 		this.type = ValueType.CYCLE;
@@ -78,9 +81,10 @@ public class ConfigWidget<T extends ConfigEntry<?>> extends ClickableWidget impl
 		BGTexture = pickBG();
 	}
 	
-	public ConfigWidget(NbtCompound rules, Vector2i pos, T rule, Enum<?>[] values, int idx)
+	public ConfigWidget(NbtCompound rules, Vector2i pos, T rule, Enum<?>[] values, int idx, String parentId)
 	{
 		super(pos.x, pos.y, 200, 36, Text.empty());
+		this.parentId = parentId;
 		this.rule = rule;
 		this.cycleValues = Arrays.stream(values).map(Enum::name).toArray(String[]::new);
 		this.type = ValueType.CYCLE;
@@ -222,6 +226,7 @@ public class ConfigWidget<T extends ConfigEntry<?>> extends ClickableWidget impl
 			return;
 		ServerConfigScreen.getRules().putString(rule.getId(), value);
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeString("server");
 		buf.writeString(rule.getId());
 		switch(type)
 		{

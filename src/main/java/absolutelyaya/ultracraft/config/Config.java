@@ -240,4 +240,9 @@ public abstract class Config
 				return entry;
 		return null;
 	}
+	
+	public String getId()
+	{
+		return id;
+	}
 }

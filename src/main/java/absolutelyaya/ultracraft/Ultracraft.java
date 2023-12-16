@@ -182,11 +182,11 @@ public class Ultracraft implements ModInitializer
         if(world != null)
         {
             boolean freezeDisabled = world.getServer().isRemote() && ServerConfig.INSTANCE.timestop.getValue().equals(Setting.FORCE_OFF);
-            PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-            buf.writeInt(ticks);
-            buf.writeBoolean(freezeDisabled);
             if(freezeDisabled)
                 return;
+            PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+            buf.writeInt(ticks);
+            buf.writeBoolean(false);
             for (ServerPlayerEntity p : world.getPlayers())
                 ServerPlayNetworking.send(p, PacketRegistry.FREEZE_PACKET_ID, buf);
         }
@@ -196,6 +196,17 @@ public class Ultracraft implements ModInitializer
     
     public static void cancelFreeze(ServerWorld world)
     {
+        if(world != null)
+        {
+            boolean freezeDisabled = world.getServer().isRemote() && ServerConfig.INSTANCE.timestop.getValue().equals(Setting.FORCE_OFF);
+            if(freezeDisabled)
+                return;
+            PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+            buf.writeInt(-1);
+            buf.writeBoolean(false);
+            for (ServerPlayerEntity p : world.getPlayers())
+                ServerPlayNetworking.send(p, PacketRegistry.FREEZE_PACKET_ID, buf);
+        }
         freezeTicks = 0;
         LOGGER.info("Forcefully Unstopped time.");
     }

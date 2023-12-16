@@ -69,19 +69,19 @@ public class ServerConfigScreen extends Screen
 	
 	<K extends ConfigEntry<?>> void addRule(K key, Vector2i pos, String[] values, int iconIdx)
 	{
-		ruleWidgets.add(addDrawableChild(new ConfigWidget<>(rules, pos, key, values, iconIdx)));
+		ruleWidgets.add(addDrawableChild(new ConfigWidget<>(rules, pos, key, values, iconIdx, "server")));
 		pos.add(0, 38);
 	}
 	
 	<K extends ConfigEntry<?>> void addRule(K key, Vector2i pos, Enum<?>[] values, int iconIdx)
 	{
-		ruleWidgets.add(addDrawableChild(new ConfigWidget<>(rules, pos, key, values, iconIdx)));
+		ruleWidgets.add(addDrawableChild(new ConfigWidget<>(rules, pos, key, values, iconIdx, "server")));
 		pos.add(0, 38);
 	}
 	
 	<K extends ConfigEntry<?>> void addRule(K key, Vector2i pos, ConfigWidget.ValueType valueType, int iconIdx)
 	{
-		ruleWidgets.add(addDrawableChild(new ConfigWidget<>(rules, pos, key, valueType, iconIdx)));
+		ruleWidgets.add(addDrawableChild(new ConfigWidget<>(rules, pos, key, valueType, iconIdx, "server")));
 		pos.add(0, 38);
 	}
 	

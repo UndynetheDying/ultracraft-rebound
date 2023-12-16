@@ -619,7 +619,10 @@ public class UltracraftClient implements ClientModInitializer
 	
 	public static void freezeVFX(int ticks)
 	{
-		visualFreezeTicks += ticks;
+		if(ticks == -1)
+			visualFreezeTicks = 0;
+		else
+			visualFreezeTicks += ticks;
 	}
 	
 	public static boolean isParryVisualsActive()
