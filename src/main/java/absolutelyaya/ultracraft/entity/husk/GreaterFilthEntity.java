@@ -177,7 +177,7 @@ public class GreaterFilthEntity extends AbstractHuskEntity implements GeoEntity,
 			dataTracker.set(DODGE_TICKS, dataTracker.get(DODGE_TICKS) - 1);
 		if(dataTracker.get(ENRAGE_TICKS) > 0)
 			dataTracker.set(ENRAGE_TICKS, dataTracker.get(ENRAGE_TICKS) - 1);
-		if(!isEnraged())
+		if(!isEnraged() && getTarget() != null)
 			dataTracker.set(FRUSTRATION_TICKS, dataTracker.get(FRUSTRATION_TICKS) + 1);
 		if(dataTracker.get(FRUSTRATION_TICKS) > 400 && !isEnraged())
 			enrage();
