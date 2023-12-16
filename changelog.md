@@ -17,6 +17,7 @@
 - Removed almost all gamerules (only remaining is `ultra-startWithPiercer`)
 - Added Option to disable Screenshake
 ## Commands
+- ultrawhitelist can now be used by non-players
 ## Tweaks
 - Buffed overpump damage towards others (10 Dmg -> 15 Dmg)
 ## Minor Changes
@@ -26,5 +27,6 @@
 - Stained Glass Windows can now be set to not drop an item when destroyed by giving them the NBT tag `{noDrop:1b}`
 - Fixed World Join Message not displaying
 - improved display of rapidly changing weapon overlays
+- the cancerous Rodent glows now with LambDynamicLights installed
 ## Resource Changes
 ## API Changes
