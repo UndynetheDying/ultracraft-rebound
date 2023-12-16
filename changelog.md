@@ -28,5 +28,6 @@
 - Fixed World Join Message not displaying
 - improved display of rapidly changing weapon overlays
 - the cancerous Rodent glows now with LambDynamicLights installed
+- added decorated pots to `fragile` blocktag
 ## Resource Changes
 ## API Changes
