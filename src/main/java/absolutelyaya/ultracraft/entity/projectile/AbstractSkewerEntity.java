@@ -163,7 +163,7 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 	{
 		float mult = source.isOf(DamageSources.KNUCKLE_PUNCH) ? 2f : 1f;
 		dataTracker.set(SHAKE, dataTracker.get(SHAKE) + (int)(10 * mult));
-		if((isInGround() || victim != null) && source.isIn(DamageTypeTags.MELEE))
+		if((isInGround() || victim != null) && (source.isIn(DamageTypeTags.MELEE) || source.isIn(DamageTypeTags.PUNCH)))
 		{
 			dataTracker.set(HEALTH, dataTracker.get(HEALTH) - (int)(1 * mult));
 			if(dataTracker.get(HEALTH) <= 0)

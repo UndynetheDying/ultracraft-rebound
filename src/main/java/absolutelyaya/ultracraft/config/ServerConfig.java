@@ -24,6 +24,8 @@ public class ServerConfig extends Config
 	public final BooleanEntry bloodSaturation = new BooleanEntry("BloodSaturation", false);
 	public final BooleanEntry dodgeableOverpump = new BooleanEntry("DodgeableOverpump", false);
 	//Weapon Damage
+	public final FloatEntry feedbackerDamage = (FloatEntry)new FloatEntry("FeedbackerDamage", 1f).setRange(0f, Float.MAX_VALUE);
+	public final FloatEntry knuckleblasterDamage = (FloatEntry)new FloatEntry("KnuckleblasterDamage", 2.5f).setRange(0f, Float.MAX_VALUE);
 	public final FloatEntry revolverDamage = (FloatEntry)new FloatEntry("RevolverDamage", 1f).setRange(0f, Float.MAX_VALUE);
 	public final FloatEntry shotgunDamage = (FloatEntry)new FloatEntry("ShotgunDamage", 1f).setRange(0f, Float.MAX_VALUE);
 	public final FloatEntry nailgunDamage = (FloatEntry)new FloatEntry("NailgunDamage", 1f).setRange(0f, Float.MAX_VALUE);
@@ -53,6 +55,8 @@ public class ServerConfig extends Config
 		entries.add(new Comment(" ## ############################# ##  #"));
 		entries.add(new Comment("      Weapon Damage Multipliers"));
 		entries.add(new Comment(" ## ############################# ##  #"));
+		entries.add(feedbackerDamage);
+		entries.add(knuckleblasterDamage);
 		entries.add(revolverDamage);
 		entries.add(shotgunDamage);
 		entries.add(nailgunDamage);

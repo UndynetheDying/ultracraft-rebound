@@ -364,7 +364,6 @@ public class UltracraftClient implements ClientModInitializer
 	{
 		ServerConfig sConfig = ServerConfig.INSTANCE;
 		HivelConfig hivelConfig = HivelConfig.INSTANCE;
-		System.out.println(client.player + " " + sConfig);
 		if(client.player == null || sConfig == null)
 			return false;
 		client.player.sendMessage(Text.translatable("message.ultracraft.join-info-header"));

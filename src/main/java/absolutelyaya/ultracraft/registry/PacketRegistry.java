@@ -156,14 +156,13 @@ public class PacketRegistry
 						else if(target instanceof MinecartAccessor minecart)
 							minecart.parry(player);
 					}
-					else
-					{
-						boolean knuckle = arm.isKnuckleblaster();
-						world.playSound(null, player.getBlockPos(), knuckle ? SoundRegistry.KNUCKLEBLASTER_PUNCH : SoundRegistry.FEEDBACKER_PUNCH ,
-								SoundCategory.PLAYERS, 0.75f, 0.5f);
-						target.damage(DamageSources.get(world, knuckle ? DamageSources.KNUCKLE_PUNCH : DamageSources.PUNCH, player), knuckle ? 2.5f : 1f);
-						//TODO: make punch damage configurable
-					}
+					boolean knuckle = arm.isKnuckleblaster();
+					world.playSound(null, player.getBlockPos(), knuckle ? SoundRegistry.KNUCKLEBLASTER_PUNCH : SoundRegistry.FEEDBACKER_PUNCH ,
+							SoundCategory.PLAYERS, 0.75f, 0.5f);
+					ServerConfig config = ServerConfig.INSTANCE;
+					target.damage(DamageSources.get(world, knuckle ? DamageSources.KNUCKLE_PUNCH : DamageSources.PUNCH, player),
+							knuckle ? config.knuckleblasterDamage.getValue() : config.feedbackerDamage.getValue());
+					
 					boolean fatal = !target.isAlive();
 					Vec3d vel = forward.multiply(fatal ? 1.5f : 0.75f);
 					if(arm.isKnuckleblaster())
@@ -234,6 +233,7 @@ public class PacketRegistry
 					{
 						heal = false;
 						Ultracraft.freeze(player, 5); //ProjBoost freezes are shorter
+						UltraComponents.STYLE.get(player).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "projboost")));
 					}
 					else
 						return;
