@@ -80,7 +80,9 @@ public class PacketRegistry
 	public static final Identifier ARM_VISIBLE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "arm_visible");
 	public static final Identifier PUNCH_PRESSED_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "punch_pressed");
 	public static final Identifier SYNC_CONFIG_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "sync_config_c2s");
-	public static final Identifier HIVEL_DATA_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "slide");
+	public static final Identifier HIVEL_DATA_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "hiveldata");
+	public static final Identifier SLIDE_STATE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "slide_state");
+	public static final Identifier SLAM_STATE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "slam_state");
 	
 	public static final Identifier FREEZE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "freeze");
 	public static final Identifier HITSCAN_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "scan");
@@ -537,6 +539,20 @@ public class PacketRegistry
 			server.execute(() -> {
 				IHivelComponent hivel = UltraComponents.HIVEL.get(player);
 				hivel.setIgnoreSlowdown(ignoreSlowdown);
+			});
+		});
+		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.SLIDE_STATE_PACKET_ID, (server, player, handler, buf, sender) -> {
+			boolean slide = buf.readBoolean();
+			server.execute(() -> {
+				if(player instanceof WingedPlayerEntity winged)
+					winged.setSliding(slide);
+			});
+		});
+		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.SLAM_STATE_PACKET_ID, (server, player, handler, buf, sender) -> {
+			boolean slam = buf.readBoolean();
+			server.execute(() -> {
+				if(player instanceof WingedPlayerEntity winged)
+					winged.setSlamming(slam);
 			});
 		});
 	}

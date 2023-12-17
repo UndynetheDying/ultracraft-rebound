@@ -163,7 +163,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			if(!hivel.consumeStamina())
 				return;
 			if(slamming)
-				slamming = false;
+				setSlammingClient(false);
 			if(slamStored)
 				slamStored = false;
 			Vec3d dir = new Vec3d(input.movementSideways, 0f, input.movementForward).rotateY(-(float)Math.toRadians(getYaw())).normalize();
@@ -248,9 +248,9 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 				{
 					hivel.cancelDash();
 					slamTicks = 0;
-					slamming = true;
+					setSlammingClient(true);
 					strongSlam = true;
-					setSliding(false);
+					setSlidingClient(false);
 					hivel.setIgnoreSlowdown(false);
 					hivel.setAirControlIncreased(false);
 					if(isMainPlayer())
@@ -262,7 +262,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 					setSliding((isGrounded(slideStartGroundTolerance) || verticalCollision) && isUnSolid(pos), isSliding());
 				}
 				else if(isSliding()) //cancel slide cause it's not even possible rn
-					setSliding(false);
+					setSlidingClient(false);
 			}
 			//cancel strong slam
 			if(strongSlam && !slidePressed)
@@ -276,7 +276,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 					setVelocity(Vec3d.fromPolar(0, getYaw()).multiply(slamStored ? slamStoreDiveVelocity : slamDiveVelocity)
 										.add(0, getJumpVelocity() * slamDiveVerticalVelocityMultiplier, 0));
 					hivel.setIgnoreSlowdown(true);
-					setSliding(false);
+					setSlidingClient(false);
 					if(isMainPlayer())
 						PlayerAnimator.playAnimation(client.player,
 								slamStored ? PlayerAnimator.SLAMSTORE_DIVE : PlayerAnimator.SLAM_DIVE, 0, false);
@@ -293,7 +293,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			}
 			if(slamming && verticalCollision && getVelocity().y < 0f) //slam impact
 			{
-				slamming = false;
+				setSlammingClient(false);
 				slamJumpTimer = slamJumpWindow;
 				curSlamCooldown = slamCooldown;
 				slideVelocity = slamStored ? slamStoreSlideVelocity : slamSlideVelocity;
@@ -490,7 +490,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	
 	void cancelSlam()
 	{
-		slamming = wasSlamming = false;
+		setSlammingClient(wasSlamming = false);
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeBoolean(slamming);
 		buf.writeBoolean(false);
@@ -503,7 +503,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		if(sliding == last)
 			return;
 		IHivelComponent hivel = UltraComponents.HIVEL.get(this);
-		setSliding(sliding);
+		setSlidingClient(sliding);
 		if(sliding && !last)
 		{
 			Vec2f movementDir = input.getMovementInput();
@@ -527,8 +527,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		slideTicks = 0;
 		if(sliding)
 			curSlidePreservationTicks = -1;
-		//else
-		//	curSlidePreservationTicks = slidePreservationTicks;
 	}
 	
 	boolean isUnSolid(BlockPos pos)
@@ -659,5 +657,21 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		ClientConfig config = UltracraftClient.getConfig();
 		if(config.screenshake)
 			screenshake += config.safeVFX ? Math.min(val / 5f, 1f) : val;
+	}
+	
+	public void setSlidingClient(boolean v)
+	{
+		setSliding(v);
+		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeBoolean(v);
+		ClientPlayNetworking.send(PacketRegistry.SLIDE_STATE_PACKET_ID, buf);
+	}
+	
+	public void setSlammingClient(boolean v)
+	{
+		slamming = v;
+		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeBoolean(v);
+		ClientPlayNetworking.send(PacketRegistry.SLAM_STATE_PACKET_ID, buf);
 	}
 }
