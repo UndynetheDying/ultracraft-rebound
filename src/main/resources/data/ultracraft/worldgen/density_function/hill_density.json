@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:add",
+  "argument1": {
+    "type": "minecraft:noise",
+    "noise": "ultracraft:hill_noise",
+    "xz_scale": 0.9,
+    "y_scale": 0.5
+  },
+  "argument2": {
+    "type": "minecraft:y_clamped_gradient",
+    "from_y": 10,
+    "to_y": 48,
+    "from_value": 1,
+    "to_value": -1
+  }
+}
