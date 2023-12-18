@@ -75,7 +75,7 @@ public class BlockRegistry
 			new SkyBlock(AbstractBlock.Settings.copy(Blocks.BEDROCK).sounds(BlockSoundGroup.GLASS).mapColor(MapColor.BLACK).pistonBehavior(PistonBehavior.BLOCK)
 								 .allowsSpawning((state, blockView, blockPos, entityType) -> false)), false);
 	public static final Block SLAB_BLOCK = register("slab_block",
-			new SlabBlock(AbstractBlock.Settings.copy(Blocks.SMOOTH_STONE).mapColor(MapColor.LIGHT_GRAY).luminance(b -> b.get(RedstoneLampBlock.LIT) ? 5 : 0)), true);
+			new SlabBlock(AbstractBlock.Settings.copy(Blocks.SMOOTH_STONE).mapColor(MapColor.LIGHT_GRAY).luminance(b -> b.get(SlabBlock.ACTIVE) ? 5 : 0)), true);
 	public static final Block CARPET = register("carpet",
 			new CarpetBlock(AbstractBlock.Settings.copy(Blocks.BLUE_CARPET).mapColor(MapColor.BLUE)), true);
 	public static final Block FLOWERBED = register("flowerbed",

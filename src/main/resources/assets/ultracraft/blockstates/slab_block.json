@@ -1,63 +1,63 @@
 {
   "variants": {
-    "number=1,lit=false": {
+    "number=1,active=false": {
       "model": "ultracraft:block/slab_block/1"
     },
-    "number=1,lit=true": {
+    "number=1,active=true": {
       "model": "ultracraft:block/slab_block/1_lit"
     },
-    "number=2,lit=false": {
+    "number=2,active=false": {
       "model": "ultracraft:block/slab_block/2"
     },
-    "number=2,lit=true": {
+    "number=2,active=true": {
       "model": "ultracraft:block/slab_block/2_lit"
     },
-    "number=3,lit=false": {
+    "number=3,active=false": {
       "model": "ultracraft:block/slab_block/3"
     },
-    "number=3,lit=true": {
+    "number=3,active=true": {
       "model": "ultracraft:block/slab_block/3_lit"
     },
-    "number=4,lit=false": {
+    "number=4,active=false": {
       "model": "ultracraft:block/slab_block/4"
     },
-    "number=4,lit=true": {
+    "number=4,active=true": {
       "model": "ultracraft:block/slab_block/4_lit"
     },
-    "number=5,lit=false": {
+    "number=5,active=false": {
       "model": "ultracraft:block/slab_block/5"
     },
-    "number=5,lit=true": {
+    "number=5,active=true": {
       "model": "ultracraft:block/slab_block/5_lit"
     },
-    "number=6,lit=false": {
+    "number=6,active=false": {
       "model": "ultracraft:block/slab_block/6"
     },
-    "number=6,lit=true": {
+    "number=6,active=true": {
       "model": "ultracraft:block/slab_block/6_lit"
     },
-    "number=7,lit=false": {
+    "number=7,active=false": {
       "model": "ultracraft:block/slab_block/7"
     },
-    "number=7,lit=true": {
+    "number=7,active=true": {
       "model": "ultracraft:block/slab_block/7_lit"
     },
-    "number=8,lit=false": {
+    "number=8,active=false": {
       "model": "ultracraft:block/slab_block/8"
     },
-    "number=8,lit=true": {
+    "number=8,active=true": {
       "model": "ultracraft:block/slab_block/8_lit"
     },
-    "number=9,lit=false": {
+    "number=9,active=false": {
       "model": "ultracraft:block/slab_block/9"
     },
-    "number=9,lit=true": {
+    "number=9,active=true": {
       "model": "ultracraft:block/slab_block/9_lit"
     },
-    "number=10,lit=false": {
+    "number=10,active=false": {
       "model": "ultracraft:block/slab_block/10"
     },
-    "number=10,lit=true": {
+    "number=10,active=true": {
       "model": "ultracraft:block/slab_block/10_lit"
     }
   }
