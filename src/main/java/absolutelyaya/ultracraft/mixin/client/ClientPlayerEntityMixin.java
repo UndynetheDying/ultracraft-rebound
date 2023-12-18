@@ -409,6 +409,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 				if(curSlidePreservationTicks == 0)
 					slideVelocity = baseSlideVelocity;
 			}
+			setSprinting(false);
 			ci.cancel();
 		}
 		else
@@ -593,14 +594,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	{
 		IWingDataComponent wings = UltraComponents.WING_DATA.get(this);
 		if(wings.isActive())
-			cir.setReturnValue(false);
-	}
-	
-	@Inject(method = "canSprint", at = @At(value = "HEAD"), cancellable = true)
-	void onCanSprint(CallbackInfoReturnable<Boolean> cir)
-	{
-		IHivelComponent hivel = UltraComponents.HIVEL.get(this);
-		if((isSliding() && !isOnGround()) || hivel.isDashing())
 			cir.setReturnValue(false);
 	}
 	

@@ -67,4 +67,10 @@ public abstract class OtherClientPlayerMixin extends PlayerEntity implements Win
 			wasDashing = hivel.getDashingTicks() >= -1;
 		});
 	}
+	
+	@Override
+	public void addScreenshake(float val)
+	{
+	
+	}
 }
