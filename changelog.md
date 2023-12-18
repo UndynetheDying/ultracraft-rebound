@@ -14,6 +14,8 @@
 - Rewrote Hivel Movement
   - no more hard coded values; you can customize everything in detail using a config file.
 - Greater Filth will not enrage anymore without a Target
+- Added Fancy Carpet Block
+- Added Flowerbed Block
 ## Settings & Config
 - Removed almost all gamerules (only remaining is `ultra-startWithPiercer`)
 - Added Option to disable Screenshake

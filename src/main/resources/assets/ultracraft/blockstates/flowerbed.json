@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "layers=1": {
+      "model": "ultracraft:block/flowerbed/1"
+    },
+    "layers=2": {
+      "model": "ultracraft:block/flowerbed/2"
+    },
+    "layers=3": {
+      "model": "ultracraft:block/flowerbed/3"
+    },
+    "layers=4": {
+      "model": "ultracraft:block/flowerbed/4"
+    }
+  }
+}

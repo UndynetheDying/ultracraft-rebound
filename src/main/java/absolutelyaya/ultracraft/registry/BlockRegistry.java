@@ -2,6 +2,8 @@ package absolutelyaya.ultracraft.registry;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.block.*;
+import absolutelyaya.ultracraft.block.CarpetBlock;
+import absolutelyaya.ultracraft.block.FlowerbedBlock;
 import absolutelyaya.ultracraft.block.SlabBlock;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -74,6 +76,10 @@ public class BlockRegistry
 								 .allowsSpawning((state, blockView, blockPos, entityType) -> false)), false);
 	public static final Block SLAB_BLOCK = register("slab_block",
 			new SlabBlock(AbstractBlock.Settings.copy(Blocks.SMOOTH_STONE).mapColor(MapColor.LIGHT_GRAY).luminance(b -> b.get(RedstoneLampBlock.LIT) ? 5 : 0)), true);
+	public static final Block CARPET = register("carpet",
+			new CarpetBlock(AbstractBlock.Settings.copy(Blocks.BLUE_CARPET).mapColor(MapColor.BLUE)), true);
+	public static final Block FLOWERBED = register("flowerbed",
+			new FlowerbedBlock(AbstractBlock.Settings.copy(Blocks.OAK_LEAVES).mapColor(MapColor.DARK_GREEN)), true);
 	
 	@SuppressWarnings("SameParameterValue")
 	private static Block register(String name, Block block, boolean item, int burn, int spread)

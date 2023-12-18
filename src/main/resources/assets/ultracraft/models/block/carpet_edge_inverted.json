@@ -1,0 +1,20 @@
+{
+	"credit": "Made by Absolutelyaya",
+	"textures": {
+		"0": "ultracraft:block/carpet",
+		"particle": "ultracraft:block/carpet_round"
+	},
+	"elements": [
+		{
+			"from": [8, 0, 0],
+			"to": [16, 1, 8],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 0, 8]},
+			"faces": {
+				"north": {"uv": [0, 8, 8, 9], "texture": "#0"},
+				"east": {"uv": [0, 8, 1, 16], "rotation": 90, "texture": "#0"},
+				"up": {"uv": [0, 8, 8, 16], "rotation": 90, "texture": "#0"},
+				"down": {"uv": [0, 8, 8, 16], "rotation": 180, "texture": "#0", "cullface": "down"}
+			}
+		}
+	]
+}
