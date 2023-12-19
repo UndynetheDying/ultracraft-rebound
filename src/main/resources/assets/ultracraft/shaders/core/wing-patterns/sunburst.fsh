@@ -75,7 +75,7 @@ void main()
     vec4 color = colorIn;
     if (color.a < 0.1)
         discard;
-    float time = sin(abs(GameTime * 600) + (round((texCoord0.g + 1 / 64) * 32)) / 32 + (round((texCoord0.r + 1 / 64) * 32)) / 32 * (sin(GameTime * 1800)) * 3) / 2 + 0.5f;
+    float time = sin(abs(GameTime * 600) + (round((texCoord0.g + 1.0 / 64.0) * 32)) / 32 + (round((texCoord0.r + 1.0 / 64.0) * 32)) / 32 * (sin(GameTime * 1800)) * 3) / 2 + 0.5f;
     color.rgb = mix(vec3(0, 0, 0), mix(vec3(0.105f, 0.027f, 0.086f), hsv2rgb(getRed(0.5) / vec3(360, 100, 100)), pow(time + (mod(round(texCoord0.g * 32 + 0.5f), 2) == 0 ? 0 : 0.5f), 4)), colorIn.r > 0 ? 1.0 : 0.0);
     color.rgb *= (mod(round(texCoord0.g * 32 + 0.5f), 2) == 0 ? 1 : 0.8f);
 

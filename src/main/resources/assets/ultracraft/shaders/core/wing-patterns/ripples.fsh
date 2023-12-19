@@ -85,7 +85,7 @@ void main()
     vec4 color = colorIn;
     if (color.a < 0.1)
         discard;
-    vec2 pixelUV = round((texCoord0 + 1 / 64) * 32) / 32 + 1 / 64;
+    vec2 pixelUV = round((texCoord0 + 1.0 / 64.0) * 32) / 32 + 1.0 / 64.0;
     color.rgb = hsv2rgb(getRed(colorIn.r).rgb / vec3(360, 100, 100));
     for(int i = 0; i < 3; i++)
     {

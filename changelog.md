@@ -38,5 +38,6 @@
 - The cancerous Rodent glows now with LambDynamicLights installed
 - Added decorated pots to `fragile` blocktag
 - Fixed Hell Spawner Spawn Egg Rendering
+- Finally fixed the half pixel offset on animated wing pattern shaders
 ## Resource Changes
 ## API Changes
