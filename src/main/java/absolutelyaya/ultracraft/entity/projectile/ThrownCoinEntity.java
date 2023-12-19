@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.ExplosionHandler;
 import absolutelyaya.ultracraft.ServerHitscanHandler;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
+import absolutelyaya.ultracraft.accessor.ThrownEntityAccessor;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.HitscanDamageSource;
@@ -33,7 +34,6 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Pair;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.hit.BlockHitResult;
@@ -47,7 +47,7 @@ import org.joml.Vector4f;
 
 import java.util.List;
 
-public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEntityAccessor
+public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEntityAccessor, ThrownEntityAccessor
 {
 	protected static final TrackedData<Boolean> STOPPED = DataTracker.registerData(ThrownCoinEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	protected static final TrackedData<Boolean> DEADCOINED = DataTracker.registerData(ThrownCoinEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -359,6 +359,12 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 		baseTick();
 	}
 	
+	@Override
+	protected float getGravity()
+	{
+		return 0.06f;
+	}
+	
 	Pair<Vector3f, Vector3f> getPoint()
 	{
 		float yVel = (float)getVelocity().normalize().y;
@@ -512,5 +518,11 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 	public boolean isChargeback()
 	{
 		return dataTracker.get(CHARGEBACK);
+	}
+	
+	@Override
+	public boolean useSlowdown()
+	{
+		return false;
 	}
 }

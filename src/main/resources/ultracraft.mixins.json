@@ -17,14 +17,15 @@
     "ProjectileEntityMixin",
     "ServerEntityHandlerMixin",
     "ServerWorldMixin",
+    "ThrownEntityMixin",
     "WorldMixin"
   ],
   "client": [
-    "client.IntegratedServerLoaderMixin",
     "client.CameraMixin",
     "client.ClientBossBarMixin",
     "client.ClientLivingEntityMixin",
     "client.ClientPlayerEntityMixin",
+    "client.IntegratedServerLoaderMixin",
     "client.KeybindMixin",
     "client.KeyboardInputMixin",
     "client.MinecraftClientMixin",
