@@ -78,6 +78,7 @@ public class Ultracraft implements ModInitializer
         StatusEffectRegistry.register();
         ScreenHandlerRegistry.registerServer();
         StatisticRegistry.register();
+        StructureRegistry.register();
         new UltraRecipeManager();
         new TerminalScreensaverManager();
         new StyleBonusManager();

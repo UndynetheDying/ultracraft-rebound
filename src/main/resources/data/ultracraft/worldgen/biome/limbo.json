@@ -51,12 +51,6 @@
         "weight": 30,
         "minCount": 1,
         "maxCount": 1
-      },
-      {
-        "type": "ultracraft:swordsmachine",
-        "weight": 1,
-        "minCount": 1,
-        "maxCount": 1
       }
     ]
   },
@@ -98,7 +92,9 @@
       "minecraft:flower_default",
       "minecraft:patch_grass_normal",
       "minecraft:patch_grass_forest",
-      "ultracraft:flowerbed"
+      "ultracraft:flowerbed",
+      "ultracraft:fake_tree",
+      "ultracraft:rock"
     ]
   ]
 }
