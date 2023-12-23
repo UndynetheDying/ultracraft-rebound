@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.client.rendering.item;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.item.SharpshooterRevolverItem;
+import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.util.Identifier;
 import mod.azure.azurelib.model.DefaultedItemGeoModel;
 import mod.azure.azurelib.renderer.GeoItemRenderer;
@@ -11,6 +12,11 @@ public class SharpshooterRevolverRenderer extends GeoItemRenderer<SharpshooterRe
 	public SharpshooterRevolverRenderer()
 	{
 		super(new DefaultedItemGeoModel<>(new Identifier(Ultracraft.MOD_ID, "revolver")));
+	}
+	
+	public SharpshooterRevolverRenderer(GeoModel<SharpshooterRevolverItem> model)
+	{
+		super(model);
 	}
 	
 	@Override
