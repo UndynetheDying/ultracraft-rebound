@@ -89,6 +89,16 @@ public class ServerHitscanHandler
 			ServerPlayNetworking.send(player, PacketRegistry.HITSCAN_PACKET_ID, buf);
 	}
 	
+	public static Hitscan makeBasicHitscan(LivingEntity user, byte type, float damage, RegistryKey<DamageType> damageType)
+	{
+		Vec3d origin = user.getEyePos();
+		Vec3d visualOrigin = origin.add(
+				new Vec3d(-0.5f * (user instanceof PlayerEntity player && player.getMainArm().equals(Arm.LEFT) ? -1 : 1), -0.2f, 0.4f)
+						.rotateX(-(float)Math.toRadians(user.getPitch())).rotateY(-(float) Math.toRadians(user.getYaw())));
+		Vec3d dest = user.getEyePos().add(user.getRotationVec(0.5f).multiply(64.0));
+		return new Hitscan(user, origin, visualOrigin, dest, type, damage, damageType);
+	}
+	
 	public static void performHitscan(LivingEntity user, byte type, float damage)
 	{
 		performHitscan(user, type, damage, 1, DamageSources.GUN, null);
@@ -188,10 +198,11 @@ public class ServerHitscanHandler
 		public LivingEntity owner;
 		public Vec3d from, visualFrom, dest;
 		public byte type;
-		public float damage, autoAim = 0f, damageMultiplier;
+		public float damage, autoAim = 0f, damageMultiplier, damageIncrements;
 		public HitscanDamageSource damageSource;
-		public int maxHits = 1, bounces = 0, maxBounces = 0;
+		public int maxHits = 1, maxHitsPerEntity, bounces = 0, maxBounces = 0;
 		public HitscanExplosionData explosion = null;
+		boolean semiPierce;
 		
 		public Hitscan(LivingEntity owner, Vec3d from, Vec3d visualFrom, Vec3d dest, byte type, float damage, RegistryKey<DamageType> damageType)
 		{
@@ -247,6 +258,17 @@ public class ServerHitscanHandler
 			return this;
 		}
 		
+		/**
+		 * Mainly used by the Alternate Revolvers to emulate their unique piercing behavior
+		 */
+		public Hitscan semiPierce(int maxHitsPerEntity, float damageIncrements)
+		{
+			this.maxHitsPerEntity = maxHitsPerEntity;
+			this.damageIncrements = damageIncrements;
+			this.semiPierce = maxHitsPerEntity > 1;
+			return this;
+		}
+		
 		public HitscanResult perform()
 		{
 			World world = owner.getWorld();
@@ -256,6 +278,7 @@ public class ServerHitscanHandler
 			Vec3d dir = dest.subtract(from).normalize();
 			Box box = new Box(from.subtract(-1f, -1f, -1f), from.add(1f, 1f, 1f)).stretch(dir.multiply(64.0)).expand(1.0, 1.0, 1.0);
 			EntityHitResult finalEHit = null;
+			float remainingDamage = damage;
 			boolean searchForEntities = true;
 			while (searchForEntities)
 			{
@@ -264,18 +287,22 @@ public class ServerHitscanHandler
 						(entity) -> !entities.contains(entity) && isValidTarget(entity, type), 0.25f, 64f);
 				if(eHit == null || eHit.getEntity() == null)
 					break;
-				searchForEntities = eHit.getType() != HitResult.Type.MISS && maxHits > 0;
+				searchForEntities = eHit.getType() != HitResult.Type.MISS && (maxHits > 0 || (semiPierce && remainingDamage > 0));
 				if(eHit.getType() != HitResult.Type.MISS)
 					finalEHit = eHit;
 				if(searchForEntities)
 				{
 					maxHits--;
 					from = eHit.getPos();
-					if(maxHits == 0)
+					if(maxHits == 0 && !(semiPierce && remainingDamage > 0))
 						modifiedTo = eHit.getPos();
-					entities.add(eHit.getEntity());
+					Entity e = eHit.getEntity();
+					entities.add(e);
+					if(semiPierce && e instanceof LivingEntity livingHit)
+						remainingDamage = Math.max(remainingDamage - calcSemiPierceDamage(livingHit, remainingDamage), 0);
 				}
 			}
+			remainingDamage = damage;
 			boolean disableExplosion = false;
 			IWingedPlayerComponent winged = null;
 			if(owner instanceof WingedPlayerEntity)
@@ -284,11 +311,24 @@ public class ServerHitscanHandler
 			for (int i = 0; i < entities.size(); i++)
 			{
 				Entity e = entities.get(i);
+				System.out.println(e);
 				if((e instanceof BackTank && i > 0) || e == null) //Back Tanks shouldn't be hit after an entity is pierced
 					continue;
-				//hit the last pierced enemy with up to 10 of the remaining pierce shots. A Pierce revolver shot that hits just one enemy, will damage it 3 times.
-				for (int j = 0; j < Math.min(10, i == entities.size() - 1 && maxHits < 16 ? maxHits + 1 : 1); j++)
-					e.damage(damageSource, damage * getDamageMultipier(type));
+				
+				if(semiPierce && e instanceof LivingEntity living)
+				{
+					float semiPierceDamage = calcSemiPierceDamage(living, remainingDamage);
+					e.damage(damageSource, semiPierceDamage * getDamageMultipier(type));
+					remainingDamage = Math.max(remainingDamage - semiPierceDamage, 0);
+					if(remainingDamage <= 0) //stop when there's no remaining damage
+						break;
+				}
+				else
+				{
+					//hit the last pierced enemy with up to 10 of the remaining pierce shots. A Pierce revolver shot that hits just one enemy, will damage it 3 times.
+					for (int j = 0; j < Math.min(10, i == entities.size() - 1 && maxHits < 16 ? maxHits + 1 : 1); j++)
+						e.damage(damageSource, damage * getDamageMultipier(type));
+				}
 				if(explodeProjectile && e instanceof ProjectileEntity proj && !(e instanceof IIgnoreSharpshooter || e instanceof ThrownCoinEntity))
 				{
 					ExplosionHandler.explosion(owner, world, proj.getPos(), DamageSources.get(world, DamageTypes.EXPLOSION, owner), 5f, 1f, 5f, true);
@@ -316,6 +356,13 @@ public class ServerHitscanHandler
 				return new HitscanResult(finalEHit, dir, entities.size()); //EntityHit
 			else
 				return null; //miss
+		}
+		
+		float calcSemiPierceDamage(LivingEntity victim, float remainingDamage)
+		{
+			float maxDamage = Math.min(victim.getHealth(), maxHitsPerEntity * damageIncrements);
+			float incrementalDamage = (float)Math.ceil(maxDamage / damageIncrements) * damageIncrements;
+			return Math.min(incrementalDamage, remainingDamage);
 		}
 	}
 	

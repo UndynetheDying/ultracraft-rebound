@@ -3,6 +3,7 @@ package absolutelyaya.ultracraft.item;
 import absolutelyaya.ultracraft.ServerHitscanHandler;
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
+import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.entity.Entity;
@@ -11,7 +12,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import mod.azure.azurelib.animatable.GeoItem;
@@ -47,8 +47,14 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 			world.playSound(null, user.getBlockPos(), SoundRegistry.REVOLVER_FIRE, SoundCategory.PLAYERS, 0.75f,
 					0.9f + (user.getRandom().nextFloat() - 0.5f) * 0.2f);
 			triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(), b ? "shot" : "shot2");
-			ServerHitscanHandler.performHitscan(user, ServerHitscanHandler.NORMAL, 1f);
-			cdm.setCooldown(this, 9, GunCooldownManager.PRIMARY);
+			
+			if(isAlternate())
+				ServerHitscanHandler.makeBasicHitscan(user, ServerHitscanHandler.NORMAL, 2 * getPrimaryDamage(), DamageSources.GUN)
+						.semiPierce(2, getPrimaryDamage())
+						.explosion(new ServerHitscanHandler.HitscanExplosionData(2f, 0f, 0f, true)).perform();
+			else
+				ServerHitscanHandler.performHitscan(user, ServerHitscanHandler.NORMAL, getPrimaryDamage());
+			cdm.setCooldown(this, getPrimaryCooldown(), GunCooldownManager.PRIMARY);
 			b = !b;
 			return true;
 		}
@@ -74,7 +80,7 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 		}
 		//Sharpshooter Charges Tick
 		int charges = getNbt(stack, "charges");
-		if(charges < 3 && cdm.isUsable(this, GunCooldownManager.TRITARY))
+		if(charges < (isAlternate() ? 1 : 3) && cdm.isUsable(this, GunCooldownManager.TRITARY))
 		{
 			setNbt(stack, "charges", charges + 1);
 			cdm.setCooldown(this, 200, GunCooldownManager.TRITARY);
@@ -91,7 +97,7 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 	@Override
 	int getSwitchCooldown()
 	{
-		return 4;
+		return isAlternate() ? 8 : 4;
 	}
 	
 	@Override
@@ -104,9 +110,24 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 	public int getNbtDefault(String nbt)
 	{
 		if(nbt.equals("charges"))
-			return 3;
+			return isAlternate() ? 1 : 3;
 		else if(nbt.equals("coins"))
 			return 4;
 		return 0;
+	}
+	
+	protected int getPrimaryCooldown()
+	{
+		return isAlternate() ? 26 : 9;
+	}
+	
+	protected float getPrimaryDamage()
+	{
+		return isAlternate() ? 2.5f : 1f;
+	}
+	
+	protected boolean isAlternate()
+	{
+		return false;
 	}
 }

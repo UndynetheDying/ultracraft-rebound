@@ -15,7 +15,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
@@ -111,11 +110,18 @@ public class PierceRevolverItem extends AbstractRevolverItem
 					world.playSound(null, user.getBlockPos(), SoundRegistry.PIERCER_FIRE, SoundCategory.PLAYERS, 1f,
 							0.85f + (user.getRandom().nextFloat() - 0.5f) * 0.2f);
 				}
-				player.getItemCooldownManager().set(this, 50);
+				player.getItemCooldownManager().set(this, isAlternate() ? 100 : 50);
 				onAltFire(world, player);
 			}
 			if(!world.isClient)
-				ServerHitscanHandler.performHitscan(user, ServerHitscanHandler.REVOLVER_PIERCE, 2, 3, true, DamageSources.PIERCER);
+			{
+				if(isAlternate())
+					ServerHitscanHandler.makeBasicHitscan(user, ServerHitscanHandler.REVOLVER_PIERCE, 6 * 2.5f, DamageSources.PIERCER)
+							.semiPierce(4, 2.5f)
+							.explosion(new ServerHitscanHandler.HitscanExplosionData(2f, 0f, 0f, true)).perform();
+				else
+					ServerHitscanHandler.performHitscan(user, ServerHitscanHandler.REVOLVER_PIERCE, 2, 3, true, DamageSources.PIERCER);
+			}
 		}
 		else if(!world.isClient && user instanceof PlayerEntity)
 			triggerAnim(user, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), "stop");

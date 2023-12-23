@@ -105,6 +105,8 @@ public class ItemRegistry
 			new Identifier(Ultracraft.MOD_ID, "attractor_nailgun"), new AttractorNailgunItem(new FabricItemSettings().maxCount(1)));
 	public static final OverheatNailgunItem OVERHEAT_NAILGUN = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "overheat_nailgun"), new OverheatNailgunItem(new FabricItemSettings().maxCount(1)));
+	public static final AlternatePiercerItem ALTERNATE_PIERCER = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "alternate_piercer"), new AlternatePiercerItem(new FabricItemSettings().maxCount(1)));
 	
 	//Spawn Eggs
 	public static final SpawnEggItem FILTH_SPAWN_EGG = Registry.register(Registries.ITEM,
@@ -238,6 +240,7 @@ public class ItemRegistry
 			content.add(MARKSMAN_REVOLVER.getStackedMarksman());
 			content.add(SHARPSHOOTER_REVOLVER);
 			content.add(SHARPSHOOTER_REVOLVER.getStackedSharpshooter());
+			content.add(ALTERNATE_PIERCER);
 			content.add(CORE_SHOTGUN);
 			content.add(PUMP_SHOTGUN);
 			content.add(ATTRACTOR_NAILGUN);
