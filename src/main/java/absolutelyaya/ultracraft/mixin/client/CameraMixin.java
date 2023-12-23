@@ -134,7 +134,7 @@ public abstract class CameraMixin
 		}
 		if(focusedEntity instanceof WingedPlayerEntity winged)
 		{
-			if(winged.getScreenShake() > 0.05f)
+			if(winged.getScreenShake() > 0.001f)
 			{
 				if(shakeTime == 0)
 					shakeTime = focusedEntity.getWorld().getRandom().nextFloat() * 6f;
@@ -245,7 +245,7 @@ public abstract class CameraMixin
 		setRotation(yaw + MathHelper.lerpAngleDegrees(tickDelta * 4f, 0,
 						(float)Math.sin(shakeTime + strength * 2.13f) * strength),
 				pitch + MathHelper.lerpAngleDegrees(tickDelta * 2f, 0,
-						(float)Math.sin(shakeTime + 1.43f + strength * 1.71f) * strength / 1.4f));
+						(float)Math.sin(shakeTime + 1.43f + strength * 1.71f) * strength));
 		Vec3d dir = new Vec3d(0f, 0f, -1).rotateX((float)Math.toRadians(-pitch)).rotateY((float)Math.toRadians(-yaw));
 		setPos(pos.add(dir.multiply(strength / 4f)));
 	}

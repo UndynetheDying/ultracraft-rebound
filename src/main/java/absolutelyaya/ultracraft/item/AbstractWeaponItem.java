@@ -43,7 +43,7 @@ public abstract class AbstractWeaponItem extends Item
 	public boolean onPrimaryFire(World world, PlayerEntity user, Vec3d userVelocity)
 	{
 		((LivingEntityAccessor)user).addRecoil(recoil);
-		Ultracraft.screenshake(user, recoil / 90f);
+		Ultracraft.screenshake(user, recoil / 135f);
 		return true;
 	}
 	
@@ -60,7 +60,7 @@ public abstract class AbstractWeaponItem extends Item
 	public void onAltFire(World world, PlayerEntity user)
 	{
 		((LivingEntityAccessor)user).addRecoil(altRecoil);
-		Ultracraft.screenshake(user, altRecoil / 90f);
+		Ultracraft.screenshake(user, altRecoil / 135f);
 	}
 	
 	@Override
