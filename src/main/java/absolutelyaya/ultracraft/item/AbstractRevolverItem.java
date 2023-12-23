@@ -24,6 +24,7 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 	final RawAnimation AnimationStop = RawAnimation.begin().then("nothing", Animation.LoopType.LOOP);
 	final RawAnimation AnimationCharge = RawAnimation.begin().thenPlay("charging").thenLoop("charged");
 	final RawAnimation AnimationSpin = RawAnimation.begin().thenPlay("spinup").thenLoop("spinning");
+	final RawAnimation AnimationAltSpin = RawAnimation.begin().thenLoop("spinning");
 	final RawAnimation AnimationDischarge = RawAnimation.begin().thenPlay("discharge");
 	final RawAnimation AnimationShot = RawAnimation.begin().thenPlay("shot");
 	final RawAnimation AnimationShot2 = RawAnimation.begin().thenPlay("shot2");
@@ -83,7 +84,7 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 		if(charges < (isAlternate() ? 1 : 3) && cdm.isUsable(this, GunCooldownManager.TRITARY))
 		{
 			setNbt(stack, "charges", charges + 1);
-			cdm.setCooldown(this, 200, GunCooldownManager.TRITARY);
+			cdm.setCooldown(this, getSharpshooterRechargeTime(), GunCooldownManager.TRITARY);
 			player.playSound(SoundRegistry.REVOLVER_ALT_CHARGE, 0.1f, 1.5f);
 		}
 	}
@@ -124,6 +125,11 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 	protected float getPrimaryDamage()
 	{
 		return isAlternate() ? 2.5f : 1f;
+	}
+	
+	protected int getSharpshooterRechargeTime()
+	{
+		return isAlternate() ? 170 : 120;
 	}
 	
 	protected boolean isAlternate()

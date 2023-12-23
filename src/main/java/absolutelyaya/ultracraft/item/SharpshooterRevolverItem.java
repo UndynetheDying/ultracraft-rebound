@@ -15,7 +15,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -51,7 +50,7 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 	public ItemStack getDefaultStack()
 	{
 		ItemStack stack = new ItemStack(this);
-		setNbt(stack, "charges", 3);
+		setNbt(stack, "charges", isAlternate() ? 1 : 3);
 		return stack;
 	}
 	
@@ -98,7 +97,7 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 			if(world.isClient && entity instanceof ClientPlayerEntity player && player.equals(MinecraftClient.getInstance().player))
 				approxUseTime++;
 			else if(entity instanceof PlayerEntity player)
-				triggerAnim(player, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), "spin");
+				triggerAnim(player, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), isAlternate() ? "altspin" : "spin");
 		}
 		super.inventoryTick(stack, world, entity, slot, selected);
 	}
@@ -132,8 +131,8 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 			{
 				if(!world.isClient)
 				{
-					if(charges == 3)
-						cdm.setCooldown(this, 200, GunCooldownManager.TRITARY);
+					if(charges == (isAlternate() ? 1 : 3))
+						cdm.setCooldown(this, getSharpshooterRechargeTime(), GunCooldownManager.TRITARY);
 					setNbt(stack, "charges", charges - 1);
 					triggerAnim(user, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), "discharge");
 					world.playSound(null, user.getBlockPos(), SoundRegistry.SHARPSHOOTER_FIRE, SoundCategory.PLAYERS, 1f,
@@ -144,11 +143,10 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 			}
 			if(!world.isClient)
 			{
-				byte type = ServerHitscanHandler.SHARPSHOOTER;
-				int bounces = (int)Math.ceil(Math.min(Math.abs(remainingUseTicks) / 20f, 1f) * 3), maxHits = Integer.MAX_VALUE;
-				float autoAim = 45f;
-				ServerHitscanHandler.performBouncingHitscan(user, type, 3, DamageSources.SHARPSHOOTER, maxHits,
-						bounces, new ServerHitscanHandler.HitscanExplosionData(1.5f, 0f, 0f, true), autoAim);
+				int bounces = isAlternate() ? 3 : (int)Math.ceil(Math.min(Math.abs(remainingUseTicks) / 20f, 1f) * 3);
+				ServerHitscanHandler.performBouncingHitscan(user, ServerHitscanHandler.SHARPSHOOTER, isAlternate() ? 5.5f : 3f,
+						DamageSources.SHARPSHOOTER, Integer.MAX_VALUE, bounces,
+						new ServerHitscanHandler.HitscanExplosionData(1.5f, 0f, 0f, true), 45f);
 			}
 		}
 		else if(!world.isClient && user instanceof PlayerEntity)
@@ -184,6 +182,7 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 	{
 		controllerRegistrar.add(new AnimationController<>(this, getControllerName(), 1, state -> PlayState.STOP)
 										.triggerableAnim("spin", AnimationSpin)
+										.triggerableAnim("altspin", AnimationAltSpin)
 										.triggerableAnim("discharge", AnimationDischarge)
 										.triggerableAnim("shot", AnimationShot)
 										.triggerableAnim("shot2", AnimationShot2) //this animation purely exists to cancel shot animations.
@@ -216,7 +215,7 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 	public boolean isItemBarVisible(ItemStack stack)
 	{
 		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(MinecraftClient.getInstance().player).getGunCooldownManager();
-		return !cdm.isUsable(getCooldownClass(stack), GunCooldownManager.PRIMARY) || getNbt(stack, "charges") < 3;
+		return !cdm.isUsable(getCooldownClass(stack), GunCooldownManager.PRIMARY) || getNbt(stack, "charges") < (isAlternate() ? 1 : 3);
 	}
 	
 	@Override
