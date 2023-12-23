@@ -5,7 +5,6 @@ import absolutelyaya.ultracraft.ServerHitscanHandler;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.ChainParryAccessor;
 import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
-import absolutelyaya.ultracraft.config.ProjectileBoostSetting;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.entity.other.StainedGlassWindow;
@@ -29,6 +28,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -117,6 +117,13 @@ public abstract class ProjectileEntityMixin extends Entity implements Projectile
 			ci.cancel();
 	}
 	
+	@Inject(method = "canHit", at = @At("HEAD"), cancellable = true)
+	void onCanHit(Entity entity, CallbackInfoReturnable<Boolean> cir)
+	{
+		if(this.equals(entity))
+			cir.setReturnValue(false); //A projectile cannot hit itself after all
+	}
+	
 	@Override
 	public void setVelocity(Vec3d velocity)
 	{
@@ -189,7 +196,7 @@ public abstract class ProjectileEntityMixin extends Entity implements Projectile
 	@Override
 	public boolean isBoostable()
 	{
-		return switch((ProjectileBoostSetting)ServerConfig.INSTANCE.projboost.getValue())
+		return switch(ServerConfig.INSTANCE.projboost.getValue())
 		{
 			case ALLOW_ALL -> true;
 			case ENTITY_TAG -> getType().isIn(EntityRegistry.PROJBOOSTABLE);
