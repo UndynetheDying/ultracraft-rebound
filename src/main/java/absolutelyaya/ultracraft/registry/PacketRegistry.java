@@ -233,7 +233,6 @@ public class PacketRegistry
 					{
 						heal = false;
 						Ultracraft.freeze(player, 5); //ProjBoost freezes are shorter
-						UltraComponents.STYLE.get(player).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "projboost")));
 					}
 					else
 						return;
