@@ -39,5 +39,6 @@
 - Added decorated pots to `fragile` blocktag
 - Fixed Hell Spawner Spawn Egg Rendering
 - Finally fixed the half pixel offset on animated wing pattern shaders
+- Changed Revolver Textures to be closer to the original
 ## Resource Changes
 ## API Changes
