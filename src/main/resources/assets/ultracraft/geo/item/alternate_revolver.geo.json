@@ -209,7 +209,21 @@
 				{
 					"name": "speedMarks",
 					"parent": "Root",
-					"pivot": [0, 2, 1]
+					"pivot": [0, 2, 1],
+					"cubes": [
+						{
+							"origin": [0, 1, -1],
+							"size": [0, 2, 4],
+							"uv": {
+								"north": {"uv": [0, 0], "uv_size": [0, 8]},
+								"east": {"uv": [20, 23], "uv_size": [12, 9]},
+								"south": {"uv": [0, 0], "uv_size": [0, 8]},
+								"west": {"uv": [32, 23], "uv_size": [-12, 9]},
+								"up": {"uv": [0, 12], "uv_size": [0, -12]},
+								"down": {"uv": [0, 12], "uv_size": [0, -12]}
+							}
+						}
+					]
 				},
 				{
 					"name": "hammer",
