@@ -51,6 +51,7 @@ public class ServerHitscanHandler
 	public static final byte MALICIOUS = 5;
 	public static final byte COIN_RICOCHET = 6;
 	public static final byte SHARPSHOOTER = 7;
+	public static final byte SLAB = 8;
 	
 	static final Queue<IScheduledHitscan> scheduleAdditions = new ArrayDeque<>();
 	static final List<IScheduledHitscan> schedule = new ArrayList<>();
@@ -135,7 +136,7 @@ public class ServerHitscanHandler
 	
 	static float getDamageMultipier(byte type)
 	{
-		if(type == NORMAL || type == REVOLVER_PIERCE || type == COIN_RICOCHET || type == SHARPSHOOTER)
+		if(type == NORMAL || type == REVOLVER_PIERCE || type == COIN_RICOCHET || type == SHARPSHOOTER || type == SLAB)
 			return ServerConfig.INSTANCE.revolverDamage.getValue();
 		return 1f;
 	}

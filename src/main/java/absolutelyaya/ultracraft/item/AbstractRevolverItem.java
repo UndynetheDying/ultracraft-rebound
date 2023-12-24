@@ -59,7 +59,7 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 				triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(), b ? "shot" : "shot2");
 			
 			if(isAlternate())
-				ServerHitscanHandler.makeBasicHitscan(user, ServerHitscanHandler.NORMAL, 2 * getPrimaryDamage(), DamageSources.GUN)
+				ServerHitscanHandler.makeBasicHitscan(user, ServerHitscanHandler.SLAB, 2 * getPrimaryDamage(), DamageSources.GUN)
 						.semiPierce(2, getPrimaryDamage())
 						.explosion(new ServerHitscanHandler.HitscanExplosionData(2f, 0f, 0f, true)).perform();
 			else
