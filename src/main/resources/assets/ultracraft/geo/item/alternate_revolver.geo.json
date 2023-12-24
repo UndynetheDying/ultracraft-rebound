@@ -176,10 +176,11 @@
 				{
 					"name": "bulletChamber",
 					"parent": "Root",
-					"pivot": [0, 1.25, 2.5],
+					"pivot": [0, 1.15, 2.5],
+					"rotation": [0, 0, 45],
 					"cubes": [
 						{
-							"origin": [-1.25, 0, 1],
+							"origin": [-1.25, -0.1, 0.999],
 							"size": [2.5, 2.5, 3],
 							"uv": {
 								"north": {"uv": [12, 2], "uv_size": [2.5, 2.5]},
@@ -191,7 +192,7 @@
 							}
 						},
 						{
-							"origin": [-1.25, 0, 1],
+							"origin": [-1.25, -0.1, 0.999],
 							"size": [2.5, 2.5, 3],
 							"inflate": -0.15,
 							"uv": {
@@ -211,13 +212,15 @@
 					"pivot": [0, 2, 1]
 				},
 				{
-					"name": "bone",
+					"name": "hammer",
 					"parent": "Root",
 					"pivot": [0, 2, 4.5],
 					"cubes": [
 						{
-							"origin": [-0.5, 2, 4.25],
+							"origin": [-0.5, 2.25, 4.25],
 							"size": [1, 1, 1],
+							"pivot": [0, 2, 4.25],
+							"rotation": [-30, 0, 0],
 							"uv": {
 								"north": {"uv": [20, 6], "uv_size": [1, 1]},
 								"east": {"uv": [4, 22], "uv_size": [1, 1]},

@@ -28,6 +28,9 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 	final RawAnimation AnimationDischarge = RawAnimation.begin().thenPlay("discharge");
 	final RawAnimation AnimationShot = RawAnimation.begin().thenPlay("shot");
 	final RawAnimation AnimationShot2 = RawAnimation.begin().thenPlay("shot2");
+	final RawAnimation AnimationSlabShot = RawAnimation.begin().thenPlay("slabshot").thenPlay("hammerpull");
+	final RawAnimation AnimationHammerPull = RawAnimation.begin().thenPlay("hammerpull");
+	final RawAnimation AnimationHammerPull2 = RawAnimation.begin().thenPlay("hammerpull2");
 	
 	public AbstractRevolverItem(Settings settings, float recoil, float altRecoil)
 	{
@@ -47,7 +50,13 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 			}
 			world.playSound(null, user.getBlockPos(), SoundRegistry.REVOLVER_FIRE, SoundCategory.PLAYERS, 0.75f,
 					0.9f + (user.getRandom().nextFloat() - 0.5f) * 0.2f);
-			triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(), b ? "shot" : "shot2");
+			if(isAlternate())
+			{
+				triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(), "slabshot");
+				setNbt(user.getMainHandStack(), getHammerId(), 0);
+			}
+			else
+				triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(), b ? "shot" : "shot2");
 			
 			if(isAlternate())
 				ServerHitscanHandler.makeBasicHitscan(user, ServerHitscanHandler.NORMAL, 2 * getPrimaryDamage(), DamageSources.GUN)
@@ -92,13 +101,13 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 	@Override
 	Item[] getVariants()
 	{
-		return new Item[]{ItemRegistry.PIERCE_REVOLVER, ItemRegistry.MARKSMAN_REVOLVER, ItemRegistry.SHARPSHOOTER_REVOLVER};
+		return new Item[]{ItemRegistry.ALTERNATE_PIERCER, ItemRegistry.MARKSMAN_REVOLVER, ItemRegistry.ALTERNATE_SHARPSHOOTER};
 	}
 	
 	@Override
-	int getSwitchCooldown()
+	int getSwitchCooldown(ItemStack stack)
 	{
-		return isAlternate() ? 8 : 4;
+		return 4;
 	}
 	
 	@Override
@@ -110,16 +119,18 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 	@Override
 	public int getNbtDefault(String nbt)
 	{
-		if(nbt.equals("charges"))
-			return isAlternate() ? 1 : 3;
-		else if(nbt.equals("coins"))
-			return 4;
-		return 0;
+		return switch (nbt)
+		{
+			case "charges" -> isAlternate() ? 1 : 3;
+			case "coins" -> 4;
+			case "hammer1", "hammer2", "hammer3" -> 1;
+			default -> 0;
+		};
 	}
 	
 	protected int getPrimaryCooldown()
 	{
-		return isAlternate() ? 26 : 9;
+		return isAlternate() ? 32 : 9;
 	}
 	
 	protected float getPrimaryDamage()
@@ -135,5 +146,10 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 	protected boolean isAlternate()
 	{
 		return false;
+	}
+	
+	protected String getHammerId()
+	{
+		return null;
 	}
 }

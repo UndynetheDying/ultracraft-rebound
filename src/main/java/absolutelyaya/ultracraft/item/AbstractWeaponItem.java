@@ -134,7 +134,7 @@ public abstract class AbstractWeaponItem extends Item
 	
 	abstract Item[] getVariants();
 	
-	abstract int getSwitchCooldown();
+	abstract int getSwitchCooldown(ItemStack stack);
 	
 	static Item getNextVariant(ItemStack stack, IProgressionComponent progression)
 	{
@@ -184,7 +184,7 @@ public abstract class AbstractWeaponItem extends Item
 		player.getInventory().main.set(player.getInventory().selectedSlot, nextStack);
 		if(nextItem instanceof AbstractWeaponItem weapon)
 		{
-			UltraComponents.WINGED_ENTITY.get(player).getGunCooldownManager().setCooldown(weapon, weapon.getSwitchCooldown(), GunCooldownManager.PRIMARY);
+			UltraComponents.WINGED_ENTITY.get(player).getGunCooldownManager().setCooldown(weapon, weapon.getSwitchCooldown(nextStack), GunCooldownManager.PRIMARY);
 			weapon.onSwitch(player, player.getWorld());
 		}
 	}

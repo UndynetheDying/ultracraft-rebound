@@ -113,7 +113,7 @@ public abstract class AbstractShotgunItem extends AbstractWeaponItem implements 
 	}
 	
 	@Override
-	int getSwitchCooldown()
+	int getSwitchCooldown(ItemStack stack)
 	{
 		return 8;
 	}

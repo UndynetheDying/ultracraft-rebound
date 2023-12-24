@@ -180,13 +180,16 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 	@Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar)
 	{
-		controllerRegistrar.add(new AnimationController<>(this, getControllerName(), 1, state -> PlayState.STOP)
+		controllerRegistrar.add(new AnimationController<>(this, getControllerName(), 0, state -> PlayState.STOP)
 										.triggerableAnim("spin", AnimationSpin)
 										.triggerableAnim("altspin", AnimationAltSpin)
 										.triggerableAnim("discharge", AnimationDischarge)
 										.triggerableAnim("shot", AnimationShot)
 										.triggerableAnim("shot2", AnimationShot2) //this animation purely exists to cancel shot animations.
-										.triggerableAnim("stop", AnimationStop));
+										.triggerableAnim("stop", AnimationStop)
+										.triggerableAnim("slabshot", AnimationSlabShot)
+										.triggerableAnim("hammerpull", AnimationHammerPull)
+										.triggerableAnim("hammerpull2", AnimationHammerPull2));
 	}
 	
 	@Override

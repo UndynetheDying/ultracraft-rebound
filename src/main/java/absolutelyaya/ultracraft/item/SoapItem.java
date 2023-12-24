@@ -75,7 +75,7 @@ public class SoapItem extends AbstractWeaponItem
 	}
 	
 	@Override
-	int getSwitchCooldown()
+	int getSwitchCooldown(ItemStack stack)
 	{
 		return 0;
 	}
