@@ -75,9 +75,9 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 	@Override
 	public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected)
 	{
-		if(world.isClient && approxUseTime > 5)
+		if(world.isClient && (approxUseTime > 5 || isAlternate()))
 		{
-			float f = Math.min((approxUseTime - 5) / 35f, 1f);
+			float f = Math.min((approxUseTime - (isAlternate() ? 0 : 5)) / (isAlternate() ? 5f : 35f), 1f);
 			float pitch = MathHelper.lerp(f, 0.1f, 1.4f);
 			int frequency = MathHelper.lerp(f, 8, 3);
 			if((approxUseTime - 2) % frequency == 0)
@@ -174,7 +174,7 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 	@Override
 	public int getMaxUseTime(ItemStack stack)
 	{
-		return 20;
+		return isAlternate() ? 5 : 20;
 	}
 	
 	@Override
