@@ -174,7 +174,7 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 	@Override
 	public int getMaxUseTime(ItemStack stack)
 	{
-		return isAlternate() ? 5 : 20;
+		return isAlternate() ? 0 : 20;
 	}
 	
 	@Override
@@ -189,7 +189,8 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 										.triggerableAnim("stop", AnimationStop)
 										.triggerableAnim("slabshot", AnimationSlabShot)
 										.triggerableAnim("hammerpull", AnimationHammerPull)
-										.triggerableAnim("hammerpull2", AnimationHammerPull2));
+										.triggerableAnim("hammerpull2", AnimationHammerPull2)
+										.setSoundKeyframeHandler(this::handleAnimSound));
 	}
 	
 	@Override

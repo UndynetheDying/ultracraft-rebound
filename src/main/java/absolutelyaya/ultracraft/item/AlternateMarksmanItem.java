@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.item;
 
-import absolutelyaya.ultracraft.client.rendering.item.AlternateSharpshooterRevolverRenderer;
+import absolutelyaya.ultracraft.client.rendering.item.AlternateMarksmanRevolverRenderer;
 import mod.azure.azurelib.animatable.GeoItem;
 import mod.azure.azurelib.animatable.client.RenderProvider;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
@@ -12,9 +12,9 @@ import net.minecraft.world.World;
 
 import java.util.function.Consumer;
 
-public class AlternateSharpshooterItem extends SharpshooterRevolverItem
+public class AlternateMarksmanItem extends MarksmanRevolverItem
 {
-	public AlternateSharpshooterItem(Settings settings)
+	public AlternateMarksmanItem(Settings settings)
 	{
 		super(settings);
 	}
@@ -23,12 +23,12 @@ public class AlternateSharpshooterItem extends SharpshooterRevolverItem
 	public void createRenderer(Consumer<Object> consumer)
 	{
 		consumer.accept(new RenderProvider() {
-			private AlternateSharpshooterRevolverRenderer renderer;
+			private AlternateMarksmanRevolverRenderer renderer;
 			
 			@Override
 			public BuiltinModelItemRenderer getCustomRenderer() {
 				if (this.renderer == null)
-					this.renderer = new AlternateSharpshooterRevolverRenderer();
+					this.renderer = new AlternateMarksmanRevolverRenderer();
 				
 				return renderer;
 			}
@@ -64,11 +64,9 @@ public class AlternateSharpshooterItem extends SharpshooterRevolverItem
 	protected void onSwitch(PlayerEntity user, World world)
 	{
 		super.onSwitch(user, world);
-		ItemStack stack = user.getMainHandStack();
-		if(getNbt(stack, "charges") > 1)
-			setNbt(stack, "charges", 1);
 		if(!world.isClient)
 		{
+			ItemStack stack = user.getMainHandStack();
 			if(getNbt(stack, getHammerId()) != 1)
 				triggerAnim(user, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), "hammerpull" + (b ? "2" : ""));
 			b = !b;
@@ -78,6 +76,6 @@ public class AlternateSharpshooterItem extends SharpshooterRevolverItem
 	@Override
 	protected String getHammerId()
 	{
-		return "hammer3";
+		return "hammer2";
 	}
 }

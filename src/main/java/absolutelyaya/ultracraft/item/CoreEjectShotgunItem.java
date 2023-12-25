@@ -147,7 +147,8 @@ public class CoreEjectShotgunItem extends AbstractShotgunItem
 										.triggerableAnim("switch2", AnimationSwitch2)
 										.triggerableAnim("shot_core", AnimationShot)
 										.triggerableAnim("shot_core2", AnimationShot2)
-										.triggerableAnim("altShot", AnimationAltShot));
+										.triggerableAnim("altShot", AnimationAltShot)
+										.setSoundKeyframeHandler(this::handleAnimSound));
 	}
 	
 	public int getApproxUseTime()

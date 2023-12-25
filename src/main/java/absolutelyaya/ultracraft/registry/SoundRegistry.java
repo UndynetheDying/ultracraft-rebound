@@ -53,6 +53,9 @@ public class SoundRegistry
 	
 	//WEAPONS
 	public static final SoundEvent REVOLVER_FIRE = register("item.revolver.fire");
+	public static final SoundEvent SLAB_REVOLVER_FIRE = register("item.alt_revolver.fire");
+	public static final SoundEvent SLAB_REVOLVER_FIRE_DING = register("item.alt_revolver.fire_ding");
+	public static final SoundEvent SLAB_REVOLVER_CLICK = register("item.alt_revolver.click");
 	public static final SoundEvent REVOLVER_ALT_CHARGE = register("item.revolver.alt_charge");
 	public static final SoundEvent PIERCER_CHARGE = register("item.piercer.charge");
 	public static final SoundEvent PIERCER_FIRE = register("item.piercer.fire");
@@ -67,6 +70,9 @@ public class SoundRegistry
 	public static final SoundEvent SHOTGUN_PUMP = register("item.shotgun.pump");
 	public static final SoundEvent SHOTGUN_OVERPUMP_BEEP = register("item.shotgun.overpump_beep");
 	public static final SoundEvent SHOTGUN_CORE_CHARGE = register("item.shotgun.core_charge");
+	public static final SoundEvent SHOTGUN_OPEN = register("item.shotgun.open");
+	public static final SoundEvent SHOTGUN_CLOSE = register("item.shotgun.close");
+	public static final SoundEvent SHOTGUN_HISS = register("item.shotgun.hiss");
 	
 	public static final SoundEvent MACHINESWORD_ATTACK = register("item.machinesword.attack");
 	

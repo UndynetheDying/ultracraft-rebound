@@ -89,7 +89,7 @@ public class PumpShotgunItem extends AbstractShotgunItem
 		else
 		{
 			int charge = getNbt(stack, "charge");
-			user.playSound(SoundRegistry.SHOTGUN_PUMP, 0.5f, 0.8f + 0.1f * Math.min(charge + 1, 3));
+			user.playSound(SoundRegistry.SHOTGUN_PUMP, 1f, 0.8f + 0.1f * Math.min(charge + 1, 3));
 		}
 		cdm.setCooldown(this, cooldown, GunCooldownManager.SECONDARY);
 	}
@@ -152,7 +152,8 @@ public class PumpShotgunItem extends AbstractShotgunItem
 										.triggerableAnim("shot_pump", AnimationShot)
 										.triggerableAnim("shot_pump2", AnimationShot2)
 										.triggerableAnim("pump", AnimationPump)
-										.triggerableAnim("pump2", AnimationPump2));
+										.triggerableAnim("pump2", AnimationPump2)
+										.setSoundKeyframeHandler(this::handleAnimSound));
 	}
 	
 	@Override

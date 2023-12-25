@@ -8,8 +8,10 @@ import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import io.netty.buffer.Unpooled;
+import mod.azure.azurelib.core.keyframe.event.SoundKeyframeEvent;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -18,7 +20,10 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.joml.Vector2i;
@@ -219,4 +224,12 @@ public abstract class AbstractWeaponItem extends Item
 	}
 	
 	protected void onSwitch(PlayerEntity user, World world) {}
+	
+	protected void handleAnimSound(SoundKeyframeEvent<? extends AbstractWeaponItem> keyframe)
+	{
+		SoundEvent event = Registries.SOUND_EVENT.get(new Identifier(Ultracraft.MOD_ID, keyframe.getKeyframeData().getSound()));
+		ClientPlayerEntity player = MinecraftClient.getInstance().player;
+		if(player.getMainHandStack().getItem().equals(keyframe.getAnimatable()))
+			player.playSound(event, SoundCategory.PLAYERS, 1f, 1f + (player.getRandom().nextFloat() - 0.5f) * 0.1f);
+	}
 }

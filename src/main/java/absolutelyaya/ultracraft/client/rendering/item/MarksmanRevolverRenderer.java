@@ -2,6 +2,8 @@ package absolutelyaya.ultracraft.client.rendering.item;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.item.MarksmanRevolverItem;
+import absolutelyaya.ultracraft.item.PierceRevolverItem;
+import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.util.Identifier;
 import mod.azure.azurelib.model.DefaultedItemGeoModel;
 import mod.azure.azurelib.renderer.GeoItemRenderer;
@@ -11,6 +13,11 @@ public class MarksmanRevolverRenderer extends GeoItemRenderer<MarksmanRevolverIt
 	public MarksmanRevolverRenderer()
 	{
 		super(new DefaultedItemGeoModel<>(new Identifier(Ultracraft.MOD_ID, "revolver")));
+	}
+	
+	public MarksmanRevolverRenderer(GeoModel<MarksmanRevolverItem> model)
+	{
+		super(model);
 	}
 	
 	@Override

@@ -107,6 +107,8 @@ public class ItemRegistry
 			new Identifier(Ultracraft.MOD_ID, "overheat_nailgun"), new OverheatNailgunItem(new FabricItemSettings().maxCount(1)));
 	public static final AlternatePiercerItem ALTERNATE_PIERCER = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "alternate_piercer"), new AlternatePiercerItem(new FabricItemSettings().maxCount(1)));
+	public static final AlternateMarksmanItem ALTERNATE_MARKSMAN = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "alternate_marksman"), new AlternateMarksmanItem(new FabricItemSettings().maxCount(1)));
 	public static final AlternateSharpshooterItem ALTERNATE_SHARPSHOOTER = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "alternate_sharpshooter"), new AlternateSharpshooterItem(new FabricItemSettings().maxCount(1)));
 	
@@ -243,6 +245,7 @@ public class ItemRegistry
 			content.add(SHARPSHOOTER_REVOLVER);
 			content.add(SHARPSHOOTER_REVOLVER.getStackedSharpshooter());
 			content.add(ALTERNATE_PIERCER);
+			content.add(ALTERNATE_MARKSMAN);
 			content.add(ALTERNATE_SHARPSHOOTER);
 			content.add(CORE_SHOTGUN);
 			content.add(PUMP_SHOTGUN);

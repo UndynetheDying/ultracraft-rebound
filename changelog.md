@@ -4,9 +4,17 @@
   - Primary fire of all Nailgun variants now builds up "heat"
   - The higher the heat, the slower the fire rate (this one only applies to the Overheat Nailgun)
   - Alt fire uses a "heatsink", firing 5 nails and consuming 5 "heat" per tick until heat is used up.
+- Added Slab Revolvers
+  - An Alternate Version for each revolver
+  - Slower, but does more damage and pierces up to 1 weak enemy
+  - Have a Hammer that has to be pulled back before firing; if the variant is switched before this happens, it'll be pulled back when you switch back to that weapon.
+  - Piercer pierces more
+  - Sharpshooter has only 1 Charge, but spins at full speed instantly
 - Removed cooldown caused by stopping to use the Flamethrower
 - Added Slab Blocks
-  - Work like redstone lamps with Numbers from 1-10
+  - Right click // Punch to toggle; alternatively, use a redstone signal of level 15
+  - Emits redstone Signal equal to it's displayed number when active
+  - Power with a redstone signal of <=10 to change its displayed number
 - Malicious Face can now be summoned as a non-decaying corpse using `{decorative: 1b}`
 - Added Screenshake
 - Fixed Keybind conflicts making only one action mapped to that key execute
@@ -15,7 +23,10 @@
   - no more hard coded values; you can customize everything in detail using a config file.
 - Greater Filth will not enrage anymore without a Target
 - Added Fancy Carpet Block
+  - Connects to other fancy carpet blocks directly next to it
 - Added Flowerbed Block
+  - Placed like snow layers, each layer having different flowers
+  - If an entity falls more than 0.5 Blocks, they fall through Flowerbeds; this can be used to hide secrets or as a parcour gimmick
 ## Settings & Config
 - Removed almost all gamerules (only remaining is `ultra-startWithPiercer`)
 - Added Option to disable Screenshake
@@ -40,5 +51,6 @@
 - Fixed Hell Spawner Spawn Egg Rendering
 - Finally fixed the half pixel offset on animated wing pattern shaders
 - Changed Revolver Textures to be closer to the original
+- Updated Carpet texture in Limbo Main Menu BG
 ## Resource Changes
 ## API Changes

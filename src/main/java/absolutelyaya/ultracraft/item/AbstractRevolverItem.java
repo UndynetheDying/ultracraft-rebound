@@ -48,15 +48,20 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 				super.onPrimaryFire(world, user, userVelocity);
 				return true;
 			}
-			world.playSound(null, user.getBlockPos(), SoundRegistry.REVOLVER_FIRE, SoundCategory.PLAYERS, 0.75f,
-					0.9f + (user.getRandom().nextFloat() - 0.5f) * 0.2f);
 			if(isAlternate())
 			{
+				float pitch = 1f + (user.getRandom().nextFloat() - 0.5f) * 0.2f;
+				world.playSound(null, user.getBlockPos(), SoundRegistry.SLAB_REVOLVER_FIRE, SoundCategory.PLAYERS, 0.9f, pitch);
+				world.playSound(null, user.getBlockPos(), SoundRegistry.SLAB_REVOLVER_FIRE_DING, SoundCategory.PLAYERS, 0.8f, 1f);
 				triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(), "slabshot");
 				setNbt(user.getMainHandStack(), getHammerId(), 0);
 			}
 			else
+			{
+				world.playSound(null, user.getBlockPos(), SoundRegistry.REVOLVER_FIRE, SoundCategory.PLAYERS, 0.75f,
+						0.9f + (user.getRandom().nextFloat() - 0.5f) * 0.2f);
 				triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(), b ? "shot" : "shot2");
+			}
 			
 			if(isAlternate())
 				ServerHitscanHandler.makeBasicHitscan(user, ServerHitscanHandler.SLAB, 2 * getPrimaryDamage(), DamageSources.GUN)
@@ -101,7 +106,7 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 	@Override
 	Item[] getVariants()
 	{
-		return new Item[]{ItemRegistry.ALTERNATE_PIERCER, ItemRegistry.MARKSMAN_REVOLVER, ItemRegistry.ALTERNATE_SHARPSHOOTER};
+		return new Item[]{ItemRegistry.ALTERNATE_PIERCER, ItemRegistry.ALTERNATE_MARKSMAN, ItemRegistry.ALTERNATE_SHARPSHOOTER};
 	}
 	
 	@Override

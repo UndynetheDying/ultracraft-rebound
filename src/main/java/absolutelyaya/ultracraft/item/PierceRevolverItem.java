@@ -162,7 +162,8 @@ public class PierceRevolverItem extends AbstractRevolverItem
 										.triggerableAnim("stop", AnimationStop)
 										.triggerableAnim("slabshot", AnimationSlabShot)
 										.triggerableAnim("hammerpull", AnimationHammerPull)
-										.triggerableAnim("hammerpull2", AnimationHammerPull2));
+										.triggerableAnim("hammerpull2", AnimationHammerPull2)
+										.setSoundKeyframeHandler(this::handleAnimSound));
 	}
 	
 	@Override

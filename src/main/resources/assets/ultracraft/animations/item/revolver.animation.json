@@ -476,6 +476,11 @@
 						"vector": [0, 0, 0]
 					}
 				}
+			},
+			"sound_effects": {
+				"0.3": {
+					"effect": "item.alt_revolver.click"
+				}
 			}
 		},
 		"hammerpull2": {
@@ -570,6 +575,11 @@
 					"scale": {
 						"vector": [0, 0, 0]
 					}
+				}
+			},
+			"sound_effects": {
+				"0.3": {
+					"effect": "item.alt_revolver.click"
 				}
 			}
 		}

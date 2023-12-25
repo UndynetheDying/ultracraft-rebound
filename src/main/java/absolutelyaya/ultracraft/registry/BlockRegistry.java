@@ -105,6 +105,8 @@ public class BlockRegistry
 	
 	public static void registerBlocks()
 	{
-	
+		FlammableBlockRegistry registry = FlammableBlockRegistry.getDefaultInstance();
+		registry.add(FLOWERBED, 20, 10);
+		registry.add(CARPET, 20, 5);
 	}
 }
