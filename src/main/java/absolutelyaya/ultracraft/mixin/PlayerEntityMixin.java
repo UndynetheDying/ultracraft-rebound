@@ -48,7 +48,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@Mixin(PlayerEntity.class)
+@Mixin(value = PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements WingedPlayerEntity
 {
 	@Shadow public abstract boolean isCreative();
@@ -309,11 +309,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 			cir.setReturnValue(movement);
 	}
 	
-	@Redirect(method = "increaseTravelMotionStats", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;addExhaustion(F)V", ordinal = 3))
-	void addExhaustion(PlayerEntity instance, float exhaustion)
+	@ModifyArg(method = "increaseTravelMotionStats", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;addExhaustion(F)V", ordinal = 3))
+	float addExhaustion(float exhaustion)
 	{
-		if(!UltraComponents.WING_DATA.get(instance).isActive())
-			instance.addExhaustion(exhaustion);
+		if(!UltraComponents.WING_DATA.get(this).isActive())
+			return exhaustion;
+		return 0;
 	}
 	
 	@ModifyConstant(method = "getOffGroundSpeed", constant = @Constant(floatValue = 0.02f))
