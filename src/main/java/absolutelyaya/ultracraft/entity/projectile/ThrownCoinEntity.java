@@ -200,6 +200,7 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 	{
 		boolean isDamageChargeback = source.isOf(DamageSources.CHARGEBACK);
 		boolean isDamageRicochet = source.isOf(DamageSources.RICOCHET) || isDamageChargeback;
+		boolean singleTarget = source.isAlternate();
 		byte hitscanType = source.hitscan.type;
 		if(hitscanType == ServerHitscanHandler.NORMAL)
 			hitscanType = ServerHitscanHandler.COIN_RICOCHET;
@@ -278,8 +279,9 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 					}
 					if (closest instanceof ServerPlayerEntity player)
 					{
+						int mult = singleTarget ? dataTracker.get(SPLITS) : 1;
 						ServerHitscanHandler.scheduleDelayedAimingHitscan((LivingEntity) getOwner(), getPos(), getPos(), player, hitscanType,
-								(isDamageRicochet ? Math.max(amount, 1) : 1), DamageSources.RICOCHET, source.hitscan.maxHits + 1, source.hitscan.maxBounces, null,
+								(isDamageRicochet ? Math.max(amount, 1) : 1) * mult, DamageSources.RICOCHET, source.hitscan.maxHits + 1, source.hitscan.maxBounces, null,
 								10 + 5 * (dataTracker.get(SPLITS) + 1), 15 + 5 * (dataTracker.get(SPLITS) + 1), true);
 						if (getOwner() instanceof ServerPlayerEntity attackingPlayer)
 						{
@@ -291,15 +293,17 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 					{
 						Vec3d target = closest.getBoundingBox().getCenter();
 						Vec3d dir = target.subtract(getPos()).normalize();
+						int mult = singleTarget ? dataTracker.get(SPLITS) : 1;
 						ServerHitscanHandler.performBouncingHitscan(new ServerHitscanHandler.Hitscan(attacker, getPos(), getPos(), getPos().add(dir.multiply(64f)), hitscanType,
-								isDamageRicochet ? 3 * amount : 5, DamageSources.RICOCHET).maxHits(source.hitscan.maxHits + 1).bounces(source.hitscan.maxBounces).autoAim(source.hitscan.autoAim));
-						Ultracraft.freeze((ServerWorld) getWorld(), 3);
+								(isDamageRicochet ? 3 * amount : 5) * mult, DamageSources.RICOCHET)
+																				.maxHits(source.hitscan.maxHits + 1).bounces(source.hitscan.maxBounces).autoAim(source.hitscan.autoAim));
+						Ultracraft.freeze((ServerWorld) getWorld(), 3 * mult);
 						if (getOwner() instanceof ServerPlayerEntity player)
 							CriteriaRegistry.RICOCHET.trigger(player, damage);
 						//world.getPlayers().forEach(p -> p.sendMessage(Text.of("CHAIN END! final damage: " + (isDamageRicochet ? 5 * amount : 5))));
 					}
 				}
-				if(dataTracker.get(SPLITS) > 0)
+				if(dataTracker.get(SPLITS) > 0 && !singleTarget)
 					return performSplits(source, amount, attacker, potentialTargets.size() > 1);
 			}
 			else
@@ -310,7 +314,7 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 							isDamageRicochet ? 5 * amount : 5, DamageSources.RICOCHET).maxHits(source.hitscan.maxHits).bounces(source.hitscan.maxBounces).autoAim(source.hitscan.autoAim));
 				else
 					ServerHitscanHandler.sendPacket((ServerWorld)getWorld(), getPos(), dest, hitscanType);
-				if (dataTracker.get(SPLITS) > 0)
+				if (dataTracker.get(SPLITS) > 0 && !singleTarget)
 					return performSplits(source, amount, attacker, false);
 			}
 		}

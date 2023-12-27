@@ -66,7 +66,8 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 			if(isAlternate())
 				ServerHitscanHandler.makeBasicHitscan(user, ServerHitscanHandler.SLAB, 2 * getPrimaryDamage(), DamageSources.GUN)
 						.semiPierce(2, getPrimaryDamage())
-						.explosion(new ServerHitscanHandler.HitscanExplosionData(2f, 0f, 0f, true)).perform();
+						.explosion(new ServerHitscanHandler.HitscanExplosionData(2f, 0f, 0f, true))
+						.alternate().perform();
 			else
 				ServerHitscanHandler.performHitscan(user, ServerHitscanHandler.NORMAL, getPrimaryDamage());
 			cdm.setCooldown(this, getPrimaryCooldown(), GunCooldownManager.PRIMARY);

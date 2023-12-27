@@ -270,6 +270,15 @@ public class ServerHitscanHandler
 			return this;
 		}
 		
+		/**
+		 * Marks a hitscans damage as being from an Alternate Revolver
+		 */
+		public Hitscan alternate()
+		{
+			damageSource.alternate();
+			return this;
+		}
+		
 		public HitscanResult perform()
 		{
 			World world = owner.getWorld();

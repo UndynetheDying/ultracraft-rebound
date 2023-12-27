@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 public class HitscanDamageSource extends DamageSource
 {
 	public final ServerHitscanHandler.Hitscan hitscan;
+	boolean alternate = false;
 	
 	public HitscanDamageSource(RegistryEntry<DamageType> type, @Nullable Entity attacker, ServerHitscanHandler.Hitscan hitscan)
 	{
@@ -21,5 +22,15 @@ public class HitscanDamageSource extends DamageSource
 	{
 		super(type, source, attacker);
 		this.hitscan = hitscan;
+	}
+	
+	public void alternate()
+	{
+		alternate = true;
+	}
+	
+	public boolean isAlternate()
+	{
+		return alternate;
 	}
 }
