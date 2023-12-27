@@ -47,8 +47,17 @@ public class AlternateMarksmanItem extends MarksmanRevolverItem
 		super.inventoryTick(stack, world, entity, slot, selected);
 		if(!(entity instanceof PlayerEntity user))
 			return;
-		if(isCanFirePrimary(user) && getNbt(stack, getHammerId()) == 0)
-			setNbt(stack, getHammerId(), 1);
+		int hammer = getNbt(stack, getHammerId());
+		if(isCanFirePrimary(user) && hammer != 1)
+		{
+			if(!world.isClient && hammer == 0)
+			{
+				setNbt(stack, getHammerId(), 2);
+				hammerPull(user, stack, (ServerWorld)world);
+			}
+			if(hammer == 2)
+				setNbt(stack, getHammerId(), 1);
+		}
 	}
 	
 	@Override
@@ -57,20 +66,16 @@ public class AlternateMarksmanItem extends MarksmanRevolverItem
 		if(getNbt(stack, getHammerId()) == 1)
 			return super.getSwitchCooldown(stack);
 		else
-			return 14;
+			return 0;
 	}
 	
 	@Override
 	protected void onSwitch(PlayerEntity user, World world)
 	{
 		super.onSwitch(user, world);
-		if(!world.isClient)
-		{
-			ItemStack stack = user.getMainHandStack();
-			if(getNbt(stack, getHammerId()) != 1)
-				triggerAnim(user, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), "hammerpull" + (b ? "2" : ""));
-			b = !b;
-		}
+		ItemStack stack = user.getMainHandStack();
+		if(getNbt(stack, getHammerId()) == 2)
+			setNbt(stack, getHammerId(), 0);
 	}
 	
 	@Override

@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.item;
 
 import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -46,9 +47,9 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 	@Override
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand)
 	{
-		ItemStack itemStack = user.getStackInHand(hand);
+		ItemStack stack = user.getStackInHand(hand);
 		if(hand.equals(Hand.OFF_HAND))
-			return TypedActionResult.fail(itemStack);
+			return TypedActionResult.fail(stack);
 		onAltFire(world, user);
 		return super.use(world, user, hand);
 	}
@@ -75,7 +76,8 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 			setNbt(stack, "heatsink_cd", heatsinkCD - 1);
 		if(heatsinkCD == 0)
 		{
-			setNbt(stack, "heatsinks", ++heatsinks);
+			if(heatsinks < 2)
+				setNbt(stack, "heatsinks", ++heatsinks);
 			if(heatsinks >= 2)
 				setNbt(stack, "heatsink_cd", -1);
 			else
@@ -118,6 +120,30 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 	
 	@Override
 	public boolean shouldAim()
+	{
+		return false;
+	}
+	
+	@Override
+	protected void onBeforeSwitch(PlayerEntity user, World world)
+	{
+		super.onBeforeSwitch(user, world);
+		IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(user);
+		if(winged.isPrimaryFiring())
+			onPrimaryFireStop(world, user);
+	}
+	
+	@Override
+	protected void onSwitch(PlayerEntity user, World world)
+	{
+		super.onSwitch(user, world);
+		IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(user);
+		if(winged.isPrimaryFiring())
+			onPrimaryFireStart(world, user);
+	}
+	
+	@Override
+	public boolean canHoldUse()
 	{
 		return false;
 	}

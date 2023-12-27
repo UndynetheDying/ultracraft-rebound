@@ -173,8 +173,9 @@ public abstract class AbstractWeaponItem extends Item
 			return;
 		}
 		ItemStack stack = player.getMainHandStack();
-		if(!(stack.getItem() instanceof AbstractWeaponItem))
+		if(!(stack.getItem() instanceof AbstractWeaponItem lastWeapon))
 			return;
+		lastWeapon.onBeforeSwitch(player, player.getWorld());
 		IProgressionComponent progression = UltraComponents.PROGRESSION.get(player);
 		Item nextItem = getNextVariant(stack, progression);
 		if(nextItem == null)
@@ -223,6 +224,8 @@ public abstract class AbstractWeaponItem extends Item
 		return 0;
 	}
 	
+	protected void onBeforeSwitch(PlayerEntity user, World world) {}
+	
 	protected void onSwitch(PlayerEntity user, World world) {}
 	
 	protected void handleAnimSound(SoundKeyframeEvent<? extends AbstractWeaponItem> keyframe)
@@ -231,5 +234,13 @@ public abstract class AbstractWeaponItem extends Item
 		ClientPlayerEntity player = MinecraftClient.getInstance().player;
 		if(player.getMainHandStack().getItem().equals(keyframe.getAnimatable()))
 			player.playSound(event, SoundCategory.PLAYERS, 1f, 1f + (player.getRandom().nextFloat() - 0.5f) * 0.1f);
+	}
+	
+	/**
+	 * whether the use-key can be held down to repeatedly perform the alt fire action
+	 */
+	public boolean canHoldUse()
+	{
+		return true;
 	}
 }

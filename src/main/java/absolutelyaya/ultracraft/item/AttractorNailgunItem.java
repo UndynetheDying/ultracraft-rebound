@@ -86,9 +86,9 @@ public class AttractorNailgunItem extends AbstractNailgunItem
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand)
 	{
 		int magnets = UltraComponents.WINGED_ENTITY.get(user).getMagnets();
-		ItemStack itemStack = user.getStackInHand(hand);
-		if((magnets >= 3 && !world.isClient) || getNbt(itemStack, "magnets") <= 0)
-			return TypedActionResult.fail(itemStack);
+		ItemStack stack = user.getStackInHand(hand);
+		if((magnets >= 3 && !world.isClient) || getNbt(stack, "magnets") <= 0)
+			return TypedActionResult.fail(stack);
 		return super.use(world, user, hand);
 	}
 	

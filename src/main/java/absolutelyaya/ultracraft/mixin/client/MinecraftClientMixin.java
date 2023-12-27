@@ -126,6 +126,13 @@ public abstract class MinecraftClientMixin
 			stopShooting();
 	}
 	
+	@Redirect(method = "handleInputEvents", at = @At(value="INVOKE", target = "Lnet/minecraft/client/MinecraftClient;doItemUse()V", ordinal = 1))
+	void onItemUseHeld(MinecraftClient instance)
+	{
+		if(!(instance.player.getMainHandStack().getItem() instanceof AbstractWeaponItem weapon && !weapon.canHoldUse()))
+			instance.doItemUse();
+	}
+	
 	void stopShooting()
 	{
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
