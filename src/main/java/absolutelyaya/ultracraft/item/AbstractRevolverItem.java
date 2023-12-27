@@ -28,7 +28,7 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 	final RawAnimation AnimationDischarge = RawAnimation.begin().thenPlay("discharge");
 	final RawAnimation AnimationShot = RawAnimation.begin().thenPlay("shot");
 	final RawAnimation AnimationShot2 = RawAnimation.begin().thenPlay("shot2");
-	final RawAnimation AnimationSlabShot = RawAnimation.begin().thenPlay("slabshot").thenPlay("hammerpull");
+	final RawAnimation AnimationSlabShot = RawAnimation.begin().thenPlay("slabshot");
 	final RawAnimation AnimationHammerPull = RawAnimation.begin().thenPlay("hammerpull");
 	final RawAnimation AnimationHammerPull2 = RawAnimation.begin().thenPlay("hammerpull2");
 	
@@ -133,9 +133,17 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 		};
 	}
 	
+	protected void hammerPull(PlayerEntity user, ItemStack stack, ServerWorld world)
+	{
+		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(user).getGunCooldownManager();
+		cdm.setCooldown(this, 14, GunCooldownManager.PRIMARY);
+		triggerAnim(user, GeoItem.getOrAssignId(stack, world), getControllerName(), "hammerpull" + (b ? "2" : ""));
+		b = !b;
+	}
+	
 	protected int getPrimaryCooldown()
 	{
-		return isAlternate() ? 32 : 9;
+		return isAlternate() ? 18 : 9;
 	}
 	
 	protected float getPrimaryDamage()

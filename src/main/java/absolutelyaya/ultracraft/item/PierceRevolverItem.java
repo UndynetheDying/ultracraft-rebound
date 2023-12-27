@@ -112,6 +112,11 @@ public class PierceRevolverItem extends AbstractRevolverItem
 				}
 				player.getItemCooldownManager().set(this, isAlternate() ? 100 : 50);
 				onAltFire(world, player);
+				if(isAlternate())
+				{
+					setNbt(stack, getHammerId(), 0);
+					cdm.setCooldown(this, 20, GunCooldownManager.PRIMARY);
+				}
 			}
 			if(!world.isClient)
 			{

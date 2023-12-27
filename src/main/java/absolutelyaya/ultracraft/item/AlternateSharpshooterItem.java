@@ -1,7 +1,6 @@
 package absolutelyaya.ultracraft.item;
 
 import absolutelyaya.ultracraft.client.rendering.item.AlternateSharpshooterRevolverRenderer;
-import mod.azure.azurelib.animatable.GeoItem;
 import mod.azure.azurelib.animatable.client.RenderProvider;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.Entity;
@@ -47,8 +46,17 @@ public class AlternateSharpshooterItem extends SharpshooterRevolverItem
 		super.inventoryTick(stack, world, entity, slot, selected);
 		if(!(entity instanceof PlayerEntity user))
 			return;
-		if(isCanFirePrimary(user) && getNbt(stack, getHammerId()) == 0)
-			setNbt(stack, getHammerId(), 1);
+		int hammer = getNbt(stack, getHammerId());
+		if(isCanFirePrimary(user) && hammer != 1)
+		{
+			if(!world.isClient && hammer == 0)
+			{
+				setNbt(stack, getHammerId(), 2);
+				hammerPull(user, stack, (ServerWorld)world);
+			}
+			if(hammer == 2)
+				setNbt(stack, getHammerId(), 1);
+		}
 	}
 	
 	@Override
@@ -57,7 +65,7 @@ public class AlternateSharpshooterItem extends SharpshooterRevolverItem
 		if(getNbt(stack, getHammerId()) == 1)
 			return super.getSwitchCooldown(stack);
 		else
-			return 14;
+			return 0;
 	}
 	
 	@Override
@@ -67,12 +75,8 @@ public class AlternateSharpshooterItem extends SharpshooterRevolverItem
 		ItemStack stack = user.getMainHandStack();
 		if(getNbt(stack, "charges") > 1)
 			setNbt(stack, "charges", 1);
-		if(!world.isClient)
-		{
-			if(getNbt(stack, getHammerId()) != 1)
-				triggerAnim(user, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), "hammerpull" + (b ? "2" : ""));
-			b = !b;
-		}
+		if(getNbt(stack, getHammerId()) == 2)
+			setNbt(stack, getHammerId(), 0);
 	}
 	
 	@Override

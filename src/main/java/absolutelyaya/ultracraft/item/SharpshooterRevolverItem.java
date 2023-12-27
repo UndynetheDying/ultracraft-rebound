@@ -140,6 +140,11 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 				}
 				player.getItemCooldownManager().set(this, 10);
 				onAltFire(world, player);
+				if(isAlternate())
+				{
+					setNbt(stack, getHammerId(), 0);
+					cdm.setCooldown(this, 20, GunCooldownManager.PRIMARY);
+				}
 			}
 			if(!world.isClient)
 			{
