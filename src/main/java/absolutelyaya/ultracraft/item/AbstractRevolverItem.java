@@ -2,13 +2,12 @@ package absolutelyaya.ultracraft.item;
 
 import absolutelyaya.ultracraft.ServerHitscanHandler;
 import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.Weapon;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.damage.DamageSources;
-import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -104,11 +103,6 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 		}
 	}
 	
-	@Override
-	Item[] getVariants()
-	{
-		return new Item[]{ItemRegistry.ALTERNATE_PIERCER, ItemRegistry.ALTERNATE_MARKSMAN, ItemRegistry.ALTERNATE_SHARPSHOOTER};
-	}
 	
 	@Override
 	int getSwitchCooldown(ItemStack stack)
@@ -165,5 +159,11 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 	protected String getHammerId()
 	{
 		return null;
+	}
+	
+	@Override
+	public Weapon getWeaponType()
+	{
+		return Weapon.REVOLVER;
 	}
 }

@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.client.gui.terminal;
 
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.Weapon;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
 import absolutelyaya.ultracraft.client.gui.terminal.elements.Button;
 import absolutelyaya.ultracraft.client.gui.terminal.elements.Sprite;
@@ -37,31 +38,18 @@ import java.util.Map;
 public class WeaponsTab extends Tab
 {
 	static final Identifier TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/weapon_icons.png");
-	static final Identifier[] REVOLVERS = new Identifier[]{
-			new Identifier(Ultracraft.MOD_ID, "pierce_revolver"),
-			new Identifier(Ultracraft.MOD_ID, "marksman_revolver"),
-			new Identifier(Ultracraft.MOD_ID, "sharpshooter_revolver")
-	};
-	static final Identifier[] SHOTGUNS = new Identifier[]{
-			new Identifier(Ultracraft.MOD_ID, "core_shotgun"),
-			new Identifier(Ultracraft.MOD_ID, "pump_shotgun")
-	};
-	static final Identifier[] NAILGUNS = new Identifier[]{
-			new Identifier(Ultracraft.MOD_ID, "attractor_nailgun"),
-			new Identifier(Ultracraft.MOD_ID, "overheat_nailgun")
-	};
 	
 	Button returnButton = new Button(Button.RETURN_LABEL,
 			new Vector2i(-6 - textRenderer.getWidth(Text.translatable(Button.RETURN_LABEL).getString()), 96 - textRenderer.fontHeight),
 			"mainmenu", 0, false);
 	Button craftButton = new Button("terminal.craft", new Vector2i(150, 96 - textRenderer.fontHeight), "craft", 0, true);
-	final String[] weaponCategories = new String[] { "revolver", "shotgun", "nailgun", "railcannon", "rocket_launcher" };
 	Button blueWeapon = new Button(new Sprite(TEXTURE, new Vector2i(0, 0), 0.001f, new Vector2i(48, 32), new Vector2i(0, 0), new Vector2i(192, 192)),
 			new Vector2i(50, 23), "weapon", 0, true);
 	Button greenWeapon = new Button(new Sprite(TEXTURE, new Vector2i(0, 0), 0.001f, new Vector2i(48, 32), new Vector2i(48, 0), new Vector2i(192, 192)),
 			new Vector2i(26, 58), "weapon", 1, true);
 	Button redWeapon = new Button(new Sprite(TEXTURE, new Vector2i(0, 0), 0.001f, new Vector2i(48, 32), new Vector2i(96, 0), new Vector2i(192, 192)),
 			new Vector2i(75, 58), "weapon", 2, true);
+	Button loadoutButton = new Button("terminal.loadout", new Vector2i(-98, 96 - textRenderer.fontHeight), "loadout", 2, false);
 	List<Button> weaponCategoryButtons = new ArrayList<>();
 	int selectedCategory = -1;
 	Identifier selectedWeapon;
@@ -77,6 +65,7 @@ public class WeaponsTab extends Tab
 	public void init(TerminalBlockEntity terminal)
 	{
 		super.init(terminal);
+		Weapon[] weaponCategories = Weapon.values();
 		for (int i = 0; i < weaponCategories.length; i++)
 		{
 			String t = "terminal.weapon." + weaponCategories[i];
@@ -93,21 +82,15 @@ public class WeaponsTab extends Tab
 		buttons.add(blueWeapon);
 		buttons.add(greenWeapon);
 		buttons.add(redWeapon);
+		buttons.add(loadoutButton);
 		ingredientList.setSelectable(false);
 		
 		onButtonClicked("select", 0);
 	}
 	
-	boolean unlockedAny(String type)
+	boolean unlockedAny(Weapon type)
 	{
-		IProgressionComponent progression = UltraComponents.PROGRESSION.get(MinecraftClient.getInstance().player);
-		return switch (type)
-		{
-			case "revolver" -> progression.isUnlocked(REVOLVERS[0]) || progression.isUnlocked(REVOLVERS[1]) || progression.isUnlocked(REVOLVERS[2]);
-			case "shotgun" -> progression.isUnlocked(SHOTGUNS[0]) || progression.isUnlocked(SHOTGUNS[1]);
-			case "nailgun" -> progression.isUnlocked(NAILGUNS[0]) || progression.isUnlocked(NAILGUNS[1]);
-			default -> false;
-		};
+		return type.isAnyUnlocked(MinecraftClient.getInstance().player);
 	}
 	
 	@Override
@@ -133,19 +116,6 @@ public class WeaponsTab extends Tab
 		}
 	}
 	
-	Identifier[] getWeaponListForType(int idx)
-	{
-		if(idx < 0 || idx > weaponCategories.length)
-			return new Identifier[]{};
-		return switch(weaponCategories[idx])
-		{
-			case "revolver" -> REVOLVERS;
-			case "shotgun" -> SHOTGUNS;
-			case "nailgun" -> NAILGUNS;
-			default -> new Identifier[]{};
-		};
-	}
-	
 	@Override
 	public boolean onButtonClicked(String action, int value)
 	{
@@ -156,7 +126,7 @@ public class WeaponsTab extends Tab
 			return true;
 		}
 		
-		Identifier[] selectedWeaponTypeIds = getWeaponListForType(selectedCategory);
+		Identifier[] selectedWeaponTypeIds = Weapon.values()[selectedCategory].ids;
 		switch(action)
 		{
 			case "weapon" -> {
@@ -191,7 +161,7 @@ public class WeaponsTab extends Tab
 	
 	boolean isResultTypeHeld()
 	{
-		for (Identifier weapon : getWeaponListForType(selectedCategory))
+		for (Identifier weapon : Weapon.values()[selectedCategory].ids)
 		{
 			PlayerEntity player = MinecraftClient.getInstance().player;
 			PlayerInventory inv = player.getInventory();
@@ -216,7 +186,7 @@ public class WeaponsTab extends Tab
 		greenWeapon.getSprite().setUv(new Vector2i(48, 32 * tab));
 		redWeapon.getSprite().setUv(new Vector2i(96, 32 * tab));
 		
-		Identifier[] selectedWeaponTypeIds = getWeaponListForType(tab);
+		Identifier[] selectedWeaponTypeIds = Weapon.values()[selectedCategory].ids;
 		updateWeaponButton(blueWeapon, 0, selectedWeaponTypeIds, progression);
 		updateWeaponButton(greenWeapon, 1, selectedWeaponTypeIds, progression);
 		updateWeaponButton(redWeapon, 2, selectedWeaponTypeIds, progression);
@@ -254,7 +224,7 @@ public class WeaponsTab extends Tab
 		{
 			if(!progression.isUnlocked(selectedWeaponTypeIds[idx]))
 			{
-				if(!selectedWeaponTypeIds[idx].equals(REVOLVERS[0]))
+				if(!selectedWeaponTypeIds[idx].equals(Weapon.REVOLVER.ids[0]))
 					refreshTab();
 				craftButton.setClickable(selectedRecipe != null);
 				return true;

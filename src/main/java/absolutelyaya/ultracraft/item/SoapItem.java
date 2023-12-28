@@ -69,12 +69,6 @@ public class SoapItem extends AbstractWeaponItem
 	}
 	
 	@Override
-	Item[] getVariants()
-	{
-		return new Item[0];
-	}
-	
-	@Override
 	int getSwitchCooldown(ItemStack stack)
 	{
 		return 0;

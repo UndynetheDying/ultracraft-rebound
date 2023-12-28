@@ -1,10 +1,7 @@
 package absolutelyaya.ultracraft.api.terminal;
 
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
-import absolutelyaya.ultracraft.client.gui.terminal.CybergrindTab;
-import absolutelyaya.ultracraft.client.gui.terminal.DefaultTabs;
-import absolutelyaya.ultracraft.client.gui.terminal.EditMainMenuTab;
-import absolutelyaya.ultracraft.client.gui.terminal.WeaponsTab;
+import absolutelyaya.ultracraft.client.gui.terminal.*;
 import absolutelyaya.ultracraft.client.gui.terminal.elements.Tab;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import io.netty.buffer.Unpooled;
@@ -58,6 +55,7 @@ public class GlobalButtonActions
 		registerAction("graffiti", (t, v) -> t.setTab(new DefaultTabs.Graffiti()));
 		registerAction("edit-mainmenu", (t, v) -> t.setTab(new EditMainMenuTab()));
 		registerAction("cybergrind", (t, v) -> t.setTab(new CybergrindTab())); //unused; start button only gives off a redstone signal
+		registerAction("loadout", (t, v) -> t.setTab(new LoadoutTab()));
 		
 		registerAction("set-base", (t, v) -> t.setBase(TerminalBlockEntity.Base.values()[v]));
 		registerAction("force-screensaver", (t, v) -> t.setInactivity(60f));

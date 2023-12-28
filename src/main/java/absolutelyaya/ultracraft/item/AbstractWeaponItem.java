@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.item;
 
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.Weapon;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
@@ -137,7 +138,14 @@ public abstract class AbstractWeaponItem extends Item
 		return true;
 	}
 	
-	abstract Item[] getVariants();
+	protected Item[] getVariants()
+	{
+		Identifier[] ids = getWeaponType().ids;
+		Item[] items = new Item[Math.min(3, ids.length)];
+		for (int i = 0; i < Math.min(3, ids.length); i++)
+			items[0] = Registries.ITEM.get(ids[i]);
+		return items;
+	}
 	
 	abstract int getSwitchCooldown(ItemStack stack);
 	
@@ -242,5 +250,10 @@ public abstract class AbstractWeaponItem extends Item
 	public boolean canHoldUse()
 	{
 		return true;
+	}
+	
+	public Weapon getWeaponType()
+	{
+		return Weapon.UNIQUE;
 	}
 }

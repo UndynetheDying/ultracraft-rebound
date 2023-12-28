@@ -186,12 +186,6 @@ public class HarpoonGunItem extends AbstractWeaponItem implements GeoItem
 	}
 	
 	@Override
-	Item[] getVariants()
-	{
-		return new Item[0];
-	}
-	
-	@Override
 	int getSwitchCooldown(ItemStack stack)
 	{
 		return 0;

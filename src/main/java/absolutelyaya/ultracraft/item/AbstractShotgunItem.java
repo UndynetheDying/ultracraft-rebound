@@ -2,22 +2,20 @@ package absolutelyaya.ultracraft.item;
 
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.Weapon;
 import absolutelyaya.ultracraft.accessor.MeleeInterruptable;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.entity.demon.MaliciousFaceEntity;
 import absolutelyaya.ultracraft.entity.projectile.ShotgunPelletEntity;
 import absolutelyaya.ultracraft.particle.ParryIndicatorParticleEffect;
-import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Arm;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -107,12 +105,6 @@ public abstract class AbstractShotgunItem extends AbstractWeaponItem implements 
 	}
 	
 	@Override
-	Item[] getVariants()
-	{
-		return new Item[] {ItemRegistry.CORE_SHOTGUN, ItemRegistry.PUMP_SHOTGUN};
-	}
-	
-	@Override
 	int getSwitchCooldown(ItemStack stack)
 	{
 		return 8;
@@ -141,5 +133,11 @@ public abstract class AbstractShotgunItem extends AbstractWeaponItem implements 
 			triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(), "switch" + (b ? "2" : ""));
 			b = !b;
 		}
+	}
+	
+	@Override
+	public Weapon getWeaponType()
+	{
+		return Weapon.SHOTGUN;
 	}
 }
