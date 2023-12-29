@@ -7,6 +7,7 @@ import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
 import absolutelyaya.ultracraft.components.player.IHivelComponent;
+import absolutelyaya.ultracraft.components.player.ILoadoutComponent;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
 import absolutelyaya.ultracraft.config.HivelConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
@@ -337,6 +338,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 		NbtCompound arms = new NbtCompound();
 		UltraComponents.ARMS.get(this).writeToNbt(arms);
 		ultra.put("arms", arms);
+		NbtCompound loadouts = new NbtCompound();
+		UltraComponents.LOADOUT.get(this).writeToNbt(loadouts);
+		ultra.put("loadouts", loadouts);
 		
 		nbt.put("ultracraft", ultra);
 	}
@@ -360,6 +364,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 			IArmComponent armComponent = UltraComponents.ARMS.get(this);
 			armComponent.readFromNbt(arms);
 			armComponent.sync();
+		}
+		if(ultra.contains("loadout", NbtElement.COMPOUND_TYPE))
+		{
+			NbtCompound arms = ultra.getCompound("loadout");
+			ILoadoutComponent loadoutComponent = UltraComponents.LOADOUT.get(this);
+			loadoutComponent.readFromNbt(arms);
+			UltraComponents.LOADOUT.sync(this);
 		}
 	}
 	

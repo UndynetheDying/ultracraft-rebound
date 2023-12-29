@@ -7,14 +7,14 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class LoadoutComponent implements ILoadoutComponent
 {
@@ -72,12 +72,27 @@ public class LoadoutComponent implements ILoadoutComponent
 	@Override
 	public void readFromNbt(NbtCompound tag)
 	{
-	
+		for (Weapon w : Weapon.values())
+		{
+			if(!tag.contains(w.toString(), NbtElement.LIST_TYPE))
+				continue;
+			NbtList list = tag.getList(w.toString(), NbtElement.STRING_TYPE);
+			List<Identifier> ids = new ArrayList<>();
+			list.forEach(i -> ids.add(Identifier.tryParse(i.asString())));
+			loadouts.put(w, ids.toArray(Identifier[]::new));
+			System.out.println(Arrays.toString(loadouts.get(w)));
+		}
 	}
 	
 	@Override
 	public void writeToNbt(NbtCompound tag)
 	{
-	
+		for (Weapon w : Weapon.values())
+		{
+			NbtList list = new NbtList();
+			for (Identifier id : getLoadoutForWeapon(w))
+				list.add(NbtString.of(id.toString()));
+			tag.put(w.toString(), list);
+		}
 	}
 }
