@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.registry;
 
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.Weapon;
 import absolutelyaya.ultracraft.accessor.*;
 import absolutelyaya.ultracraft.api.HeavyEntities;
 import absolutelyaya.ultracraft.block.HellObserverBlockEntity;
@@ -83,6 +84,7 @@ public class PacketRegistry
 	public static final Identifier HIVEL_DATA_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "hiveldata");
 	public static final Identifier SLIDE_STATE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "slide_state");
 	public static final Identifier SLAM_STATE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "slam_state");
+	public static final Identifier SYNC_LOADOUT_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "loadout");
 	
 	public static final Identifier FREEZE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "freeze");
 	public static final Identifier HITSCAN_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "scan");
@@ -553,6 +555,16 @@ public class PacketRegistry
 			server.execute(() -> {
 				if(player instanceof WingedPlayerEntity winged)
 					winged.setSlamming(slam);
+			});
+		});
+		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.SYNC_LOADOUT_PACKET_ID, (server, player, handler, buf, sender) -> {
+			Weapon weapon = Weapon.values()[buf.readInt()];
+			int count = buf.readInt();
+			Identifier[] ids = new Identifier[count];
+			for (int i = 0; i < count; i++)
+				ids[i] = buf.readIdentifier();
+			server.execute(() -> {
+				UltraComponents.LOADOUT.get(player).setLoadoutForWeapon(weapon, ids);
 			});
 		});
 	}

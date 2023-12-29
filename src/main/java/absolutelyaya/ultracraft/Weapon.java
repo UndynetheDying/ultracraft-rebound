@@ -13,24 +13,26 @@ public enum Weapon
 			new Identifier(Ultracraft.MOD_ID, "alternate_piercer"),
 			new Identifier(Ultracraft.MOD_ID, "alternate_marksman"),
 			new Identifier(Ultracraft.MOD_ID, "alternate_sharpshooter")
-	}),
+	}, new Identifier(Ultracraft.MOD_ID, "slab")),
 	SHOTGUN(new Identifier[] {
 			new Identifier(Ultracraft.MOD_ID, "core_shotgun"),
 			new Identifier(Ultracraft.MOD_ID, "pump_shotgun")
-	}),
+	}, null),
 	NAILGUN(new Identifier[]{
 			new Identifier(Ultracraft.MOD_ID, "attractor_nailgun"),
 			new Identifier(Ultracraft.MOD_ID, "overheat_nailgun")
-	}),
-	RAILCANNON(null),
-	ROCKET_LAUNCHER(null),
-	UNIQUE(null);
+	}, null),
+	RAILCANNON(null, null),
+	ROCKET_LAUNCHER(null, null),
+	UNIQUE(null, null);
 	public final Identifier[] ids;
+	public final Identifier altId;
 	public static final int[] COLORS = new int[] { 0x28ccdf, 0x28df53, 0xdf2828 };
 	
-	Weapon(Identifier[] ids)
+	Weapon(Identifier[] ids, Identifier altId)
 	{
 		this.ids = ids;
+		this.altId = altId;
 	}
 	
 	public boolean isAnyUnlocked(PlayerEntity player)
@@ -48,5 +50,22 @@ public enum Weapon
 	public String toString()
 	{
 		return super.toString().toLowerCase();
+	}
+	
+	public int getIdxForId(Identifier id)
+	{
+		for (int i = 0; i < ids.length; i++)
+			if(ids[i].equals(id))
+				return i;
+		return -1;
+	}
+	
+	public Identifier[] getDefaultLoadout()
+	{
+		if(ids == null)
+			return new Identifier[0];
+		Identifier[] loadout = new Identifier[Math.min(ids.length, 3)];
+		System.arraycopy(ids, 0, loadout, 0, Math.min(ids.length, 3));
+		return loadout;
 	}
 }

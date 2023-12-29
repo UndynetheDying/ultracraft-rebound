@@ -6,6 +6,7 @@ import absolutelyaya.ultracraft.Weapon;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
+import absolutelyaya.ultracraft.components.player.ILoadoutComponent;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import io.netty.buffer.Unpooled;
@@ -138,22 +139,21 @@ public abstract class AbstractWeaponItem extends Item
 		return true;
 	}
 	
-	protected Item[] getVariants()
-	{
-		Identifier[] ids = getWeaponType().ids;
-		Item[] items = new Item[Math.min(3, ids.length)];
-		for (int i = 0; i < Math.min(3, ids.length); i++)
-			items[0] = Registries.ITEM.get(ids[i]);
-		return items;
-	}
-	
 	abstract int getSwitchCooldown(ItemStack stack);
 	
-	static Item getNextVariant(ItemStack stack, IProgressionComponent progression)
+	static Item getNextVariant(ItemStack stack, IProgressionComponent progression, ILoadoutComponent loadout)
 	{
 		if(!(stack.getItem() instanceof AbstractWeaponItem weapon))
 			return null;
-		Item[] variants = weapon.getVariants();
+		Identifier[] ids = loadout.getLoadoutForWeapon(weapon.getWeaponType());
+		Item[] variants = new Item[ids.length];
+		for (int i = 0; i < ids.length; i++)
+		{
+			Item item = Registries.ITEM.get(ids[i]);
+			if(item == null)
+				continue;
+			variants[i] = item;
+		}
 		int start = -1;
 		for (int i = 0; i < variants.length; i++)
 		{
@@ -181,11 +181,12 @@ public abstract class AbstractWeaponItem extends Item
 			return;
 		}
 		ItemStack stack = player.getMainHandStack();
-		if(!(stack.getItem() instanceof AbstractWeaponItem lastWeapon))
+		ILoadoutComponent loadout = UltraComponents.LOADOUT.get(player);
+		if(!(stack.getItem() instanceof AbstractWeaponItem lastWeapon && loadout.isInLoadout(lastWeapon)))
 			return;
 		lastWeapon.onBeforeSwitch(player, player.getWorld());
 		IProgressionComponent progression = UltraComponents.PROGRESSION.get(player);
-		Item nextItem = getNextVariant(stack, progression);
+		Item nextItem = getNextVariant(stack, progression, loadout);
 		if(nextItem == null)
 			return;
 		stack.getItem().onStoppedUsing(stack, player.getWorld(), player, 999);
