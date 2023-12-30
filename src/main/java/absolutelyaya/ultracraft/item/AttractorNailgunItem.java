@@ -102,7 +102,7 @@ public class AttractorNailgunItem extends AbstractNailgunItem
 			if(gcdm.isUsable(this, GunCooldownManager.SECONDARY) && getNbt(stack, "magnets") < 3 - winged.getMagnets())
 			{
 				setNbt(stack, "magnets", getNbt(stack, "magnets") + 1);
-				if(getNbt(stack, "magnets") < 3)
+				if(getNbt(stack, "magnets") < 3 - winged.getMagnets())
 					gcdm.setCooldown(this, 10, GunCooldownManager.SECONDARY);
 			}
 		}

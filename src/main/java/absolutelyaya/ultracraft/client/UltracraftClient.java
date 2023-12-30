@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.api.terminal.TerminalCodeRegistry;
+import absolutelyaya.ultracraft.client.gui.WeaponInfoHUD;
 import absolutelyaya.ultracraft.client.gui.screen.EpilepsyPopupScreen;
 import absolutelyaya.ultracraft.client.gui.screen.ServerConfigScreen;
 import absolutelyaya.ultracraft.client.gui.terminal.PetTab;
@@ -99,6 +100,7 @@ public class UltracraftClient implements ClientModInitializer
 	static Optional<Boolean> forcedHivel = Optional.empty();
 	
 	static UltraHudRenderer hudRenderer;
+	static WeaponInfoHUD weaponInfoHUD;
 	static ConfigHolder<ClientConfig> config;
 	
 	@Override
@@ -200,6 +202,8 @@ public class UltracraftClient implements ClientModInitializer
 		
 		hudRenderer = new UltraHudRenderer();
 		WorldRenderEvents.END.register((context) -> hudRenderer.render(context.tickDelta(), context.camera()));
+		weaponInfoHUD = new WeaponInfoHUD();
+		HudRenderCallback.EVENT.register((context, delta) -> weaponInfoHUD.render(context, delta));
 		
 		ClientPlayConnectionEvents.INIT.register((handler, client) -> {
 			new ServerConfig(null);

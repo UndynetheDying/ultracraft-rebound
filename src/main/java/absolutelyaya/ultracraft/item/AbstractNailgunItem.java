@@ -72,7 +72,7 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 				setNbt(stack, "heat", Math.min(heat + 2, 100));
 		int heatsinkCD = getNbt(stack, "heatsink_cd");
 		int heatsinks = getNbt(stack, "heatsinks");
-		if(heatsinkCD > 0 && (inactive || heatsinks > 0))
+		if(heatsinkCD > 0 && inactive)
 			setNbt(stack, "heatsink_cd", heatsinkCD - 1);
 		if(heatsinkCD == 0)
 		{
