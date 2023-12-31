@@ -396,12 +396,13 @@ public class PacketRegistry
 			Vec3d vel = new Vec3d(buf.readVector3f());
 			server.execute(() -> {
 				ThrownCoinEntity coin = ThrownCoinEntity.spawn(player, player.getWorld());
-				float f = player.isOnGround() ? 1.75f : 1f;
+				float f = player.isOnGround() ? 1.75f : 1.275f;
 				Vec3d p = pos.add(vel.multiply(f, 0.25f, f));
 				coin.setPosition(p);
-				coin.setVelocity(player, player.getPitch(), player.getYaw(), 0.0F, 0.6f, 0f);
-				coin.addVelocity(vel.multiply(f, vel.y < 0f ? 0f : 0.25f, f));
-				coin.addVelocity(0f, 0.4f, 0f);
+				Vec3d rot = player.getRotationVector();
+				coin.setVelocity(rot.x, rot.y, rot.z, 0.6f, 0f);
+				coin.addVelocity(vel.multiply(f, 1f, f));
+				coin.addVelocity(0f, 0.55f, 0f);
 				player.getWorld().spawnEntity(coin);
 			});
 		});

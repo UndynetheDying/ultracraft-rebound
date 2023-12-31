@@ -57,7 +57,9 @@ public class AttractorNailgunItem extends AbstractNailgunItem
 			nail.setPosition(user.getEyePos().subtract(0, 0.25, 0).add(user.getRotationVector().rotateY((float)Math.toRadians(90))
 																			   .multiply(user.getMainArm().equals(Arm.RIGHT) ? -0.3 : 0.3)));
 			nail.setOwner(user);
-			nail.setVelocity(user, user.getPitch(), user.getYaw(), 0f, 2.5f, 7.5f);
+			Vec3d rot = user.getRotationVector();
+			nail.setVelocity(rot.x, rot.y, rot.z, 2.5f, 7.5f);
+			nail.addVelocity(userVelocity);
 			world.spawnEntity(nail);
 			setNbt(stack, "nails", getNbt(stack, "nails") - 1);
 			super.onPrimaryFire(world, user, userVelocity);
