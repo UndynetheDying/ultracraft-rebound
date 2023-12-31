@@ -38,7 +38,6 @@ public class LoadoutComponent implements ILoadoutComponent
 	public void setLoadoutForWeapon(Weapon weapon, Identifier[] ids)
 	{
 		loadouts.put(weapon, ids);
-		System.out.println(Arrays.toString(ids));
 		sync(weapon);
 	}
 	
@@ -80,7 +79,6 @@ public class LoadoutComponent implements ILoadoutComponent
 			List<Identifier> ids = new ArrayList<>();
 			list.forEach(i -> ids.add(Identifier.tryParse(i.asString())));
 			loadouts.put(w, ids.toArray(Identifier[]::new));
-			System.out.println(Arrays.toString(loadouts.get(w)));
 		}
 	}
 	

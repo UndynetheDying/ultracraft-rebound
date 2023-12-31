@@ -8,6 +8,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
+import org.joml.Vector2i;
 
 import java.util.function.Consumer;
 
@@ -83,5 +84,11 @@ public class AlternateSharpshooterItem extends SharpshooterRevolverItem
 	protected String getHammerId()
 	{
 		return "hammer3";
+	}
+	
+	@Override
+	public Vector2i getHUDTexture()
+	{
+		return new Vector2i(6, 0);
 	}
 }

@@ -9,6 +9,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
+import org.joml.Vector2i;
 
 import java.util.function.Consumer;
 
@@ -82,5 +83,11 @@ public class AlternateMarksmanItem extends MarksmanRevolverItem
 	protected String getHammerId()
 	{
 		return "hammer2";
+	}
+	
+	@Override
+	public Vector2i getHUDTexture()
+	{
+		return new Vector2i(5, 0);
 	}
 }

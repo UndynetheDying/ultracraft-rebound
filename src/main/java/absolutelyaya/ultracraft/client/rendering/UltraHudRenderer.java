@@ -454,7 +454,7 @@ public class UltraHudRenderer
 				uv = new Vector2i(3, 3);
 			RenderSystem.setShaderTexture(0, WEAPONS_TEXTURE);
 			RenderingUtil.drawTexture(textureMatrix, new Vector4f(0, 16, 48, 32f), 0f,
-					new Vec2f(192, 192), new Vector4f(uv.x * 48f, uv.y * 32f, 48f, 32f), 0.75f);
+					new Vec2f(384, 384), new Vector4f(uv.x * 48f, uv.y * 32f, 48f, 32f), 0.75f);
 			RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		}
 		else
