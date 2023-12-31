@@ -76,7 +76,6 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 		super(entityType, world);
 		lookControl = new StreetCleanerLookControl(this);
 		moveControl = new StreetCleanerMoveControl(this);
-		tank = BackTank.spawn(world, this);
 	}
 	
 	public static DefaultAttributeContainer.Builder getDefaultAttributes()
@@ -114,6 +113,8 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 	public void tick()
 	{
 		super.tick();
+		if(tank == null && !isRemoved())
+			tank = BackTank.spawn(getWorld(), this);
 		if(dataTracker.get(ROTATION_DELAY) > 0)
 			dataTracker.set(ROTATION_DELAY, dataTracker.get(ROTATION_DELAY) - 1);
 		if(dataTracker.get(ROTATION_DELAY_COOLDOWN) > 0)
@@ -266,6 +267,13 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 	public boolean isCanCounter()
 	{
 		return dataTracker.get(COUNTER_COOLDOWN) <= 0;
+	}
+	
+	@Override
+	public void remove(RemovalReason reason)
+	{
+		super.remove(reason);
+		tank.remove(reason);
 	}
 	
 	static class StreetCleanerLookControl extends LookControl

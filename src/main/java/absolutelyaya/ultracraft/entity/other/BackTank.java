@@ -69,10 +69,10 @@ public class BackTank extends Entity
 	public void tick()
 	{
 		super.tick();
-		if(owner != null && owner.isAlive())
+		if(owner != null && owner.isAlive() && !owner.isRemoved())
 			positionSelf(owner);
 		else if(!isRemoved())
-			kill();
+			remove(RemovalReason.DISCARDED);
 		if(owner instanceof PlayerEntity player && !player.getMainHandStack().isOf(ItemRegistry.FLAMETHROWER))
 		{
 			kill();
