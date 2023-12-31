@@ -1,5 +1,7 @@
 package absolutelyaya.ultracraft.block;
 
+import absolutelyaya.ultracraft.entity.machine.DestinyBondSwordsmachineEntity;
+import absolutelyaya.ultracraft.item.DestinyBondSpawnEggItem;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import absolutelyaya.ultracraft.registry.BlockRegistry;
 import mod.azure.azurelib.util.AzureLibUtil;
@@ -63,8 +65,11 @@ public class HellSpawnerBlockEntity extends BlockEntity implements GeoBlockEntit
 		}
 		if(spawnStack != null && spawnStack.getItem() instanceof SpawnEggItem eggItem)
 		{
-			eggItem.getEntityType(spawnStack.getNbt()).spawnFromItemStack(world, spawnStack, null,
-					spawnPos, SpawnReason.DISPENSER, true, false);
+			if(eggItem instanceof DestinyBondSpawnEggItem)
+				DestinyBondSwordsmachineEntity.spawn(getWorld(), spawnPos.toCenterPos(), 0);
+			else
+				eggItem.getEntityType(spawnStack.getNbt()).spawnFromItemStack(world, spawnStack, null,
+						spawnPos, SpawnReason.DISPENSER, true, false);
 		}
 		triggerAnim(CONTROLLER_NAME, "spawn");
 	}
