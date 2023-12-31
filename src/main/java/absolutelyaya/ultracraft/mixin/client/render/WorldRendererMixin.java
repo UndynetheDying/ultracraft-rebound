@@ -1,21 +1,27 @@
 package absolutelyaya.ultracraft.mixin.client.render;
 
+import absolutelyaya.ultracraft.block.SkyBlockEntity;
 import absolutelyaya.ultracraft.client.RenderLayers;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Matrix4f;
+import org.spongepowered.asm.mixin.Debug;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+@Debug(export = true)
 @Mixin(WorldRenderer.class)
 public abstract class WorldRendererMixin
 {
 	@Shadow protected abstract void renderLayer(RenderLayer renderLayer, MatrixStack matrices, double cameraX, double cameraY, double cameraZ, Matrix4f positionMatrix);
+	
+	@Shadow @Final private BufferBuilderStorage bufferBuilders;
 	
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/WorldRenderer;renderLayer(Lnet/minecraft/client/render/RenderLayer;Lnet/minecraft/client/util/math/MatrixStack;DDDLorg/joml/Matrix4f;)V", ordinal = 1))
 	void onRenderLayers(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f projectionMatrix, CallbackInfo ci)
@@ -24,5 +30,11 @@ public abstract class WorldRendererMixin
 			return;
 		Vec3d pos = camera.getPos();
 		renderLayer(RenderLayers.getFlesh(), matrices, pos.x, pos.y, pos.z, projectionMatrix);
+	}
+	
+	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumerProvider$Immediate;draw(Lnet/minecraft/client/render/RenderLayer;)V", ordinal = 4, shift = At.Shift.BEFORE))
+	void onRenderTileEntities(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f projectionMatrix, CallbackInfo ci)
+	{
+		bufferBuilders.getEntityVertexConsumers().draw(RenderLayers.getSky(SkyBlockEntity.SkyType.DAY));
 	}
 }
