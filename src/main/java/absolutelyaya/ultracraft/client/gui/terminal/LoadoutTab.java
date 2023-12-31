@@ -110,7 +110,7 @@ public class LoadoutTab extends Tab
 		{
 			case 0 -> "N";
 			case 1 -> "Y";
-			case 2 -> "*";
+			case 2 -> "§6A";
 			default -> "?";
 		};
 	}

@@ -104,9 +104,9 @@ public class Ultracraft implements ModInitializer
             newPlayer.getInventory().main.forEach(stack -> {
                 Item item = stack.getItem();
                 if(item instanceof MarksmanRevolverItem marksman && marksman.getNbt(stack, "coins") < 4)
-                    marksman.setNbt(stack, "coins", 4);
+                    marksman.setNbt(stack, "coins", marksman.getNbtDefault("coins"));
                 else if (item instanceof SharpshooterRevolverItem sharpshooter && sharpshooter.getNbt(stack, "charges") < 3)
-                    sharpshooter.setNbt(stack, "charges", 3);
+                    sharpshooter.setNbt(stack, "charges", sharpshooter.getNbtDefault("charges"));
                 else if (item instanceof AbstractNailgunItem nailgun && nailgun.getNbt(stack, "nails") < 100)
                     nailgun.setNbt(stack, "nails", 100);
             });
