@@ -1,0 +1,21 @@
+package absolutelyaya.ultracraft.mixin.client.gui;
+
+import absolutelyaya.ultracraft.client.UltracraftClient;
+import absolutelyaya.ultracraft.client.gui.screen.TravelScreen;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.DownloadingTerrainScreen;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
+
+@Mixin(DownloadingTerrainScreen.class)
+public class DownloadingTerrainScreenMixin
+{
+	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/DownloadingTerrainScreen;renderBackgroundTexture(Lnet/minecraft/client/gui/DrawContext;)V"))
+	void redirectRenderBackground(DownloadingTerrainScreen instance, DrawContext drawContext)
+	{
+		if(UltracraftClient.isTravelling())
+			TravelScreen.BG.render(MinecraftClient.getInstance().getTickDelta(), 1f);
+	}
+}

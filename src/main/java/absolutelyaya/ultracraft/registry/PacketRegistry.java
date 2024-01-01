@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.registry;
 
+import absolutelyaya.ultracraft.Layer;
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.Weapon;
@@ -27,6 +28,7 @@ import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.item.SoapItem;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.bytes.ByteArrayList;
+import net.fabricmc.fabric.api.dimension.v1.FabricDimensions;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.BellBlock;
 import net.minecraft.block.BlockState;
@@ -46,6 +48,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
+import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.ArrayUtils;
 import org.joml.Vector3f;
@@ -85,6 +88,7 @@ public class PacketRegistry
 	public static final Identifier SLIDE_STATE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "slide_state");
 	public static final Identifier SLAM_STATE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "slam_state");
 	public static final Identifier SYNC_LOADOUT_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "loadout");
+	public static final Identifier TRAVEL_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "travel");
 	
 	public static final Identifier FREEZE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "freeze");
 	public static final Identifier HITSCAN_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "scan");
@@ -566,6 +570,14 @@ public class PacketRegistry
 				ids[i] = buf.readIdentifier();
 			server.execute(() -> {
 				UltraComponents.LOADOUT.get(player).setLoadoutForWeapon(weapon, ids);
+			});
+		});
+		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.TRAVEL_PACKET_ID, (server, player, handler, buf, sender) -> {
+			Layer layer = Layer.values()[buf.readInt()];
+			server.execute(() -> {
+				ServerWorld world = server.getWorld(layer.worldKey);
+				BlockPos pos = layer.arrivalPos == null ? world.getSpawnPos() : layer.arrivalPos;
+				FabricDimensions.teleport(player, world, new TeleportTarget(pos.toCenterPos(), Vec3d.ZERO, world.getSpawnAngle(), 0f));
 			});
 		});
 	}

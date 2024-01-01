@@ -6,6 +6,7 @@ import absolutelyaya.ultracraft.block.TerminalBlockEntity;
 import absolutelyaya.ultracraft.block.TerminalDisplayBlock;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.screen.IntroScreen;
+import absolutelyaya.ultracraft.client.gui.screen.TravelScreen;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.BlockRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
@@ -62,6 +63,9 @@ public abstract class MinecraftClientMixin
 	@Shadow @Nullable public Screen currentScreen;
 	
 	@Shadow @Nullable public HitResult crosshairTarget;
+	
+	@Shadow public abstract void setScreen(@Nullable Screen screen);
+	
 	boolean isShooting, wasBreaking;
 	
 	@Redirect(method = "handleInputEvents()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V"))
@@ -252,5 +256,16 @@ public abstract class MinecraftClientMixin
 			}
 		});
 		return resourceReload;
+	}
+	
+	@Inject(method = "setScreen", at = @At("HEAD"), cancellable = true)
+	void onSetScreen(Screen screen, CallbackInfo ci)
+	{
+		if(screen == null && UltracraftClient.isTravelling())
+		{
+			setScreen(new TravelScreen(true));
+			UltracraftClient.setTravelling(false);
+			ci.cancel();
+		}
 	}
 }

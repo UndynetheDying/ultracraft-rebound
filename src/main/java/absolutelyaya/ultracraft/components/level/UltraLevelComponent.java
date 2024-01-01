@@ -17,6 +17,7 @@ public class UltraLevelComponent implements IUltraLevelComponent
 	
 	boolean hivelWhitelistActive, graffitiWhitelistActive;
 	Map<UUID, String> hivelWhitelist = new HashMap<>(), graffitiWhitelist = new HashMap<>();
+	//TODO: add global progression tracker - aka, what layers are unlocked
 	
 	public UltraLevelComponent(WorldProperties properties)
 	{

@@ -92,7 +92,7 @@ public class UltracraftClient implements ClientModInitializer
 	public static ClientHitscanHandler HITSCAN_HANDLER;
 	public static TrailRenderer TRAIL_RENDERER;
 	public static boolean REPLACE_MENU_MUSIC = true, APPLY_ENTITY_POSES, GRAFFITI_WHITELISTED = true, SODIUM = true, IRIS = false;
-	static boolean wasMovementSoundsEnabled, supporter = false, joinInfoPending;
+	static boolean wasMovementSoundsEnabled, supporter = false, joinInfoPending, travelling;
 	static float screenblood;
 	static Vector3f[] wingColors = new Vector3f[] { new Vector3f(247f, 255f, 154f), new Vector3f(117f, 154f, 255f) };
 	static final Vector3f[] defaultWingColors = new Vector3f[] { new Vector3f(247f, 255f, 154f), new Vector3f(117f, 154f, 255f) };
@@ -643,7 +643,7 @@ public class UltracraftClient implements ClientModInitializer
 	{
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		ClientPlayNetworking.send(PacketRegistry.REQUEST_GRAFFITI_WHITELIST_PACKET_ID, buf);
-		return switch((GraffitiSetting)ServerConfig.INSTANCE.graffiti.getValue())
+		return switch(ServerConfig.INSTANCE.graffiti.getValue())
 		{
 			case ALLOW_ALL -> GRAFFITI_WHITELISTED;
 			case ONLY_ADMINS -> ((WingedPlayerEntity)MinecraftClient.getInstance().player).isOpped() && GRAFFITI_WHITELISTED;
@@ -654,5 +654,15 @@ public class UltracraftClient implements ClientModInitializer
 	public static boolean isTerminalProtEnabled()
 	{
 		return ServerConfig.INSTANCE.terminalProtection.getValue();
+	}
+	
+	public static boolean isTravelling()
+	{
+		return travelling;
+	}
+	
+	public static void setTravelling(boolean travelling)
+	{
+		UltracraftClient.travelling = travelling;
 	}
 }
