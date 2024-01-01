@@ -166,7 +166,8 @@ public abstract class AbstractWeaponItem extends Item
 		for (int i = 1; i < variants.length; i++)
 		{
 			Item item = variants[(start + i) % (variants.length)];
-			if(!item.equals(stack.getItem()) && progression.isOwned(Registries.ITEM.getId(item)))
+			if(!item.equals(stack.getItem()) && item instanceof AbstractWeaponItem w && progression.isOwned(w.getProgressionEntry()) &&
+					   (!w.isAlternate() || w.getWeaponType().altId == null || progression.isOwned(w.getWeaponType().altId)))
 				return item;
 		}
 		return null;
@@ -256,5 +257,15 @@ public abstract class AbstractWeaponItem extends Item
 	public Weapon getWeaponType()
 	{
 		return Weapon.UNIQUE;
+	}
+	
+	public Identifier getProgressionEntry()
+	{
+		return Registries.ITEM.getId(this);
+	}
+	
+	protected boolean isAlternate()
+	{
+		return false;
 	}
 }

@@ -151,11 +151,6 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 		return isAlternate() ? 170 : 120;
 	}
 	
-	protected boolean isAlternate()
-	{
-		return false;
-	}
-	
 	protected String getHammerId()
 	{
 		return null;

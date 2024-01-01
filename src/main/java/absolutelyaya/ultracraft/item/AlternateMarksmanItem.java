@@ -1,13 +1,14 @@
 package absolutelyaya.ultracraft.item;
 
 import absolutelyaya.ultracraft.client.rendering.item.AlternateMarksmanRevolverRenderer;
-import mod.azure.azurelib.animatable.GeoItem;
+import absolutelyaya.ultracraft.registry.ItemRegistry;
 import mod.azure.azurelib.animatable.client.RenderProvider;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import org.joml.Vector2i;
 
@@ -89,5 +90,11 @@ public class AlternateMarksmanItem extends MarksmanRevolverItem
 	public Vector2i getHUDTexture()
 	{
 		return new Vector2i(5, 0);
+	}
+	
+	@Override
+	public Identifier getProgressionEntry()
+	{
+		return ItemRegistry.MARKSMAN_REVOLVER.getProgressionEntry();
 	}
 }
