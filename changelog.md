@@ -44,6 +44,7 @@
 ## Commands
 - ultrawhitelist can now be used by non-players
 - fixed time unfreeze command not clearing the time freeze VFX on Clients
+- Added Command to trigger Style Bonuses `/ultracraft style`
 ## Tweaks
 - Buffed overpump damage towards others (10 Dmg -> 15 Dmg)
 - Hitscans don't cause Thorn Damage from Guardians anymore

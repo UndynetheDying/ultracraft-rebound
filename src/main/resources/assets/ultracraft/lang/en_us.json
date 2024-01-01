@@ -288,6 +288,8 @@
   "command.ultracraft.whitelist.list-prefix": "[Ultracraft] Whitelist '%s': ",
   "command.ultracraft.whitelist.add": "[Ultracraft] Added %1$s to Whitelist '%2$s'.",
   "command.ultracraft.whitelist.remove": "[Ultracraft] removed %1$s from Whitelist '%2$s'.",
+  "command.ultracraft.style.notfound": "[Ultracraft] Style bonus '%s' not found",
+  "command.ultracraft.style.success": "[Ultracraft] Gave Style Bonus '%1$s' to %2$s",
 
   "gamerule.ultracraft.category.general": "ULTRACRAFT",
   "gamerule.ultracraft.category.world": "ULTRACRAFT (world)",

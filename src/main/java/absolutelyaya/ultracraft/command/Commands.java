@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.config.Setting;
+import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.entity.machine.DestinyBondSwordsmachineEntity;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import com.chocohead.mm.api.ClassTinkerers;
@@ -70,7 +71,8 @@ public class Commands
 					.then(literal("grant-all").then(argument("target", players()).executes(Commands::executeProgressionGrantAll)))
 					.then(literal("revoke").then(argument("target", players()).then(argument("entry", identifier()).suggests(Commands::progressionListProvider).executes(Commands::executeProgressionRevoke)))))
 				.then(literal("reset").then(argument("target", players()).executes(Commands::executeProgressionReset))))
-			.then(literal("ultrabossbar").requires(source -> source.hasPermissionLevel(2)).then(argument("id", identifier()).executes(Commands::executeUltraBossbar))));
+			.then(literal("ultrabossbar").requires(source -> source.hasPermissionLevel(2)).then(argument("id", identifier()).executes(Commands::executeUltraBossbar)))
+			.then(literal("style").then(argument("target", players()).then(argument("entry", identifier()).suggests(Commands::styleBonusProvider).executes(Commands::executeStyle)))));
 		dispatcher.register(literal("ultrasummon").requires(source -> source.hasPermissionLevel(2)).then(argument("type", string()).suggests((context, builder) -> CommandSource.suggestMatching(List.of("\"tundra//agony\""), builder)).then(argument("pos", Vec3ArgumentType.vec3()).then(argument("yaw", DoubleArgumentType.doubleArg()).executes(Commands::executeSpecialSpawn)))));
 	}
 	
@@ -329,6 +331,26 @@ public class Commands
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		Ultracraft.screenshake(player, context.getArgument("strength", Float.class));
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static CompletableFuture<Suggestions> styleBonusProvider(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder)
+	{
+		StyleBonusManager.getBonuses().keySet().forEach(i -> builder.suggest(i.toString()));
+		return builder.buildFuture();
+	}
+	
+	private static int executeStyle(CommandContext<ServerCommandSource> context)
+	{
+		ServerPlayerEntity player = context.getSource().getPlayer();
+		Identifier entry = IdentifierArgumentType.getIdentifier(context, "entry");
+		if(!StyleBonusManager.getBonuses().containsKey(entry))
+		{
+			context.getSource().sendError(Text.translatable("command.ultracraft.style.notfound", entry));
+			return Command.SINGLE_SUCCESS;
+		}
+		UltraComponents.STYLE.get(player).styleBonusGet(StyleBonusManager.getBonuses().get(entry));
+		context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.style.success", entry, player.getName()), true);
 		return Command.SINGLE_SUCCESS;
 	}
 }
