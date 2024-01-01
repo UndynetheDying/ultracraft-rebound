@@ -68,5 +68,6 @@
 - Fixed a rare nullref involving the Sharpshooter and Tundra//Agony
 - Added Block Tag `ultracraft:cannot_connect`
   - allows to designate Blocks that fences and walls cannot connect to; because for some reason base Minecraft doesn't do that and checks block states indiviually in an `or` chain
+- Added Proper Spawn Restrictions to all basic Enemies
 ## Resource Changes
 ## API Changes

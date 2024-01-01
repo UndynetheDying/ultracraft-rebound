@@ -12,11 +12,14 @@ import absolutelyaya.ultracraft.entity.projectile.*;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.SpawnRestriction;
+import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.Heightmap;
 
 public class EntityRegistry
 {
@@ -170,5 +173,15 @@ public class EntityRegistry
 		FabricDefaultAttributeRegistry.register(V2, V2Entity.getDefaultAttributes());
 		FabricDefaultAttributeRegistry.register(RODENT, RodentEntity.getDefaultAttributes());
 		FabricDefaultAttributeRegistry.register(GREATER_FILTH, GreaterFilthEntity.getDefaultAttributes());
+		
+		SpawnRestriction.register(FILTH, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
+		SpawnRestriction.register(STRAY, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
+		SpawnRestriction.register(SCHISM, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
+		SpawnRestriction.register(MALICIOUS_FACE, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
+		SpawnRestriction.register(CERBERUS, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
+		SpawnRestriction.register(HIDEOUS_MASS, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
+		SpawnRestriction.register(SWORDSMACHINE, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
+		SpawnRestriction.register(DRONE, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
+		SpawnRestriction.register(STREET_CLEANER, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
 	}
 }

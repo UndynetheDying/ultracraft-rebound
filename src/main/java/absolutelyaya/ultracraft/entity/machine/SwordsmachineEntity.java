@@ -17,7 +17,6 @@ import absolutelyaya.ultracraft.entity.other.ProgressionItemEntity;
 import absolutelyaya.ultracraft.entity.projectile.ShotgunPelletEntity;
 import absolutelyaya.ultracraft.entity.projectile.ThrownMachineSwordEntity;
 import absolutelyaya.ultracraft.item.MachineSwordItem;
-import absolutelyaya.ultracraft.registry.GameruleRegistry;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
@@ -26,10 +25,7 @@ import com.google.common.collect.Multimap;
 import io.netty.buffer.Unpooled;
 import mod.azure.azurelib.util.AzureLibUtil;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MovementType;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.RevengeGoal;
@@ -51,7 +47,6 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.TypeFilter;
@@ -59,9 +54,8 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.RaycastContext;
-import net.minecraft.world.World;
+import net.minecraft.world.*;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import mod.azure.azurelib.animatable.GeoEntity;
@@ -179,6 +173,14 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 			if(getHealth() > health)
 				setHealth(health);
 		}
+	}
+	
+	@Override
+	public @Nullable EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt)
+	{
+		if(spawnReason.equals(SpawnReason.NATURAL))
+			dataTracker.set(BOSS, false);
+		return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
 	}
 	
 	public static DefaultAttributeContainer.Builder getDefaultAttributes()
