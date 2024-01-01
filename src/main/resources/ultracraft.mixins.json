@@ -4,6 +4,7 @@
   "package": "absolutelyaya.ultracraft.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "BlockMixin",
     "EntityMixin",
     "ExplosiveProjectileMixin",
     "FishingBobberMixin",

@@ -47,7 +47,7 @@
 ## Tweaks
 - Buffed overpump damage towards others (10 Dmg -> 15 Dmg)
 - Hitscans don't cause Thorn Damage from Guardians anymore
-  - Player Armor Thorns still do damage though to stay consistent with minecrafts inconsistent logic
+  - Player Armor Thorns still do damage though to stay consistent with Minecrafts inconsistent logic
 ## Minor Changes
 - Fixed water skimming not playing sounds
 - Removed the "vents" MOTD from the non-essential resources
@@ -66,5 +66,7 @@
 - The Sharpshooter now spins in the right direction
 - Fixed Attractor Nailgun Magnet recharge cooldown starting at the wrong time
 - Fixed a rare nullref involving the Sharpshooter and Tundra//Agony
+- Added Block Tag `ultracraft:cannot_connect`
+  - allows to designate Blocks that fences and walls cannot connect to; because for some reason base Minecraft doesn't do that and checks block states indiviually in an `or` chain
 ## Resource Changes
 ## API Changes
