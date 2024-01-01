@@ -17,6 +17,7 @@
   - Power with a redstone signal of <=10 to change its displayed number
 - Malicious Face can now be summoned as a non-decaying corpse using `{decorative: 1b}`
 - Added Screenshake
+  - Can be turned off in the Client Settings
 - Fixed Keybind conflicts making only one action mapped to that key execute
   - Not even my fault, like I'm fixing an issue on Mojangs end here
 - Rewrote Hivel Movement
@@ -27,6 +28,12 @@
 - Added Flowerbed Block
   - Placed like snow layers, each layer having different flowers
   - If an entity falls more than 0.5 Blocks, they fall through Flowerbeds; this can be used to hide secrets or as a parcour gimmick
+- Added Customizeable Loadouts
+  - Check the Weapons Tab on Terminals for a new Button in the bottom left
+- Improved Sounds for Shotguns by using Sound Keyframes in their animations
+- Added new Weapon Info HUD element when holding Nailguns
+- Fucked around with Coin Physics a lot; they're probably as good as they'll get now
+- Fixed Tundra//Agony Spawn Egg crashing Servers when used in Hell Spawners
 ## Settings & Config
 - Removed almost all gamerules (only remaining is `ultra-startWithPiercer`)
 - Added Option to disable Screenshake
@@ -39,6 +46,8 @@
 - fixed time unfreeze command not clearing the time freeze VFX on Clients
 ## Tweaks
 - Buffed overpump damage towards others (10 Dmg -> 15 Dmg)
+- Hitscans don't cause Thorn Damage from Guardians anymore
+  - Player Armor Thorns still do damage though to stay consistent with minecrafts inconsistent logic
 ## Minor Changes
 - Fixed water skimming not playing sounds
 - Removed the "vents" MOTD from the non-essential resources
@@ -52,5 +61,10 @@
 - Finally fixed the half pixel offset on animated wing pattern shaders
 - Changed Revolver Textures to be closer to the original
 - Updated Carpet texture in Limbo Main Menu BG
+- Fixed Blood Fluid not being masked by Boats
+- Fixed Mixin Conflict with Origins Classes addon mod
+- The Sharpshooter now spins in the right direction
+- Fixed Attractor Nailgun Magnet recharge cooldown starting at the wrong time
+- Fixed a rare nullref involving the Sharpshooter and Tundra//Agony
 ## Resource Changes
 ## API Changes
