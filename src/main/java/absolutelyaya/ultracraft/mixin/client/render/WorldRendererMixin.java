@@ -35,6 +35,7 @@ public abstract class WorldRendererMixin
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumerProvider$Immediate;draw(Lnet/minecraft/client/render/RenderLayer;)V", ordinal = 4, shift = At.Shift.BEFORE))
 	void onRenderTileEntities(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f projectionMatrix, CallbackInfo ci)
 	{
-		bufferBuilders.getEntityVertexConsumers().draw(RenderLayers.getSky(SkyBlockEntity.SkyType.DAY));
+		for (SkyBlockEntity.SkyType type : SkyBlockEntity.SkyType.values())
+			bufferBuilders.getEntityVertexConsumers().draw(RenderLayers.getSky(type));
 	}
 }

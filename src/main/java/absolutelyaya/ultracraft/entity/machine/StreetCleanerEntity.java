@@ -273,7 +273,8 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 	public void remove(RemovalReason reason)
 	{
 		super.remove(reason);
-		tank.remove(reason);
+		if(tank != null)
+			tank.remove(reason);
 	}
 	
 	static class StreetCleanerLookControl extends LookControl

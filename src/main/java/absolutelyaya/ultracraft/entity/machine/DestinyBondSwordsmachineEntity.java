@@ -235,15 +235,14 @@ public class DestinyBondSwordsmachineEntity extends SwordsmachineEntity implemen
 		super.tick();
 		if(dataTracker.get(HEALING) > 0)
 		{
-			bossBar.setPercent(MathHelper.lerp((10 - dataTracker.get(HEALING)) / 10f, 0f, getHealth() / getMaxHealth()));
+			if(bossBar != null)
+				bossBar.setPercent(MathHelper.lerp((10 - dataTracker.get(HEALING)) / 10f, 0f, getHealth() / getMaxHealth()));
 			dataTracker.set(HEALING, dataTracker.get(HEALING) - 1);
 		}
 		if(dataTracker.get(ANIMATION) == ANIMATION_STUN_STOP)
 			dataTracker.set(UN_STUN_TICKS, dataTracker.get(UN_STUN_TICKS) + 1);
 		if(!initalized && getWorld().isChunkLoaded(getChunkPos().x, getChunkPos().z))
-		{
 			bondShip();
-		}
 	}
 	
 	@Override
