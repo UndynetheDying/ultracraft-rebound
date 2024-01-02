@@ -18,4 +18,14 @@ public enum Layer
 		this.worldKey = worldKey;
 		this.arrivalPos = arrivalPos;
 	}
+	
+	public static Layer fromRegistryKey(RegistryKey<World> registryKey)
+	{
+		for (Layer l : values())
+		{
+			if(l.worldKey.equals(registryKey))
+				return l;
+		}
+		return null;
+	}
 }
