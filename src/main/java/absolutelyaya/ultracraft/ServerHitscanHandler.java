@@ -310,6 +310,8 @@ public class ServerHitscanHandler
 					entities.add(e);
 					if(semiPierce && e instanceof LivingEntity livingHit)
 						remainingDamage = Math.max(remainingDamage - calcSemiPierceDamage(livingHit, remainingDamage), 0);
+					if(e instanceof ThrownCoinEntity)
+						searchForEntities = false;
 				}
 			}
 			remainingDamage = damage;

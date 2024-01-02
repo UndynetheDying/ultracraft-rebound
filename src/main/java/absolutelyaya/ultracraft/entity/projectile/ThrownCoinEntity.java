@@ -279,7 +279,7 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 					}
 					if (closest instanceof ServerPlayerEntity player)
 					{
-						int mult = singleTarget ? dataTracker.get(SPLITS) : 1;
+						int mult = singleTarget ? dataTracker.get(SPLITS) + 1 : 1;
 						ServerHitscanHandler.scheduleDelayedAimingHitscan((LivingEntity) getOwner(), getPos(), getPos(), player, hitscanType,
 								(isDamageRicochet ? Math.max(amount, 1) : 1) * mult, DamageSources.RICOCHET, source.hitscan.maxHits + 1, source.hitscan.maxBounces, null,
 								10 + 5 * (dataTracker.get(SPLITS) + 1), 15 + 5 * (dataTracker.get(SPLITS) + 1), true);
@@ -293,7 +293,7 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 					{
 						Vec3d target = closest.getBoundingBox().getCenter();
 						Vec3d dir = target.subtract(getPos()).normalize();
-						int mult = singleTarget ? dataTracker.get(SPLITS) : 1;
+						int mult = singleTarget ? dataTracker.get(SPLITS) + 1 : 1;
 						ServerHitscanHandler.performBouncingHitscan(new ServerHitscanHandler.Hitscan(attacker, getPos(), getPos(), getPos().add(dir.multiply(64f)), hitscanType,
 								(isDamageRicochet ? 3 * amount : 5) * mult, DamageSources.RICOCHET)
 																				.maxHits(source.hitscan.maxHits + 1).bounces(source.hitscan.maxBounces).autoAim(source.hitscan.autoAim));
@@ -505,7 +505,7 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 	
 	public boolean isSplittable()
 	{
-		return !dataTracker.get(PUNCHED) && !dataTracker.get(CHARGEBACK) && (Math.max(1f - Math.abs(getVelocity().y * 6.5f), 0f) > 0.35f || realAge > 20);
+		return !dataTracker.get(PUNCHED) && !dataTracker.get(CHARGEBACK) && (Math.max(1f - Math.abs(getVelocity().y * 6.5f), 0f) > 0.5f || realAge > 20);
 	}
 	
 	@Override
