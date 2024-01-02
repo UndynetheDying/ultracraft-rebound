@@ -20,9 +20,9 @@ public abstract class AbstractHuskEntity extends AbstractUltraHostileEntity
 	@Override
 	public boolean damage(DamageSource source, float amount)
 	{
-		if(getVelocity().y < 0f)
+		if(!isOnGround())
 			amount *= 1.5;
-		if(getBurningDuration() > 0 && !source.isIn(DamageTypeTags.IS_FIRE) && !source.isIn(DamageTypeTags.IS_EXPLOSION))
+		if(isOnFire() && !source.isIn(DamageTypeTags.IS_FIRE) && !source.isIn(DamageTypeTags.IS_EXPLOSION))
 			amount *= 1.5;
 		if(source.isOf(DamageSources.PROJBOOST))
 			amount *= 2;
