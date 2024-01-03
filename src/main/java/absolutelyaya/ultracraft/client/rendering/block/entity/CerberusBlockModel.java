@@ -22,6 +22,6 @@ public class CerberusBlockModel extends DefaultedBlockGeoModel<CerberusBlockEnti
 	@Override
 	public RenderLayer getRenderType(CerberusBlockEntity animatable, Identifier texture)
 	{
-		return RenderLayer.getEntitySolid(getTextureResource(animatable));
+		return RenderLayer.getEntityTranslucent(getTextureResource(animatable));
 	}
 }

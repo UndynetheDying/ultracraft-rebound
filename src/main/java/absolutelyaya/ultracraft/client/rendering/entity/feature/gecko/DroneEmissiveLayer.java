@@ -25,10 +25,10 @@ public class DroneEmissiveLayer extends GeoRenderLayer<DroneEntity>
 	@Override
 	public void render(MatrixStack poseStack, DroneEntity animatable, BakedGeoModel bakedModel, RenderLayer renderType, VertexConsumerProvider bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay)
 	{
-		RenderLayer armorRenderType = RenderLayer.getEntityTranslucentEmissive(animatable.isAttacking() ? TEXTURE2 : TEXTURE);
+		RenderLayer layer = RenderLayer.getEntityTranslucentEmissive(animatable.isAttacking() ? TEXTURE2 : TEXTURE);
 		
-		getRenderer().reRender(getDefaultBakedModel(animatable), poseStack, bufferSource, animatable, armorRenderType,
-				bufferSource.getBuffer(armorRenderType), partialTick, packedLight, OverlayTexture.DEFAULT_UV,
+		getRenderer().reRender(getDefaultBakedModel(animatable), poseStack, bufferSource, animatable, layer,
+				bufferSource.getBuffer(layer), partialTick, packedLight, OverlayTexture.DEFAULT_UV,
 				1, 1, 1, 1);
 	}
 }

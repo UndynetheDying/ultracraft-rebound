@@ -34,6 +34,11 @@
 - Added new Weapon Info HUD element when holding Nailguns
 - Fucked around with Coin Physics a lot; they're probably as good as they'll get now
 - Fixed Tundra//Agony Spawn Egg crashing Servers when used in Hell Spawners
+- Remodeled Schism
+  - the old model was trash and I knew I could do better
+- Visually Improved Cerberus
+  - Ball//Apple now has an aura and is emissive
+  - Changed colors to be closer to the Vanilla Stone palette
 ## Settings & Config
 - Removed almost all gamerules (only remaining is `ultra-startWithPiercer`)
 - Added Option to disable Screenshake
