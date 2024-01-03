@@ -186,23 +186,29 @@ public abstract class AbstractWeaponItem extends Item
 		if(!(stack.getItem() instanceof AbstractWeaponItem lastWeapon && loadout.isInLoadout(lastWeapon)))
 			return;
 		lastWeapon.onBeforeSwitch(player, player.getWorld());
+		stack.getItem().onStoppedUsing(stack, player.getWorld(), player, 999);
 		IProgressionComponent progression = UltraComponents.PROGRESSION.get(player);
 		Item nextItem = getNextVariant(stack, progression, loadout);
-		if(nextItem == null)
-			return;
-		stack.getItem().onStoppedUsing(stack, player.getWorld(), player, 999);
-		ItemStack nextStack = new ItemStack(nextItem);
-		if(stack.hasNbt())
-		{
-			NbtCompound nbt = stack.getOrCreateNbt();
-			nextStack.setNbt(nbt);
-		}
-		player.getInventory().main.set(player.getInventory().selectedSlot, nextStack);
+		ItemStack nextStack = replaceVariant(stack, player, player.getInventory().selectedSlot, nextItem);
 		if(nextItem instanceof AbstractWeaponItem weapon)
 		{
 			UltraComponents.WINGED_ENTITY.get(player).getGunCooldownManager().setCooldown(weapon, weapon.getSwitchCooldown(nextStack), GunCooldownManager.PRIMARY);
 			weapon.onSwitch(player, player.getWorld());
 		}
+	}
+	
+	public static ItemStack replaceVariant(ItemStack stack, PlayerEntity player, int slot, Item replacement)
+	{
+		if(replacement == null)
+			return null;
+		ItemStack nextStack = new ItemStack(replacement);
+		if(stack.hasNbt())
+		{
+			NbtCompound nbt = stack.getOrCreateNbt();
+			nextStack.setNbt(nbt);
+		}
+		player.getInventory().main.set(slot, nextStack);
+		return nextStack;
 	}
 	
 	public Class<? extends AbstractWeaponItem> getCooldownClass()

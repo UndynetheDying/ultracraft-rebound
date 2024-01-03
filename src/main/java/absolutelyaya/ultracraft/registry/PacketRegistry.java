@@ -37,6 +37,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -569,6 +570,31 @@ public class PacketRegistry
 			for (int i = 0; i < count; i++)
 				ids[i] = buf.readIdentifier();
 			server.execute(() -> {
+				//check all items
+				if(ids.length > 0)
+				{
+					List<ItemStack> inventory = player.getInventory().main;
+					for (int slot = 0; slot < inventory.size(); slot++)
+					{
+						//if the item is a weapon of this loadouts type
+						if(!(inventory.get(slot).getItem() instanceof AbstractWeaponItem w && w.getWeaponType().equals(weapon)))
+							continue;
+						boolean found = false;
+						//check if its variant is in the loadout
+						for (Identifier id : ids)
+						{
+							if (id.equals(Registries.ITEM.getId(w)))
+							{
+								found = true;
+								break;
+							}
+						}
+						//if its not found in the loadout, set its variant to the first available one.
+						if(!found)
+							AbstractWeaponItem.replaceVariant(inventory.get(slot), player, slot, Registries.ITEM.get(ids[0]));
+					}
+				}
+				//set loadout
 				UltraComponents.LOADOUT.get(player).setLoadoutForWeapon(weapon, ids);
 			});
 		});

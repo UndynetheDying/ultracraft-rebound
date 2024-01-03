@@ -96,7 +96,7 @@ public class LoadoutTab extends Tab
 		{
 			if(order[i] == -1)
 				continue;
-			int ii = state[order[i]];
+			int ii = state[i];
 			if(ii == 0)
 				continue;
 			ids[order[i]] = weapon.ids[ii == 2 ? 3 + i : i];
