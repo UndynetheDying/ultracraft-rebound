@@ -48,7 +48,34 @@ public class LoadoutComponent implements ILoadoutComponent
 		if(loadout == null)
 			return false;
 		for (Identifier identifier : loadout)
-			if (identifier.equals(Registries.ITEM.getId(weaponItem)))
+			if (identifier != null && identifier.equals(Registries.ITEM.getId(weaponItem)))
+				return true;
+		return false;
+	}
+	
+	@Override
+	public boolean isInLoadout(Weapon weapon, Identifier id)
+	{
+		Identifier[] loadout = loadouts.get(weapon);
+		if(loadout == null)
+			return false;
+		for (Identifier identifier : loadout)
+			if (identifier != null && identifier.equals(id))
+				return true;
+		return false;
+	}
+	
+	@Override
+	public boolean isAltInLoadout(Weapon weapon, Identifier id)
+	{
+		Identifier[] loadout = loadouts.get(weapon);
+		if(loadout == null || weapon.altId == null)
+			return false;
+		Identifier alt = weapon.getAlt(id);
+		if(alt == null)
+			return false;
+		for (Identifier identifier : loadout)
+			if (identifier != null && identifier.equals(alt))
 				return true;
 		return false;
 	}

@@ -510,6 +510,7 @@
   "terminal.dispense": "Dispense",
   "terminal.held": "! Already Held !",
   "terminal.no-recipe": "! No Recipe !",
+  "terminal.not-equipped": "! Not in Loadout !",
   "terminal.loadout": "Loadout",
   "terminal.weapon-short.pierce_revolver": "Piercer",
   "terminal.weapon-short.marksman_revolver": "Marksman",

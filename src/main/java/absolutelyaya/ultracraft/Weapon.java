@@ -68,4 +68,14 @@ public enum Weapon
 		System.arraycopy(ids, 0, loadout, 0, Math.min(ids.length, 3));
 		return loadout;
 	}
+	
+	public Identifier getAlt(Identifier id)
+	{
+		if (altId == null)
+			return null;
+		int i = getIdxForId(id) + ids.length / 2;
+		if(i < ids.length)
+			return ids[i];
+		return null;
+	}
 }

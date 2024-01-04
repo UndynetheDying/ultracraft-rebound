@@ -479,10 +479,19 @@ public class PacketRegistry
 		});
 		ServerPlayNetworking.registerGlobalReceiver(TERMINAL_WEAPON_DISPENSE_PACKET_ID, (server, player, handler, buf, sender) -> {
 			Identifier weapon = buf.readIdentifier();
+			int weaponType = buf.readInt();
+			boolean alt = buf.readBoolean();
 			server.execute(() ->
 			{
 				if(UltraComponents.PROGRESSION.get(player).isOwned(weapon))
-					player.giveItemStack(Registries.ITEM.get(weapon).getDefaultStack());
+				{
+					ItemStack stack;
+					if(alt)
+						stack =  Registries.ITEM.get(Weapon.values()[weaponType].getAlt(weapon)).getDefaultStack();
+					else
+						stack = Registries.ITEM.get(weapon).getDefaultStack();
+					player.giveItemStack(stack);
+				}
 			});
 		});
 		ServerPlayNetworking.registerGlobalReceiver(CYCLE_WEAPON_VARIANT_PACKET_ID, (server, player, handler, buf, sender) -> {

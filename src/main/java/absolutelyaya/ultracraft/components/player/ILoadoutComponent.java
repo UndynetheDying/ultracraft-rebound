@@ -14,5 +14,9 @@ public interface ILoadoutComponent extends ComponentV3, AutoSyncedComponent
 	
 	boolean isInLoadout(AbstractWeaponItem weaponItem);
 	
+	boolean isInLoadout(Weapon weapon, Identifier id);
+	
+	boolean isAltInLoadout(Weapon weapon, Identifier id);
+	
 	void sync(Weapon weapon);
 }
