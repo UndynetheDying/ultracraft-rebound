@@ -11,6 +11,7 @@ import absolutelyaya.ultracraft.config.Setting;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.data.TerminalScreensaverManager;
 import absolutelyaya.ultracraft.data.UltraRecipeManager;
+import absolutelyaya.ultracraft.dimension.UltraDimensions;
 import absolutelyaya.ultracraft.item.AbstractNailgunItem;
 import absolutelyaya.ultracraft.item.MarksmanRevolverItem;
 import absolutelyaya.ultracraft.item.SharpshooterRevolverItem;
@@ -24,6 +25,9 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
@@ -84,7 +88,10 @@ public class Ultracraft implements ModInitializer
         new StyleBonusManager();
         
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-        
+            new UltraDimensions(server);
+            UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> UltraDimensions.Instance.onBlockInteract(player, world, hand, hitResult));
+            AttackBlockCallback.EVENT.register(((player, world, hand, pos, direction) -> UltraDimensions.Instance.onAttackBlock(player, world, hand, pos, direction)));
+            //UseItemCallback.EVENT.register(((player, world, hand) -> UltraDimensions.Instance.onUseItem(player, world, hand)));
         });
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             Commands.register(dispatcher);
@@ -99,6 +106,7 @@ public class Ultracraft implements ModInitializer
                 if(i > 0)
                     supporterCache.put(uuid, i - 1);
             });
+            UltraDimensions.Instance.tickManagers();
         });
         ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
             newPlayer.getInventory().main.forEach(stack -> {

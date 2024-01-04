@@ -609,6 +609,12 @@
   "ultrakill.game": "ULTRAKILL (real)",
   "yaya.support.kofi": "Support yayas endeavours",
 
+  "limbo.slab_press.fail.spawn": "This must be activated from elsewhere",
+  "limbo.slab_press.fail.active": "Your Actions cannot be undone",
+  "limbo.slab_press.success": "At the Center of Limbo, a mechanism stirs",
+  "limbo.slab-open": "And finally, a Door opens",
+  "limbo.structure.modify-fail": "Something prevents you from modifying this Structure",
+
   "text.autoconfig.ultracraft.category.default": "Ultracraft",
   "text.autoconfig.ultracraft.category.ultra-hud": "UltraHUD",
   "text.autoconfig.ultracraft.category.blood": "Goop // Blood",

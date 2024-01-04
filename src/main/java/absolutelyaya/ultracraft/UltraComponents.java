@@ -3,6 +3,8 @@ package absolutelyaya.ultracraft;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
 import absolutelyaya.ultracraft.components.level.UltraLevelComponent;
 import absolutelyaya.ultracraft.components.player.*;
+import absolutelyaya.ultracraft.components.world.DimensionDataComponent;
+import absolutelyaya.ultracraft.components.world.IDimensionDataComponent;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
 import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
@@ -10,9 +12,11 @@ import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer;
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
 import dev.onyxstudios.cca.api.v3.level.LevelComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.level.LevelComponentInitializer;
+import dev.onyxstudios.cca.api.v3.world.WorldComponentFactoryRegistry;
+import dev.onyxstudios.cca.api.v3.world.WorldComponentInitializer;
 import net.minecraft.util.Identifier;
 
-public final class UltraComponents implements EntityComponentInitializer, LevelComponentInitializer
+public final class UltraComponents implements EntityComponentInitializer, LevelComponentInitializer, WorldComponentInitializer
 {
 	public static final ComponentKey<IWingDataComponent> WING_DATA =
 			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "wing_data"), IWingDataComponent.class);
@@ -30,8 +34,12 @@ public final class UltraComponents implements EntityComponentInitializer, LevelC
 			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "hivel"), IHivelComponent.class);
 	public static final ComponentKey<ILoadoutComponent> LOADOUT =
 			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "loadout"), ILoadoutComponent.class);
+	
 	public static final ComponentKey<IUltraLevelComponent> GLOBAL =
 			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "global_data"), IUltraLevelComponent.class);
+	
+	public static final ComponentKey<IDimensionDataComponent> DIMENSION_DATA =
+			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "dimension_data"), IDimensionDataComponent.class);
 	
 	@Override
 	public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry)
@@ -50,5 +58,11 @@ public final class UltraComponents implements EntityComponentInitializer, LevelC
 	public void registerLevelComponentFactories(LevelComponentFactoryRegistry registry)
 	{
 		registry.register(GLOBAL, UltraLevelComponent::new);
+	}
+	
+	@Override
+	public void registerWorldComponentFactories(WorldComponentFactoryRegistry registry)
+	{
+		registry.register(DIMENSION_DATA, DimensionDataComponent::new);
 	}
 }
