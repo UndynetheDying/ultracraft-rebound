@@ -4,6 +4,8 @@ import absolutelyaya.ultracraft.components.player.IProgressionComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
+import java.util.Locale;
+
 public enum Weapon
 {
 	REVOLVER(new Identifier[] {
@@ -49,7 +51,7 @@ public enum Weapon
 	@Override
 	public String toString()
 	{
-		return super.toString().toLowerCase();
+		return super.toString().toLowerCase(Locale.ROOT);
 	}
 	
 	public int getIdxForId(Identifier id)

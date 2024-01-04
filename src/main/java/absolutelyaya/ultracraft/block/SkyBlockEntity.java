@@ -11,6 +11,8 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
+
 public class SkyBlockEntity extends BlockEntity
 {
 	SkyType type = SkyType.DAY;
@@ -44,7 +46,7 @@ public class SkyBlockEntity extends BlockEntity
 	protected void writeNbt(NbtCompound nbt)
 	{
 		super.writeNbt(nbt);
-		nbt.putString("type", type.toString().toLowerCase());
+		nbt.putString("type", type.toString().toLowerCase(Locale.ROOT));
 	}
 	
 	@Nullable
@@ -69,7 +71,7 @@ public class SkyBlockEntity extends BlockEntity
 		@Override
 		public String toString()
 		{
-			return super.toString().toLowerCase();
+			return super.toString().toLowerCase(Locale.ROOT);
 		}
 	}
 }
