@@ -14,7 +14,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 {
 	PlayerEntity provider;
 	GunCooldownManager gunCDM;
-	boolean primaryFiring;
+	boolean primaryFiring, justPlayedBloodhealNoise;
 	byte wingState, lastState;
 	int bloodHealCooldown, sharpshooterCooldown, magnets;
 	AbstractWeaponItem lastPrimaryWeapon;
@@ -60,6 +60,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	{
 		if(bloodHealCooldown == 0)
 			provider.heal(val);
+		justPlayedBloodhealNoise = true;
 	}
 	
 	@Override
@@ -125,6 +126,18 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	}
 	
 	@Override
+	public boolean isJustPlayedBloodhealNoise()
+	{
+		return justPlayedBloodhealNoise;
+	}
+	
+	@Override
+	public void setJustPlayedBloodhealNoise()
+	{
+		justPlayedBloodhealNoise = true;
+	}
+	
+	@Override
 	public void readFromNbt(NbtCompound tag)
 	{
 	
@@ -145,6 +158,8 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			bloodHealCooldown--;
 		if(sharpshooterCooldown > 0)
 			sharpshooterCooldown--;
+		if(justPlayedBloodhealNoise)
+			justPlayedBloodhealNoise = false;
 		updateWingState();
 	}
 }

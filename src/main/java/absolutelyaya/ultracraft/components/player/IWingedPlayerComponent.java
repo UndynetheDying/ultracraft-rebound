@@ -33,4 +33,8 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	int getMagnets();
 	
 	void setMagnets(int i);
+	
+	boolean isJustPlayedBloodhealNoise();
+	
+	void setJustPlayedBloodhealNoise();
 }

@@ -13,6 +13,7 @@ import absolutelyaya.ultracraft.client.gui.screen.HellObserverScreen;
 import absolutelyaya.ultracraft.client.gui.screen.ServerConfigScreen;
 import absolutelyaya.ultracraft.client.rendering.UltraHudRenderer;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
+import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.data.UltraRecipeManager;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.particle.ParryIndicatorParticleEffect;
@@ -116,7 +117,12 @@ public class ClientPacketRegistry
 				if(client.player.squaredDistanceTo(pos) < 10 && !water)
 				{
 					UltracraftClient.addBlood(amount / (shotgun ? 10f : 30f));
-					client.player.playSound(SoundRegistry.BLOOD_HEAL, SoundCategory.PLAYERS, shotgun ? 0.2f : 0.8f, 1.7f);
+					IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(client.player);
+					if(!winged.isJustPlayedBloodhealNoise())
+					{
+						client.player.playSound(SoundRegistry.BLOOD_HEAL, SoundCategory.PLAYERS, 0.8f, 1.7f);
+						winged.setJustPlayedBloodhealNoise();
+					}
 				}
 			});
 		})));

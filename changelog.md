@@ -87,5 +87,6 @@
   - allows to designate Blocks that fences and walls cannot connect to; because for some reason base Minecraft doesn't do that and checks block states indiviually in an `or` chain
 - Added Proper Spawn Restrictions to all basic Enemies
 - Fixed the first person Arm staying hidden when dying while focused on a Terminal
+- Bloodheal noise can no longer be triggered multiple times on the same tick
 ## Resource Changes
 ## API Changes
