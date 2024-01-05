@@ -53,6 +53,8 @@ public class LimboManager implements DimensionManager
 	public ActionResult onBlockInteract(PlayerEntity player, World world, Hand hand, BlockHitResult hit)
 	{
 		IDimensionDataComponent data = UltraComponents.DIMENSION_DATA.get(world);
+		if(!data.isFixedStructuresPlaced())
+			return ActionResult.PASS;
 		BlockPos pos = hit.getBlockPos();
 		//Spawn Slab Blocks
 		int spawnY = data.getFlag(FLAG_SPAWN_Y);
@@ -78,6 +80,9 @@ public class LimboManager implements DimensionManager
 	@Override
 	public ActionResult onAttackBlock(PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction)
 	{
+		IDimensionDataComponent data = UltraComponents.DIMENSION_DATA.get(world);
+		if(!data.isFixedStructuresPlaced())
+			return ActionResult.PASS;
 		if(spawnBounds.contains(pos.toCenterPos()))
 		{
 			player.sendMessage(Text.translatable("limbo.structure.modify-fail"), true);
