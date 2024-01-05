@@ -1,5 +1,13 @@
 ## Major Changes
-- Added Minecart Parries
+- Added Prelude Structure to Overworld
+  - Complete this Dungeon to obtain a Teleporter that can be used to travel to other Layers
+- Added Limbo Dimension
+  - Custom Worldgen inspired by Limbo
+  - Pre-placed Structures with Scripted Events and Progression
+    - Activate all 4 Slab Blocks to obtain the Slab Revolver
+  - Other Random Limbo Themed Structures
+  - Appropriate enemies randomly spawn in dark areas // at night
+    - Anyone who wanted this will probably realize that this isn't exactly fun
 - Added Overheat Nailgun
   - Primary fire of all Nailgun variants now builds up "heat"
   - The higher the heat, the slower the fire rate (this one only applies to the Overheat Nailgun)
@@ -32,6 +40,7 @@
   - Check the Weapons Tab on Terminals for a new Button in the bottom left
 - Improved Sounds for Shotguns by using Sound Keyframes in their animations
 - Added new Weapon Info HUD element when holding Nailguns
+- Added Minecart Parries
 - Fucked around with Coin Physics a lot; they're probably as good as they'll get now
 - Fixed Tundra//Agony Spawn Egg crashing Servers when used in Hell Spawners
 - Remodeled Schism
@@ -39,6 +48,8 @@
 - Visually Improved Cerberus
   - Ball//Apple now has an aura and is emissive
   - Changed colors to be closer to the Vanilla Stone palette
+- Fixed Streetcleaners dodging upwards when shot from below
+- Fixed Backtanks eating projectiles
 ## Settings & Config
 - Removed almost all gamerules (only remaining is `ultra-startWithPiercer`)
 - Added Option to disable Screenshake

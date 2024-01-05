@@ -97,6 +97,8 @@ public class HellBulletEntity extends ThrownItemEntity implements ProjectileEnti
 	@Override
 	protected void onCollision(HitResult hitResult)
 	{
+		if(hitResult instanceof EntityHitResult eHit && !eHit.getEntity().canBeHitByProjectile())
+			return;
 		if (!getWorld().isClient && !isRemoved())
 		{
 			getWorld().sendEntityStatus(this, (byte)3);

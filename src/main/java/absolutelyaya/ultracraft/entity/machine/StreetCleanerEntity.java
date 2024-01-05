@@ -186,7 +186,7 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 			{
 				Entity target = dodgeCandidates.get(0);
 				boolean b = random.nextBoolean();
-				Vec3d dir = target.getVelocity().normalize().multiply(3f).rotateY(b ? 75 : -75);
+				Vec3d dir = target.getVelocity().multiply(1, 0, 1).normalize().multiply(3f).rotateY((float)Math.toDegrees(b ? 75f : -75f));
 				setVelocity(dir);
 				dataTracker.set(ANIMATION, ANIMATION_DODGE);
 				dataTracker.set(ANIM_TIME, 0);
@@ -203,6 +203,14 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 		if(source.isOf(DamageTypes.FALL) && getHealth() - amount <= 0)
 			ExplosionHandler.explosion(this, getWorld(), getPos(), DamageSources.get(getWorld(), DamageTypes.EXPLOSION, this, this), 6, 4, 3, true);
 		return super.damage(source, source.isIn(DamageTypeTags.IS_EXPLOSION) ? amount * 0.5f : amount);
+	}
+	
+	@Override
+	public boolean canBeHitByProjectile()
+	{
+		if(getAnimation() == ANIMATION_DODGE && dataTracker.get(ANIM_TIME) < 30)
+			return false;
+		return super.canBeHitByProjectile();
 	}
 	
 	@Override

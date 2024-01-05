@@ -116,6 +116,12 @@ public class BackTank extends Entity
 	}
 	
 	@Override
+	public boolean canBeHitByProjectile()
+	{
+		return false;
+	}
+	
+	@Override
 	protected void readCustomDataFromNbt(NbtCompound nbt)
 	{
 	
