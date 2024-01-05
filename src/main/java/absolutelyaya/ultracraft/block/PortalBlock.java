@@ -1,10 +1,13 @@
 package absolutelyaya.ultracraft.block;
 
-import absolutelyaya.ultracraft.client.gui.screen.TravelScreen;
+import absolutelyaya.ultracraft.registry.PacketRegistry;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -21,8 +24,8 @@ public class PortalBlock extends Block
 	@Override
 	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit)
 	{
-		if(world.isClient)
-			MinecraftClient.getInstance().setScreen(new TravelScreen(false));
+		if(!world.isClient)
+			ServerPlayNetworking.send((ServerPlayerEntity)player, PacketRegistry.TRAVEL_SCREEN_PACKET_ID, new PacketByteBuf(Unpooled.buffer()));
 		return ActionResult.PASS;
 	}
 }

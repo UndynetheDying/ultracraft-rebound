@@ -11,6 +11,7 @@ import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.screen.HellObserverScreen;
 import absolutelyaya.ultracraft.client.gui.screen.ServerConfigScreen;
+import absolutelyaya.ultracraft.client.gui.screen.TravelScreen;
 import absolutelyaya.ultracraft.client.rendering.UltraHudRenderer;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
@@ -352,6 +353,11 @@ public class ClientPacketRegistry
 			String key = buf.readString();
 			client.execute(() -> {
 				UltraComponents.STYLE.get(client.player).clientStyleBonusGet(key);
+			});
+		})));
+		ClientPlayNetworking.registerGlobalReceiver(TRAVEL_SCREEN_PACKET_ID, (((client, handler, buf, responseSender) -> {
+			client.execute(() -> {
+				client.setScreen(new TravelScreen(false));
 			});
 		})));
 	}

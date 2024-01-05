@@ -120,6 +120,7 @@ public class PacketRegistry
 	public static final Identifier HELL_OBSERVER_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "hell_observer");
 	public static final Identifier SCREENSHAKE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "screenshake");
 	public static final Identifier STYLE_BONUS_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "style");
+	public static final Identifier TRAVEL_SCREEN_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "open_travel_screen");
 	
 	public static void registerC2S()
 	{
