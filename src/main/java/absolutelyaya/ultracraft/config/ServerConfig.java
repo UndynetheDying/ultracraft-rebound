@@ -29,6 +29,8 @@ public class ServerConfig extends Config
 	public final FloatEntry revolverDamage = (FloatEntry)new FloatEntry("RevolverDamage", 1f).setRange(0f, Float.MAX_VALUE);
 	public final FloatEntry shotgunDamage = (FloatEntry)new FloatEntry("ShotgunDamage", 1f).setRange(0f, Float.MAX_VALUE);
 	public final FloatEntry nailgunDamage = (FloatEntry)new FloatEntry("NailgunDamage", 1f).setRange(0f, Float.MAX_VALUE);
+	//Debug
+	public final BooleanEntry disableFixedStructures = new BooleanEntry("DisableFixedStructures", true); //TODO: SET DEFAULT TO TRUE!!!!
 	
 	public ServerConfig(MinecraftServer server)
 	{
@@ -60,6 +62,10 @@ public class ServerConfig extends Config
 		entries.add(revolverDamage);
 		entries.add(shotgunDamage);
 		entries.add(nailgunDamage);
+		entries.add(new Comment(" ## ############################# ##  #"));
+		entries.add(new Comment("           Debug stuff"));
+		entries.add(new Comment(" ## ############################# ##  #"));
+		entries.add(disableFixedStructures);
 		
 		load(server);
 		INSTANCE = this;

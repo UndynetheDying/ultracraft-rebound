@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.block.SlabBlock;
 import absolutelyaya.ultracraft.components.world.IDimensionDataComponent;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.registry.RegistryKey;
@@ -44,7 +45,8 @@ public class LimboManager implements DimensionManager
 	public void tick()
 	{
 		IDimensionDataComponent data = UltraComponents.DIMENSION_DATA.get(world);
-		if(!data.isFixedStructuresPlaced() && world.isChunkLoaded(world.getRandomAlivePlayer().getBlockPos()))
+		if(!ServerConfig.INSTANCE.disableFixedStructures.getValue() && !data.isFixedStructuresPlaced() &&
+				   world.isChunkLoaded(world.getRandomAlivePlayer().getBlockPos()))
 			prePlaceStructures();
 	}
 	
