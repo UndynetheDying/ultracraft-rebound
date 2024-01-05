@@ -3,7 +3,6 @@ package absolutelyaya.ultracraft.block;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.item.TerminalItem;
 import absolutelyaya.ultracraft.registry.BlockRegistry;
-import absolutelyaya.ultracraft.registry.GameruleRegistry;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.enums.DoubleBlockHalf;
