@@ -26,6 +26,11 @@
         },
         {
           "type": "minecraft:item",
+          "name": "ultracraft:lumpfish",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
           "name": "ultracraft:talon",
           "weight": 1
         }

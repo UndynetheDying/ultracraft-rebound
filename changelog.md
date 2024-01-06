@@ -39,6 +39,7 @@
 - Added Customizeable Loadouts
   - Check the Weapons Tab on Terminals for a new Button in the bottom left
 - Improved Sounds for Shotguns by using Sound Keyframes in their animations
+- Added a new Fish
 - Added new Weapon Info HUD element when holding Nailguns
 - Added Minecart Parries
 - Fucked around with Coin Physics a lot; they're probably as good as they'll get now
@@ -88,5 +89,6 @@
 - Added Proper Spawn Restrictions to all basic Enemies
 - Fixed the first person Arm staying hidden when dying while focused on a Terminal
 - Bloodheal noise can no longer be triggered multiple times on the same tick
+- Fixed an issue that would crash the game upon trying to render white terminals while using specific System locales
 ## Resource Changes
 ## API Changes

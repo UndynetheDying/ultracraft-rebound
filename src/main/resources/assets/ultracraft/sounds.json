@@ -412,6 +412,21 @@
       "ultracraft:item/killer_fish1"
     ]
   },
+  "item.lumpfish.select": {
+    "sounds": [
+      "ultracraft:item/lumpfish1"
+    ]
+  },
+  "item.lumpfish.unselect": {
+    "sounds": [
+      "ultracraft:item/lumpfish2"
+    ]
+  },
+  "item.lumpfish.use": {
+    "sounds": [
+      "ultracraft:item/lumpfish3"
+    ]
+  },
   "entity.orb.ambient": {
     "sounds": [
       {"name": "block.beacon.ambient", "type": "event"}
