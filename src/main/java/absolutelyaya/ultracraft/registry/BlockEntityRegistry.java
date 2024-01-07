@@ -2,7 +2,7 @@ package absolutelyaya.ultracraft.registry;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.block.*;
-import absolutelyaya.ultracraft.block.mapping.LevelBlockEntity;
+import absolutelyaya.ultracraft.block.mapping.RoomBlockEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.registry.Registries;
@@ -17,7 +17,7 @@ public class BlockEntityRegistry
 	public static final BlockEntityType<HellObserverBlockEntity> HELL_OBSERVER;
 	public static final BlockEntityType<HellSpawnerBlockEntity> HELL_SPAWNER;
 	public static final BlockEntityType<SkyBlockEntity> SKY;
-	public static final BlockEntityType<LevelBlockEntity> LEVEL;
+	public static final BlockEntityType<RoomBlockEntity> MAP_ROOM;
 	
 	public static void register() {
 	}
@@ -42,8 +42,8 @@ public class BlockEntityRegistry
 		SKY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				new Identifier(Ultracraft.MOD_ID, "sky_block"),
 				FabricBlockEntityTypeBuilder.create(SkyBlockEntity::new, BlockRegistry.SKY_BLOCK).build());
-		LEVEL = Registry.register(Registries.BLOCK_ENTITY_TYPE,
-				new Identifier(Ultracraft.MOD_ID, "level"),
-				FabricBlockEntityTypeBuilder.create(LevelBlockEntity::new, BlockRegistry.LEVEL_BLOCK).build());
+		MAP_ROOM = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Ultracraft.MOD_ID, "room"),
+				FabricBlockEntityTypeBuilder.create(RoomBlockEntity::new, BlockRegistry.MAP_ROOM).build());
 	}
 }

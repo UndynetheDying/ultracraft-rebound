@@ -9,15 +9,16 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector4f;
 
-public class LevelBlockEntity extends AbstractMappingBlockEntity
+public class RoomBlockEntity extends AbstractMappingBlockEntity
 {
 	static int i = 0;
 	
-	public LevelBlockEntity(BlockPos pos, BlockState state)
+	public RoomBlockEntity(BlockPos pos, BlockState state)
 	{
-		super(BlockEntityRegistry.LEVEL, pos, state);
-		id = "level-" + i;
+		super(BlockEntityRegistry.MAP_ROOM, pos, state);
+		id = "room-" + i;
 		i++;
 	}
 	
@@ -37,12 +38,24 @@ public class LevelBlockEntity extends AbstractMappingBlockEntity
 	@Override
 	public Text getAreaLabel()
 	{
-		return Text.of("L-" + getID());
+		return Text.of("R-" + getID());
 	}
 	
 	@Override
 	public String getFocusKey()
 	{
-		return "level";
+		return "room";
+	}
+	
+	@Override
+	public Vector4f getColor()
+	{
+		return new Vector4f(0.25f, 0.25f, 0.25f, 0.2f);
+	}
+	
+	@Override
+	public boolean showCamLine()
+	{
+		return true;
 	}
 }

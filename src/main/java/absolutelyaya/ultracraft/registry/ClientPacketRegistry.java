@@ -9,7 +9,6 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.ITrailEnjoyer;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.UltracraftClient;
-import absolutelyaya.ultracraft.client.gui.EditModeHUD;
 import absolutelyaya.ultracraft.client.gui.screen.HellObserverScreen;
 import absolutelyaya.ultracraft.client.gui.screen.ServerConfigScreen;
 import absolutelyaya.ultracraft.client.gui.screen.TravelScreen;
@@ -368,8 +367,11 @@ public class ClientPacketRegistry
 			int size = buf.readInt();
 			for (int i = 0; i < size; i++)
 				results.add(buf.readBlockPos());
+			BlockPos focus = UltraComponents.EDITOR.get(client.player).getEditFocus("room");
+			if(focus != null && !results.contains(focus))
+				results.add(focus);
 			client.execute(() -> {
-				EditModeRenderer.Instance.newLevelBlocks = results;
+				EditModeRenderer.Instance.newRoomBlocks = results;
 			});
 		})));
 	}

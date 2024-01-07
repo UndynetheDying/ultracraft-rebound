@@ -1,14 +1,11 @@
 package absolutelyaya.ultracraft.client.gui;
 
 import absolutelyaya.ultracraft.UltraComponents;
-import absolutelyaya.ultracraft.block.mapping.LevelBlockEntity;
-import absolutelyaya.ultracraft.client.UltracraftClient;
+import absolutelyaya.ultracraft.block.mapping.RoomBlockEntity;
 import absolutelyaya.ultracraft.components.player.IEditorComponent;
-import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
@@ -37,10 +34,10 @@ public class EditModeHUD
 		context.fill(width / 2 - 64, 0, width / 2 + 64, 64, 0x88000000);
 		context.drawCenteredTextWithShadow(renderer, Text.of("Edit Mode Active"), width / 2, 2, 0xffff00);
 		BlockPos p;
-		if((p = editor.getEditFocus("level")) != null && player.getWorld().getBlockEntity(p) instanceof LevelBlockEntity level)
+		if((p = editor.getEditFocus("room")) != null && player.getWorld().getBlockEntity(p) instanceof RoomBlockEntity level)
 		{
 			matrices.translate(0, renderer.fontHeight + 2, 0);
-			context.drawCenteredTextWithShadow(renderer, Text.of("Level: " + level.getID()), width / 2, 2, 0xffff00);
+			context.drawCenteredTextWithShadow(renderer, Text.of("Room: " + level.getID()), width / 2, 2, 0xffff00);
 		}
 		matrices.pop();
 	}

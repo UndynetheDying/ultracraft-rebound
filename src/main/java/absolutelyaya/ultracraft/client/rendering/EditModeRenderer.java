@@ -22,9 +22,9 @@ public class EditModeRenderer
 {
 	public static EditModeRenderer Instance;
 	
-	public List<BlockPos> newLevelBlocks;
-	private List<BlockPos> levelBlocks = new ArrayList<>();
-	float levelAlpha;
+	public List<BlockPos> newRoomBlocks;
+	private List<BlockPos> roomBlocks = new ArrayList<>();
+	float pingTime;
 	
 	public EditModeRenderer()
 	{
@@ -36,11 +36,11 @@ public class EditModeRenderer
 		IEditorComponent editor = UltraComponents.EDITOR.get(MinecraftClient.getInstance().player);
 		if(!editor.isActive())
 			return;
-		if(newLevelBlocks != null)
+		if(newRoomBlocks != null)
 		{
-			levelBlocks = newLevelBlocks;
-			newLevelBlocks = null;
-			levelAlpha = 10f;
+			roomBlocks = newRoomBlocks;
+			newRoomBlocks = null;
+			pingTime = 10f;
 		}
 		VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEffectVertexConsumers();
 		VertexConsumerProvider.Immediate textImmediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
@@ -48,7 +48,7 @@ public class EditModeRenderer
 		TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 		RenderSystem.disableDepthTest();
 		
-		for (BlockPos pos : levelBlocks)
+		for (BlockPos pos : roomBlocks)
 		{
 			Vec3d camPos = cam.getPos();
 			Vec3d targetPos = pos.toCenterPos();
@@ -57,7 +57,9 @@ public class EditModeRenderer
 			matrices.push();
 			matrices.translate(targetPos.x, targetPos.y, targetPos.z);
 			matrices.translate(-camPos.x, -camPos.y, -camPos.z);
-			Vector4f col = new Vector4f(1f, 1f, 1f, MathHelper.clamp(levelAlpha, 0.2f, 1f));
+			Vector4f col = new Vector4f(blockEntity.getColor());
+			if(pingTime > col.w)
+				col.set(Math.min(pingTime, 1f));
 			if(pos.equals(editor.getEditFocus(blockEntity.getFocusKey())) || blockEntity.alwaysShowArea())
 			{
 				if(blockEntity.getMin(pos) != null && blockEntity.getMax(pos) != null)
@@ -76,10 +78,11 @@ public class EditModeRenderer
 			drawFloatingText(textRenderer, matrices, textImmediate, new Vector3f(), 1f, blockEntity.getAreaLabel(), 0xffffffff, cam);
 			matrices.pop();
 			matrices.pop();
-			drawLineToCam(lines, matrices, targetPos.toVector3f(), cam, col);
+			if(blockEntity.showCamLine())
+				drawLineToCam(lines, matrices, targetPos.toVector3f(), cam, col);
 		}
-		if(levelAlpha > 0f)
-			levelAlpha -= delta / 20;
+		if(pingTime > 0f)
+			pingTime -= delta / 20;
 		RenderSystem.enableDepthTest();
 	}
 	

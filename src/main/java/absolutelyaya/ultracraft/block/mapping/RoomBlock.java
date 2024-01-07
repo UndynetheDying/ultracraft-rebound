@@ -12,10 +12,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class LevelBlock extends AbstractMappingBlock
+public class RoomBlock extends AbstractMappingBlock
 {
 	
-	public LevelBlock(Settings settings)
+	public RoomBlock(Settings settings)
 	{
 		super(settings);
 	}
@@ -24,7 +24,7 @@ public class LevelBlock extends AbstractMappingBlock
 	@Override
 	public BlockEntity createBlockEntity(BlockPos pos, BlockState state)
 	{
-		return new LevelBlockEntity(pos, state);
+		return new RoomBlockEntity(pos, state);
 	}
 	
 	@Override
@@ -33,10 +33,12 @@ public class LevelBlock extends AbstractMappingBlock
 		IEditorComponent editor = UltraComponents.EDITOR.get(player);
 		if(editor.isActive())
 		{
-			editor.setEditFocus("level", pos.equals(editor.getEditFocus("level")) ? null : pos);
+			editor.setEditFocus("room", pos.equals(editor.getEditFocus("room")) ? null : pos);
 			return ActionResult.SUCCESS;
 		}
 		else
 			return ActionResult.PASS;
 	}
+	
+	//TODO: reset timer that resets all child map blocks
 }

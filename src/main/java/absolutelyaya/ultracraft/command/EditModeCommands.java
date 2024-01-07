@@ -2,7 +2,7 @@ package absolutelyaya.ultracraft.command;
 
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.block.mapping.AbstractMappingBlockEntity;
-import absolutelyaya.ultracraft.block.mapping.LevelBlockEntity;
+import absolutelyaya.ultracraft.block.mapping.RoomBlockEntity;
 import absolutelyaya.ultracraft.components.player.IEditorComponent;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import com.mojang.brigadier.Command;
@@ -59,9 +59,9 @@ public class EditModeCommands
 			{
 				for (int z = -64; z < 64; z++)
 				{
-					if(world.getBlockEntity(center.add(x, y, z)) instanceof LevelBlockEntity level)
+					if(world.getBlockEntity(center.add(x, y, z)) instanceof RoomBlockEntity level)
 					{
-						context.getSource().sendMessage(Text.of("Level found: '" + level.getID() + "' at " + x + " " + y + " " + z));
+						context.getSource().sendMessage(Text.of("Room found: '" + level.getID() + "' at " + x + " " + y + " " + z));
 						levelBlocks.add(center.add(x, y, z));
 					}
 				}
@@ -73,7 +73,7 @@ public class EditModeCommands
 			buf.writeBlockPos(pos);
 		ServerPlayNetworking.send(player, PacketRegistry.EDIT_PING_PACKET_ID, buf);
 		if(levelBlocks.size() == 0)
-			context.getSource().sendMessage(Text.of("No Levels :("));
+			context.getSource().sendMessage(Text.of("No Rooms :("));
 		return Command.SINGLE_SUCCESS;
 	}
 	
@@ -83,7 +83,7 @@ public class EditModeCommands
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeInt(0);
 		ServerPlayNetworking.send(player, PacketRegistry.EDIT_PING_PACKET_ID, buf);
-		context.getSource().sendMessage(Text.of("Ping targets cleared"));
+		context.getSource().sendMessage(Text.of("Ping results cleared"));
 		return Command.SINGLE_SUCCESS;
 	}
 	
@@ -109,7 +109,7 @@ public class EditModeCommands
 		String key = context.getArgument("key", String.class);
 		IEditorComponent editor = UltraComponents.EDITOR.get(player);
 		BlockPos pos = editor.getEditFocus(key);
-		if(pos != null && player.getWorld().getBlockEntity(pos) instanceof AbstractMappingBlockEntity e)
+		if(pos != null && player.getWorld().getBlockEntity(pos) instanceof AbstractMappingBlockEntity)
 		{
 			editor.setEditAreaStep(2);
 			editor.setEditAreaCore(pos);

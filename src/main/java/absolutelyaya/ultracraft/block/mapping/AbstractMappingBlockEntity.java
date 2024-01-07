@@ -7,6 +7,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import org.joml.Vector4f;
 
 public abstract class AbstractMappingBlockEntity extends BlockEntity
 {
@@ -67,6 +68,8 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 	
 	public abstract String getFocusKey();
 	
+	public abstract Vector4f getColor();
+	
 	@Override
 	protected void writeNbt(NbtCompound nbt)
 	{
@@ -90,4 +93,6 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 		if(nbt.contains("name", NbtElement.STRING_TYPE))
 			id = nbt.getString("name");
 	}
+	
+	public abstract boolean showCamLine();
 }
