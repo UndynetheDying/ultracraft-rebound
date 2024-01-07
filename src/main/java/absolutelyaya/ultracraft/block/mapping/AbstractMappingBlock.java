@@ -8,30 +8,18 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 
-public abstract class AbstractMappingBlock extends Block
+public abstract class AbstractMappingBlock extends BlockWithEntity
 {
-	String id;
-	
 	public AbstractMappingBlock(Settings settings)
 	{
 		super(settings);
-	}
-	
-	protected void setId(String id)
-	{
-		this.id = id;
-	}
-	
-	public String getId()
-	{
-		return id;
 	}
 	
 	@Override
 	public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context)
 	{
 		if(context instanceof EntityShapeContext e && e.getEntity() instanceof PlayerEntity player && player.getWorld().isClient)
-			if(UltraComponents.WINGED_ENTITY.get(player).isEditMode())
+			if(UltraComponents.EDITOR.get(player).isActive())
 				return VoxelShapes.fullCube();
 		return VoxelShapes.empty();
 	}

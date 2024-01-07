@@ -363,14 +363,6 @@ public class ClientPacketRegistry
 				client.setScreen(new TravelScreen(false));
 			});
 		})));
-		ClientPlayNetworking.registerGlobalReceiver(EDIT_STATE_PACKET_ID, (((client, handler, buf, responseSender) -> {
-			boolean state = buf.readBoolean();
-			client.execute(() -> {
-				UltracraftClient.setEditMode(state);
-				if(client.player != null)
-					UltraComponents.WINGED_ENTITY.get(client.player).setEditMode(state);
-			});
-		})));
 		ClientPlayNetworking.registerGlobalReceiver(EDIT_PING_PACKET_ID, (((client, handler, buf, responseSender) -> {
 			List<BlockPos> results = new ArrayList<>();
 			int size = buf.readInt();

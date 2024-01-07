@@ -1,8 +1,9 @@
 package absolutelyaya.ultracraft.command;
 
 import absolutelyaya.ultracraft.UltraComponents;
-import absolutelyaya.ultracraft.block.mapping.LevelBlock;
-import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.block.mapping.AbstractMappingBlockEntity;
+import absolutelyaya.ultracraft.block.mapping.LevelBlockEntity;
+import absolutelyaya.ultracraft.components.player.IEditorComponent;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
@@ -19,6 +20,8 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mojang.brigadier.arguments.StringArgumentType.string;
+import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class EditModeCommands
@@ -27,15 +30,19 @@ public class EditModeCommands
 	{
 		dispatcher.register(literal("editmode").requires(source -> source.hasPermissionLevel(2))
 									.then(literal("edit").executes(EditModeCommands::executeToggleEditMode))
-									.then(literal("ping").requires(i -> UltraComponents.WINGED_ENTITY.get(i.getPlayer()).isEditMode()).executes(EditModeCommands::executePing)));
+									.then(literal("ping").executes(EditModeCommands::executePing)
+												  .then(literal("clear").executes(EditModeCommands::executePingClear)))
+									.then(literal("name").then(argument("key", string()).then(argument("name", string()).executes(EditModeCommands::rename))))
+									.then(literal("area").then(argument("key", string()).executes(EditModeCommands::editArea))));
 	}
 	
 	private static int executeToggleEditMode(CommandContext<ServerCommandSource> context)
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
-		IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(player);
-		winged.toggleEditMode();
-		boolean b = winged.isEditMode();
+		IEditorComponent editor = UltraComponents.EDITOR.get(player);
+		editor.toggleEditMode();
+		editor.sync();
+		boolean b = editor.isActive();
 		context.getSource().sendFeedback(() -> Text.of(player.getName() + (b ? " has entered edit mode" : " has left edit mode")), true);
 		return Command.SINGLE_SUCCESS;
 	}
@@ -52,9 +59,9 @@ public class EditModeCommands
 			{
 				for (int z = -64; z < 64; z++)
 				{
-					if(world.getBlockState(center.add(x, y, z)).getBlock() instanceof LevelBlock level)
+					if(world.getBlockEntity(center.add(x, y, z)) instanceof LevelBlockEntity level)
 					{
-						context.getSource().sendMessage(Text.of("Level found: '" + level.getId() + "' at " + x + " " + y + " " + z));
+						context.getSource().sendMessage(Text.of("Level found: '" + level.getID() + "' at " + x + " " + y + " " + z));
 						levelBlocks.add(center.add(x, y, z));
 					}
 				}
@@ -66,7 +73,51 @@ public class EditModeCommands
 			buf.writeBlockPos(pos);
 		ServerPlayNetworking.send(player, PacketRegistry.EDIT_PING_PACKET_ID, buf);
 		if(levelBlocks.size() == 0)
-			context.getSource().sendMessage(Text.of("no levels :("));
+			context.getSource().sendMessage(Text.of("No Levels :("));
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int executePingClear(CommandContext<ServerCommandSource> context)
+	{
+		ServerPlayerEntity player = context.getSource().getPlayer();
+		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeInt(0);
+		ServerPlayNetworking.send(player, PacketRegistry.EDIT_PING_PACKET_ID, buf);
+		context.getSource().sendMessage(Text.of("Ping targets cleared"));
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int rename(CommandContext<ServerCommandSource> context)
+	{
+		ServerPlayerEntity player = context.getSource().getPlayer();
+		String key = context.getArgument("key", String.class);
+		String name = context.getArgument("name", String.class);
+		BlockPos pos = UltraComponents.EDITOR.get(player).getEditFocus(key);
+		if(pos != null && player.getWorld().getBlockEntity(pos) instanceof AbstractMappingBlockEntity e)
+		{
+			e.setID(name);
+			context.getSource().sendMessage(Text.of("Renamed successfully"));
+		}
+		else
+			context.getSource().sendMessage(Text.of("Nothing focused with key '" + key + "'"));
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int editArea(CommandContext<ServerCommandSource> context)
+	{
+		ServerPlayerEntity player = context.getSource().getPlayer();
+		String key = context.getArgument("key", String.class);
+		IEditorComponent editor = UltraComponents.EDITOR.get(player);
+		BlockPos pos = editor.getEditFocus(key);
+		if(pos != null && player.getWorld().getBlockEntity(pos) instanceof AbstractMappingBlockEntity e)
+		{
+			editor.setEditAreaStep(2);
+			editor.setEditAreaCore(pos);
+			editor.sync();
+			context.getSource().sendMessage(Text.of("Ready to change Area; Right Click 2 Blocks"));
+		}
+		else
+			context.getSource().sendMessage(Text.of("Nothing focused with key '" + key + "'"));
 		return Command.SINGLE_SUCCESS;
 	}
 }

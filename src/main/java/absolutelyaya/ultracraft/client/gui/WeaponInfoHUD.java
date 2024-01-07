@@ -81,5 +81,6 @@ public class WeaponInfoHUD
 			context.setShaderColor(0.156f, 0.874f, 0.325f, 1f);
 			context.drawTexture(TEXTURE, x, y + 21, 0, 24, Math.round(f * 91), 7, 128, 128);
 		}
+		context.setShaderColor(1f, 1f, 1f, 1f);
 	}
 }

@@ -9,7 +9,6 @@ import absolutelyaya.ultracraft.client.gui.EditModeHUD;
 import absolutelyaya.ultracraft.client.gui.WeaponInfoHUD;
 import absolutelyaya.ultracraft.client.gui.screen.EpilepsyPopupScreen;
 import absolutelyaya.ultracraft.client.gui.screen.ServerConfigScreen;
-import absolutelyaya.ultracraft.client.gui.screen.TravelScreen;
 import absolutelyaya.ultracraft.client.gui.terminal.PetTab;
 import absolutelyaya.ultracraft.client.rendering.EditModeRenderer;
 import absolutelyaya.ultracraft.client.rendering.TrailRenderer;
@@ -96,7 +95,7 @@ public class UltracraftClient implements ClientModInitializer
 	public static TrailRenderer TRAIL_RENDERER;
 	private static EditModeRenderer EDITMODE_RENDERER;
 	public static boolean REPLACE_MENU_MUSIC = true, APPLY_ENTITY_POSES, GRAFFITI_WHITELISTED = true, SODIUM = true, IRIS = false;
-	static boolean wasMovementSoundsEnabled, supporter = false, joinInfoPending, travelling, editMode;
+	static boolean wasMovementSoundsEnabled, supporter = false, joinInfoPending, travelling;
 	static float screenblood;
 	static Vector3f[] wingColors = new Vector3f[] { new Vector3f(247f, 255f, 154f), new Vector3f(117f, 154f, 255f) };
 	static final Vector3f[] defaultWingColors = new Vector3f[] { new Vector3f(247f, 255f, 154f), new Vector3f(117f, 154f, 255f) };
@@ -239,7 +238,6 @@ public class UltracraftClient implements ClientModInitializer
 			ClientPlayNetworking.send(PacketRegistry.ARM_VISIBLE_PACKET_ID, buf);
 			if(config.get().showEpilepsyWarning)
 				MinecraftClient.getInstance().setScreen(new EpilepsyPopupScreen(null));
-			editMode = false;
 		});
 		
 		ClientEntityEvents.ENTITY_LOAD.register((entity, clientWorld) -> {
@@ -676,15 +674,5 @@ public class UltracraftClient implements ClientModInitializer
 	public static void setTravelling(boolean travelling)
 	{
 		UltracraftClient.travelling = travelling;
-	}
-	
-	public static void setEditMode(boolean state)
-	{
-		editMode = state;
-	}
-	
-	public static boolean isEditMode()
-	{
-		return editMode;
 	}
 }
