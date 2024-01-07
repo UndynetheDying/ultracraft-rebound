@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.block.*;
 import absolutelyaya.ultracraft.block.CarpetBlock;
 import absolutelyaya.ultracraft.block.FlowerbedBlock;
 import absolutelyaya.ultracraft.block.SlabBlock;
+import absolutelyaya.ultracraft.block.mapping.LevelBlock;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
@@ -82,6 +83,8 @@ public class BlockRegistry
 			new FlowerbedBlock(AbstractBlock.Settings.copy(Blocks.OAK_LEAVES).mapColor(MapColor.DARK_GREEN)), true);
 	public static final Block PORTAL = register("portal",
 			new PortalBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.TERRACOTTA_PURPLE)), true);
+	
+	public static final Block LEVEL_BLOCK = register("map-level", new LevelBlock(AbstractBlock.Settings.copy(Blocks.BEDROCK)), true);
 	
 	@SuppressWarnings("SameParameterValue")
 	private static Block register(String name, Block block, boolean item, int burn, int spread)

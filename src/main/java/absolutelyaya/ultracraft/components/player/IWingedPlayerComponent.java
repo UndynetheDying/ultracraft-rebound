@@ -37,4 +37,10 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	boolean isJustPlayedBloodhealNoise();
 	
 	void setJustPlayedBloodhealNoise();
+	
+	void toggleEditMode();
+	
+	boolean isEditMode();
+	
+	void setEditMode(boolean state);
 }

@@ -3,6 +3,7 @@ package absolutelyaya.ultracraft;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.command.Commands;
+import absolutelyaya.ultracraft.command.EditModeCommands;
 import absolutelyaya.ultracraft.command.WhitelistCommand;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
 import absolutelyaya.ultracraft.config.HivelConfig;
@@ -96,6 +97,7 @@ public class Ultracraft implements ModInitializer
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             Commands.register(dispatcher);
             WhitelistCommand.register(dispatcher);
+            EditModeCommands.register(dispatcher);
         });
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             tickFreeze();

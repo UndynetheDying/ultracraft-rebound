@@ -5,16 +5,21 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
+import absolutelyaya.ultracraft.registry.PacketRegistry;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSyncedComponent
 {
 	PlayerEntity provider;
 	GunCooldownManager gunCDM;
-	boolean primaryFiring, justPlayedBloodhealNoise;
+	boolean primaryFiring, justPlayedBloodhealNoise, editMode;
 	byte wingState, lastState;
 	int bloodHealCooldown, sharpshooterCooldown, magnets;
 	AbstractWeaponItem lastPrimaryWeapon;
@@ -135,6 +140,38 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	public void setJustPlayedBloodhealNoise()
 	{
 		justPlayedBloodhealNoise = true;
+	}
+	
+	@Override
+	public void toggleEditMode()
+	{
+		setEditMode(!editMode);
+		
+		if(!provider.getWorld().isClient)
+		{
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			buf.writeBoolean(editMode);
+			ServerPlayNetworking.send((ServerPlayerEntity)provider, PacketRegistry.EDIT_STATE_PACKET_ID, buf);
+		}
+	}
+	
+	@Override
+	public boolean isEditMode()
+	{
+		return editMode;
+	}
+	
+	@Override
+	public void setEditMode(boolean editMode)
+	{
+		this.editMode = editMode;
+		
+		provider.noClip = provider.getAbilities().flying = editMode;
+		if(editMode)
+			provider.getAbilities().allowFlying = true;
+		else
+			provider.getAbilities().allowFlying = provider.isCreative() || provider.isSpectator();
+		provider.getAbilities().setFlySpeed(editMode ? 0.25f : 0.05f);
 	}
 	
 	@Override
