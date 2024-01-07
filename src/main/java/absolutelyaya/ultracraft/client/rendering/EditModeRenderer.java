@@ -43,7 +43,7 @@ public class EditModeRenderer
 			levelAlpha = 10f;
 		}
 		VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEffectVertexConsumers();
-		VertexConsumerProvider.Immediate immediate2 = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+		VertexConsumerProvider.Immediate textImmediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
 		VertexConsumer lines = immediate.getBuffer(RenderLayer.LINES);
 		TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 		RenderSystem.disableDepthTest();
@@ -58,32 +58,41 @@ public class EditModeRenderer
 			matrices.translate(targetPos.x, targetPos.y, targetPos.z);
 			matrices.translate(-camPos.x, -camPos.y, -camPos.z);
 			Vector4f col = new Vector4f(1f, 1f, 1f, MathHelper.clamp(levelAlpha, 0.2f, 1f));
-			if(pos.equals(editor.getEditFocus("level")))
+			if(pos.equals(editor.getEditFocus(blockEntity.getFocusKey())) || blockEntity.alwaysShowArea())
 			{
 				if(blockEntity.getMin(pos) != null && blockEntity.getMax(pos) != null)
 				{
 					Box box = new Box(blockEntity.getMin(pos), blockEntity.getMax(pos)).expand(0.5f);
 					WorldRenderer.drawBox(matrices, lines, box, 0.3f, 0.3f, 0.3f, 0.75f);
-					matrices.push();
-					Vector3f tPos = box.getCenter().toVector3f();
-					matrices.translate(tPos.x, tPos.y, tPos.z);
-					matrices.scale(-0.1f, -0.1f, 1f);
-					Text t = Text.of("Area");
-					textRenderer.draw(t, -textRenderer.getWidth(t) / 2f, 0f, 0xffffffff, false, matrices.peek().getPositionMatrix(), immediate2, TextRenderer.TextLayerType.NORMAL, 0x44000000, LightmapTextureManager.MAX_LIGHT_COORDINATE);
-					matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180f));
-					textRenderer.draw(t, -textRenderer.getWidth(t) / 2f, 0f, 0xffffffff, false, matrices.peek().getPositionMatrix(), immediate2, TextRenderer.TextLayerType.NORMAL, 0x44000000, LightmapTextureManager.MAX_LIGHT_COORDINATE);
-					matrices.pop();
+					drawFloatingText(textRenderer, matrices, textImmediate, box.getCenter().toVector3f().add(0f, 0.25f, 0f), 4f,
+							blockEntity.getAreaLabel(), 0xffffffff, cam);
 				}
 				col = new Vector4f(0f, 0.75f, 0f, 1f);
 			}
 			WorldRenderer.drawBox(matrices, lines, new Box(new BlockPos(0, 0, 0)).expand(-0.01).offset(-0.5, -0.5, -0.5),
 					col.x, col.y, col.z, col.w);
+			matrices.push();
+			matrices.translate(0f, 1f, 0f);
+			drawFloatingText(textRenderer, matrices, textImmediate, new Vector3f(), 1f, blockEntity.getAreaLabel(), 0xffffffff, cam);
+			matrices.pop();
 			matrices.pop();
 			drawLineToCam(lines, matrices, targetPos.toVector3f(), cam, col);
 		}
 		if(levelAlpha > 0f)
 			levelAlpha -= delta / 20;
 		RenderSystem.enableDepthTest();
+	}
+	
+	void drawFloatingText(TextRenderer renderer, MatrixStack matrices, VertexConsumerProvider.Immediate immediate, Vector3f tPos, float size, Text text,
+						  int col, Camera cam)
+	{
+		matrices.push();
+		matrices.translate(tPos.x, tPos.y, tPos.z);
+		matrices.multiply(cam.getRotation());
+		matrices.scale(-size / 50f, -size / 50f, size / 50f);
+		renderer.draw(text, -renderer.getWidth(text) / 2f, 0f, col, false, matrices.peek().getPositionMatrix(),
+				immediate, TextRenderer.TextLayerType.NORMAL, 0x44000000, LightmapTextureManager.MAX_LIGHT_COORDINATE);
+		matrices.pop();
 	}
 	
 	void drawLineToCam(VertexConsumer lines, MatrixStack matrices, Vector3f targetPos, Camera cam, Vector4f col)

@@ -33,7 +33,7 @@ public class LevelBlock extends AbstractMappingBlock
 		IEditorComponent editor = UltraComponents.EDITOR.get(player);
 		if(editor.isActive())
 		{
-			editor.setEditFocus("level", pos);
+			editor.setEditFocus("level", pos.equals(editor.getEditFocus("level")) ? null : pos);
 			return ActionResult.SUCCESS;
 		}
 		else

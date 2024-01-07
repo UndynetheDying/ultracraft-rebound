@@ -5,6 +5,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 
 public abstract class AbstractMappingBlockEntity extends BlockEntity
@@ -53,6 +54,18 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 			return null;
 		return max.subtract(pos);
 	}
+	
+	public Text getAreaLabel()
+	{
+		return Text.of(id);
+	}
+	
+	public boolean alwaysShowArea()
+	{
+		return false;
+	}
+	
+	public abstract String getFocusKey();
 	
 	@Override
 	protected void writeNbt(NbtCompound nbt)
