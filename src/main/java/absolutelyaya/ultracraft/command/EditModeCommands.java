@@ -10,6 +10,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -20,6 +21,7 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mojang.brigadier.arguments.BoolArgumentType.bool;
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -33,7 +35,11 @@ public class EditModeCommands
 									.then(literal("ping").executes(EditModeCommands::executePing)
 												  .then(literal("clear").executes(EditModeCommands::executePingClear)))
 									.then(literal("name").then(argument("key", string()).then(argument("name", string()).executes(EditModeCommands::rename))))
-									.then(literal("area").then(argument("key", string()).executes(EditModeCommands::editArea))));
+									.then(literal("area").then(argument("key", string()).executes(EditModeCommands::editArea)))
+									.then(literal("flag")
+												  .then(literal("add").then(argument("id", string()).executes(EditModeCommands::addFlag)))
+												  .then(literal("remove").then(argument("id", string()).executes(EditModeCommands::removeFlag)))
+												  .then(literal("set").then(argument("id", string()).then(argument("state", bool()).executes(EditModeCommands::setFlag))))));
 	}
 	
 	private static int executeToggleEditMode(CommandContext<ServerCommandSource> context)
@@ -118,6 +124,71 @@ public class EditModeCommands
 		}
 		else
 			context.getSource().sendMessage(Text.of("Nothing focused with key '" + key + "'"));
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static BlockPos getSelectedRoom(PlayerEntity player)
+	{
+		return UltraComponents.EDITOR.get(player).getEditFocus("room");
+	}
+	
+	private static int addFlag(CommandContext<ServerCommandSource> context)
+	{
+		PlayerEntity player = context.getSource().getPlayer();
+		BlockPos roomPos = getSelectedRoom(player);
+		if(roomPos == null)
+		{
+			context.getSource().sendMessage(Text.of("No Room Selected"));
+			return Command.SINGLE_SUCCESS;
+		}
+		String id = context.getArgument("id", String.class);
+		if(player.getWorld().getBlockEntity(roomPos) instanceof RoomBlockEntity room)
+		{
+			room.registerFlag(id);
+			context.getSource().sendMessage(Text.of("Flag '" + id + "' registered"));
+		}
+		else
+			context.getSource().sendMessage(Text.of("Error: focused room pos is not a room"));
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int removeFlag(CommandContext<ServerCommandSource> context)
+	{
+		PlayerEntity player = context.getSource().getPlayer();
+		BlockPos roomPos = getSelectedRoom(player);
+		if(roomPos == null)
+		{
+			context.getSource().sendMessage(Text.of("No Room Selected"));
+			return Command.SINGLE_SUCCESS;
+		}
+		String id = context.getArgument("id", String.class);
+		if(player.getWorld().getBlockEntity(roomPos) instanceof RoomBlockEntity room)
+			context.getSource().sendMessage(Text.of("Flag '" + id + "' " + (room.removeFlag(id) ? "removed" : "wasn't there to begin with")));
+		else
+			context.getSource().sendMessage(Text.of("Error: focused room pos is not a room"));
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int setFlag(CommandContext<ServerCommandSource> context)
+	{
+		PlayerEntity player = context.getSource().getPlayer();
+		BlockPos roomPos = getSelectedRoom(player);
+		if(roomPos == null)
+		{
+			context.getSource().sendMessage(Text.of("No Room Selected"));
+			return Command.SINGLE_SUCCESS;
+		}
+		String id = context.getArgument("id", String.class);
+		boolean state = context.getArgument("state", Boolean.class);
+		if(player.getWorld().getBlockEntity(roomPos) instanceof RoomBlockEntity room)
+		{
+			if(room.setFlag(id, state))
+				context.getSource().sendMessage(Text.of("Flag '" + id + "' set to " + state));
+			else
+				context.getSource().sendMessage(Text.of("Flag '" + id + "' doesn't exist"));
+		}
+		else
+			context.getSource().sendMessage(Text.of("Error: focused room pos is not a room"));
 		return Command.SINGLE_SUCCESS;
 	}
 }

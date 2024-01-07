@@ -14,6 +14,7 @@ import net.minecraft.util.math.BlockPos;
 public class EditModeHUD
 {
 	public static EditModeHUD Instance;
+	int maxWidth, maxHeight;
 	
 	public EditModeHUD()
 	{
@@ -29,16 +30,32 @@ public class EditModeHUD
 		MatrixStack matrices = context.getMatrices();
 		matrices.push();
 		TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
-		int width = context.getScaledWindowWidth();
-		int height = context.getScaledWindowHeight();
-		context.fill(width / 2 - 64, 0, width / 2 + 64, 64, 0x88000000);
-		context.drawCenteredTextWithShadow(renderer, Text.of("Edit Mode Active"), width / 2, 2, 0xffff00);
+		context.fill(0, 0, maxWidth, maxHeight, 0x88000000);
+		Text header = Text.of("Edit Mode Active");
+		context.drawTextWithShadow(renderer, header, 2, 2, 0xffff00);
+		maxWidth = renderer.getWidth(header) + 4;
+		maxHeight = renderer.fontHeight + 4;
 		BlockPos p;
-		if((p = editor.getEditFocus("room")) != null && player.getWorld().getBlockEntity(p) instanceof RoomBlockEntity level)
+		if((p = editor.getEditFocus("room")) != null && player.getWorld().getBlockEntity(p) instanceof RoomBlockEntity room)
 		{
-			matrices.translate(0, renderer.fontHeight + 2, 0);
-			context.drawCenteredTextWithShadow(renderer, Text.of("Room: " + level.getID()), width / 2, 2, 0xffff00);
+			addLine(renderer, context, matrices, Text.of("Room: " + room.getID()), 0, 0xff8800);
+			addLine(renderer, context, matrices, Text.of("Children:"), 0, 0xffff00);
+			for (int i = 0; i < 4; i++)
+				addLine(renderer, context, matrices, Text.of("Child-" + i), 1, 0xffffff);
+			addLine(renderer, context, matrices, Text.of("Flags:"), 0, 0xffff00);
+			for (String id : room.getFlags())
+				addLine(renderer, context, matrices, Text.of(id), 1, room.checkFlag(id) ? 0x00cc00 : 0x880000);
 		}
+		else
+			addLine(renderer, context, matrices, Text.of("No Room Selected"), 0, 0x888888);
 		matrices.pop();
+	}
+	
+	void addLine(TextRenderer renderer, DrawContext context, MatrixStack matrices, Text text, int indent, int color)
+	{
+		matrices.translate(0, renderer.fontHeight + 2, 0);
+		context.drawTextWithShadow(renderer, text, 2 + indent * 5, 2, color);
+		maxHeight += renderer.fontHeight + 2;
+		maxWidth = Math.max(maxWidth, renderer.getWidth(text) + 5 * (indent + 1));
 	}
 }

@@ -70,6 +70,8 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 	
 	public abstract Vector4f getColor();
 	
+	public abstract boolean showCamLine();
+	
 	@Override
 	protected void writeNbt(NbtCompound nbt)
 	{
@@ -93,6 +95,4 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 		if(nbt.contains("name", NbtElement.STRING_TYPE))
 			id = nbt.getString("name");
 	}
-	
-	public abstract boolean showCamLine();
 }
