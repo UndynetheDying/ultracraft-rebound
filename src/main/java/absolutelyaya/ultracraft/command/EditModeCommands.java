@@ -73,6 +73,7 @@ public class EditModeCommands
 				}
 			}
 		}
+		//TODO: scan for Blocks without valid parent and mark them red
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeInt(levelBlocks.size());
 		for (BlockPos pos : levelBlocks)

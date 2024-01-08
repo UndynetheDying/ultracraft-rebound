@@ -2,12 +2,14 @@ package absolutelyaya.ultracraft.client.rendering;
 
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.block.mapping.AbstractMappingBlockEntity;
+import absolutelyaya.ultracraft.block.mapping.RoomBlockEntity;
 import absolutelyaya.ultracraft.components.player.IEditorComponent;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.*;
 import org.joml.Matrix3f;
@@ -24,7 +26,7 @@ public class EditModeRenderer
 	
 	public List<BlockPos> newRoomBlocks;
 	private List<BlockPos> roomBlocks = new ArrayList<>();
-	float pingTime;
+	float pingTime, pulseTime;
 	
 	public EditModeRenderer()
 	{
@@ -33,9 +35,12 @@ public class EditModeRenderer
 	
 	public void render(MatrixStack matrices, Camera cam, float delta)
 	{
-		IEditorComponent editor = UltraComponents.EDITOR.get(MinecraftClient.getInstance().player);
+		PlayerEntity player = MinecraftClient.getInstance().player;
+		IEditorComponent editor = UltraComponents.EDITOR.get(player);
 		if(!editor.isActive())
 			return;
+		pulseTime = (pulseTime + delta / 10f) % 4f;
+		float pulse = Math.max((float)Math.sin(pulseTime), 0f);
 		if(newRoomBlocks != null)
 		{
 			roomBlocks = newRoomBlocks;
@@ -48,11 +53,16 @@ public class EditModeRenderer
 		TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 		RenderSystem.disableDepthTest();
 		
-		for (BlockPos pos : roomBlocks)
+		List<BlockPos> blocks = new ArrayList<>(roomBlocks);
+		BlockPos focusRoom = editor.getEditFocus("room");
+		if(focusRoom != null && (player.getWorld().getBlockEntity(focusRoom) instanceof RoomBlockEntity room))
+			blocks.addAll(room.getChildren());
+		
+		for (BlockPos pos : blocks)
 		{
 			Vec3d camPos = cam.getPos();
 			Vec3d targetPos = pos.toCenterPos();
-			if(!(MinecraftClient.getInstance().player.getWorld().getBlockEntity(pos) instanceof AbstractMappingBlockEntity blockEntity))
+			if(!(player.getWorld().getBlockEntity(pos) instanceof AbstractMappingBlockEntity blockEntity))
 				continue;
 			matrices.push();
 			matrices.translate(targetPos.x, targetPos.y, targetPos.z);
@@ -60,17 +70,20 @@ public class EditModeRenderer
 			Vector4f col = new Vector4f(blockEntity.getColor());
 			if(pingTime > col.w)
 				col.set(Math.min(pingTime, 1f));
-			if(pos.equals(editor.getEditFocus(blockEntity.getFocusKey())) || blockEntity.alwaysShowArea())
+			boolean focused = pos.equals(editor.getEditFocus(blockEntity.getFocusKey()));
+			if(focused || blockEntity.alwaysShowArea())
 			{
 				if(blockEntity.getMin(pos) != null && blockEntity.getMax(pos) != null)
 				{
 					Box box = new Box(blockEntity.getMin(pos), blockEntity.getMax(pos)).expand(0.5f);
-					WorldRenderer.drawBox(matrices, lines, box, 0.3f, 0.3f, 0.3f, 0.75f);
-					drawFloatingText(textRenderer, matrices, textImmediate, box.getCenter().toVector3f().add(0f, 0.25f, 0f), 4f,
+					Vector4f areaColor = blockEntity.getAreaColor();
+					WorldRenderer.drawBox(matrices, lines, box, areaColor.x, areaColor.y, areaColor.z, areaColor.w);
+					drawFloatingText(textRenderer, matrices, textImmediate, box.getCenter().toVector3f().add(0f, 0.25f, 0f), blockEntity.getAreaLabelSize(),
 							blockEntity.getAreaLabel(), 0xffffffff, cam);
 				}
-				col = new Vector4f(0f, 0.75f, 0f, 1f);
 			}
+			if(focused)
+				col = col.lerp(new Vector4f(0f, 1f, 0f, 1f), pulse);
 			WorldRenderer.drawBox(matrices, lines, new Box(new BlockPos(0, 0, 0)).expand(-0.01).offset(-0.5, -0.5, -0.5),
 					col.x, col.y, col.z, col.w);
 			matrices.push();

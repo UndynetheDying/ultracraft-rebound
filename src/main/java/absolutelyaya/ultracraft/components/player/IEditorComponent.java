@@ -6,6 +6,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public interface IEditorComponent extends ComponentV3, AutoSyncedComponent
 {
 	void toggleEditMode();
@@ -18,6 +21,12 @@ public interface IEditorComponent extends ComponentV3, AutoSyncedComponent
 	
 	BlockPos getEditFocus(String key);
 	
+	HashMap<String, BlockPos> getEditFocus();
+	
+	void clearEditFocus();
+	
+	void clearEditFocus(String key);
+	
 	void setEditAreaStep(int i);
 	
 	void setEditAreaCore(BlockPos pos);
@@ -26,5 +35,8 @@ public interface IEditorComponent extends ComponentV3, AutoSyncedComponent
 	
 	ActionResult useBlock(PlayerEntity player, BlockPos pos);
 	
+	void setRebindingParent(BlockPos pos);
+	
 	void sync();
+	
 }

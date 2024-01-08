@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.components.player;
 
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.block.mapping.AbstractMappingBlockEntity;
+import absolutelyaya.ultracraft.block.mapping.RoomBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -10,13 +11,12 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class EditorComponent implements IEditorComponent
 {
 	PlayerEntity provider;
-	Map<String, BlockPos> focus = new HashMap<>();
-	BlockPos editAreaCore;
+	HashMap<String, BlockPos> focus = new HashMap<>();
+	BlockPos editAreaCore, rebindingParent;
 	int editAreaStep;
 	boolean active;
 	
@@ -64,6 +64,24 @@ public class EditorComponent implements IEditorComponent
 	}
 	
 	@Override
+	public HashMap<String, BlockPos> getEditFocus()
+	{
+		return focus;
+	}
+	
+	@Override
+	public void clearEditFocus()
+	{
+		focus = new HashMap<>();
+	}
+	
+	@Override
+	public void clearEditFocus(String key)
+	{
+		focus.remove(key);
+	}
+	
+	@Override
 	public void setEditAreaStep(int i)
 	{
 		editAreaStep = i;
@@ -86,7 +104,7 @@ public class EditorComponent implements IEditorComponent
 	{
 		if(player.getWorld().isClient)
 			return ActionResult.PASS;
-		if(editAreaStep > 0 && editAreaCore != null && provider.getWorld().getBlockEntity(editAreaCore) instanceof AbstractMappingBlockEntity e)
+		if(editAreaStep > 0 && editAreaCore != null && player.getWorld().getBlockEntity(editAreaCore) instanceof AbstractMappingBlockEntity e)
 		{
 			e.setAreaCorner(editAreaStep, pos);
 			setEditAreaStep(editAreaStep - 1);
@@ -99,7 +117,27 @@ public class EditorComponent implements IEditorComponent
 		}
 		else if(editAreaStep > 0)
 			editAreaCore = null;
+		if(rebindingParent != null)
+		{
+			if(player.getWorld().getBlockEntity(pos) instanceof RoomBlockEntity room &&
+					   player.getWorld().getBlockEntity(rebindingParent) instanceof AbstractMappingBlockEntity block)
+			{
+				room.registerChild(pos, block);
+				block.setParent(pos);
+				player.sendMessage(Text.of("Block was bound to this Room successfully"));
+			}
+			else
+				player.sendMessage(Text.of("Not a valid parent. Parent rebinding cancelled"));
+			rebindingParent = null;
+			return ActionResult.SUCCESS;
+		}
 		return ActionResult.PASS;
+	}
+	
+	@Override
+	public void setRebindingParent(BlockPos pos)
+	{
+		rebindingParent = pos;
 	}
 	
 	@Override

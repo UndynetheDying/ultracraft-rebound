@@ -2,25 +2,24 @@ package absolutelyaya.ultracraft.block.mapping;
 
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtLong;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.World;
 import org.joml.Vector4f;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class RoomBlockEntity extends AbstractMappingBlockEntity
 {
 	static int i = 0;
 	Map<BlockPos, AbstractMappingBlockEntity> children = new HashMap<>();
 	Map<String, Boolean> flags = new HashMap<>();
+	boolean childCheckPending;
 	
 	public RoomBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -29,17 +28,20 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 		i++;
 	}
 	
-	@Nullable
-	@Override
-	public Packet<ClientPlayPacketListener> toUpdatePacket()
+	public static <T extends BlockEntity> void tick(World world, BlockPos blockPos, BlockState state, T instance)
 	{
-		return BlockEntityUpdateS2CPacket.create(this);
-	}
-	
-	@Override
-	public NbtCompound toInitialChunkDataNbt()
-	{
-		return createNbt();
+		if(instance instanceof RoomBlockEntity room && room.childCheckPending)
+		{
+			for (BlockPos pos : room.getChildren())
+			{
+				if(world.getBlockEntity(pos) instanceof AbstractMappingBlockEntity block && !(block instanceof RoomBlockEntity))
+					room.registerChild(pos.subtract(room.getPos()), block);
+				else
+					room.removeChild(pos.subtract(room.getPos()));
+			}
+			room.childCheckPending = false;
+			System.out.println("child check finished");
+		}
 	}
 	
 	@Override
@@ -68,7 +70,25 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	
 	public void registerChild(BlockPos pos, AbstractMappingBlockEntity blockEntity)
 	{
-		children.put(pos, blockEntity);
+		children.put(pos.subtract(getPos()), blockEntity);
+		System.out.println("register " + pos + " " + blockEntity);
+		markDirty();
+		world.updateListeners(pos, getCachedState(), getCachedState(), 0);
+	}
+	
+	private void removeChild(BlockPos pos)
+	{
+		children.remove(pos);
+		System.out.println("remove " + pos);
+		markDirty();
+		world.updateListeners(pos, getCachedState(), getCachedState(), 0);
+	}
+	
+	public List<BlockPos> getChildren()
+	{
+		List<BlockPos> out = new ArrayList<>();
+		children.forEach((c, b) -> out.add(c.add(getPos())));
+		return out;
 	}
 	
 	public void registerFlag(String id)
@@ -120,6 +140,22 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 			for (String key : flags.getKeys())
 				this.flags.put(key, flags.getBoolean(key));
 		}
+		if(nbt.contains("children", NbtElement.LIST_TYPE))
+		{
+			this.children = new HashMap<>();
+			NbtList list = nbt.getList("children", NbtElement.LONG_TYPE);
+			for (NbtElement i : list)
+			{
+				if(i instanceof NbtLong l)
+				{
+					BlockPos pos = BlockPos.fromLong(l.longValue());
+					if(pos != null)
+						children.put(pos, null);
+				}
+			}
+			if(list.size() > 0)
+				childCheckPending = true;
+		}
 	}
 	
 	@Override
@@ -130,5 +166,9 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 		for (String id : getFlags())
 			flags.putBoolean(id, checkFlag(id));
 		nbt.put("flags", flags);
+		NbtList children = new NbtList();
+		for (BlockPos pos : this.children.keySet())
+			children.add(NbtLong.of(pos.asLong()));
+		nbt.put("children", children);
 	}
 }
