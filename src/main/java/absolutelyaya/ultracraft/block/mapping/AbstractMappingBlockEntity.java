@@ -107,12 +107,17 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 	
 	public BlockPos getParent()
 	{
-		return parent;
+		if(parent == null)
+			return null;
+		return parent.add(getPos());
 	}
 	
 	public void setParent(BlockPos pos)
 	{
-		parent = pos;
+		if(pos == null)
+			parent = null;
+		else
+			parent = pos.subtract(getPos());
 	}
 	
 	@Override

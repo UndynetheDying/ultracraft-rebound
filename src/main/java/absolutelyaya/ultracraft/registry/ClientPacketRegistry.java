@@ -363,15 +363,22 @@ public class ClientPacketRegistry
 			});
 		})));
 		ClientPlayNetworking.registerGlobalReceiver(EDIT_PING_PACKET_ID, (((client, handler, buf, responseSender) -> {
-			List<BlockPos> results = new ArrayList<>();
+			List<BlockPos> rooms = new ArrayList<>();
+			List<BlockPos> orphans = new ArrayList<>();
 			int size = buf.readInt();
 			for (int i = 0; i < size; i++)
-				results.add(buf.readBlockPos());
+				rooms.add(buf.readBlockPos());
+			size = buf.readInt();
+			for (int i = 0; i < size; i++)
+				orphans.add(buf.readBlockPos());
+			
+			
 			BlockPos focus = UltraComponents.EDITOR.get(client.player).getEditFocus("room");
-			if(focus != null && !results.contains(focus))
-				results.add(focus);
+			if(focus != null && !rooms.contains(focus))
+				rooms.add(focus);
 			client.execute(() -> {
-				EditModeRenderer.Instance.newRoomBlocks = results;
+				EditModeRenderer.Instance.newRoomBlocks = rooms;
+				EditModeRenderer.Instance.newOrphans = orphans;
 			});
 		})));
 	}

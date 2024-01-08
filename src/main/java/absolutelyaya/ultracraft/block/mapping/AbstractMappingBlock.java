@@ -3,9 +3,6 @@ package absolutelyaya.ultracraft.block.mapping;
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IEditorComponent;
 import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -73,24 +70,47 @@ public abstract class AbstractMappingBlock extends BlockWithEntity
 			return ActionResult.PASS;
 		if(editor.getEditAreaStep() > 0 && !world.isClient)
 			return ActionResult.SUCCESS;
-		AbstractMappingBlockEntity block = null;
+		AbstractMappingBlockEntity entity = null;
 		if(world.getBlockEntity(pos) instanceof AbstractMappingBlockEntity b)
-			block = b;
+			entity = b;
 		String key = mappingBlock.getFocusKey();
 		BlockPos previous = editor.getEditFocus(key);
 		if(!key.equals("room"))
 		{
-			if((block.getParent() == null || !(world.getBlockEntity(block.getParent()) instanceof AbstractMappingBlockEntity)))
+			if((entity.getParent() == null || !(world.getBlockEntity(entity.getParent()) instanceof AbstractMappingBlockEntity)))
 			{
 				editor.setRebindingParent(pos);
-				player.sendMessage(Text.of("Invalid Parent; Right Click a Room Block to reparent."));
+				if(!world.isClient)
+					player.sendMessage(Text.of("Invalid Parent; Right Click a Room Block to reparent."));
 				return ActionResult.SUCCESS;
 			}
-			if(!key.equals("room") && !block.getParent().equals(editor.getEditFocus("room")))
+			BlockPos focusedRoom = editor.getEditFocus("room");
+			if(focusedRoom != null && !entity.getParent().equals(focusedRoom))
 			{
-				player.sendMessage(Text.of("This belongs to a different Room"));
+				if(!world.isClient)
+					player.sendMessage(Text.of("This belongs to a different Room"));
 				return ActionResult.SUCCESS;
 			}
+		}
+		BlockPos rebind = editor.getRebindingParent();
+		if(rebind != null)
+		{
+			if(entity instanceof RoomBlockEntity room)
+			{
+				if(world.getBlockEntity(rebind) instanceof AbstractMappingBlockEntity rebindTarget)
+				{
+					rebindTarget.setParent(pos);
+					room.registerChild(rebind, rebindTarget);
+					if(!world.isClient)
+						player.sendMessage(Text.of("Rebound Child Block to '" + entity.getID() + "'"));
+				}
+				else if(!world.isClient)
+					player.sendMessage(Text.of("The Rebind Target is no longer valid; Rebinding cancelled"));
+			}
+			else if(!world.isClient)
+				player.sendMessage(Text.of("This Block cannot have child Blocks; Rebinding cancelled"));
+			editor.setRebindingParent(null);
+			return ActionResult.SUCCESS;
 		}
 		if(previous != null && previous.equals(pos))
 		{
@@ -99,6 +119,8 @@ public abstract class AbstractMappingBlock extends BlockWithEntity
 		}
 		if(editor.isActive())
 		{
+			if(key.equals("room"))
+				editor.clearEditFocus();
 			editor.setEditFocus(key, pos.equals(editor.getEditFocus(key)) ? null : pos);
 			return ActionResult.SUCCESS;
 		}

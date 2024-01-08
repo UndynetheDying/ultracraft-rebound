@@ -35,7 +35,7 @@ public class TriggerBlockEntity extends AbstractMappingBlockEntity implements Fl
 			if(b && trigger.active < trigger.activateDelay * 2)
 				trigger.active++;
 			
-			if(trigger.flag != null && trigger.parent != null && world.getBlockEntity(trigger.parent) instanceof RoomBlockEntity room)
+			if(trigger.flag != null && trigger.getParent() != null && world.getBlockEntity(trigger.getParent()) instanceof RoomBlockEntity room)
 			{
 				if(trigger.isActive() && !wasActive)
 					room.setFlag(trigger.flag, true);

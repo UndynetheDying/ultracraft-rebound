@@ -37,6 +37,7 @@ public interface IEditorComponent extends ComponentV3, AutoSyncedComponent
 	
 	void setRebindingParent(BlockPos pos);
 	
-	void sync();
+	BlockPos getRebindingParent();
 	
+	void sync();
 }

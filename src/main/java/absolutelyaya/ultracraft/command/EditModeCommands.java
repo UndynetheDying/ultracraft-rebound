@@ -11,6 +11,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.command.ServerCommandSource;
@@ -41,7 +42,8 @@ public class EditModeCommands
 												  .then(literal("add").then(argument("id", string()).executes(EditModeCommands::addFlag)))
 												  .then(literal("remove").then(argument("id", string()).executes(EditModeCommands::removeFlag)))
 												  .then(literal("set").then(argument("id", string()).then(argument("state", bool()).executes(EditModeCommands::setFlag))))
-												  .then(literal("bind").then(argument("key", string()).then(argument("flag", string()).executes(EditModeCommands::bindFlag))))));
+												  .then(literal("bind").then(argument("key", string()).then(argument("flag", string()).executes(EditModeCommands::bindFlag)))))
+									.then(literal("reparent").then(argument("key", string()).executes(EditModeCommands::rebindParent))));
 	}
 	
 	private static int executeToggleEditMode(CommandContext<ServerCommandSource> context)
@@ -58,7 +60,8 @@ public class EditModeCommands
 	private static int executePing(CommandContext<ServerCommandSource> context)
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
-		List<BlockPos> levelBlocks = new ArrayList<>();
+		List<BlockPos> roomBlocks = new ArrayList<>();
+		List<BlockPos> orphans = new ArrayList<>();
 		BlockPos center = player.getBlockPos();
 		World world = player.getWorld();
 		for (int x = -64; x < 64; x++)
@@ -67,22 +70,37 @@ public class EditModeCommands
 			{
 				for (int z = -64; z < 64; z++)
 				{
-					if(world.getBlockEntity(center.add(x, y, z)) instanceof RoomBlockEntity level)
+					BlockPos pos = center.add(x, y, z);
+					BlockEntity blockEntity = world.getBlockEntity(pos);
+					if(blockEntity instanceof RoomBlockEntity room)
 					{
-						context.getSource().sendMessage(Text.of("Room found: '" + level.getID() + "' at " + x + " " + y + " " + z));
-						levelBlocks.add(center.add(x, y, z));
+						context.getSource().sendMessage(Text.of("Room found: '" + room.getID() + "' at " + x + " " + y + " " + z));
+						roomBlocks.add(pos);
+					}
+					else if(blockEntity instanceof AbstractMappingBlockEntity block)
+					{
+						if(block.getParent() == null || !(world.getBlockEntity(block.getParent()) instanceof RoomBlockEntity))
+						{
+							context.getSource().sendMessage(Text.of("Orphan " + block.getFocusKey() + " found: '" +
+																			block.getID() + "' at " + x + " " + y + " " + z));
+							orphans.add(pos);
+						}
 					}
 				}
 			}
 		}
-		//TODO: scan for Blocks without valid parent and mark them red
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-		buf.writeInt(levelBlocks.size());
-		for (BlockPos pos : levelBlocks)
+		buf.writeInt(roomBlocks.size());
+		for (BlockPos pos : roomBlocks)
+			buf.writeBlockPos(pos);
+		buf.writeInt(orphans.size());
+		for (BlockPos pos : orphans)
 			buf.writeBlockPos(pos);
 		ServerPlayNetworking.send(player, PacketRegistry.EDIT_PING_PACKET_ID, buf);
-		if(levelBlocks.size() == 0)
+		if(roomBlocks.size() == 0)
 			context.getSource().sendMessage(Text.of("No Rooms :("));
+		if(orphans.size() > 0)
+			context.getSource().sendMessage(Text.of(orphans.size() + " Orphans found."));
 		return Command.SINGLE_SUCCESS;
 	}
 	
@@ -91,8 +109,9 @@ public class EditModeCommands
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeInt(0);
+		buf.writeInt(0);
 		ServerPlayNetworking.send(player, PacketRegistry.EDIT_PING_PACKET_ID, buf);
-		context.getSource().sendMessage(Text.of("Ping results cleared"));
+		context.getSource().sendMessage(Text.of("Ping Results cleared"));
 		return Command.SINGLE_SUCCESS;
 	}
 	
@@ -209,6 +228,30 @@ public class EditModeCommands
 		else
 			context.getSource().sendMessage(Text.of("Nothing focused with key '" + key + "'"));
 		
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int rebindParent(CommandContext<ServerCommandSource> context)
+	{
+		ServerPlayerEntity player = context.getSource().getPlayer();
+		String key = context.getArgument("key", String.class);
+		if(key.equals("room"))
+		{
+			context.getSource().sendMessage(Text.of("Rooms don't have Parents."));
+			return Command.SINGLE_SUCCESS;
+		}
+		BlockPos pos = UltraComponents.EDITOR.get(player).getEditFocus(key);
+		if(pos != null && player.getWorld().getBlockEntity(pos) instanceof AbstractMappingBlockEntity entity)
+		{
+			UltraComponents.EDITOR.get(player).setRebindingParent(pos);
+			BlockPos lastParent = entity.getParent();
+			entity.setParent(null);
+			if(player.getWorld().getBlockEntity(lastParent) instanceof RoomBlockEntity room)
+				room.removeChild(pos);
+			context.getSource().sendMessage(Text.of("Rebinding Parent of key '" + key + "'"));
+		}
+		else
+			context.getSource().sendMessage(Text.of("Nothing focused with key '" + key + "'"));
 		return Command.SINGLE_SUCCESS;
 	}
 }

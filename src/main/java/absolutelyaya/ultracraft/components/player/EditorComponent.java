@@ -117,20 +117,6 @@ public class EditorComponent implements IEditorComponent
 		}
 		else if(editAreaStep > 0)
 			editAreaCore = null;
-		if(rebindingParent != null)
-		{
-			if(player.getWorld().getBlockEntity(pos) instanceof RoomBlockEntity room &&
-					   player.getWorld().getBlockEntity(rebindingParent) instanceof AbstractMappingBlockEntity block)
-			{
-				room.registerChild(pos, block);
-				block.setParent(pos);
-				player.sendMessage(Text.of("Block was bound to this Room successfully"));
-			}
-			else
-				player.sendMessage(Text.of("Not a valid parent. Parent rebinding cancelled"));
-			rebindingParent = null;
-			return ActionResult.SUCCESS;
-		}
 		return ActionResult.PASS;
 	}
 	
@@ -138,6 +124,12 @@ public class EditorComponent implements IEditorComponent
 	public void setRebindingParent(BlockPos pos)
 	{
 		rebindingParent = pos;
+	}
+	
+	@Override
+	public BlockPos getRebindingParent()
+	{
+		return rebindingParent;
 	}
 	
 	@Override

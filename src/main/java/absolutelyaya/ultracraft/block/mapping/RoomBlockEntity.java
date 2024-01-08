@@ -72,13 +72,15 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 		children.put(pos.subtract(getPos()), blockEntity);
 		markDirty();
 		world.updateListeners(pos, getCachedState(), getCachedState(), 0);
+		setID(id);
 	}
 	
-	private void removeChild(BlockPos pos)
+	public void removeChild(BlockPos pos)
 	{
-		children.remove(pos);
+		children.remove(pos.subtract(getPos()));
 		markDirty();
 		world.updateListeners(pos, getCachedState(), getCachedState(), 0);
+		setID(id);
 	}
 	
 	public List<BlockPos> getChildren()

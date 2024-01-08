@@ -24,8 +24,8 @@ public class EditModeRenderer
 {
 	public static EditModeRenderer Instance;
 	
-	public List<BlockPos> newRoomBlocks;
-	private List<BlockPos> roomBlocks = new ArrayList<>();
+	public List<BlockPos> newRoomBlocks, newOrphans, resolvedOrphans = new ArrayList<>();
+	private List<BlockPos> roomBlocks = new ArrayList<>(), orphans = new ArrayList<>();
 	float pingTime, pulseTime;
 	
 	public EditModeRenderer()
@@ -47,6 +47,18 @@ public class EditModeRenderer
 			newRoomBlocks = null;
 			pingTime = 10f;
 		}
+		if(newOrphans != null)
+		{
+			orphans = newOrphans;
+			newOrphans = null;
+			pingTime = 10f;
+		}
+		if(resolvedOrphans.size() > 0)
+		{
+			orphans.removeAll(resolvedOrphans);
+			resolvedOrphans.clear();
+			pingTime = 1f;
+		}
 		VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEffectVertexConsumers();
 		VertexConsumerProvider.Immediate textImmediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
 		VertexConsumer lines = immediate.getBuffer(RenderLayer.LINES);
@@ -58,9 +70,9 @@ public class EditModeRenderer
 		if(focusRoom != null && (player.getWorld().getBlockEntity(focusRoom) instanceof RoomBlockEntity room))
 			blocks.addAll(room.getChildren());
 		
+		Vec3d camPos = cam.getPos();
 		for (BlockPos pos : blocks)
 		{
-			Vec3d camPos = cam.getPos();
 			Vec3d targetPos = pos.toCenterPos();
 			if(!(player.getWorld().getBlockEntity(pos) instanceof AbstractMappingBlockEntity blockEntity))
 				continue;
@@ -94,8 +106,35 @@ public class EditModeRenderer
 			if(blockEntity.showCamLine())
 				drawLineToCam(lines, matrices, targetPos.toVector3f(), cam, col);
 		}
+		
+		for (BlockPos pos : orphans)
+		{
+			Vec3d targetPos = pos.toCenterPos();
+			if(!(player.getWorld().getBlockEntity(pos) instanceof AbstractMappingBlockEntity blockEntity))
+				continue;
+			if(blockEntity.getParent() != null && player.getWorld().getBlockEntity(blockEntity.getParent()) instanceof RoomBlockEntity)
+			{
+				resolvedOrphans.add(pos);
+				continue;
+			}
+			matrices.push();
+			matrices.translate(targetPos.x, targetPos.y, targetPos.z);
+			matrices.translate(-camPos.x, -camPos.y, -camPos.z);
+			float alpha = Math.max(Math.min(pingTime, 1f), 0.5f);
+			Vector4f col = new Vector4f(0.2f, 0f, 0f, alpha);
+			col = col.lerp(new Vector4f(1f, 0f, 0f, alpha), (float)Math.sin(pulseTime) * 0.5f + 0.5f);
+			WorldRenderer.drawBox(matrices, lines, new Box(new BlockPos(0, 0, 0)).expand(-0.01).offset(-0.5, -0.5, -0.5),
+					col.x, col.y, col.z, col.w);
+			matrices.push();
+			matrices.translate(0f, 1f, 0f);
+			drawFloatingText(textRenderer, matrices, textImmediate, new Vector3f(), 1f, blockEntity.getAreaLabel(), 0xffffffff, cam);
+			matrices.pop();
+			matrices.pop();
+			drawLineToCam(lines, matrices, targetPos.toVector3f(), cam, col);
+		}
+		
 		if(pingTime > 0f)
-			pingTime -= delta / 20;
+			pingTime -= delta / 20f;
 		RenderSystem.enableDepthTest();
 	}
 	
