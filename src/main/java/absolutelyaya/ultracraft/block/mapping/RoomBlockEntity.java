@@ -40,7 +40,6 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 					room.removeChild(pos.subtract(room.getPos()));
 			}
 			room.childCheckPending = false;
-			System.out.println("child check finished");
 		}
 	}
 	
@@ -71,7 +70,6 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	public void registerChild(BlockPos pos, AbstractMappingBlockEntity blockEntity)
 	{
 		children.put(pos.subtract(getPos()), blockEntity);
-		System.out.println("register " + pos + " " + blockEntity);
 		markDirty();
 		world.updateListeners(pos, getCachedState(), getCachedState(), 0);
 	}
@@ -79,7 +77,6 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	private void removeChild(BlockPos pos)
 	{
 		children.remove(pos);
-		System.out.println("remove " + pos);
 		markDirty();
 		world.updateListeners(pos, getCachedState(), getCachedState(), 0);
 	}
@@ -124,6 +121,16 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 		if(!flags.containsKey(id))
 			return false;
 		flags.put(id, state);
+		for (BlockPos pos : children.keySet())
+		{
+			if(children.get(pos) instanceof FlagListener listener)
+			{
+				if(state)
+					listener.onActivateFlag();
+				else
+					listener.onDeactivateFlag();
+			}
+		}
 		markDirty();
 		world.updateListeners(pos, getCachedState(), getCachedState(), 0);
 		return true;

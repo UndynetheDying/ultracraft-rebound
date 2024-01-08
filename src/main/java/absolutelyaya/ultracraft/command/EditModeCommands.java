@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.command;
 
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.block.mapping.AbstractMappingBlockEntity;
+import absolutelyaya.ultracraft.block.mapping.FlagBindable;
 import absolutelyaya.ultracraft.block.mapping.RoomBlockEntity;
 import absolutelyaya.ultracraft.components.player.IEditorComponent;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
@@ -39,7 +40,8 @@ public class EditModeCommands
 									.then(literal("flag")
 												  .then(literal("add").then(argument("id", string()).executes(EditModeCommands::addFlag)))
 												  .then(literal("remove").then(argument("id", string()).executes(EditModeCommands::removeFlag)))
-												  .then(literal("set").then(argument("id", string()).then(argument("state", bool()).executes(EditModeCommands::setFlag))))));
+												  .then(literal("set").then(argument("id", string()).then(argument("state", bool()).executes(EditModeCommands::setFlag))))
+												  .then(literal("bind").then(argument("key", string()).then(argument("flag", string()).executes(EditModeCommands::bindFlag))))));
 	}
 	
 	private static int executeToggleEditMode(CommandContext<ServerCommandSource> context)
@@ -190,6 +192,23 @@ public class EditModeCommands
 		}
 		else
 			context.getSource().sendMessage(Text.of("Error: focused room pos is not a room"));
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int bindFlag(CommandContext<ServerCommandSource> context)
+	{
+		ServerPlayerEntity player = context.getSource().getPlayer();
+		String key = context.getArgument("key", String.class);
+		String flag = context.getArgument("flag", String.class);
+		BlockPos pos = UltraComponents.EDITOR.get(player).getEditFocus(key);
+		if(pos != null && player.getWorld().getBlockEntity(pos) instanceof FlagBindable e)
+		{
+			e.bindFlag(flag);
+			context.getSource().sendMessage(Text.of("Bound Flag '" + flag + "' to focused key '" + key + "'"));
+		}
+		else
+			context.getSource().sendMessage(Text.of("Nothing focused with key '" + key + "'"));
+		
 		return Command.SINGLE_SUCCESS;
 	}
 }
