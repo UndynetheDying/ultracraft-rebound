@@ -22,8 +22,8 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 	public AbstractMappingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state)
 	{
 		super(type, pos, state);
-		min = pos;
-		max = pos;
+		min = new BlockPos(0, 0, 0);
+		max = new BlockPos(0, 0, 0);
 	}
 	
 	@Nullable
@@ -53,30 +53,41 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 	
 	public void setAreaCorner(int editAreaStep, BlockPos pos)
 	{
+		System.out.println(pos.subtract(getPos()));
 		if(editAreaStep == 2)
-			max = pos;
+			max = pos.subtract(getPos());
 		else if(editAreaStep == 1)
-			min = pos;
+			min = pos.subtract(getPos());
 		setID(id); //for some reason the blocks data woN'T SYNC ANY OTHER WAY RAAAA
 	}
 	
-	public BlockPos getMin(BlockPos pos)
+	public void setMin(BlockPos pos)
+	{
+		min = pos.subtract(getPos());
+	}
+	
+	public void setMax(BlockPos pos)
+	{
+		max = pos.subtract(getPos());
+	}
+	
+	public BlockPos getMin()
 	{
 		if(min == null)
 			return null;
-		return min.subtract(pos);
+		return min.add(getPos());
 	}
 	
-	public BlockPos getMax(BlockPos pos)
+	public BlockPos getMax()
 	{
 		if(max == null)
 			return null;
-		return max.subtract(pos);
+		return max.add(getPos());
 	}
 	
 	public Box getAreaBox()
 	{
-		return new Box(min, max).expand(0.5f);
+		return new Box(getMin(), getMax()).expand(0.5f);
 	}
 	
 	public Text getAreaLabel()

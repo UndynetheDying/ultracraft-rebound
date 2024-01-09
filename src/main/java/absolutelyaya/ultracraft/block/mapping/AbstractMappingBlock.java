@@ -36,7 +36,7 @@ public abstract class AbstractMappingBlock extends BlockWithEntity
 		if(roomPos != null && world.getBlockEntity(roomPos) instanceof RoomBlockEntity room)
 		{
 			room.registerChild(pos, block);
-			block.parent = roomPos;
+			block.setParent(roomPos);
 		}
 		else
 		{

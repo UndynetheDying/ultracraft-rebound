@@ -85,9 +85,9 @@ public class EditModeRenderer
 			boolean focused = pos.equals(editor.getEditFocus(blockEntity.getFocusKey()));
 			if(focused || blockEntity.alwaysShowArea())
 			{
-				if(blockEntity.getMin(pos) != null && blockEntity.getMax(pos) != null)
+				if(blockEntity.getMin() != null && blockEntity.getMax() != null)
 				{
-					Box box = new Box(blockEntity.getMin(pos), blockEntity.getMax(pos)).expand(0.5f);
+					Box box = blockEntity.getAreaBox().offset(-pos.getX(), -pos.getY(), -pos.getZ());
 					Vector4f areaColor = blockEntity.getAreaColor();
 					WorldRenderer.drawBox(matrices, lines, box, areaColor.x, areaColor.y, areaColor.z, areaColor.w);
 					drawFloatingText(textRenderer, matrices, textImmediate, box.getCenter().toVector3f().add(0f, 0.25f, 0f), blockEntity.getAreaLabelSize(),
