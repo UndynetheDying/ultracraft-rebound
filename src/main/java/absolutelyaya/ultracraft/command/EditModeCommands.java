@@ -137,8 +137,13 @@ public class EditModeCommands
 		String key = context.getArgument("key", String.class);
 		IEditorComponent editor = UltraComponents.EDITOR.get(player);
 		BlockPos pos = editor.getEditFocus(key);
-		if(pos != null && player.getWorld().getBlockEntity(pos) instanceof AbstractMappingBlockEntity)
+		if(pos != null && player.getWorld().getBlockEntity(pos) instanceof AbstractMappingBlockEntity block)
 		{
+			if(!block.isAreaModifiable())
+			{
+				context.getSource().sendMessage(Text.of("Area of key '" + key + "' is not resizeable"));
+				return Command.SINGLE_SUCCESS;
+			}
 			editor.setEditAreaStep(2);
 			editor.setEditAreaCore(pos);
 			editor.sync();

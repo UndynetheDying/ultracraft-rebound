@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.block.*;
 import absolutelyaya.ultracraft.block.CarpetBlock;
 import absolutelyaya.ultracraft.block.FlowerbedBlock;
 import absolutelyaya.ultracraft.block.SlabBlock;
+import absolutelyaya.ultracraft.block.mapping.RedstoneListenerBlock;
 import absolutelyaya.ultracraft.block.mapping.RoomBlock;
 import absolutelyaya.ultracraft.block.mapping.TriggerBlock;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -85,8 +86,9 @@ public class BlockRegistry
 	public static final Block PORTAL = register("portal",
 			new PortalBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.TERRACOTTA_PURPLE)), true);
 	
-	public static final Block MAP_ROOM = register("map-room", new RoomBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
-	public static final Block MAP_TRIGGER = register("map-trigger", new TriggerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
+	public static final Block MAP_ROOM = register("map_room", new RoomBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
+	public static final Block MAP_TRIGGER = register("map_trigger", new TriggerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
+	public static final Block MAP_REDSTONE = register("map_redstone", new RedstoneListenerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	
 	@SuppressWarnings("SameParameterValue")
 	private static Block register(String name, Block block, boolean item, int burn, int spread)

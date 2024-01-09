@@ -87,7 +87,7 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 	
 	public Box getAreaBox()
 	{
-		return new Box(getMin(), getMax()).expand(0.5f);
+		return new Box(getMin(), getMax()).expand(0.5f).offset(0.5f, 0.5f, 0.5f);
 	}
 	
 	public Text getAreaLabel()
@@ -130,6 +130,13 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 		else
 			parent = pos.subtract(getPos());
 	}
+	
+	public boolean isAreaModifiable()
+	{
+		return true;
+	}
+	
+	abstract void tick();
 	
 	@Override
 	protected void writeNbt(NbtCompound nbt)

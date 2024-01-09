@@ -2,14 +2,12 @@ package absolutelyaya.ultracraft.block.mapping;
 
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.Text;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.joml.Vector4f;
 
 public class TriggerBlockEntity extends AbstractMappingBlockEntity implements FlagBindable
@@ -22,27 +20,6 @@ public class TriggerBlockEntity extends AbstractMappingBlockEntity implements Fl
 	{
 		super(BlockEntityRegistry.MAP_TRIGGER, pos, state);
 		id = "trigger";
-	}
-	
-	public static <T extends BlockEntity> void tick(World world, BlockPos blockPos, BlockState state, T instance)
-	{
-		if(instance instanceof TriggerBlockEntity trigger)
-		{
-			boolean b = world.getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), trigger.getAreaBox(), i -> true).size() > 0;
-			boolean wasActive = trigger.isActive();
-			if(!b && trigger.active > 0 && trigger.selfResetting)
-				trigger.active--;
-			if(b && trigger.active < trigger.activateDelay * 2)
-				trigger.active++;
-			
-			if(trigger.flag != null && trigger.getParent() != null && world.getBlockEntity(trigger.getParent()) instanceof RoomBlockEntity room)
-			{
-				if(trigger.isActive() && !wasActive)
-					room.setFlag(trigger.flag, true);
-				if(!trigger.isActive() && wasActive)
-					room.setFlag(trigger.flag, false);
-			}
-		}
 	}
 	
 	@Override
@@ -103,6 +80,25 @@ public class TriggerBlockEntity extends AbstractMappingBlockEntity implements Fl
 	public String getFlag()
 	{
 		return flag;
+	}
+	
+	@Override
+	void tick()
+	{
+		boolean b = world.getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getAreaBox(), i -> true).size() > 0;
+		boolean wasActive = isActive();
+		if(!b && active > 0 && selfResetting)
+			active--;
+		if(b && active < activateDelay * 2)
+			active++;
+		
+		if(flag != null && getParent() != null && world.getBlockEntity(getParent()) instanceof RoomBlockEntity room)
+		{
+			if(isActive() && !wasActive)
+				room.setFlag(flag, true);
+			if(!isActive() && wasActive)
+				room.setFlag(flag, false);
+		}
 	}
 	
 	@Override

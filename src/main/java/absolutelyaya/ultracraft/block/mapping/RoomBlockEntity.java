@@ -28,18 +28,22 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 		i++;
 	}
 	
-	public static <T extends BlockEntity> void tick(World world, BlockPos blockPos, BlockState state, T instance)
+	public static <T extends BlockEntity> void tick(World world, BlockPos ignored1, BlockState ignored2, T instance)
 	{
-		if(instance instanceof RoomBlockEntity room && room.childCheckPending)
+		if(instance instanceof RoomBlockEntity room)
 		{
-			for (BlockPos pos : room.getChildren())
+			if(room.childCheckPending)
 			{
-				if(world.getBlockEntity(pos) instanceof AbstractMappingBlockEntity block && !(block instanceof RoomBlockEntity))
-					room.registerChild(pos.subtract(room.getPos()), block);
-				else
-					room.removeChild(pos.subtract(room.getPos()));
+				for (BlockPos pos : room.getChildren())
+				{
+					if(world.getBlockEntity(pos) instanceof AbstractMappingBlockEntity block && !(block instanceof RoomBlockEntity))
+						room.registerChild(pos.subtract(room.getPos()), block);
+					else
+						room.removeChild(pos.subtract(room.getPos()));
+				}
+				room.childCheckPending = false;
 			}
-			room.childCheckPending = false;
+			room.tick();
 		}
 	}
 	
@@ -65,6 +69,15 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	public boolean showCamLine()
 	{
 		return true;
+	}
+	
+	@Override
+	void tick() //just execute child block ticks
+	{
+		children.forEach((pos, entity) -> {
+			if(world.getBlockEntity(pos.add(getPos())) instanceof AbstractMappingBlockEntity e && !(e instanceof RoomBlockEntity))
+				e.tick();
+		});
 	}
 	
 	public void registerChild(BlockPos pos, AbstractMappingBlockEntity blockEntity)
