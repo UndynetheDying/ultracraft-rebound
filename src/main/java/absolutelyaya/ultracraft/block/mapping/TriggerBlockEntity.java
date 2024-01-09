@@ -102,6 +102,12 @@ public class TriggerBlockEntity extends AbstractMappingBlockEntity implements Fl
 	}
 	
 	@Override
+	public String getTexture()
+	{
+		return "trigger";
+	}
+	
+	@Override
 	public void readNbt(NbtCompound nbt)
 	{
 		super.readNbt(nbt);

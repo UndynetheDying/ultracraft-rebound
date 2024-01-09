@@ -1,16 +1,20 @@
 package absolutelyaya.ultracraft.client.rendering;
 
 import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.block.mapping.AbstractMappingBlockEntity;
 import absolutelyaya.ultracraft.block.mapping.RoomBlockEntity;
 import absolutelyaya.ultracraft.components.player.IEditorComponent;
+import absolutelyaya.ultracraft.util.RenderingUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Items;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
@@ -87,7 +91,7 @@ public class EditModeRenderer
 			{
 				if(blockEntity.getMin() != null && blockEntity.getMax() != null)
 				{
-					Box box = blockEntity.getAreaBox().offset(-pos.getX(), -pos.getY(), -pos.getZ());
+					Box box = blockEntity.getAreaBox().offset(-pos.getX() - 0.5, -pos.getY() - 0.5, -pos.getZ() - 0.5);
 					Vector4f areaColor = blockEntity.getAreaColor();
 					WorldRenderer.drawBox(matrices, lines, box, areaColor.x, areaColor.y, areaColor.z, areaColor.w);
 					drawFloatingText(textRenderer, matrices, textImmediate, box.getCenter().toVector3f().add(0f, 0.25f, 0f), blockEntity.getAreaLabelSize(),
@@ -102,6 +106,7 @@ public class EditModeRenderer
 			matrices.translate(0f, 1f, 0f);
 			drawFloatingText(textRenderer, matrices, textImmediate, new Vector3f(), 1f, blockEntity.getAreaLabel(), 0xffffffff, cam);
 			matrices.pop();
+			drawSprite(matrices, new Vector3f(0, 0, 0), textImmediate, blockEntity.getTexture(), cam);
 			matrices.pop();
 			if(blockEntity.showCamLine())
 				drawLineToCam(lines, matrices, targetPos.toVector3f(), cam, col);
@@ -129,6 +134,7 @@ public class EditModeRenderer
 			matrices.translate(0f, 1f, 0f);
 			drawFloatingText(textRenderer, matrices, textImmediate, new Vector3f(), 1f, blockEntity.getAreaLabel(), 0xffffffff, cam);
 			matrices.pop();
+			drawSprite(matrices, new Vector3f(0, 0, 0), textImmediate, blockEntity.getTexture(), cam);
 			matrices.pop();
 			drawLineToCam(lines, matrices, targetPos.toVector3f(), cam, col);
 		}
@@ -147,6 +153,27 @@ public class EditModeRenderer
 		matrices.scale(-size / 50f, -size / 50f, size / 50f);
 		renderer.draw(text, -renderer.getWidth(text) / 2f, 0f, col, false, matrices.peek().getPositionMatrix(),
 				immediate, TextRenderer.TextLayerType.NORMAL, 0x44000000, LightmapTextureManager.MAX_LIGHT_COORDINATE);
+		matrices.pop();
+	}
+	
+	void drawSprite(MatrixStack matrices, Vector3f tPos, VertexConsumerProvider consumerProvider, String texture, Camera cam)
+	{
+		matrices.push();
+		matrices.translate(tPos.x, tPos.y, tPos.z);
+		matrices.multiply(cam.getRotation());
+		matrices.scale(1f, 1f, -1f);
+		//POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL
+		Matrix4f matrix = matrices.peek().getPositionMatrix();
+		Matrix3f normal = matrices.peek().getNormalMatrix();
+		VertexConsumer consumer = consumerProvider.getBuffer(RenderLayer.getEntityCutout(new Identifier(Ultracraft.MOD_ID, "textures/item/editor/" + texture + ".png")));
+		consumer.vertex(matrix, -0.5f, -0.5f, 0f).color(0xffffffff).texture(1f, 1f).overlay(OverlayTexture.DEFAULT_UV)
+				.light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(0f, 1f, 0f).next();
+		consumer.vertex(matrix, -0.5f, 0.5f, 0f).color(0xffffffff).texture(1f, 0f).overlay(OverlayTexture.DEFAULT_UV)
+				.light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(0f, 1f, 0f).next();
+		consumer.vertex(matrix, 0.5f, 0.5f, 0f).color(0xffffffff).texture(0f, 0f).overlay(OverlayTexture.DEFAULT_UV)
+				.light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(0f, 1f, 0f).next();
+		consumer.vertex(matrix, 0.5f, -0.5f, 0f).color(0xffffffff).texture(0f, 1f).overlay(OverlayTexture.DEFAULT_UV)
+				.light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(0f, 1f, 0f).next();
 		matrices.pop();
 	}
 	

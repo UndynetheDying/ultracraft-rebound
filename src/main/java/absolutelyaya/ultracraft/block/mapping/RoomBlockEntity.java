@@ -152,6 +152,12 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	}
 	
 	@Override
+	public String getTexture()
+	{
+		return "root";
+	}
+	
+	@Override
 	public void readNbt(NbtCompound nbt)
 	{
 		super.readNbt(nbt);

@@ -137,6 +137,9 @@
   "block.ultracraft.slab_block": "Slab Block",
   "block.ultracraft.carpet": "Fancy Carpet",
   "block.ultracraft.flowerbed": "Flowerbed",
+  "block.ultracraft.map_room": "Map Room",
+  "block.ultracraft.map_trigger": "Map Trigger",
+  "block.ultracraft.map_redstone": "Map Redstone Listener",
 
   "entity.ultracraft.filth": "Filth",
   "entity.ultracraft.stray": "Stray",

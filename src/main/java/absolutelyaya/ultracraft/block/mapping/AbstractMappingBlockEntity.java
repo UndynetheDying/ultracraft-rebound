@@ -138,6 +138,8 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 	
 	abstract void tick();
 	
+	public abstract String getTexture();
+	
 	@Override
 	protected void writeNbt(NbtCompound nbt)
 	{

@@ -40,13 +40,13 @@ public abstract class AbstractListenerBlockEntity extends AbstractMappingBlockEn
 	public void onActivateFlag()
 	{
 		pulseRenderTime = 10;
-		world.updateNeighbors(getPos(), world.getBlockState(getPos()).getBlock());
+		updateNeighbors();
 	}
 	
 	@Override
 	public void onDeactivateFlag()
 	{
-		world.updateNeighbors(getPos(), world.getBlockState(getPos()).getBlock());
+		updateNeighbors();
 	}
 	
 	@Override
@@ -60,6 +60,11 @@ public abstract class AbstractListenerBlockEntity extends AbstractMappingBlockEn
 	{
 		if(pulseRenderTime > 0)
 			pulseRenderTime--;
+	}
+	
+	protected void updateNeighbors()
+	{
+		world.updateNeighbors(getPos(), world.getBlockState(getPos()).getBlock());
 	}
 	
 	@Override
