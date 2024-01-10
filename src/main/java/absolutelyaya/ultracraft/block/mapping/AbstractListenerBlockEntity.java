@@ -8,12 +8,19 @@ import net.minecraft.util.math.BlockPos;
 
 public abstract class AbstractListenerBlockEntity extends AbstractMappingBlockEntity implements FlagListener
 {
+	boolean nextState, state;
 	String flag;
-	int pulseRenderTime;
+	int pulseRenderTime, activationDelay, curActivationDelay;
 	
 	public AbstractListenerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state)
 	{
 		super(type, pos, state);
+	}
+	
+	@Override
+	public String getFocusKey()
+	{
+		return "listener";
 	}
 	
 	@Override
@@ -40,13 +47,25 @@ public abstract class AbstractListenerBlockEntity extends AbstractMappingBlockEn
 	public void onActivateFlag()
 	{
 		pulseRenderTime = 10;
-		updateNeighbors();
+		curActivationDelay = activationDelay;
+		nextState = true;
 	}
 	
 	@Override
 	public void onDeactivateFlag()
 	{
+		curActivationDelay = activationDelay;
+		nextState = false;
+	}
+	
+	protected void onStateChanged(boolean newState)
+	{
 		updateNeighbors();
+	}
+	
+	public boolean isActive()
+	{
+		return state;
 	}
 	
 	@Override
@@ -60,6 +79,10 @@ public abstract class AbstractListenerBlockEntity extends AbstractMappingBlockEn
 	{
 		if(pulseRenderTime > 0)
 			pulseRenderTime--;
+		if(curActivationDelay > 0)
+			curActivationDelay--;
+		if(curActivationDelay == 0 && state != nextState)
+			onStateChanged(state = nextState);
 	}
 	
 	protected void updateNeighbors()

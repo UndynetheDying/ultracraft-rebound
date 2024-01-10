@@ -8,7 +8,6 @@ import org.joml.Vector4f;
 
 public class RedstoneListenerBlockEntity extends AbstractListenerBlockEntity
 {
-	boolean active;
 	int maxPulseDuration = 5, pulseDuration;
 	
 	public RedstoneListenerBlockEntity(BlockPos pos, BlockState state)
@@ -30,35 +29,23 @@ public class RedstoneListenerBlockEntity extends AbstractListenerBlockEntity
 	}
 	
 	@Override
-	public String getFocusKey()
-	{
-		return "listener";
-	}
-	
-	@Override
 	public Vector4f getColor()
 	{
 		return new Vector4f(0.6f, 0f, 0f, 0.75f).lerp(new Vector4f(0.5f, 1f, 0.5f, 1f), pulseRenderTime / 10f);
 	}
 	
 	@Override
-	public void onActivateFlag()
+	protected void onStateChanged(boolean newState)
 	{
-		pulseDuration = maxPulseDuration;
-		active = true;
-		super.onActivateFlag();
+		if(newState)
+			pulseDuration = maxPulseDuration;
+		super.onStateChanged(newState);
 	}
 	
 	@Override
-	public void onDeactivateFlag()
-	{
-		active = false;
-		super.onDeactivateFlag();
-	}
-	
 	public boolean isActive()
 	{
-		return active && (pulseDuration > 0 || pulseDuration == -1);
+		return super.isActive() && (pulseDuration > 0 || pulseDuration == -1);
 	}
 	
 	@Override

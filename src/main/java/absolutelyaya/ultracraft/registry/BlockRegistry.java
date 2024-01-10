@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.block.*;
 import absolutelyaya.ultracraft.block.CarpetBlock;
 import absolutelyaya.ultracraft.block.FlowerbedBlock;
 import absolutelyaya.ultracraft.block.SlabBlock;
+import absolutelyaya.ultracraft.block.mapping.DoorListenerBlock;
 import absolutelyaya.ultracraft.block.mapping.RedstoneListenerBlock;
 import absolutelyaya.ultracraft.block.mapping.RoomBlock;
 import absolutelyaya.ultracraft.block.mapping.TriggerBlock;
@@ -89,6 +90,7 @@ public class BlockRegistry
 	public static final Block MAP_ROOM = register("map_room", new RoomBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_TRIGGER = register("map_trigger", new TriggerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_REDSTONE = register("map_redstone", new RedstoneListenerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
+	public static final Block MAP_DOOR = register("map_door", new DoorListenerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	
 	@SuppressWarnings("SameParameterValue")
 	private static Block register(String name, Block block, boolean item, int burn, int spread)

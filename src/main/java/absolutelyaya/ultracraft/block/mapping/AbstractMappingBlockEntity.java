@@ -14,6 +14,8 @@ import net.minecraft.util.math.Box;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector4f;
 
+import java.util.function.Consumer;
+
 public abstract class AbstractMappingBlockEntity extends BlockEntity
 {
 	protected String id;
@@ -139,6 +141,18 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 	abstract void tick();
 	
 	public abstract String getTexture();
+	
+	void forEachBlockInArea(Consumer<BlockPos> consumer)
+	{
+		Box box = getAreaBox();
+		BlockPos min = new BlockPos((int)box.minX, (int)box.minY, (int)box.minZ);
+		BlockPos size = new BlockPos((int)box.maxX, (int)box.maxY, (int)box.maxZ).subtract(getMin());
+		
+		for (int x = 0; x < Math.abs(size.getX()); x++)
+			for (int y = 0; y < Math.abs(size.getY()); y++)
+				for (int z = 0; z < Math.abs(size.getZ()); z++)
+					consumer.accept(min.add(x, y, z));
+	}
 	
 	@Override
 	protected void writeNbt(NbtCompound nbt)
