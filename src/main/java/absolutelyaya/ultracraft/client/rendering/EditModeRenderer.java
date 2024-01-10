@@ -92,7 +92,7 @@ public class EditModeRenderer
 					Box box = blockEntity.getAreaBox().offset(-pos.getX() - 0.5, -pos.getY() - 0.5, -pos.getZ() - 0.5);
 					Vector4f areaColor = blockEntity.getAreaColor();
 					WorldRenderer.drawBox(matrices, lines, box, areaColor.x, areaColor.y, areaColor.z, areaColor.w);
-					if(focused)
+					if(focused && editor.isShowAreaOwner())
 						drawLinesBetweenBoxes(lines, matrices, new Box(new BlockPos(0, 0, 0)).offset(-0.5f, -0.5f, -0.5f), box,
 								new Vector4f(areaColor).mul(1f, 1f, 1f, 0.5f));
 					drawFloatingText(textRenderer, matrices, textImmediate, box.getCenter().toVector3f().add(0f, 0.25f, 0f), blockEntity.getAreaLabelSize(),

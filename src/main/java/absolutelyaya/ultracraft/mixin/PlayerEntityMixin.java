@@ -5,10 +5,7 @@ import absolutelyaya.ultracraft.accessor.EntityAccessor;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
-import absolutelyaya.ultracraft.components.player.IArmComponent;
-import absolutelyaya.ultracraft.components.player.IHivelComponent;
-import absolutelyaya.ultracraft.components.player.ILoadoutComponent;
-import absolutelyaya.ultracraft.components.player.IProgressionComponent;
+import absolutelyaya.ultracraft.components.player.*;
 import absolutelyaya.ultracraft.config.HivelConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.DamageTypeTags;
@@ -260,7 +257,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;isSpectator()Z", shift = At.Shift.AFTER))
 	void preTick(CallbackInfo ci)
 	{
-		if(UltraComponents.EDITOR.get(this).isActive())
+		if(UltraComponents.EDITOR.get(this).isNoClip())
 			noClip = true;
 	}
 	

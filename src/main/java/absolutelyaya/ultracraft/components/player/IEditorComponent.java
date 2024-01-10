@@ -39,5 +39,21 @@ public interface IEditorComponent extends ComponentV3, AutoSyncedComponent
 	
 	BlockPos getRebindingParent();
 	
+	boolean isShowAreaOwner();
+	
+	void setShowAreaOwner(boolean v);
+	
+	void toggleShowAreaOwner();
+	
+	boolean isNoClip();
+	
+	void setNoClip(boolean v);
+	
+	void toggleNoClip();
+	
+	float getFlySpeed();
+	
+	void setFlySpeed(float v);
+	
 	void sync();
 }

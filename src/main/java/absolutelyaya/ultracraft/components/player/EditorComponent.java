@@ -2,7 +2,6 @@ package absolutelyaya.ultracraft.components.player;
 
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.block.mapping.AbstractMappingBlockEntity;
-import absolutelyaya.ultracraft.block.mapping.RoomBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -18,7 +17,8 @@ public class EditorComponent implements IEditorComponent
 	HashMap<String, BlockPos> focus = new HashMap<>();
 	BlockPos editAreaCore, rebindingParent;
 	int editAreaStep;
-	boolean active;
+	boolean active, showAreaOwner = true, noClip = true;
+	float flySpeed = 3f;
 	
 	public EditorComponent(PlayerEntity provider)
 	{
@@ -47,7 +47,7 @@ public class EditorComponent implements IEditorComponent
 			provider.getAbilities().allowFlying = true;
 		else
 			provider.getAbilities().allowFlying = provider.isCreative() || provider.isSpectator();
-		provider.getAbilities().setFlySpeed(active ? 0.2f : 0.05f);
+		provider.getAbilities().setFlySpeed(active ? flySpeed / 20f : 0.05f);
 		UltraComponents.EDITOR.sync(provider);
 	}
 	
@@ -133,6 +133,56 @@ public class EditorComponent implements IEditorComponent
 	}
 	
 	@Override
+	public boolean isShowAreaOwner()
+	{
+		return showAreaOwner;
+	}
+	
+	@Override
+	public void setShowAreaOwner(boolean v)
+	{
+		showAreaOwner = v;
+	}
+	
+	@Override
+	public void toggleShowAreaOwner()
+	{
+		showAreaOwner = !showAreaOwner;
+	}
+	
+	@Override
+	public boolean isNoClip()
+	{
+		return active && noClip;
+	}
+	
+	@Override
+	public void setNoClip(boolean v)
+	{
+		noClip = v;
+	}
+	
+	@Override
+	public void toggleNoClip()
+	{
+		noClip = !noClip;
+	}
+	
+	@Override
+	public float getFlySpeed()
+	{
+		return flySpeed;
+	}
+	
+	@Override
+	public void setFlySpeed(float v)
+	{
+		flySpeed = v;
+		if(active)
+			provider.getAbilities().setFlySpeed(v / 20f);
+	}
+	
+	@Override
 	public void sync()
 	{
 		UltraComponents.EDITOR.sync(provider);
@@ -147,6 +197,12 @@ public class EditorComponent implements IEditorComponent
 			editAreaStep = tag.getInt("areaStep");
 		if(tag.contains("areaCore", NbtElement.LONG_TYPE))
 			editAreaCore = BlockPos.fromLong(tag.getLong("areaCore"));
+		if(tag.contains("showAreaOwner", NbtElement.BYTE_TYPE))
+			setShowAreaOwner(tag.getBoolean("showAreaOwner"));
+		if(tag.contains("noclip", NbtElement.BYTE_TYPE))
+			setNoClip(tag.getBoolean("noclip"));
+		if(tag.contains("flySpeed", NbtElement.FLOAT_TYPE))
+			setFlySpeed(tag.getFloat("flySpeed"));
 	}
 	
 	@Override
@@ -156,5 +212,8 @@ public class EditorComponent implements IEditorComponent
 		tag.putInt("areaStep", editAreaStep);
 		if(editAreaCore != null)
 			tag.putLong("areaCore", BlockPos.asLong(editAreaCore.getX(), editAreaCore.getY(), editAreaCore.getZ()));
+		tag.putBoolean("showAreaOwner", showAreaOwner);
+		tag.putBoolean("noclip", noClip);
+		tag.putFloat("flySpeed", flySpeed);
 	}
 }

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.mojang.brigadier.arguments.BoolArgumentType.bool;
+import static com.mojang.brigadier.arguments.FloatArgumentType.floatArg;
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -32,8 +33,8 @@ public class EditModeCommands
 {
 	public static void register(CommandDispatcher<ServerCommandSource> dispatcher)
 	{
-		dispatcher.register(literal("editmode").requires(source -> source.hasPermissionLevel(2))
-									.then(literal("edit").executes(EditModeCommands::executeToggleEditMode))
+		dispatcher.register(literal("edit").requires(source -> source.hasPermissionLevel(2))
+									.executes(EditModeCommands::executeToggleEditMode)
 									.then(literal("ping").executes(EditModeCommands::executePing)
 												  .then(literal("clear").executes(EditModeCommands::executePingClear)))
 									.then(literal("name").then(argument("key", string()).then(argument("name", string()).executes(EditModeCommands::rename))))
@@ -43,7 +44,11 @@ public class EditModeCommands
 												  .then(literal("remove").then(argument("id", string()).executes(EditModeCommands::removeFlag)))
 												  .then(literal("set").then(argument("id", string()).then(argument("state", bool()).executes(EditModeCommands::setFlag))))
 												  .then(literal("bind").then(argument("key", string()).then(argument("flag", string()).executes(EditModeCommands::bindFlag)))))
-									.then(literal("reparent").then(argument("key", string()).executes(EditModeCommands::rebindParent))));
+									.then(literal("reparent").then(argument("key", string()).executes(EditModeCommands::rebindParent)))
+									.then(literal("config")
+												  .then(literal("flySpeed").then(argument("speed", floatArg()).executes(EditModeCommands::setFlySpeed)))
+												  .then(literal("noClip").executes(EditModeCommands::executeToggleNoClip))
+												  .then(literal("showAreaOwner").executes(EditModeCommands::executeToggleShowAreaOwner))));
 	}
 	
 	private static int executeToggleEditMode(CommandContext<ServerCommandSource> context)
@@ -53,7 +58,7 @@ public class EditModeCommands
 		editor.toggleEditMode();
 		editor.sync();
 		boolean b = editor.isActive();
-		context.getSource().sendFeedback(() -> Text.of(player.getName() + (b ? " has entered edit mode" : " has left edit mode")), true);
+		context.getSource().sendFeedback(() -> Text.of(player.getName().getString() + (b ? " has entered edit mode" : " has left edit mode")), true);
 		return Command.SINGLE_SUCCESS;
 	}
 	
@@ -257,6 +262,39 @@ public class EditModeCommands
 		}
 		else
 			context.getSource().sendMessage(Text.of("Nothing focused with key '" + key + "'"));
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int setFlySpeed(CommandContext<ServerCommandSource> context)
+	{
+		ServerPlayerEntity player = context.getSource().getPlayer();
+		float speed = context.getArgument("speed", Float.class);
+		IEditorComponent editor = UltraComponents.EDITOR.get(player);
+		editor.setFlySpeed(speed);
+		editor.sync();
+		context.getSource().sendMessage(Text.of(("Edit mode Fly Speed set to " + speed)));
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int executeToggleNoClip(CommandContext<ServerCommandSource> context)
+	{
+		ServerPlayerEntity player = context.getSource().getPlayer();
+		IEditorComponent editor = UltraComponents.EDITOR.get(player);
+		editor.toggleNoClip();
+		editor.sync();
+		boolean b = editor.isNoClip();
+		context.getSource().sendMessage(Text.of((b ? " activated NoClip in edit mode" : " deactivated NoClip in edit mode")));
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int executeToggleShowAreaOwner(CommandContext<ServerCommandSource> context)
+	{
+		ServerPlayerEntity player = context.getSource().getPlayer();
+		IEditorComponent editor = UltraComponents.EDITOR.get(player);
+		editor.toggleShowAreaOwner();
+		editor.sync();
+		boolean b = editor.isShowAreaOwner();
+		context.getSource().sendMessage(Text.of((b ? " lines between areas and owners are now shown" : " lines between areas and owners are now hidden")));
 		return Command.SINGLE_SUCCESS;
 	}
 }
