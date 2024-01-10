@@ -7,7 +7,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import org.jetbrains.annotations.Nullable;
 
-public class RedstoneListenerBlock extends AbstractListenerBlock
+public class RedstoneListenerBlock extends AbstractMappingBlock
 {
 	public RedstoneListenerBlock(Settings settings)
 	{

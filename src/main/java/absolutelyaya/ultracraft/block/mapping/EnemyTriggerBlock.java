@@ -5,9 +5,9 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
-public class DoorListenerBlock extends AbstractMappingBlock
+public class EnemyTriggerBlock extends AbstractMappingBlock
 {
-	public DoorListenerBlock(Settings settings)
+	public EnemyTriggerBlock(Settings settings)
 	{
 		super(settings);
 	}
@@ -16,6 +16,6 @@ public class DoorListenerBlock extends AbstractMappingBlock
 	@Override
 	public BlockEntity createBlockEntity(BlockPos pos, BlockState state)
 	{
-		return new DoorListenerBlockEntity(pos, state);
+		return new EnemyTriggerBlockEntity(pos, state);
 	}
 }

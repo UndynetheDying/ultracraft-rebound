@@ -139,6 +139,7 @@
   "block.ultracraft.flowerbed": "Flowerbed",
   "block.ultracraft.map_room": "Map Room",
   "block.ultracraft.map_trigger": "Map Trigger",
+  "block.ultracraft.map_enemy_trigger": "Map Enemy Trigger",
   "block.ultracraft.map_redstone": "Map Redstone Listener",
   "block.ultracraft.map_spawner": "Map Spawner Listener",
   "block.ultracraft.map_door": "Map Door Listener",

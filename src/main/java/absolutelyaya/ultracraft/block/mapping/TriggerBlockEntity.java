@@ -2,30 +2,17 @@ package absolutelyaya.ultracraft.block.mapping;
 
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.Text;
-import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.BlockPos;
 import org.joml.Vector4f;
 
-public class TriggerBlockEntity extends AbstractMappingBlockEntity implements FlagBindable
+public class TriggerBlockEntity extends AbstractTriggerBlockEntity
 {
-	int active, activateDelay = 10;
-	String flag;
-	boolean selfResetting = true;
-	
 	public TriggerBlockEntity(BlockPos pos, BlockState state)
 	{
 		super(BlockEntityRegistry.MAP_TRIGGER, pos, state);
-		id = "trigger";
-	}
-	
-	@Override
-	public String getFocusKey()
-	{
-		return "trigger";
 	}
 	
 	@Override
@@ -34,95 +21,21 @@ public class TriggerBlockEntity extends AbstractMappingBlockEntity implements Fl
 		return new Vector4f(0.25f, 0f, 0.5f, 1f);
 	}
 	
-	public Vector4f getAreaColor()
-	{
-		Vector4f col = new Vector4f(1f, 0f, 0f, 0.5f).lerp(new Vector4f(0f, 1f, 0f, 0.5f), Math.min((float)active / activateDelay, 1f));
-		return col.lerp(new Vector4f(1f, 1f, 1f, 1f), Math.max(1f - Math.abs(active - activateDelay) / 2f, 0f));
-	}
-	
-	public float getAreaLabelSize()
-	{
-		return 2f;
-	}
-	
-	@Override
-	public boolean showCamLine()
-	{
-		return false;
-	}
-	
-	@Override
-	public boolean alwaysShowArea()
-	{
-		return true;
-	}
-	
 	@Override
 	public Text getAreaLabel()
 	{
 		return Text.of("T-" + id + " -> " + flag);
 	}
 	
-	public boolean isActive()
-	{
-		return active > activateDelay;
-	}
-	
 	@Override
-	public void bindFlag(String flag)
+	Class<? extends LivingEntity> getTargetClass()
 	{
-		this.flag = flag;
-		markDirty();
-		world.updateListeners(pos, getCachedState(), getCachedState(), 0);
-	}
-	
-	@Override
-	public String getFlag()
-	{
-		return flag;
-	}
-	
-	@Override
-	void tick()
-	{
-		boolean b = world.getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getAreaBox(), i -> true).size() > 0;
-		boolean wasActive = isActive();
-		if(!b && active > 0 && selfResetting)
-			active--;
-		if(b && active < activateDelay * 2)
-			active++;
-		
-		if(flag != null && getParent() != null && world.getBlockEntity(getParent()) instanceof RoomBlockEntity room)
-		{
-			if(isActive() && !wasActive)
-				room.setFlag(flag, true);
-			if(!isActive() && wasActive)
-				room.setFlag(flag, false);
-		}
+		return PlayerEntity.class;
 	}
 	
 	@Override
 	public String getTexture()
 	{
 		return "trigger";
-	}
-	
-	@Override
-	public void readNbt(NbtCompound nbt)
-	{
-		super.readNbt(nbt);
-		if(nbt.contains("flag", NbtElement.STRING_TYPE))
-			flag = nbt.getString("flag");
-		if(nbt.contains("selfReset", NbtElement.BYTE_TYPE))
-			selfResetting = nbt.getBoolean("selfReset");
-	}
-	
-	@Override
-	protected void writeNbt(NbtCompound nbt)
-	{
-		super.writeNbt(nbt);
-		if(flag != null)
-			nbt.putString("flag", flag);
-		nbt.putBoolean("selfReset", selfResetting);
 	}
 }

@@ -23,6 +23,7 @@ public class BlockEntityRegistry
 	public static final BlockEntityType<RedstoneListenerBlockEntity> MAP_REDSTONE;
 	public static final BlockEntityType<DoorListenerBlockEntity> MAP_DOOR;
 	public static final BlockEntityType<SpawnListenerBlockEntity> MAP_SPAWNER;
+	public static final BlockEntityType<EnemyTriggerBlockEntity> MAP_ENEMY_TRIGGER;
 	
 	public static void register() {
 	}
@@ -63,5 +64,8 @@ public class BlockEntityRegistry
 		MAP_SPAWNER = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				new Identifier(Ultracraft.MOD_ID, "map_spawner"),
 				FabricBlockEntityTypeBuilder.create(SpawnListenerBlockEntity::new, BlockRegistry.MAP_SPAWNER).build());
+		MAP_ENEMY_TRIGGER = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Ultracraft.MOD_ID, "map_enemy_trigger"),
+				FabricBlockEntityTypeBuilder.create(EnemyTriggerBlockEntity::new, BlockRegistry.MAP_ENEMY_TRIGGER).build());
 	}
 }
