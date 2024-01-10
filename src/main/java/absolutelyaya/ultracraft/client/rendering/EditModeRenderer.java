@@ -92,6 +92,9 @@ public class EditModeRenderer
 					Box box = blockEntity.getAreaBox().offset(-pos.getX() - 0.5, -pos.getY() - 0.5, -pos.getZ() - 0.5);
 					Vector4f areaColor = blockEntity.getAreaColor();
 					WorldRenderer.drawBox(matrices, lines, box, areaColor.x, areaColor.y, areaColor.z, areaColor.w);
+					if(focused)
+						drawLinesBetweenBoxes(lines, matrices, new Box(new BlockPos(0, 0, 0)).offset(-0.5f, -0.5f, -0.5f), box,
+								new Vector4f(areaColor).mul(1f, 1f, 1f, 0.5f));
 					drawFloatingText(textRenderer, matrices, textImmediate, box.getCenter().toVector3f().add(0f, 0.25f, 0f), blockEntity.getAreaLabelSize(),
 							blockEntity.getAreaLabel(), 0xffffffff, cam);
 				}
@@ -162,7 +165,6 @@ public class EditModeRenderer
 		matrices.scale(1f, 1f, -1f);
 		//POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL
 		Matrix4f matrix = matrices.peek().getPositionMatrix();
-		Matrix3f normal = matrices.peek().getNormalMatrix();
 		VertexConsumer consumer = consumerProvider.getBuffer(RenderLayer.getEntityCutout(new Identifier(Ultracraft.MOD_ID, "textures/item/editor/" + texture + ".png")));
 		consumer.vertex(matrix, -0.5f, -0.5f, 0f).color(0xffffffff).texture(1f, 1f).overlay(OverlayTexture.DEFAULT_UV)
 				.light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(0f, 1f, 0f).next();
@@ -177,21 +179,47 @@ public class EditModeRenderer
 	
 	void drawLineToCam(VertexConsumer lines, MatrixStack matrices, Vector3f targetPos, Camera cam, Vector4f col)
 	{
+		Vector3f camPos = cam.getPos().toVector3f();
+		Vector3f p = new Vector3f(0, 0, 0.25f).rotateX((float)Math.toRadians(cam.getPitch())).rotateY(-(float)Math.toRadians(cam.getYaw()));
+		drawLineBetween(lines, matrices, p, targetPos.sub(camPos), col);
+	}
+	
+	void drawLinesBetweenBoxes(VertexConsumer lines, MatrixStack matrices, Box start, Box end, Vector4f col)
+	{
+		drawLineBetween(lines, matrices, new Vec3d(start.minX, start.minY, start.minZ).toVector3f(),
+										new Vec3d(end.minX, end.minY, end.minZ).toVector3f(), col);
+		drawLineBetween(lines, matrices, new Vec3d(start.maxX, start.minY, start.minZ).toVector3f(),
+										new Vec3d(end.maxX, end.minY, end.minZ).toVector3f(), col);
+		drawLineBetween(lines, matrices, new Vec3d(start.minX, start.maxY, start.minZ).toVector3f(),
+										new Vec3d(end.minX, end.maxY, end.minZ).toVector3f(), col);
+		drawLineBetween(lines, matrices, new Vec3d(start.maxX, start.maxY, start.minZ).toVector3f(),
+										new Vec3d(end.maxX, end.maxY, end.minZ).toVector3f(), col);
+		
+		drawLineBetween(lines, matrices, new Vec3d(start.minX, start.minY, start.maxZ).toVector3f(),
+										new Vec3d(end.minX, end.minY, end.maxZ).toVector3f(), col);
+		drawLineBetween(lines, matrices, new Vec3d(start.maxX, start.minY, start.maxZ).toVector3f(),
+										new Vec3d(end.maxX, end.minY, end.maxZ).toVector3f(), col);
+		drawLineBetween(lines, matrices, new Vec3d(start.minX, start.maxY, start.maxZ).toVector3f(),
+										new Vec3d(end.minX, end.maxY, end.maxZ).toVector3f(), col);
+		drawLineBetween(lines, matrices, new Vec3d(start.maxX, start.maxY, start.maxZ).toVector3f(),
+										new Vec3d(end.maxX, end.maxY, end.maxZ).toVector3f(), col);
+	}
+	
+	void drawLineBetween(VertexConsumer lines, MatrixStack matrices, Vector3f startPos, Vector3f targetPos, Vector4f col)
+	{
 		Matrix4f matrix = matrices.peek().getPositionMatrix();
 		Matrix3f normal = matrices.peek().getNormalMatrix();
-		Vector3f camPos = cam.getPos().toVector3f();
-		Vec3d p = new Vec3d(0, 0, 0.25).rotateX(-(float)Math.toRadians(cam.getPitch())).rotateY(-(float)Math.toRadians(cam.getYaw()));
-		lines.vertex(matrix, (float)p.x, (float)p.y, (float)p.z)
+		lines.vertex(matrix, startPos.x, startPos.y, startPos.z)
 				.color(col.x, col.y, col.z, col.w).normal(normal, 1f, 0f, 0f).next();
-		lines.vertex(matrix, (targetPos.x - camPos.x), (targetPos.y - camPos.y), (targetPos.z - camPos.z))
+		lines.vertex(matrix, targetPos.x, targetPos.y, targetPos.z)
 				.color(col.x, col.y, col.z, col.w).normal(normal, 1f, 0f, 0f).next();
-		lines.vertex(matrix, (float)p.x, (float)p.y, (float)p.z)
+		lines.vertex(matrix, startPos.x, startPos.y, startPos.z)
 				.color(col.x, col.y, col.z, col.w).normal(normal, 0f, 1f, 0f).next();
-		lines.vertex(matrix, (targetPos.x - camPos.x), (targetPos.y - camPos.y), (targetPos.z - camPos.z))
+		lines.vertex(matrix, targetPos.x, targetPos.y, targetPos.z)
 				.color(col.x, col.y, col.z, col.w).normal(normal, 0f, 1f, 0f).next();
-		lines.vertex(matrix, (float)p.x, (float)p.y, (float)p.z)
+		lines.vertex(matrix, startPos.x, startPos.y, startPos.z)
 				.color(col.x, col.y, col.z, col.w).normal(normal, 0f, 0.0f, 1f).next();
-		lines.vertex(matrix, (targetPos.x - camPos.x), (targetPos.y - camPos.y), (targetPos.z - camPos.z))
+		lines.vertex(matrix, targetPos.x, targetPos.y, targetPos.z)
 				.color(col.x, col.y, col.z, col.w).normal(normal, 0f, 0.0f, 1f).next();
 	}
 }
