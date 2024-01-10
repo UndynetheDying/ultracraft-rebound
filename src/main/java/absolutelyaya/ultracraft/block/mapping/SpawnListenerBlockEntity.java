@@ -1,0 +1,66 @@
+package absolutelyaya.ultracraft.block.mapping;
+
+import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.registry.Registries;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import org.joml.Vector4f;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
+{
+	List<Entity> entities = new ArrayList<>();
+	Identifier entityType = new Identifier(Ultracraft.MOD_ID, "stray");
+	
+	public SpawnListenerBlockEntity(BlockPos pos, BlockState state)
+	{
+		super(BlockEntityRegistry.MAP_SPAWNER, pos, state);
+		id = "spawner";
+	}
+	
+	@Override
+	public Vector4f getColor()
+	{
+		return new Vector4f(0.5f, 0.43f, 0.61f, 0.75f);
+	}
+	
+	@Override
+	public Text getAreaLabel()
+	{
+		return Text.of("S-" + flag + "->" + id);
+	}
+	
+	@Override
+	protected void onStateChanged(boolean newState)
+	{
+		if(newState && !world.isClient)
+			entities.add(Registries.ENTITY_TYPE.get(entityType).spawn((ServerWorld)world, pos, SpawnReason.SPAWNER));
+		else if(!newState)
+		{
+			entities.forEach(e -> {
+				if(e != null) e.remove(Entity.RemovalReason.DISCARDED);
+			});
+		}
+		super.onStateChanged(newState);
+	}
+	
+	@Override
+	public float getAreaLabelSize()
+	{
+		return 0f;
+	}
+	
+	@Override
+	public String getTexture()
+	{
+		return "spawn_listener";
+	}
+}

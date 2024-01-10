@@ -2,10 +2,7 @@ package absolutelyaya.ultracraft.registry;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.block.*;
-import absolutelyaya.ultracraft.block.mapping.DoorListenerBlockEntity;
-import absolutelyaya.ultracraft.block.mapping.RedstoneListenerBlockEntity;
-import absolutelyaya.ultracraft.block.mapping.RoomBlockEntity;
-import absolutelyaya.ultracraft.block.mapping.TriggerBlockEntity;
+import absolutelyaya.ultracraft.block.mapping.*;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.registry.Registries;
@@ -25,6 +22,7 @@ public class BlockEntityRegistry
 	public static final BlockEntityType<TriggerBlockEntity> MAP_TRIGGER;
 	public static final BlockEntityType<RedstoneListenerBlockEntity> MAP_REDSTONE;
 	public static final BlockEntityType<DoorListenerBlockEntity> MAP_DOOR;
+	public static final BlockEntityType<SpawnListenerBlockEntity> MAP_SPAWNER;
 	
 	public static void register() {
 	}
@@ -62,5 +60,8 @@ public class BlockEntityRegistry
 		MAP_DOOR = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				new Identifier(Ultracraft.MOD_ID, "map_door"),
 				FabricBlockEntityTypeBuilder.create(DoorListenerBlockEntity::new, BlockRegistry.MAP_DOOR).build());
+		MAP_SPAWNER = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Ultracraft.MOD_ID, "map_spawner"),
+				FabricBlockEntityTypeBuilder.create(SpawnListenerBlockEntity::new, BlockRegistry.MAP_SPAWNER).build());
 	}
 }
