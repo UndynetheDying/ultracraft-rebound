@@ -12,12 +12,14 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class EditModeHUD
 {
 	public static EditModeHUD Instance;
-	int maxWidth, maxHeight;
+	int maxWidth, maxHeight, attributeTabs, attributeY;
 	
 	public EditModeHUD()
 	{
@@ -30,6 +32,7 @@ public class EditModeHUD
 		IEditorComponent editor = UltraComponents.EDITOR.get(player);
 		if(!editor.isActive())
 			return;
+		attributeTabs = attributeY = 0;
 		MatrixStack matrices = context.getMatrices();
 		matrices.push();
 		TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
@@ -43,11 +46,15 @@ public class EditModeHUD
 		if((p = focus.get("room")) != null && player.getWorld().getBlockEntity(p) instanceof RoomBlockEntity room)
 		{
 			addLine(renderer, context, matrices, Text.of("Room: " + room.getID()), 0, 0xff8800);
+			drawAttributeTab(renderer, context, matrices, room);
 			for (String key : focus.keySet())
 			{
 				BlockPos p2;
 				if(!key.equals("room") && (p2 = focus.get(key)) != null && player.getWorld().getBlockEntity(p2) instanceof AbstractMappingBlockEntity child)
+				{
 					addLine(renderer, context, matrices, Text.of(key + ": " + child.getID()), 1, 0xff8800);
+					drawAttributeTab(renderer, context, matrices, child);
+				}
 			}
 			addLine(renderer, context, matrices, Text.of("Children:"), 0, 0xffff00);
 			for (BlockPos pos : room.getChildren())
@@ -70,5 +77,35 @@ public class EditModeHUD
 		context.drawTextWithShadow(renderer, text, 2 + indent * 5, 2, color);
 		maxHeight += renderer.fontHeight + 2;
 		maxWidth = Math.max(maxWidth, renderer.getWidth(text) + 5 * (indent + 1));
+	}
+	
+	void drawAttributeTab(TextRenderer renderer, DrawContext context, MatrixStack matrices, AbstractMappingBlockEntity e)
+	{
+		List<String> attributes = e.getAttributes();
+		List<Text> lines = new ArrayList<>();
+		Text header = Text.of(e.getID() + "'s Attributes");
+		int width = renderer.getWidth(header);
+		for (String attribute : attributes)
+			lines.add(Text.of(attribute + ": " + e.getAttribute(attribute)));
+		for (Text t : lines)
+		{
+			int i = renderer.getWidth(t);
+			if(i > width)
+				width = i;
+		}
+		matrices.push();
+		matrices.translate((context.getScaledWindowWidth() - (width + 4)), attributeY - 8, 0);
+		context.fill(0, 0, width + 4, (attributes.size() + 1) * renderer.fontHeight + 8, 0x88000000);
+		context.fill(0, 0, width + 4, renderer.fontHeight + 2, 0x88000000);
+		matrices.translate(2, 2, 0);
+		context.drawTextWithShadow(renderer, header, 0, 0, 0xff8800);
+		for (Text line : lines)
+		{
+			matrices.translate(0, renderer.fontHeight + 2, 0);
+			context.drawTextWithShadow(renderer, line, 0, 0, 0xffffff);
+		}
+		matrices.pop();
+		attributeTabs++;
+		attributeY += (attributes.size() + 1) * renderer.fontHeight - 1;
 	}
 }

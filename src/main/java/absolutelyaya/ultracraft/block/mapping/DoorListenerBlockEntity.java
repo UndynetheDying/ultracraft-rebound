@@ -99,6 +99,16 @@ public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 	}
 	
 	@Override
+	public String getAttribute(String attribute)
+	{
+		if(attribute.equals("block"))
+			return String.valueOf(filler);
+		else if(attribute.equals("delay"))
+			return String.valueOf(activationDelay);
+		return null;
+	}
+	
+	@Override
 	public void readNbt(NbtCompound nbt)
 	{
 		super.readNbt(nbt);

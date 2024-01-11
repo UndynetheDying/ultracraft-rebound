@@ -171,6 +171,12 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	}
 	
 	@Override
+	public String getAttribute(String attribute)
+	{
+		return null;
+	}
+	
+	@Override
 	public void readNbt(NbtCompound nbt)
 	{
 		super.readNbt(nbt);

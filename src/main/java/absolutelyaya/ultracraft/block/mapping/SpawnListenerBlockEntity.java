@@ -84,6 +84,16 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 	}
 	
 	@Override
+	public String getAttribute(String attribute)
+	{
+		if(attribute.equals("entityType"))
+			return String.valueOf(entityType);
+		else if(attribute.equals("delay"))
+			return String.valueOf(activationDelay);
+		return null;
+	}
+	
+	@Override
 	public void readNbt(NbtCompound nbt)
 	{
 		super.readNbt(nbt);

@@ -89,6 +89,16 @@ public class RedstoneListenerBlockEntity extends AbstractListenerBlockEntity
 	}
 	
 	@Override
+	public String getAttribute(String attribute)
+	{
+		if(attribute.equals("maxPulseDuration"))
+			return String.valueOf(maxPulseDuration);
+		else if(attribute.equals("delay"))
+			return String.valueOf(activationDelay);
+		return null;
+	}
+	
+	@Override
 	public void readNbt(NbtCompound nbt)
 	{
 		super.readNbt(nbt);

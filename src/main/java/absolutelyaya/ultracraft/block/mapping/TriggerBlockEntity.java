@@ -60,6 +60,16 @@ public class TriggerBlockEntity extends AbstractTriggerBlockEntity
 		super.setAttribute(s, value);
 	}
 	
+	@Override
+	public String getAttribute(String attribute)
+	{
+		if(attribute.equals("isSelfReset"))
+			return String.valueOf(selfResetting);
+		else if(attribute.equals("activationDelay"))
+			return String.valueOf(activateDelay);
+		return null;
+	}
+	
 	static {
 		attributes.add("isSelfReset");
 		attributes.add("activationDelay");

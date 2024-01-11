@@ -162,6 +162,8 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 		world.updateListeners(pos, getCachedState(), getCachedState(), 0);
 	}
 	
+	public abstract String getAttribute(String attribute);
+	
 	@Override
 	protected void writeNbt(NbtCompound nbt)
 	{
