@@ -2,13 +2,19 @@ package absolutelyaya.ultracraft.block.mapping;
 
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.BlockState;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import org.joml.Vector4f;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RedstoneListenerBlockEntity extends AbstractListenerBlockEntity
 {
 	int maxPulseDuration = 5, pulseDuration;
+	static List<String> attributes = new ArrayList<>();
 	
 	public RedstoneListenerBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -64,5 +70,41 @@ public class RedstoneListenerBlockEntity extends AbstractListenerBlockEntity
 	public String getTexture()
 	{
 		return "redstone_listener";
+	}
+	
+	@Override
+	public List<String> getAttributes()
+	{
+		return attributes;
+	}
+	
+	@Override
+	public void setAttribute(String s, String value)
+	{
+		if(s.equals("maxPulseDuration"))
+			maxPulseDuration = Integer.parseInt(value);
+		else if(s.equals("delay"))
+			activationDelay = Integer.parseInt(value);
+		super.setAttribute(s, value);
+	}
+	
+	@Override
+	public void readNbt(NbtCompound nbt)
+	{
+		super.readNbt(nbt);
+		if(nbt.contains("pulseDuration", NbtElement.INT_TYPE))
+			maxPulseDuration = nbt.getInt("pulseDuration");
+	}
+	
+	@Override
+	protected void writeNbt(NbtCompound nbt)
+	{
+		super.writeNbt(nbt);
+		nbt.putInt("pulseDuration", maxPulseDuration);
+	}
+	
+	static {
+		attributes.add("maxPulseDuration");
+		attributes.add("delay");
 	}
 }

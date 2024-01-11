@@ -7,6 +7,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import org.joml.Vector4f;
 
 public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEntity implements FlagBindable
@@ -30,7 +31,7 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 	public Vector4f getAreaColor()
 	{
 		Vector4f col = new Vector4f(1f, 0f, 0f, 0.5f).lerp(new Vector4f(0f, 1f, 0f, 0.5f), Math.min((float)active / activateDelay, 1f));
-		return col.lerp(new Vector4f(1f, 1f, 1f, 1f), Math.max(1f - Math.abs(active - activateDelay) / 2f, 0f));
+		return col.lerp(new Vector4f(1f, 1f, 1f, 1f), activateDelay > 1 ? Math.max(1f - Math.abs(active - activateDelay) / 2f, 0f) : 0f);
 	}
 	
 	public float getAreaLabelSize()
@@ -74,10 +75,11 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 	{
 		boolean b = world.getEntitiesByType(TypeFilter.instanceOf(getTargetClass()), getAreaBox(), i -> true).size() > 0;
 		boolean wasActive = isActive();
-		if(!b && active > 0 && selfResetting)
+		if(!b && active > 0 && (selfResetting || active < activateDelay))
 			active--;
 		if(b && active < activateDelay * 2)
 			active++;
+		active = MathHelper.clamp(active, 0, activateDelay * 2);
 		
 		if(flag != null && getParent() != null && world.getBlockEntity(getParent()) instanceof RoomBlockEntity room)
 		{
@@ -96,6 +98,8 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 		super.readNbt(nbt);
 		if(nbt.contains("flag", NbtElement.STRING_TYPE))
 			flag = nbt.getString("flag");
+		if(nbt.contains("activateDelay", NbtElement.INT_TYPE))
+			activateDelay = nbt.getInt("activateDelay");
 		if(nbt.contains("selfReset", NbtElement.BYTE_TYPE))
 			selfResetting = nbt.getBoolean("selfReset");
 	}
@@ -106,6 +110,7 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 		super.writeNbt(nbt);
 		if(flag != null)
 			nbt.putString("flag", flag);
+		nbt.putInt("activateDelay", activateDelay);
 		nbt.putBoolean("selfReset", selfResetting);
 	}
 }

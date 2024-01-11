@@ -5,6 +5,8 @@ import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
@@ -19,6 +21,7 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 {
 	List<Entity> entities = new ArrayList<>();
 	Identifier entityType = new Identifier(Ultracraft.MOD_ID, "stray");
+	static List<String> attributes = new ArrayList<>();
 	
 	public SpawnListenerBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -62,5 +65,41 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 	public String getTexture()
 	{
 		return "spawn_listener";
+	}
+	
+	@Override
+	public List<String> getAttributes()
+	{
+		return attributes;
+	}
+	
+	@Override
+	public void setAttribute(String s, String value)
+	{
+		if(s.equals("entityType"))
+			entityType = Identifier.tryParse(value);
+		else if(s.equals("delay"))
+			activationDelay = Integer.parseInt(value);
+		super.setAttribute(s, value);
+	}
+	
+	@Override
+	public void readNbt(NbtCompound nbt)
+	{
+		super.readNbt(nbt);
+		if(nbt.contains("entityType", NbtElement.STRING_TYPE))
+			entityType = Identifier.tryParse(nbt.getString("entityType"));
+	}
+	
+	@Override
+	protected void writeNbt(NbtCompound nbt)
+	{
+		super.writeNbt(nbt);
+		nbt.putString("entityType", entityType.toString());
+	}
+	
+	static {
+		attributes.add("entityType");
+		attributes.add("delay");
 	}
 }

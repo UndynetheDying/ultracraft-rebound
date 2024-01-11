@@ -4,15 +4,21 @@ import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.joml.Vector4f;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 {
 	Identifier filler = new Identifier("spruce_planks");
+	static List<String> attributes = new ArrayList<>();
 	
 	public DoorListenerBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -74,5 +80,41 @@ public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 		});
 		super.onStateChanged(newState);
 		//TODO: add option to save the areas blocks and restore them when opening the door instead of just filling air
+	}
+	
+	@Override
+	public List<String> getAttributes()
+	{
+		return attributes;
+	}
+	
+	@Override
+	public void setAttribute(String s, String value)
+	{
+		if(s.equals("block"))
+			filler = Identifier.tryParse(value);
+		else if(s.equals("delay"))
+			activationDelay = Integer.parseInt(value);
+		super.setAttribute(s, value);
+	}
+	
+	@Override
+	public void readNbt(NbtCompound nbt)
+	{
+		super.readNbt(nbt);
+		if(nbt.contains("filler", NbtElement.STRING_TYPE))
+			filler = Identifier.tryParse(nbt.getString("filler"));
+	}
+	
+	@Override
+	protected void writeNbt(NbtCompound nbt)
+	{
+		super.writeNbt(nbt);
+		nbt.putString("filler", filler.toString());
+	}
+	
+	static {
+		attributes.add("block");
+		attributes.add("delay");
 	}
 }

@@ -20,6 +20,7 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	Map<BlockPos, AbstractMappingBlockEntity> children = new HashMap<>();
 	Map<String, Boolean> flags = new HashMap<>();
 	boolean childCheckPending;
+	static List<String> attributes = new ArrayList<>();
 	
 	public RoomBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -155,6 +156,18 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	public String getTexture()
 	{
 		return "root";
+	}
+	
+	@Override
+	public List<String> getAttributes()
+	{
+		return attributes;
+	}
+	
+	@Override
+	public void setAttribute(String s, String value)
+	{
+	
 	}
 	
 	@Override

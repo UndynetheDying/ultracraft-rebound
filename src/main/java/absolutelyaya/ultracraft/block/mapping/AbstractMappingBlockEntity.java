@@ -14,6 +14,7 @@ import net.minecraft.util.math.Box;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector4f;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class AbstractMappingBlockEntity extends BlockEntity
@@ -154,6 +155,13 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 					consumer.accept(min.add(x, y, z));
 	}
 	
+	public abstract List<String> getAttributes();
+	
+	public void setAttribute(String s, String value)
+	{
+		world.updateListeners(pos, getCachedState(), getCachedState(), 0);
+	}
+	
 	@Override
 	protected void writeNbt(NbtCompound nbt)
 	{
@@ -181,4 +189,6 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 		if(nbt.contains("parent", NbtElement.LONG_TYPE))
 			parent = BlockPos.fromLong(nbt.getLong("parent"));
 	}
+	
+	//TODO: add Scriptable Blocks
 }

@@ -9,6 +9,8 @@ import absolutelyaya.ultracraft.registry.PacketRegistry;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.entity.BlockEntity;
@@ -22,6 +24,7 @@ import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static com.mojang.brigadier.arguments.BoolArgumentType.bool;
 import static com.mojang.brigadier.arguments.FloatArgumentType.floatArg;
@@ -35,7 +38,7 @@ public class EditModeCommands
 	{
 		dispatcher.register(literal("edit").requires(source -> source.hasPermissionLevel(2))
 									.executes(EditModeCommands::executeToggleEditMode)
-									.then(literal("ping").executes(EditModeCommands::executePing)
+									.then(literal("ping").executes(EditModeCommands::ping)
 												  .then(literal("clear").executes(EditModeCommands::executePingClear)))
 									.then(literal("name").then(argument("key", string()).then(argument("name", string()).executes(EditModeCommands::rename))))
 									.then(literal("area").then(argument("key", string()).executes(EditModeCommands::editArea)))
@@ -48,7 +51,8 @@ public class EditModeCommands
 									.then(literal("config")
 												  .then(literal("flySpeed").then(argument("speed", floatArg()).executes(EditModeCommands::setFlySpeed)))
 												  .then(literal("noClip").executes(EditModeCommands::executeToggleNoClip))
-												  .then(literal("showAreaOwner").executes(EditModeCommands::executeToggleShowAreaOwner))));
+												  .then(literal("showAreaOwner").executes(EditModeCommands::executeToggleShowAreaOwner)))
+									.then(literal("attribute").then(literal("set").then(argument("key", string()).then(argument("attribute", string()).suggests(EditModeCommands::suggestAttibutes).then(argument("value", string()).executes(EditModeCommands::setAttribute)))))));
 	}
 	
 	private static int executeToggleEditMode(CommandContext<ServerCommandSource> context)
@@ -62,7 +66,7 @@ public class EditModeCommands
 		return Command.SINGLE_SUCCESS;
 	}
 	
-	private static int executePing(CommandContext<ServerCommandSource> context)
+	private static int ping(CommandContext<ServerCommandSource> context)
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		List<BlockPos> roomBlocks = new ArrayList<>();
@@ -295,6 +299,39 @@ public class EditModeCommands
 		editor.sync();
 		boolean b = editor.isShowAreaOwner();
 		context.getSource().sendMessage(Text.of((b ? " lines between areas and owners are now shown" : " lines between areas and owners are now hidden")));
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static CompletableFuture<Suggestions> suggestAttibutes(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder)
+	{
+		ServerPlayerEntity player = context.getSource().getPlayer();
+		String key = context.getArgument("key", String.class);
+		BlockPos pos = UltraComponents.EDITOR.get(player).getEditFocus(key);
+		if(pos != null && player.getWorld().getBlockEntity(pos) instanceof AbstractMappingBlockEntity e)
+			e.getAttributes().forEach(builder::suggest);
+		return builder.buildFuture();
+	}
+	
+	private static int setAttribute(CommandContext<ServerCommandSource> context)
+	{
+		ServerPlayerEntity player = context.getSource().getPlayer();
+		String key = context.getArgument("key", String.class);
+		String attribute = context.getArgument("attribute", String.class);
+		String value = context.getArgument("value", String.class);
+		BlockPos pos = UltraComponents.EDITOR.get(player).getEditFocus(key);
+		if(pos != null && player.getWorld().getBlockEntity(pos) instanceof AbstractMappingBlockEntity e)
+		{
+			List<String> attributes = e.getAttributes();
+			if(!attributes.contains(attribute))
+			{
+				context.getSource().sendMessage(Text.of("Attribute '" + attribute + "' not found on focused key '" + key + "'"));
+				return Command.SINGLE_SUCCESS;
+			}
+			e.setAttribute(attribute, value);
+			context.getSource().sendMessage(Text.of("Set Attribute '" + attribute + "' to '" + value + "' on focused key '" + key + "'"));
+		}
+		else
+			context.getSource().sendMessage(Text.of("Nothing focused with key '" + key + "'"));
 		return Command.SINGLE_SUCCESS;
 	}
 }

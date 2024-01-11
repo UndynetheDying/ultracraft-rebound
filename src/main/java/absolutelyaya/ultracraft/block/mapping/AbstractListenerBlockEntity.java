@@ -47,14 +47,16 @@ public abstract class AbstractListenerBlockEntity extends AbstractMappingBlockEn
 	public void onActivateFlag()
 	{
 		pulseRenderTime = 10;
-		curActivationDelay = activationDelay;
+		if(!nextState)
+			curActivationDelay = activationDelay;
 		nextState = true;
 	}
 	
 	@Override
 	public void onDeactivateFlag()
 	{
-		curActivationDelay = activationDelay;
+		if(nextState)
+			curActivationDelay = activationDelay;
 		nextState = false;
 	}
 	
@@ -96,6 +98,8 @@ public abstract class AbstractListenerBlockEntity extends AbstractMappingBlockEn
 		super.readNbt(nbt);
 		if(nbt.contains("flag", NbtElement.STRING_TYPE))
 			flag = nbt.getString("flag");
+		if(nbt.contains("delay", NbtElement.INT_TYPE))
+			activationDelay = nbt.getInt("delay");
 	}
 	
 	@Override
@@ -104,5 +108,6 @@ public abstract class AbstractListenerBlockEntity extends AbstractMappingBlockEn
 		super.writeNbt(nbt);
 		if(flag != null)
 			nbt.putString("flag", flag);
+		nbt.putInt("delay", activationDelay);
 	}
 }
