@@ -90,6 +90,8 @@ public class BlockRegistry
 	public static final Block MAP_DOOR = register("map_door", new DoorListenerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_SPAWNER = register("map_spawner", new SpawnerListenerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_ENEMY_TRIGGER = register("map_enemy_trigger", new EnemyTriggerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
+	public static final Block MAP_EXPLOSION = register("map_explosion", new ExplosionListenerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
+	public static final Block MAP_SOUND = register("map_sound", new SoundListenerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	
 	@SuppressWarnings("SameParameterValue")
 	private static Block register(String name, Block block, boolean item, int burn, int spread)

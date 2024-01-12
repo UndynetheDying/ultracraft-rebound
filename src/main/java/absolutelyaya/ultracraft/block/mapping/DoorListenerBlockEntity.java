@@ -3,7 +3,6 @@ package absolutelyaya.ultracraft.block.mapping;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.Registries;
@@ -17,8 +16,8 @@ import java.util.List;
 
 public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 {
-	Identifier filler = new Identifier("spruce_planks");
 	static List<String> attributes = new ArrayList<>();
+	Identifier close = new Identifier("spruce_planks"), open = new Identifier("air");
 	
 	public DoorListenerBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -71,12 +70,12 @@ public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 	@Override
 	protected void onStateChanged(boolean newState)
 	{
-		Block fillerState = Registries.BLOCK.get(filler);
+		Block closedState = Registries.BLOCK.get(close), openState = Registries.BLOCK.get(open);
 		forEachBlockInArea(pos -> {
-			if(newState && world.isAir(pos))
-				world.setBlockState(pos, fillerState.getDefaultState());
-			else if(!newState && world.getBlockState(pos).isOf(fillerState))
-				world.setBlockState(pos, Blocks.AIR.getDefaultState());
+			if(newState && world.getBlockState(pos).isOf(openState))
+				world.setBlockState(pos, closedState.getDefaultState());
+			else if(!newState && world.getBlockState(pos).isOf(closedState))
+				world.setBlockState(pos, openState.getDefaultState());
 		});
 		super.onStateChanged(newState);
 		//TODO: add option to save the areas blocks and restore them when opening the door instead of just filling air
@@ -91,40 +90,48 @@ public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 	@Override
 	public void setAttribute(String s, String value)
 	{
-		if(s.equals("block"))
-			filler = Identifier.tryParse(value);
-		else if(s.equals("delay"))
-			activationDelay = Integer.parseInt(value);
+		switch (s)
+		{
+			case "closedBlock" -> close = Identifier.tryParse(value);
+			case "openBlock" -> open = Identifier.tryParse(value);
+			case "delay" -> activationDelay = Integer.parseInt(value);
+		}
 		super.setAttribute(s, value);
 	}
 	
 	@Override
 	public String getAttribute(String attribute)
 	{
-		if(attribute.equals("block"))
-			return String.valueOf(filler);
-		else if(attribute.equals("delay"))
-			return String.valueOf(activationDelay);
-		return null;
+		return switch (attribute)
+		{
+			case "closedBlock" -> String.valueOf(close);
+			case "openBlock" -> String.valueOf(open);
+			case "delay" -> String.valueOf(activationDelay);
+			default -> null;
+		};
 	}
 	
 	@Override
 	public void readNbt(NbtCompound nbt)
 	{
 		super.readNbt(nbt);
-		if(nbt.contains("filler", NbtElement.STRING_TYPE))
-			filler = Identifier.tryParse(nbt.getString("filler"));
+		if(nbt.contains("closedBlock", NbtElement.STRING_TYPE))
+			close = Identifier.tryParse(nbt.getString("closedBlock"));
+		if(nbt.contains("openBlock", NbtElement.STRING_TYPE))
+			open = Identifier.tryParse(nbt.getString("openBlock"));
 	}
 	
 	@Override
 	protected void writeNbt(NbtCompound nbt)
 	{
 		super.writeNbt(nbt);
-		nbt.putString("filler", filler.toString());
+		nbt.putString("closedBlock", close.toString());
+		nbt.putString("openBlock", open.toString());
 	}
 	
 	static {
-		attributes.add("block");
+		attributes.add("closedBlock");
+		attributes.add("openBlock");
 		attributes.add("delay");
 	}
 }

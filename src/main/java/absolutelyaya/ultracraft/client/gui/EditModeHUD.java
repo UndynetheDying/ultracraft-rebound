@@ -95,7 +95,7 @@ public class EditModeHUD
 		}
 		matrices.push();
 		matrices.translate((context.getScaledWindowWidth() - (width + 4)), attributeY - 8, 0);
-		context.fill(0, 0, width + 4, (attributes.size() + 1) * renderer.fontHeight + 8, 0x88000000);
+		context.fill(0, 0, width + 4, (attributes.size() + 1) * (renderer.fontHeight + 2), 0x88000000);
 		context.fill(0, 0, width + 4, renderer.fontHeight + 2, 0x88000000);
 		matrices.translate(2, 2, 0);
 		context.drawTextWithShadow(renderer, header, 0, 0, 0xff8800);
@@ -106,6 +106,6 @@ public class EditModeHUD
 		}
 		matrices.pop();
 		attributeTabs++;
-		attributeY += (attributes.size() + 1) * renderer.fontHeight - 1;
+		attributeY += (attributes.size()) * (renderer.fontHeight + 2) + 3;
 	}
 }

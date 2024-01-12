@@ -143,6 +143,8 @@
   "block.ultracraft.map_redstone": "Map Redstone Listener",
   "block.ultracraft.map_spawner": "Map Spawner Listener",
   "block.ultracraft.map_door": "Map Door Listener",
+  "block.ultracraft.map_explosion": "Map Explosion Listener",
+  "block.ultracraft.map_sound": "Map Sound Listener",
 
   "entity.ultracraft.filth": "Filth",
   "entity.ultracraft.stray": "Stray",

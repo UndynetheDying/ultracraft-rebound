@@ -24,6 +24,8 @@ public class BlockEntityRegistry
 	public static final BlockEntityType<DoorListenerBlockEntity> MAP_DOOR;
 	public static final BlockEntityType<SpawnListenerBlockEntity> MAP_SPAWNER;
 	public static final BlockEntityType<EnemyTriggerBlockEntity> MAP_ENEMY_TRIGGER;
+	public static final BlockEntityType<ExplosionListenerBlockEntity> MAP_EXPLOSION;
+	public static final BlockEntityType<SoundListenerBlockEntity> MAP_SOUND;
 	
 	public static void register() {
 	}
@@ -67,5 +69,11 @@ public class BlockEntityRegistry
 		MAP_ENEMY_TRIGGER = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				new Identifier(Ultracraft.MOD_ID, "map_enemy_trigger"),
 				FabricBlockEntityTypeBuilder.create(EnemyTriggerBlockEntity::new, BlockRegistry.MAP_ENEMY_TRIGGER).build());
+		MAP_EXPLOSION = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Ultracraft.MOD_ID, "map_explosion"),
+				FabricBlockEntityTypeBuilder.create(ExplosionListenerBlockEntity::new, BlockRegistry.MAP_EXPLOSION).build());
+		MAP_SOUND = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Ultracraft.MOD_ID, "map_sound"),
+				FabricBlockEntityTypeBuilder.create(SoundListenerBlockEntity::new, BlockRegistry.MAP_SOUND).build());
 	}
 }
