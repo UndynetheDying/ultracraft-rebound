@@ -100,6 +100,7 @@ public class SoundRegistry
 	//BLOCKS
 	public static final SoundEvent STAINED_GLASS_WINDOW_PLACE = register("blocks.stained_glass_window.place");
 	public static final SoundEvent STAINED_GLASS_WINDOW_BREAK = register("blocks.stained_glass_window.break");
+	public static final SoundEvent CHECKPOINT_GET = register("blocks.checkpoint.get");
 	
 	//MISC
 	public static final SoundEvent ELEVATOR_FALL = register("misc.elevator_fall");

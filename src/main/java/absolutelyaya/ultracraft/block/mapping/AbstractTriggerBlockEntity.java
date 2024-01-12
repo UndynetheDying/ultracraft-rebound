@@ -10,11 +10,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import org.joml.Vector4f;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEntity implements FlagBindable
 {
 	int active, activateDelay = 10;
 	String flag;
 	boolean selfResetting = true;
+	List<? extends LivingEntity> containedEntities = new ArrayList<>();
 	
 	public AbstractTriggerBlockEntity(BlockEntityType<? extends AbstractTriggerBlockEntity> type, BlockPos pos, BlockState state)
 	{
@@ -73,7 +77,7 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 	@Override
 	void tick()
 	{
-		boolean b = world.getEntitiesByType(TypeFilter.instanceOf(getTargetClass()), getAreaBox(), i -> true).size() > 0;
+		boolean b = (containedEntities = world.getEntitiesByType(TypeFilter.instanceOf(getTargetClass()), getAreaBox(), i -> true)).size() > 0;
 		boolean wasActive = isActive();
 		if(!b && active > 0 && (selfResetting || active < activateDelay))
 			active--;

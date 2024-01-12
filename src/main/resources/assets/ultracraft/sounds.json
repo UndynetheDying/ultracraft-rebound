@@ -380,6 +380,11 @@
       {"name": "block.glass.break", "type": "event"}
     ]
   },
+  "blocks.checkpoint.get": {
+    "sounds": [
+      {"name": "block.bell.resonate", "type": "event", "pitch": 2}
+    ]
+  },
 
 
   "misc.elevator_fall": {

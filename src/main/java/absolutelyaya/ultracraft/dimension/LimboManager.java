@@ -113,7 +113,6 @@ public class LimboManager implements DimensionManager
 					int y = world.getTopY(Heightmap.Type.WORLD_SURFACE_WG, pos.getX(), pos.getZ());
 					i.place(world, pos.add(-26, y - 10, -26), new BlockPos(0, 0, 0), new StructurePlacementData(), world.getRandom(), 2);
 					UltraComponents.DIMENSION_DATA.get(world).setFlag(FLAG_SPAWN_Y, y);
-					System.out.println(y);
 				});
 		Ultracraft.LOGGER.info("Limbo fixed Structure Placement complete!");
 		UltraComponents.DIMENSION_DATA.get(world).setFixedStructuresPlaced(true);

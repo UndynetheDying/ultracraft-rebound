@@ -3,6 +3,9 @@ package absolutelyaya.ultracraft.block.mapping;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -84,7 +87,7 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 		if(active) //tick child blocks
 		{
 			children.forEach((pos, entity) -> {
-				if(world.getBlockEntity(pos.add(getPos())) instanceof AbstractMappingBlockEntity e && !(e instanceof RoomBlockEntity))
+				if(world.getBlockEntity(pos.add(getPos())) instanceof AbstractMappingBlockEntity e && !e.selfTicking() && !(e instanceof RoomBlockEntity))
 					e.tick();
 			});
 		}
@@ -108,10 +111,8 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 		for (String key : flags.keySet())
 			setFlag(key, false);
 		for (AbstractMappingBlockEntity child : children.values())
-		{
 			if(child != null)
 				child.reset();
-		}
 	}
 	
 	public void registerChild(BlockPos pos, AbstractMappingBlockEntity blockEntity)
@@ -211,6 +212,12 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 		if(attribute.equals("resetCooldown"))
 			return String.valueOf(maxResetCooldown);
 		return null;
+	}
+	
+	public void resetIfEmpty()
+	{
+		if(!active)
+			reset();
 	}
 	
 	@Override

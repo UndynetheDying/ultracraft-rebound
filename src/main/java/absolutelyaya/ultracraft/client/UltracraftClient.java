@@ -183,6 +183,7 @@ public class UltracraftClient implements ClientModInitializer
 		BlockEntityRendererFactories.register(BlockEntityRegistry.HELL_OBSERVER, context -> new HellObserverRenderer());
 		BlockEntityRendererFactories.register(BlockEntityRegistry.HELL_SPAWNER, context -> new HellSpawnerBlockRenderer());
 		BlockEntityRendererFactories.register(BlockEntityRegistry.SKY, context -> new SkyBlockRenderer());
+		BlockEntityRendererFactories.register(BlockEntityRegistry.MAP_CHECKPOINT, context -> new CheckpointRenderer());
 		//Player Animations
 		PlayerAnimator.init();
 		

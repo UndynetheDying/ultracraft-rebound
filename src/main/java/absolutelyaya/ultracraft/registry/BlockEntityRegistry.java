@@ -26,6 +26,7 @@ public class BlockEntityRegistry
 	public static final BlockEntityType<EnemyTriggerBlockEntity> MAP_ENEMY_TRIGGER;
 	public static final BlockEntityType<ExplosionListenerBlockEntity> MAP_EXPLOSION;
 	public static final BlockEntityType<SoundListenerBlockEntity> MAP_SOUND;
+	public static final BlockEntityType<CheckpointBlockEntity> MAP_CHECKPOINT;
 	
 	public static void register() {
 	}
@@ -75,5 +76,8 @@ public class BlockEntityRegistry
 		MAP_SOUND = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				new Identifier(Ultracraft.MOD_ID, "map_sound"),
 				FabricBlockEntityTypeBuilder.create(SoundListenerBlockEntity::new, BlockRegistry.MAP_SOUND).build());
+		MAP_CHECKPOINT = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Ultracraft.MOD_ID, "map_checkpoint"),
+				FabricBlockEntityTypeBuilder.create(CheckpointBlockEntity::new, BlockRegistry.MAP_CHECKPOINT).build());
 	}
 }

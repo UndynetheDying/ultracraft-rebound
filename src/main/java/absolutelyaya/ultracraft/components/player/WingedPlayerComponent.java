@@ -8,6 +8,9 @@ import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSyncedComponent
@@ -18,6 +21,8 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	byte wingState, lastState;
 	int bloodHealCooldown, sharpshooterCooldown, magnets;
 	AbstractWeaponItem lastPrimaryWeapon;
+	BlockPos lastCheckpoint;
+	RegistryKey<World> checkpointDimension;
 	
 	public WingedPlayerComponent(PlayerEntity provider)
 	{
@@ -135,6 +140,25 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	public void setJustPlayedBloodhealNoise()
 	{
 		justPlayedBloodhealNoise = true;
+	}
+	
+	@Override
+	public BlockPos getLastCheckpoint()
+	{
+		return lastCheckpoint;
+	}
+	
+	@Override
+	public void setLastCheckpoint(BlockPos pos, World dimension)
+	{
+		lastCheckpoint = pos;
+		checkpointDimension = dimension.getRegistryKey();
+	}
+	
+	@Override
+	public RegistryKey<World> getCheckpointDimension()
+	{
+		return checkpointDimension;
 	}
 	
 	@Override

@@ -56,7 +56,6 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 	
 	public void setAreaCorner(int editAreaStep, BlockPos pos)
 	{
-		System.out.println(pos.subtract(getPos()));
 		if(editAreaStep == 2)
 			max = pos.subtract(getPos());
 		else if(editAreaStep == 1)
@@ -165,6 +164,11 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 	public abstract String getAttribute(String attribute);
 	
 	public abstract void reset();
+	
+	boolean selfTicking()
+	{
+		return false;
+	}
 	
 	@Override
 	protected void writeNbt(NbtCompound nbt)
