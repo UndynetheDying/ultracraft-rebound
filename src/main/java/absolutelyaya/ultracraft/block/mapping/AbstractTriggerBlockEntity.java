@@ -90,6 +90,12 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 		}
 	}
 	
+	@Override
+	public void reset()
+	{
+		active = 0;
+	}
+	
 	abstract Class<? extends LivingEntity> getTargetClass();
 	
 	@Override

@@ -164,6 +164,8 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 	
 	public abstract String getAttribute(String attribute);
 	
+	public abstract void reset();
+	
 	@Override
 	protected void writeNbt(NbtCompound nbt)
 	{

@@ -93,6 +93,14 @@ public abstract class AbstractListenerBlockEntity extends AbstractMappingBlockEn
 	}
 	
 	@Override
+	public void reset()
+	{
+		state = nextState = false;
+		curActivationDelay = 0;
+		onStateChanged(false);
+	}
+	
+	@Override
 	public void readNbt(NbtCompound nbt)
 	{
 		super.readNbt(nbt);

@@ -3,11 +3,13 @@ package absolutelyaya.ultracraft.block.mapping;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtLong;
 import net.minecraft.text.Text;
+import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.joml.Vector4f;
@@ -16,11 +18,12 @@ import java.util.*;
 
 public class RoomBlockEntity extends AbstractMappingBlockEntity
 {
+	static List<String> attributes = new ArrayList<>();
 	static int i = 0;
 	Map<BlockPos, AbstractMappingBlockEntity> children = new HashMap<>();
 	Map<String, Boolean> flags = new HashMap<>();
-	boolean childCheckPending;
-	static List<String> attributes = new ArrayList<>();
+	boolean childCheckPending, active;
+	int curResetCooldown, maxResetCooldown = 6000;
 	
 	public RoomBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -73,12 +76,42 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	}
 	
 	@Override
-	void tick() //just execute child block ticks
+	void tick()
 	{
-		children.forEach((pos, entity) -> {
-			if(world.getBlockEntity(pos.add(getPos())) instanceof AbstractMappingBlockEntity e && !(e instanceof RoomBlockEntity))
-				e.tick();
-		});
+		boolean lastActive = active;
+		active = world.getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getAreaBox(), i -> i.isAlive() && !i.isSpectator()).size() > 0;
+		
+		if(active) //tick child blocks
+		{
+			children.forEach((pos, entity) -> {
+				if(world.getBlockEntity(pos.add(getPos())) instanceof AbstractMappingBlockEntity e && !(e instanceof RoomBlockEntity))
+					e.tick();
+			});
+		}
+		else //reset
+		{
+			if(lastActive)
+				curResetCooldown = maxResetCooldown;
+			//if the room was not active for the cooldown period, reset all flags to false and notify all listeners
+			if(curResetCooldown > 0)
+			{
+				curResetCooldown--;
+				if(curResetCooldown == 0)
+					reset();
+			}
+		}
+	}
+	
+	@Override
+	public void reset()
+	{
+		for (String key : flags.keySet())
+			setFlag(key, false);
+		for (AbstractMappingBlockEntity child : children.values())
+		{
+			if(child != null)
+				child.reset();
+		}
 	}
 	
 	public void registerChild(BlockPos pos, AbstractMappingBlockEntity blockEntity)
@@ -167,12 +200,16 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	@Override
 	public void setAttribute(String s, String value)
 	{
-	
+		if(s.equals("resetCooldown"))
+			maxResetCooldown = Math.max(Integer.parseInt(value), 1);
+		super.setAttribute(s, value);
 	}
 	
 	@Override
 	public String getAttribute(String attribute)
 	{
+		if(attribute.equals("resetCooldown"))
+			return String.valueOf(maxResetCooldown);
 		return null;
 	}
 	
@@ -203,6 +240,8 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 			if(list.size() > 0)
 				childCheckPending = true;
 		}
+		if(nbt.contains("resetCooldown", NbtElement.INT_TYPE))
+			maxResetCooldown = nbt.getInt("resetCooldown");
 	}
 	
 	@Override
@@ -217,5 +256,10 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 		for (BlockPos pos : this.children.keySet())
 			children.add(NbtLong.of(pos.asLong()));
 		nbt.put("children", children);
+		nbt.putInt("resetCooldown", maxResetCooldown);
+	}
+	
+	static {
+		attributes.add("resetCooldown");
 	}
 }
