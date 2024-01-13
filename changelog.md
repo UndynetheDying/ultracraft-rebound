@@ -51,6 +51,38 @@
   - Changed colors to be closer to the Vanilla Stone palette
 - Fixed Streetcleaners dodging upwards when shot from below
 - Fixed Backtanks eating projectiles
+- Added "Edit Mode"
+  - A Component Based System to basically make working Ultrakill levels
+  - Being in edit mode allows you to fly with noClip, but still place blocks. It's much faster than normal creative flight and can be further adjusted.
+  - Edit mode lets you see known mapping blocks; to search for them, use `/edit ping`. 
+  - Mapping Blocks themselves have no rendering (with the only exception being checkpoints) and aren't interactable outside of edit mode.
+  - Each Component is its own Block and has an Area (with some exceptions)
+  - This System is not exactly designed for accessibility; I might write a Guide on it in the future, but I won't teach it ot people individually.
+  - Room Blocks
+    - Levels are divided into rooms
+    - these blocks can be seen as the root, with all other components being children of a Room
+    - Only when a Player is in the Rooms Area, the child blocks will tick
+    - Holds Flags that can either be True or False
+    - Resets all Flags and Child Blocks when empty of Players for a certain duration or the last player in the room dies and respawns at a Child Checkpoint Block
+  - Trigger Blocks
+    - Their Area detects Entities and sets a bound flag to true or false depending on if something of the right type is in them
+    - There are Normal//Player Triggers and Enemy Triggers
+    - Triggers can be set to not deactivate automatically, making them activate only once until the room resets
+    - Triggers can be set to have an activation period, requiring something to stay in the trigger for a certain amount of time to actually set the bound flag; same for deactivating
+  - Listener Blocks
+    - Listen for the state of the bound Flag being changed and performs an action based on its type
+    - All Listeners can have a set delay for their action; if the bound flag is deactivated again before the activation cooldown is run out, it'll be cancelled.
+    - Door Listeners fill their area with a chosen Block Type when activated; Same for deactivating. When the door closes, it will only fill blocks of the "open" block-type in it's area, opening works the opposite way; this means doorframes and stuff stay unaffected as long as they're not of either of the door block's block types
+    - Spawn Listeners spawn a chosen mob when activated and if it's still alive when deactivated, despawns it again.
+    - Redstone Listeners give off a redstone Signal of a chosen duration when activated.
+    - Explosion Listeners perform an explosion of chosen radius and damage when activated. These do not Break blocks, but could be used in conjunction with a Door Block to get the same effect
+    - Sound Listeners play a sound when activated
+  - Checkpoints
+    - Checkpoints tick regardless of if the room is ative; placing their Block and Area outside the Rooms is recommended to make room resets work properly
+    - Checkpoints set the Spawnpoint of a player that enters its area to the position of the Block itself.
+    - If a player dies and respawns at a Checkpoint, the parent Room will check if it's empty of Players; if it is, it'll force reset
+    - The Spawnpoint Text will be oriented depending on which side of the area is longer
+  - More Additions//Improvements to edit mode are already planned for the future; those will take longer to make than I'm willing to further delay this update though.
 ## Settings & Config
 - Removed almost all gamerules (only remaining is `ultra-startWithPiercer`)
 - Added Option to disable Screenshake

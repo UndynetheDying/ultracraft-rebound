@@ -158,6 +158,7 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 	
 	public void setAttribute(String s, String value)
 	{
+		markDirty();
 		world.updateListeners(pos, getCachedState(), getCachedState(), 0);
 	}
 	

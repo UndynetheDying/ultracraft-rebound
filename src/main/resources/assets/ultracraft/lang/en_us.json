@@ -146,6 +146,7 @@
   "block.ultracraft.map_explosion": "Map Explosion Listener",
   "block.ultracraft.map_sound": "Map Sound Listener",
   "block.ultracraft.map_checkpoint": "Map Checkpoint",
+  "block.ultracraft.map_progression": "Map Progression",
 
   "entity.ultracraft.filth": "Filth",
   "entity.ultracraft.stray": "Stray",
@@ -412,6 +413,8 @@
   "message.ultracraft.flamethrower.overheat": "The Flamethrower overheated",
   "message.ultracraft.terminal-prot": "[§4Ultracraft§r] Only their Owners and Admins can break Terminals on this Server.",
   "message.ultracraft.hell_spawner.fail-spawn.blocked": "[§4Ultracraft§r] Hell Spawner at %s couldn't find a free spawn location.",
+  "message.ultracraft.progression.unlock": "You have unlocked the %s!",
+  "message.ultracraft.progression.unlock.alt-revolver": "You can now use the Alternate Revolvers!",
 
   "intro.ultracraft.calibration": "BOOT UP SEQUENCE READY\n\nFIRMWARE\n  §aVERSION %s§r\n\nCALIBRATION\n  §4EXPIRED§r\n  §4NEW CALIBRATION REQUIRED§r\n\n",
   "intro.ultracraft.input": "Press any Key",

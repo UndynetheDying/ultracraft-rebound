@@ -3,6 +3,7 @@ package absolutelyaya.ultracraft.entity.demon;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.entity.projectile.CancerBulletEntity;
+import absolutelyaya.ultracraft.registry.EntityRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
@@ -20,6 +21,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import mod.azure.azurelib.animatable.GeoEntity;
 import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
@@ -69,6 +71,15 @@ public class RodentEntity extends AbstractUltraHostileEntity implements GeoEntit
 		super.onTrackedDataSet(data);
 		if (data.equals(SIZE))
 			calculateDimensions();
+	}
+	
+	public static RodentEntity spawn(World world, Vec3d pos, int size)
+	{
+		RodentEntity rodent = new RodentEntity(EntityRegistry.RODENT, world);
+		rodent.setPosition(pos);
+		rodent.setSize(size);
+		world.spawnEntity(rodent);
+		return rodent;
 	}
 	
 	@Override

@@ -1,6 +1,8 @@
 package absolutelyaya.ultracraft.block.mapping;
 
 import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.entity.demon.RodentEntity;
+import absolutelyaya.ultracraft.entity.machine.DestinyBondSwordsmachineEntity;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -45,7 +47,14 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 	protected void onStateChanged(boolean newState)
 	{
 		if(newState && !world.isClient)
-			entities.add(Registries.ENTITY_TYPE.get(entityType).spawn((ServerWorld)world, pos, SpawnReason.SPAWNER));
+		{
+			switch(entityType.toString())
+			{
+				case "ultracraft:destiny_swordsmachine" -> entities.addAll(DestinyBondSwordsmachineEntity.spawn(world, pos.toCenterPos(), 0f));
+				case "ultracraft:big_rodent" -> entities.add(RodentEntity.spawn(world, pos.toCenterPos(), 1));
+				default -> entities.add(Registries.ENTITY_TYPE.get(entityType).spawn((ServerWorld)world, pos, SpawnReason.SPAWNER));
+			}
+		}
 		else if(!newState)
 		{
 			entities.forEach(e -> {

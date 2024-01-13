@@ -93,6 +93,7 @@ public class BlockRegistry
 	public static final Block MAP_EXPLOSION = register("map_explosion", new ExplosionListenerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_SOUND = register("map_sound", new SoundListenerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_CHECKPOINT = register("map_checkpoint", new CheckpointBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
+	public static final Block MAP_PROGRESSION = register("map_progression", new ProgressionTriggerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	
 	@SuppressWarnings("SameParameterValue")
 	private static Block register(String name, Block block, boolean item, int burn, int spread)
