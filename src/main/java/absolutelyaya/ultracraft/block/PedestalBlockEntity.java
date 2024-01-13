@@ -26,6 +26,7 @@ public class PedestalBlockEntity extends BlockEntity implements NamedScreenHandl
 {
 	Inventory inventory;
 	String type;
+	boolean decorative;
 	
 	public PedestalBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -35,6 +36,8 @@ public class PedestalBlockEntity extends BlockEntity implements NamedScreenHandl
 	
 	public boolean onPunch(PlayerEntity player, boolean mainHand)
 	{
+		if(decorative)
+			return false;
 		markDirty();
 		PlayerInventory playerInventory = player.getInventory();
 		ItemStack held = inventory.getStack(0);
@@ -80,6 +83,8 @@ public class PedestalBlockEntity extends BlockEntity implements NamedScreenHandl
 		}
 		else
 			type = "none";
+		if(nbt.contains("decorative", NbtElement.BYTE_TYPE))
+			decorative = nbt.getBoolean("decorative");
 	}
 	
 	protected void writeNbt(NbtCompound nbt)
@@ -90,6 +95,7 @@ public class PedestalBlockEntity extends BlockEntity implements NamedScreenHandl
 		nbt.putString("type", getCachedState().get(PedestalBlock.TYPE).name);
 		nbt.putBoolean("fancy", getCachedState().get(PedestalBlock.FANCY));
 		nbt.putBoolean("locked", getCachedState().get(PedestalBlock.LOCKED));
+		nbt.putBoolean("decorative", decorative);
 	}
 	
 	@Override
