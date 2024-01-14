@@ -146,7 +146,7 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 	{
 		Box box = getAreaBox();
 		BlockPos min = new BlockPos((int)box.minX, (int)box.minY, (int)box.minZ);
-		BlockPos size = new BlockPos((int)box.maxX, (int)box.maxY, (int)box.maxZ).subtract(getMin());
+		BlockPos size = new BlockPos((int)(box.maxX - box.minX), (int)(box.maxY - box.minY), (int)(box.maxZ - box.minZ));
 		
 		for (int x = 0; x < Math.abs(size.getX()); x++)
 			for (int y = 0; y < Math.abs(size.getY()); y++)

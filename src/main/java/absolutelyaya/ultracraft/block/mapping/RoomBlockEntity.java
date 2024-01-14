@@ -3,9 +3,6 @@ package absolutelyaya.ultracraft.block.mapping;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -39,14 +36,14 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	{
 		if(instance instanceof RoomBlockEntity room)
 		{
-			if(room.childCheckPending)
+			if(room.childCheckPending && world != null)
 			{
 				for (BlockPos pos : room.getChildren())
 				{
 					if(world.getBlockEntity(pos) instanceof AbstractMappingBlockEntity block && !(block instanceof RoomBlockEntity))
-						room.registerChild(pos.subtract(room.getPos()), block);
+						room.registerChild(pos, block);
 					else
-						room.removeChild(pos.subtract(room.getPos()));
+						room.removeChild(pos);
 				}
 				room.childCheckPending = false;
 			}
@@ -119,7 +116,7 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	{
 		children.put(pos.subtract(getPos()), blockEntity);
 		markDirty();
-		world.updateListeners(pos, getCachedState(), getCachedState(), 0);
+		world.updateListeners(getPos(), getCachedState(), getCachedState(), 0);
 		setID(id);
 	}
 	
@@ -127,7 +124,7 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	{
 		children.remove(pos.subtract(getPos()));
 		markDirty();
-		world.updateListeners(pos, getCachedState(), getCachedState(), 0);
+		world.updateListeners(getPos(), getCachedState(), getCachedState(), 0);
 		setID(id);
 	}
 	
@@ -173,7 +170,7 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 		flags.put(id, state);
 		for (BlockPos pos : children.keySet())
 		{
-			if(children.get(pos) instanceof FlagListener listener)
+			if(children.get(pos) instanceof FlagListener listener && listener.getFlag() != null && listener.getFlag().equals(id))
 			{
 				if(state)
 					listener.onActivateFlag();
