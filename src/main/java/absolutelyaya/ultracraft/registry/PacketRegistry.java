@@ -1,9 +1,6 @@
 package absolutelyaya.ultracraft.registry;
 
-import absolutelyaya.ultracraft.Layer;
-import absolutelyaya.ultracraft.UltraComponents;
-import absolutelyaya.ultracraft.Ultracraft;
-import absolutelyaya.ultracraft.Weapon;
+import absolutelyaya.ultracraft.*;
 import absolutelyaya.ultracraft.accessor.*;
 import absolutelyaya.ultracraft.api.HeavyEntities;
 import absolutelyaya.ultracraft.block.HellObserverBlockEntity;
@@ -72,7 +69,7 @@ public class PacketRegistry
 	public static final Identifier THROW_COIN_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "throw_coin");
 	public static final Identifier LOCK_PEDESTAL_ID = new Identifier(Ultracraft.MOD_ID, "lock_pedestal");
 	public static final Identifier ANIMATION_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "animation_c2s");
-	public static final Identifier KILLER_FISH_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "killerfish");
+	public static final Identifier FISH_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "fish");
 	public static final Identifier TERMINAL_SYNC_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "terminal_c2s");
 	public static final Identifier GRAFFITI_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "graffiti_c2s");
 	public static final Identifier TERMINAL_REDSTONE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "terminal_redstone");
@@ -120,6 +117,8 @@ public class PacketRegistry
 	public static final Identifier HELL_OBSERVER_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "hell_observer");
 	public static final Identifier SCREENSHAKE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "screenshake");
 	public static final Identifier STYLE_BONUS_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "style");
+	public static final Identifier TRAVEL_SCREEN_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "open_travel_screen");
+	public static final Identifier EDIT_PING_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "edit_ping");
 	
 	public static void registerC2S()
 	{
@@ -430,9 +429,10 @@ public class PacketRegistry
 					ServerPlayNetworking.send((ServerPlayerEntity)p, ANIMATION_S2C_PACKET_ID, cbuf);
 			});
 		});
-		ServerPlayNetworking.registerGlobalReceiver(KILLER_FISH_PACKET_ID, (server, player, handler, buf, sender) -> {
+		ServerPlayNetworking.registerGlobalReceiver(FISH_PACKET_ID, (server, player, handler, buf, sender) -> {
+			int data = buf.readInt();
 			server.execute(() -> player.getWorld().playSound(null, player.getBlockPos(),
-					SoundRegistry.KILLERFISH_SELECT, SoundCategory.PLAYERS, 1f, 1f));
+					FishPacket.values()[data].sound, SoundCategory.PLAYERS, 1f, 1f));
 		});
 		ServerPlayNetworking.registerGlobalReceiver(TERMINAL_SYNC_C2S_PACKET_ID, (server, player, handler, buf, sender) -> {
 			BlockPos pos = buf.readBlockPos();

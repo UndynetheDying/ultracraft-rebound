@@ -77,6 +77,8 @@ public class ItemRegistry
 	public static final Item PLACEHOLDER = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "placeholder"),
 			new Item(new FabricItemSettings().food(new FoodComponent.Builder().alwaysEdible().hunger(-1).build())));
+	public static final LumpFishItem LUMPFISH = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "lumpfish"), new LumpFishItem(new FabricItemSettings()));
 	
 	//Weapons
 	public static final PierceRevolverItem PIERCE_REVOLVER = Registry.register(Registries.ITEM,
@@ -298,6 +300,7 @@ public class ItemRegistry
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.DAY));
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.EVENING));
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.NIGHT));
+			content.add(BlockRegistry.PORTAL.asItem());
 		});
 		//Dispenser Behaviors
 		DispenserBlock.registerBehavior(HELL_BULLET, new ProjectileDispenserBehavior(){

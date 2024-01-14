@@ -160,6 +160,8 @@ public class PedestalBlock extends BlockWithEntity implements IPunchableBlock, B
 	@Override
 	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit)
 	{
+		if(world.getBlockEntity(pos) instanceof PedestalBlockEntity pedestal && pedestal.decorative)
+			return ActionResult.FAIL;
 		ItemStack stack = player.getStackInHand(hand);
 		if(stack.isOf(Items.BLUE_DYE) && !state.get(TYPE).equals(Type.BLUE))
 		{

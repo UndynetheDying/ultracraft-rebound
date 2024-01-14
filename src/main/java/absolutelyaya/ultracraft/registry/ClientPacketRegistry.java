@@ -11,6 +11,8 @@ import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.screen.HellObserverScreen;
 import absolutelyaya.ultracraft.client.gui.screen.ServerConfigScreen;
+import absolutelyaya.ultracraft.client.gui.screen.TravelScreen;
+import absolutelyaya.ultracraft.client.rendering.EditModeRenderer;
 import absolutelyaya.ultracraft.client.rendering.UltraHudRenderer;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
@@ -44,6 +46,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -352,6 +355,30 @@ public class ClientPacketRegistry
 			String key = buf.readString();
 			client.execute(() -> {
 				UltraComponents.STYLE.get(client.player).clientStyleBonusGet(key);
+			});
+		})));
+		ClientPlayNetworking.registerGlobalReceiver(TRAVEL_SCREEN_PACKET_ID, (((client, handler, buf, responseSender) -> {
+			client.execute(() -> {
+				client.setScreen(new TravelScreen(false));
+			});
+		})));
+		ClientPlayNetworking.registerGlobalReceiver(EDIT_PING_PACKET_ID, (((client, handler, buf, responseSender) -> {
+			List<BlockPos> rooms = new ArrayList<>();
+			List<BlockPos> orphans = new ArrayList<>();
+			int size = buf.readInt();
+			for (int i = 0; i < size; i++)
+				rooms.add(buf.readBlockPos());
+			size = buf.readInt();
+			for (int i = 0; i < size; i++)
+				orphans.add(buf.readBlockPos());
+			
+			
+			BlockPos focus = UltraComponents.EDITOR.get(client.player).getEditFocus("room");
+			if(focus != null && !rooms.contains(focus))
+				rooms.add(focus);
+			client.execute(() -> {
+				EditModeRenderer.Instance.newRoomBlocks = rooms;
+				EditModeRenderer.Instance.newOrphans = orphans;
 			});
 		})));
 	}

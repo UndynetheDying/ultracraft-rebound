@@ -5,10 +5,12 @@ import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.api.terminal.TerminalCodeRegistry;
+import absolutelyaya.ultracraft.client.gui.EditModeHUD;
 import absolutelyaya.ultracraft.client.gui.WeaponInfoHUD;
 import absolutelyaya.ultracraft.client.gui.screen.EpilepsyPopupScreen;
 import absolutelyaya.ultracraft.client.gui.screen.ServerConfigScreen;
 import absolutelyaya.ultracraft.client.gui.terminal.PetTab;
+import absolutelyaya.ultracraft.client.rendering.EditModeRenderer;
 import absolutelyaya.ultracraft.client.rendering.TrailRenderer;
 import absolutelyaya.ultracraft.client.rendering.UltraHudRenderer;
 import absolutelyaya.ultracraft.client.rendering.block.entity.*;
@@ -91,6 +93,7 @@ public class UltracraftClient implements ClientModInitializer
 	private static ShaderProgram wingsColoredProgram, wingsColoredUIProgram, texPosFade, flesh, sky;
 	public static ClientHitscanHandler HITSCAN_HANDLER;
 	public static TrailRenderer TRAIL_RENDERER;
+	private static EditModeRenderer EDITMODE_RENDERER;
 	public static boolean REPLACE_MENU_MUSIC = true, APPLY_ENTITY_POSES, GRAFFITI_WHITELISTED = true, SODIUM = true, IRIS = false;
 	static boolean wasMovementSoundsEnabled, supporter = false, joinInfoPending, travelling;
 	static float screenblood;
@@ -101,6 +104,7 @@ public class UltracraftClient implements ClientModInitializer
 	
 	static UltraHudRenderer hudRenderer;
 	static WeaponInfoHUD weaponInfoHUD;
+	static EditModeHUD editModeHUD;
 	static ConfigHolder<ClientConfig> config;
 	
 	@Override
@@ -179,6 +183,7 @@ public class UltracraftClient implements ClientModInitializer
 		BlockEntityRendererFactories.register(BlockEntityRegistry.HELL_OBSERVER, context -> new HellObserverRenderer());
 		BlockEntityRendererFactories.register(BlockEntityRegistry.HELL_SPAWNER, context -> new HellSpawnerBlockRenderer());
 		BlockEntityRendererFactories.register(BlockEntityRegistry.SKY, context -> new SkyBlockRenderer());
+		BlockEntityRendererFactories.register(BlockEntityRegistry.MAP_CHECKPOINT, context -> new CheckpointRenderer());
 		//Player Animations
 		PlayerAnimator.init();
 		
@@ -189,6 +194,7 @@ public class UltracraftClient implements ClientModInitializer
 		
 		HITSCAN_HANDLER = new ClientHitscanHandler();
 		TRAIL_RENDERER = new TrailRenderer();
+		EDITMODE_RENDERER = new EditModeRenderer();
 		
 		ResourceManagerHelper.registerBuiltinResourcePack(new Identifier("ultracraft_non_essential"),
 				FabricLoader.getInstance().getModContainer(Ultracraft.MOD_ID).orElseThrow(), Text.literal("ULTRACRAFT Non-Essential"),
@@ -203,7 +209,11 @@ public class UltracraftClient implements ClientModInitializer
 		hudRenderer = new UltraHudRenderer();
 		WorldRenderEvents.END.register((context) -> hudRenderer.render(context.tickDelta(), context.camera()));
 		weaponInfoHUD = new WeaponInfoHUD();
-		HudRenderCallback.EVENT.register((context, delta) -> weaponInfoHUD.render(context, delta));
+		editModeHUD = new EditModeHUD();
+		HudRenderCallback.EVENT.register((context, delta) -> {
+			weaponInfoHUD.render(context, delta);
+			editModeHUD.render(context, delta);
+		});
 		
 		ClientPlayConnectionEvents.INIT.register((handler, client) -> {
 			new ServerConfig(null);
@@ -269,6 +279,7 @@ public class UltracraftClient implements ClientModInitializer
 		WorldRenderEvents.AFTER_ENTITIES.register((ctx) -> {
 			UltracraftClient.HITSCAN_HANDLER.render(ctx.matrixStack(), ctx.camera(), ctx.tickDelta());
 			UltracraftClient.TRAIL_RENDERER.render(ctx.matrixStack(), ctx.camera());
+			UltracraftClient.EDITMODE_RENDERER.render(ctx.matrixStack(), ctx.camera(), ctx.tickDelta());
 			APPLY_ENTITY_POSES = false;
 		});
 		

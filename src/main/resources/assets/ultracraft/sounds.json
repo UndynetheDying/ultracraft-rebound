@@ -380,6 +380,11 @@
       {"name": "block.glass.break", "type": "event"}
     ]
   },
+  "blocks.checkpoint.get": {
+    "sounds": [
+      {"name": "block.bell.resonate", "type": "event", "pitch": 2}
+    ]
+  },
 
 
   "misc.elevator_fall": {
@@ -410,6 +415,21 @@
   "item.killerfish.use": {
     "sounds": [
       "ultracraft:item/killer_fish1"
+    ]
+  },
+  "item.lumpfish.select": {
+    "sounds": [
+      "ultracraft:item/lumpfish1"
+    ]
+  },
+  "item.lumpfish.unselect": {
+    "sounds": [
+      "ultracraft:item/lumpfish2"
+    ]
+  },
+  "item.lumpfish.use": {
+    "sounds": [
+      "ultracraft:item/lumpfish3"
     ]
   },
   "entity.orb.ambient": {

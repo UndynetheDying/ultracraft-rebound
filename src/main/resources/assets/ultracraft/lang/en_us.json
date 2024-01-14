@@ -60,6 +60,9 @@
   "item.ultracraft.blood_bucket": "Blood Bucket",
   "item.ultracraft.killerfish": "Killer Fish",
   "item.ultracraft.killerfish-hiddenlore": "Probably from San Diego.",
+  "item.ultracraft.lumpfish": "Lumpfish",
+  "item.ultracraft.lumpfish-hiddenlore": "Very Beautiful; Very Powerful.",
+  "item.ultracraft.lumpfish-soldier": "Valiant Soldier",
   "item.ultracraft.bloodray": "Blood Ray",
   "item.ultracraft.mincedmeat": "Bag of Minced Meat",
   "item.ultracraft.mincedmeat.lore": "A Neat Zip-Lock bag filled to 4/5ths with Minced Meat.",
@@ -103,6 +106,7 @@
   "color.minecraft.rgb": "Custom",
 
   "rei-group.ultracraft.terminals": "Terminal Variants",
+  "rei-group.ultracraft.mapping": "Edit Mode Blocks",
 
   "block.ultracraft.elevator": "Elevator Casing",
   "block.ultracraft.elevator_wall": "Elevator Room Wall",
@@ -134,6 +138,16 @@
   "block.ultracraft.slab_block": "Slab Block",
   "block.ultracraft.carpet": "Fancy Carpet",
   "block.ultracraft.flowerbed": "Flowerbed",
+  "block.ultracraft.map_room": "Map Room",
+  "block.ultracraft.map_trigger": "Map Trigger",
+  "block.ultracraft.map_enemy_trigger": "Map Enemy Trigger",
+  "block.ultracraft.map_redstone": "Map Redstone Listener",
+  "block.ultracraft.map_spawner": "Map Spawner Listener",
+  "block.ultracraft.map_door": "Map Door Listener",
+  "block.ultracraft.map_explosion": "Map Explosion Listener",
+  "block.ultracraft.map_sound": "Map Sound Listener",
+  "block.ultracraft.map_checkpoint": "Map Checkpoint",
+  "block.ultracraft.map_progression": "Map Progression",
 
   "entity.ultracraft.filth": "Filth",
   "entity.ultracraft.stray": "Stray",
@@ -400,6 +414,8 @@
   "message.ultracraft.flamethrower.overheat": "The Flamethrower overheated",
   "message.ultracraft.terminal-prot": "[§4Ultracraft§r] Only their Owners and Admins can break Terminals on this Server.",
   "message.ultracraft.hell_spawner.fail-spawn.blocked": "[§4Ultracraft§r] Hell Spawner at %s couldn't find a free spawn location.",
+  "message.ultracraft.progression.unlock": "You have unlocked the %s!",
+  "message.ultracraft.progression.unlock.alt-revolver": "You can now use the Alternate Revolvers!",
 
   "intro.ultracraft.calibration": "BOOT UP SEQUENCE READY\n\nFIRMWARE\n  §aVERSION %s§r\n\nCALIBRATION\n  §4EXPIRED§r\n  §4NEW CALIBRATION REQUIRED§r\n\n",
   "intro.ultracraft.input": "Press any Key",

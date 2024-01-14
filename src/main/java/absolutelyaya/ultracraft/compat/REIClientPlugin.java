@@ -2,7 +2,9 @@ package absolutelyaya.ultracraft.compat;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
+import absolutelyaya.ultracraft.block.mapping.AbstractMappingBlock;
 import absolutelyaya.ultracraft.item.TerminalItem;
+import absolutelyaya.ultracraft.registry.BlockRegistry;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import me.shedaniel.rei.api.client.entry.filtering.base.BasicFilteringRule;
 import me.shedaniel.rei.api.client.registry.entry.CollapsibleEntryRegistry;
@@ -29,6 +31,7 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 				EntryStacks.of(ItemRegistry.FAKE_TERMINAL),
 				EntryStacks.of(ItemRegistry.FAKE_HELL_SPAWNER),
 				EntryStacks.of(ItemRegistry.KILLERFISH),
+				EntryStacks.of(ItemRegistry.LUMPFISH),
 				EntryStacks.of(ItemRegistry.BLOOD_RAY),
 				EntryStacks.of(ItemRegistry.EJECTED_CORE),
 				EntryStacks.of(ItemRegistry.NAIL),
@@ -45,5 +48,17 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 		for (TerminalBlockEntity.Base base : TerminalBlockEntity.Base.values())
 			entries.add(EntryStacks.of(TerminalItem.getStack(base)));
 		registry.group(new Identifier(Ultracraft.MOD_ID, "terminal-variants"), Text.translatable("rei-group.ultracraft.terminals"), entries);
+		entries = List.of(
+				EntryStacks.of(BlockRegistry.MAP_ROOM),
+				EntryStacks.of(BlockRegistry.MAP_TRIGGER),
+				EntryStacks.of(BlockRegistry.MAP_ENEMY_TRIGGER),
+				EntryStacks.of(BlockRegistry.MAP_CHECKPOINT),
+				EntryStacks.of(BlockRegistry.MAP_REDSTONE),
+				EntryStacks.of(BlockRegistry.MAP_DOOR),
+				EntryStacks.of(BlockRegistry.MAP_SPAWNER),
+				EntryStacks.of(BlockRegistry.MAP_EXPLOSION),
+				EntryStacks.of(BlockRegistry.MAP_SOUND),
+				EntryStacks.of(BlockRegistry.MAP_PROGRESSION));
+		registry.group(new Identifier(Ultracraft.MOD_ID, "mapping"), Text.translatable("rei-group.ultracraft.mapping"), entries);
 	}
 }
