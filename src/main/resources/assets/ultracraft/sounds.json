@@ -385,6 +385,16 @@
       {"name": "block.bell.resonate", "type": "event", "pitch": 2}
     ]
   },
+  "blocks.slab_block.activate": {
+    "sounds": [
+      {"name": "block.beacon.power_select", "type": "event", "pitch": 1.25}
+    ]
+  },
+  "blocks.slab_block.deactivate": {
+    "sounds": [
+      {"name": "block.redstone_torch.burnout", "type": "event"}
+    ]
+  },
 
 
   "misc.elevator_fall": {

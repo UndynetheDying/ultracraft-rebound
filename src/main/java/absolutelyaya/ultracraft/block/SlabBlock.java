@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.block;
 
+import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.IceBlock;
@@ -8,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.IntProperty;
@@ -66,6 +68,7 @@ public class SlabBlock extends Block implements IPunchableBlock
 		if (hit == null || !(player.getStackInHand(hand).isOf(Items.DEBUG_STICK) || player.isSneaking()))
 		{
 			world.setBlockState(pos, state.cycle(ACTIVE));
+			world.playSound(null, pos, state.get(ACTIVE) ? SoundRegistry.SLAB_ACTIVATE : SoundRegistry.SLAB_DEACTIVATE, SoundCategory.BLOCKS);
 			world.updateNeighbor(pos, IceBlock.getMeltedState().getBlock(), pos);
 			return ActionResult.SUCCESS;
 		}

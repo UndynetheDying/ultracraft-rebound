@@ -19,6 +19,8 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
@@ -125,6 +127,19 @@ public abstract class ProjectileEntityMixin extends Entity implements Projectile
 	{
 		if(this.equals(entity))
 			cir.setReturnValue(false); //A projectile cannot hit itself after all
+	}
+	
+	@Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
+	void onWriteNBT(NbtCompound nbt, CallbackInfo ci)
+	{
+		nbt.putInt("parries", getParryCount());
+	}
+	
+	@Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
+	void onReadNBT(NbtCompound nbt, CallbackInfo ci)
+	{
+		if(nbt.contains("parries", NbtElement.INT_TYPE))
+			setParryCount(nbt.getInt("parries"));
 	}
 	
 	@Override

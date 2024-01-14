@@ -9,13 +9,11 @@ import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
-import absolutelyaya.ultracraft.registry.GameruleRegistry;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.BlockStateParticleEffect;
@@ -152,18 +150,5 @@ public class ShotgunPelletEntity extends HellBulletEntity implements ProjectileE
 	public boolean isBoostable()
 	{
 		return super.isBoostable() && chosenOne;
-	}
-	
-	@Override
-	public void setParried(boolean val, PlayerEntity parrier)
-	{
-		if(parrier == getOwner())
-			super.setParried(val, parrier);
-	}
-	
-	@Override
-	public boolean isParriable()
-	{
-		return age < 4;
 	}
 }

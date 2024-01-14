@@ -101,6 +101,8 @@ public class SoundRegistry
 	public static final SoundEvent STAINED_GLASS_WINDOW_PLACE = register("blocks.stained_glass_window.place");
 	public static final SoundEvent STAINED_GLASS_WINDOW_BREAK = register("blocks.stained_glass_window.break");
 	public static final SoundEvent CHECKPOINT_GET = register("blocks.checkpoint.get");
+	public static final SoundEvent SLAB_ACTIVATE = register("blocks.slab_block.activate");
+	public static final SoundEvent SLAB_DEACTIVATE = register("blocks.slab_block.deactivate");
 	
 	//MISC
 	public static final SoundEvent ELEVATOR_FALL = register("misc.elevator_fall");

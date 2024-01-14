@@ -114,6 +114,14 @@
 					"scale": {
 						"vector": [0, 0, 0]
 					}
+				},
+				"hammer": {
+					"rotation": {
+						"vector": [55, 0, 0]
+					},
+					"position": {
+						"vector": [0, -0.25, 0]
+					}
 				}
 			}
 		},

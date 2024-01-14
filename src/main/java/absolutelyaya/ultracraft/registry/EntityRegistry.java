@@ -156,6 +156,14 @@ public class EntityRegistry
 					.maxTrackingRange(5).build("progression_item"));
 	
 	public static final TagKey<EntityType<?>> PROJBOOSTABLE = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "projboostable"));
+	public static final TagKey<EntityType<?>> LIVING = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "living"));
+	public static final TagKey<EntityType<?>> NON_LIVING = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "non-living"));
+	public static final TagKey<EntityType<?>> PROJECTILES = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "projectile"));
+	public static final TagKey<EntityType<?>> HUSKS = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "husks"));
+	public static final TagKey<EntityType<?>> MACHINES = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "machines"));
+	public static final TagKey<EntityType<?>> DEMONS = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "demons"));
+	public static final TagKey<EntityType<?>> ANGELS = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "angels"));
+	public static final TagKey<EntityType<?>> BIG_FUNIS = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "funis"));
 	
 	public static void register()
 	{

@@ -71,7 +71,7 @@ public class ItemRegistry
 						.food(new FoodComponent.Builder().hunger(12).saturationModifier(6f).build()))
 								.putLore(new String[] { "item.ultracraft.mincedmeat.lore" }, new String[] { "item.ultracraft.mincedmeat.hiddenlore" }));
 	public static final Item KNUCKLEBLASTER = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "knuckleblaster"), new Item(new FabricItemSettings()));
+			new Identifier(Ultracraft.MOD_ID, "knuckleblaster"), new ProgressionUnlockItem(new FabricItemSettings(), new Identifier(Ultracraft.MOD_ID, "knuckleblaster")));
 	public static final Item HELL_MASS = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "hell_mass"), new Item(new FabricItemSettings()));
 	public static final Item PLACEHOLDER = Registry.register(Registries.ITEM,
@@ -259,6 +259,7 @@ public class ItemRegistry
 			content.add(FLAMETHROWER);
 			content.add(HARPOON);
 			content.add(HARPOON_GUN);
+			content.add(KNUCKLEBLASTER);
 			content.add(SOAP);
 			content.add(FILTH_SPAWN_EGG);
 			content.add(STRAY_SPAWN_EGG);

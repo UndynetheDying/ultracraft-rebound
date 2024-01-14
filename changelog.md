@@ -83,16 +83,19 @@
     - If a player dies and respawns at a Checkpoint, the parent Room will check if it's empty of Players; if it is, it'll force reset
     - The Spawnpoint Text will be oriented depending on which side of the area is longer
   - More Additions//Improvements to edit mode are already planned for the future; those will take longer to make than I'm willing to further delay this update though.
+- Made Flesh Blocks break faster using Hoes
+- Shotgun Pellets are now Parriable
 ## Settings & Config
 - Removed almost all gamerules (only remaining is `ultra-startWithPiercer`)
 - Added Option to disable Screenshake
 - Added new Config System
-  - /ultracraft config still works, but all hivel related entries have been moved.
-  - config files are found under `saves/<world>/ultracraft/`
-- Added Config to allow for the overpump self-damage being dodgeable (default: false)
+  - `/ultracraft config` still works, but all hivel related entries have been moved.
+  - Config files are found under `saves/<world>/ultracraft/`
+- Added Config to allow for the overpump self-damage being dodgeable (default: `false`)
+- Added Config for how much damage the Feedbacker and Knuckleblaster do
 ## Commands
-- ultrawhitelist can now be used by non-players
-- fixed time unfreeze command not clearing the time freeze VFX on Clients
+- `/ultrawhitelist` can now be used by non-players
+- Fixed time unfreeze command not clearing the time freeze VFX on Clients
 - Added Command to trigger Style Bonuses `/ultracraft style`
 ## Tweaks
 - Buffed overpump damage towards others (10 Dmg -> 15 Dmg)
@@ -106,7 +109,7 @@
 - Fixed World Join Message not displaying
 - Improved display of rapidly changing weapon overlays
 - The cancerous Rodent glows now with LambDynamicLights installed
-- Added decorated pots to `fragile` blocktag
+- Added decorated pots to `#ultracraft:fragile` blocktag
 - Fixed Hell Spawner Spawn Egg Rendering
 - Finally fixed the half pixel offset on animated wing pattern shaders
 - Changed Revolver Textures to be closer to the original
@@ -114,13 +117,30 @@
 - Fixed Blood Fluid not being masked by Boats
 - Fixed Mixin Conflict with Origins Classes addon mod
 - The Sharpshooter now spins in the right direction
+- Shotguns are now a bit more Satisfying
 - Fixed Attractor Nailgun Magnet recharge cooldown starting at the wrong time
 - Fixed a rare nullref involving the Sharpshooter and Tundra//Agony
-- Added Block Tag `ultracraft:cannot_connect`
+- Added Block Tag `#ultracraft:cannot_connect`
   - allows to designate Blocks that fences and walls cannot connect to; because for some reason base Minecraft doesn't do that and checks block states indiviually in an `or` chain
 - Added Proper Spawn Restrictions to all basic Enemies
 - Fixed the first person Arm staying hidden when dying while focused on a Terminal
 - Bloodheal noise can no longer be triggered multiple times on the same tick
 - Fixed an issue that would crash the game upon trying to render white terminals while using specific System locales
+- Added Cap to UltraHUD scale
+- Added many Entity Tags for map//datapack makers
+  - `#ultracraft:living`
+  - `#ultracraft:non-living` (Caution: `#ultracraft:projectiles` is included in this tag)
+  - `#ultracraft:projectiles`
+  - `#ultracraft:husks`
+  - `#ultracraft:demons`
+  - `#ultracraft:machines`
+  - `#ultracraft:angels` (empty for now obv)
+  - `#ultracraft:funis` (the joke entities)
+- Added `{parries:<count>}` NBT tag to all Projectiles
+  - The value would only naturally go above 1 if parry-chaining is enabled
+- You can now Right Click with the Knuckleblaster Item to grant yourself the Progression Entry
 ## Resource Changes
+- Continued Adding Sounds
+- Shotgun Animations now have a few sound keyframes
+- The `discharge` animation on Revolvers now also animates the Hammer of Alt Revolvers
 ## API Changes

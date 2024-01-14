@@ -21,7 +21,6 @@ import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
@@ -156,7 +155,7 @@ public class SchismEntity extends AbstractHuskEntity implements GeoEntity, Inter
 	@Override
 	public Vec3d getChargeOffset()
 	{
-		return (dataTracker.get(ANIMATION).equals(ANIMATION_ATTACK_VERTICAL) ? new Vec3d(-0.4f, 2.4f, 0.5f) : new Vec3d(-1f, 1.65f, 0.5f))
+		return (dataTracker.get(ANIMATION).equals(ANIMATION_ATTACK_VERTICAL) ? new Vec3d(-0.35f, 2.9f, 0.5f) : new Vec3d(-1.5f, 1.65f, 0.5f))
 					   .rotateY((float)Math.toRadians(-bodyYaw));
 	}
 	

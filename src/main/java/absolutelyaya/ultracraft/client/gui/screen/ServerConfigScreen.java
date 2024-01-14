@@ -51,12 +51,14 @@ public class ServerConfigScreen extends Screen
 		addRule(config.smSafeLedges, pos, ConfigWidget.ValueType.BOOL, 13);
 		addRule(config.parryChaining, pos, ConfigWidget.ValueType.BOOL, 14);
 		addRule(config.tntPriming, pos, ConfigWidget.ValueType.BOOL, 15);
-		addRule(config.revolverDamage, pos, ConfigWidget.ValueType.FLOAT, 16);
 		addRule(config.terminalProtection, pos, ConfigWidget.ValueType.BOOL, 18);
 		addRule(config.graffiti, pos, GraffitiSetting.values(), 19);
 		addRule(config.flamethrowerGrief, pos, ConfigWidget.ValueType.BOOL, 20);
+		addRule(config.revolverDamage, pos, ConfigWidget.ValueType.FLOAT, 16);
 		addRule(config.shotgunDamage, pos, ConfigWidget.ValueType.FLOAT, 21);
 		addRule(config.nailgunDamage, pos, ConfigWidget.ValueType.FLOAT, 22);
+		addRule(config.feedbackerDamage, pos, ConfigWidget.ValueType.FLOAT, 26);
+		addRule(config.knuckleblasterDamage, pos, ConfigWidget.ValueType.FLOAT, 27);
 		addRule(config.hellObserverInterval, pos, ConfigWidget.ValueType.INT, 23);
 		addRule(config.bloodSaturation, pos, ConfigWidget.ValueType.BOOL, 24);
 		addRule(config.dodgeableOverpump, pos, ConfigWidget.ValueType.BOOL, 25);

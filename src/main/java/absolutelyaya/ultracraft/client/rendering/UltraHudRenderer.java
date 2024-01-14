@@ -135,7 +135,7 @@ public class UltraHudRenderer
 		matrices.push();
 		RenderSystem.setShaderTexture(0, GUI_TEXTURE);
 		matrices.translate(-24, -36, 0f);
-		int guiScale = client.options.getGuiScale().getValue();
+		int guiScale = Math.min(client.options.getGuiScale().getValue(), 4);
 		if(guiScale == 0)
 			guiScale = 3;
 		float scale = guiScale * 0.2f;
@@ -257,8 +257,8 @@ public class UltraHudRenderer
 		{
 			RenderingUtil.drawTexture(textureMatrix, new Vector4f(0f, 0f, 64f, 76f), 0f,
 					new Vec2f(128f, 128f), new Vector4f(0f, 0f, 64f, 76f), alpha * 0.75f);
-			RenderingUtil.drawTexture(textureMatrix, new Vector4f(7f, 76f - 10f, 50f, 8f), 0f,
-					new Vec2f(128f, 128f), new Vector4f(65f, 21f + style.getRank() * 9f, 50f, 8f), alpha);
+			RenderingUtil.drawTexture(textureMatrix, new Vector4f(2f, 76f - 10f, 60f, 8f), 0f,
+					new Vec2f(128f, 128f), new Vector4f(65f, 21f + style.getRank() * 9f, 60f, 8f), alpha);
 			//progressBar
 			RenderingUtil.drawTexture(textureMatrix, new Vector4f(1f, 76f - 16f, 62f, 4f), 0f,
 					new Vec2f(128f, 128f), new Vector4f(1f, 112f, 62f, 4f), alpha);

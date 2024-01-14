@@ -102,6 +102,7 @@
   "item.ultracraft.alternate_piercer": "Alternate Piercer",
   "item.ultracraft.alternate_marksman": "Alternate Marksman",
   "item.ultracraft.alternate_sharpshooter": "Alternate Sharpshooter",
+  "item.ultracraft.progression-item.lore": "§8Use to Unlock a Progression Entry",
 
   "color.minecraft.rgb": "Custom",
 
@@ -362,6 +363,10 @@
   "config.ultracraft.BloodSaturation.description": "Whether Blood Healing also gives saturation.",
   "config.ultracraft.DodgeableOverpump": "Dodgeable Overpump",
   "config.ultracraft.DodgeableOverpump.description": "Whether the Overpump self-damage can be dodged.",
+  "config.ultracraft.FeedbackerDamage": "Feedbacker Damage",
+  "config.ultracraft.FeedbackerDamage.description": "How much damage a Punch with the Feedbacker does.",
+  "config.ultracraft.KnuckleblasterDamage": "Knuckleblaster Damage",
+  "config.ultracraft.KnuckleblasterDamage.description": "How much damage a Punch with the Knuckleblaster does.",
 
   "stat.ultracraft.collect_soul_orb": "Collected Soul Orbs",
   "stat.ultracraft.collect_blood_orb": "Collected Blood Orbs",
