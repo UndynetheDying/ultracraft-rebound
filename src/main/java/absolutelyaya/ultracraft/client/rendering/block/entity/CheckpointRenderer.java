@@ -29,7 +29,7 @@ public class CheckpointRenderer implements BlockEntityRenderer<CheckpointBlockEn
 		BlockPos lastCheckpoint = UltraComponents.WINGED_ENTITY.get(player).getLastCheckpoint();
 		if(lastCheckpoint != null && lastCheckpoint.equals(entity.getPos()))
 			return;
-		time += tickDelta / 120f;
+		time += MinecraftClient.getInstance().getLastFrameDuration() / 120f;
 		Box box = entity.getAreaBox().offset(entity.getPos().multiply(-1));
 		Vec3d center = box.getCenter();
 		Vector3f min, max;

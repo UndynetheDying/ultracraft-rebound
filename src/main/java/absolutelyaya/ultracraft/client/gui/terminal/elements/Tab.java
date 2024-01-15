@@ -76,7 +76,7 @@ public class Tab
 	
 	public final void render(MatrixStack matrices, TerminalBlockEntity terminal, VertexConsumerProvider buffers)
 	{
-		time += MinecraftClient.getInstance().getTickDelta() / 20f;
+		time += MinecraftClient.getInstance().getLastFrameDuration() / 30f;
 		drawCustomTab(matrices, terminal, buffers);
 	}
 	

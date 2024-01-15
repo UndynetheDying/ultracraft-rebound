@@ -2,7 +2,6 @@ package absolutelyaya.ultracraft.mixin.client.gui;
 
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.screen.TravelScreen;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.DownloadingTerrainScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -23,7 +22,7 @@ public abstract class DownloadingTerrainScreenMixin extends Screen
 	void redirectRenderBackground(DownloadingTerrainScreen instance, DrawContext context)
 	{
 		if(UltracraftClient.isTravelling())
-			TravelScreen.BG.render(MinecraftClient.getInstance().getTickDelta(), 1f);
+			TravelScreen.BG.render(client.getLastFrameDuration(), 1f);
 		else
 			renderBackgroundTexture(context);
 	}

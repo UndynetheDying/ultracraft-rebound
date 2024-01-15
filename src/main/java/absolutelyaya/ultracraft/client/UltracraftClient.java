@@ -277,9 +277,10 @@ public class UltracraftClient implements ClientModInitializer
 		WorldRenderEvents.BEFORE_ENTITIES.register((ctx) -> APPLY_ENTITY_POSES = true);
 		
 		WorldRenderEvents.AFTER_ENTITIES.register((ctx) -> {
+			float delta = MinecraftClient.getInstance().getLastFrameDuration();
 			UltracraftClient.HITSCAN_HANDLER.render(ctx.matrixStack(), ctx.camera(), ctx.tickDelta());
 			UltracraftClient.TRAIL_RENDERER.render(ctx.matrixStack(), ctx.camera());
-			UltracraftClient.EDITMODE_RENDERER.render(ctx.matrixStack(), ctx.camera(), ctx.tickDelta());
+			UltracraftClient.EDITMODE_RENDERER.render(ctx.matrixStack(), ctx.camera(), delta);
 			APPLY_ENTITY_POSES = false;
 		});
 		

@@ -141,7 +141,7 @@ public class EditModeRenderer
 		}
 		
 		if(pingTime > 0f)
-			pingTime -= delta / 20f;
+			pingTime -= delta / 30f;
 		RenderSystem.enableDepthTest();
 	}
 	

@@ -1,6 +1,5 @@
 package absolutelyaya.ultracraft.mixin.client;
 
-import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.block.HellObserverBlockEntity;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
@@ -241,10 +240,11 @@ public abstract class CameraMixin
 	
 	void applyScreenShake(float tickDelta, float strength)
 	{
-		shakeTime += tickDelta + strength * 0.65f;
-		setRotation(yaw + MathHelper.lerpAngleDegrees(tickDelta * 4f, 0,
+		float delta = MinecraftClient.getInstance().getLastFrameDuration();
+		shakeTime += delta + strength * 0.65f;
+		setRotation(yaw + MathHelper.lerpAngleDegrees(delta * 4f, 0,
 						(float)Math.sin(shakeTime + strength * 2.13f) * strength),
-				pitch + MathHelper.lerpAngleDegrees(tickDelta * 2f, 0,
+				pitch + MathHelper.lerpAngleDegrees(delta * 2f, 0,
 						(float)Math.sin(shakeTime + 1.43f + strength * 1.71f) * strength));
 		Vec3d dir = new Vec3d(0f, 0f, -1).rotateX((float)Math.toRadians(-pitch)).rotateY((float)Math.toRadians(-yaw));
 		setPos(pos.add(dir.multiply(strength / 4f)));

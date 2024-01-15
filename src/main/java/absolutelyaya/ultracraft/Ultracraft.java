@@ -264,7 +264,7 @@ public class Ultracraft implements ModInitializer
     {
         if (!(MinecraftClient.getInstance().player instanceof LivingEntityAccessor living))
             return;
-        float blast = living.getKnuckleBlastProgress(MinecraftClient.getInstance().getTickDelta());
+        float blast = living.getKnuckleBlastProgress(MinecraftClient.getInstance().getLastFrameDuration());
         int flip = flipped ? 1 : -1;
         float swing = MathHelper.sqrt(blast);
         float x = 0.1f * Math.min(MathHelper.sin(swing * (float)Math.PI + 0.25f), 0.5f) * 2f;

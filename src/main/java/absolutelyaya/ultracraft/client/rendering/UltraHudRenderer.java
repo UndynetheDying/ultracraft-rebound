@@ -387,7 +387,7 @@ public class UltraHudRenderer
 			drawItem(matrices, new Matrix4f(matrices.peek().getPositionMatrix()), client, immediate, lastCatch, false);
 			immediate.draw();
 			matrices.pop();
-			fishTimer -= tickDelta / 20;
+			fishTimer -= MinecraftClient.getInstance().getLastFrameDuration() / 15f;
 			matrices.pop();
 		}
 		
