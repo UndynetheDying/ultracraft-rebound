@@ -181,7 +181,7 @@ public class ItemRegistry
 			new TerminalItem(BlockRegistry.TERMINAL, new FabricItemSettings()));
 	public static final MusicDiscItem CLAIR_DE_LUNE_DISK = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "clair_de_lune"),
-			new MusicDiscItem(15, SoundRegistry.CLAIR_DE_LUNE.value(), new FabricItemSettings(), 231));
+			new MusicDiscItem(15, SoundRegistry.CLAIR_DE_LUNE.value(), new FabricItemSettings().maxCount(1), 231));
 	public static final FlorpItem FLORP = (FlorpItem)Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "florp"), new FlorpItem(new FabricItemSettings().rarity(Rarity.EPIC).maxCount(1))
 																.putLore(true, new String[] { "item.ultracraft.florp.hiddenlore" }));
