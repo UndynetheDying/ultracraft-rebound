@@ -298,7 +298,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	@Inject(method = "computeFallDamage", at = @At("RETURN"), cancellable = true)
 	private void onComputeFallDamage(float fallDistance, float damageMultiplier, CallbackInfoReturnable<Integer> cir)
 	{
-		if(!(this instanceof WingedPlayerEntity winged && winged.isSliding()))
+		if(isPlayer() && !(this instanceof WingedPlayerEntity winged && winged.isSliding()))
 			cir.setReturnValue(0);
 	}
 	

@@ -18,6 +18,7 @@ import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
+import net.minecraft.registry.tag.EntityTypeTags;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -25,6 +26,8 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.*;
 import org.jetbrains.annotations.Nullable;
@@ -122,6 +125,17 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 	protected int computeFallDamage(float fallDistance, float damageMultiplier)
 	{
 		return super.computeFallDamage(fallDistance - 3, damageMultiplier);
+	}
+	
+	public boolean shouldScream()
+	{
+		if(isOnGround())
+			return false;
+		BlockHitResult hit = getWorld().raycast(new RaycastContext(getPos(), getPos().add(0, -32, 0),
+				RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, this));
+		boolean miss = hit.getType().equals(HitResult.Type.MISS);
+		return isAlive() && miss ||
+					   (!miss && computeFallDamage((float)Math.max(fallDistance, Math.abs(getPos().getY() - (float)hit.getPos().y)), 1f) >= getHealth());
 	}
 	
 	@Override

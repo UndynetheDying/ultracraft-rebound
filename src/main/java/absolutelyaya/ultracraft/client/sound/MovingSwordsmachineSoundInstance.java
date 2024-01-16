@@ -10,7 +10,7 @@ public class MovingSwordsmachineSoundInstance extends MovingPlayerSoundInstance
 	{
 		super(SoundRegistry.MACHINESWORD_LOOP, SoundCategory.HOSTILE, owner);
 		pitch = 1.5f;
-		volume = 1f;
+		volume = 0f;
 	}
 	
 	@Override

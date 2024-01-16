@@ -26,13 +26,11 @@ import absolutelyaya.ultracraft.client.rendering.entity.machine.SwordsmachineRen
 import absolutelyaya.ultracraft.client.rendering.entity.machine.V2Renderer;
 import absolutelyaya.ultracraft.client.rendering.entity.other.*;
 import absolutelyaya.ultracraft.client.rendering.entity.projectile.*;
-import absolutelyaya.ultracraft.client.sound.MovingMachineSwordSoundInstance;
-import absolutelyaya.ultracraft.client.sound.MovingSlideSoundInstance;
-import absolutelyaya.ultracraft.client.sound.MovingSwordsmachineSoundInstance;
-import absolutelyaya.ultracraft.client.sound.MovingWindSoundInstance;
+import absolutelyaya.ultracraft.client.sound.*;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
 import absolutelyaya.ultracraft.config.*;
+import absolutelyaya.ultracraft.entity.husk.AbstractHuskEntity;
 import absolutelyaya.ultracraft.entity.machine.SwordsmachineEntity;
 import absolutelyaya.ultracraft.entity.projectile.ThrownMachineSwordEntity;
 import absolutelyaya.ultracraft.particle.*;
@@ -261,6 +259,8 @@ public class UltracraftClient implements ClientModInitializer
 				MinecraftClient.getInstance().getSoundManager().play(new MovingMachineSwordSoundInstance(sword));
 			else if (entity instanceof SwordsmachineEntity sm)
 				MinecraftClient.getInstance().getSoundManager().play(new MovingSwordsmachineSoundInstance(sm));
+			else if (entity instanceof AbstractHuskEntity husk)
+				MinecraftClient.getInstance().getSoundManager().play(new MovingHuskScreamSoundInstance(husk));
 		});
 		
 		LivingEntityFeatureRendererRegistrationCallback.EVENT.register((type, renderer, helper, context) -> {
