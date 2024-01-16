@@ -217,6 +217,7 @@ public class ItemRegistry
 			content.add(RED_SKULL);
 			content.add(HELL_BULLET);
 			content.add(CERBERUS_BALL);
+			content.add(CANCER_BULLET);
 			content.add(BlockRegistry.ELEVATOR.asItem());
 			content.add(BlockRegistry.ELEVATOR_WALL.asItem());
 			content.add(BlockRegistry.ELEVATOR_FLOOR.asItem());

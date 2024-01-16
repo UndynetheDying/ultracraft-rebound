@@ -69,6 +69,7 @@
     - There are Normal//Player Triggers and Enemy Triggers
     - Triggers can be set to not deactivate automatically, making them activate only once until the room resets
     - Triggers can be set to have an activation period, requiring something to stay in the trigger for a certain amount of time to actually set the bound flag; same for deactivating
+    - Progression Triggers grant a progression entry and optionally give an item as well once entered by a player; if the progression entry is already unlocked//obtained, it won't give an item
   - Listener Blocks
     - Listen for the state of the bound Flag being changed and performs an action based on its type
     - All Listeners can have a set delay for their action; if the bound flag is deactivated again before the activation cooldown is run out, it'll be cancelled.
@@ -139,6 +140,7 @@
 - Added `{parries:<count>}` NBT tag to all Projectiles
   - The value would only naturally go above 1 if parry-chaining is enabled
 - You can now Right Click with the Knuckleblaster Item to grant yourself the Progression Entry
+- Husks now scream when falling from a lethal height
 ## Resource Changes
 - Continued Adding Sounds
 - Shotgun Animations now have a few sound keyframes
