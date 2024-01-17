@@ -135,7 +135,7 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 				RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, this));
 		boolean miss = hit.getType().equals(HitResult.Type.MISS);
 		return isAlive() && miss ||
-					   (!miss && computeFallDamage((float)Math.max(fallDistance, Math.abs(getPos().getY() - (float)hit.getPos().y)), 1f) >= getHealth());
+					   (!miss && computeFallDamage((float)(fallDistance + Math.abs(getPos().getY() - (float)hit.getPos().y)), 1f) - 2f >= getHealth());
 	}
 	
 	@Override
@@ -178,6 +178,18 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 					.forEach(p -> bossBar.addPlayer((ServerPlayerEntity)p));
 		}
 		wasBossbarVisible = isBossBarVisible();
+	}
+	
+	@Override
+	public void tickMovement()
+	{
+		super.tickMovement();
+		if(!getWorld().isClient)
+			return;
+		if(!isOnGround() && getVelocity().y < 0f)
+			fallDistance -= getVelocity().y;
+		else
+			fallDistance = 0f;
 	}
 	
 	@Override

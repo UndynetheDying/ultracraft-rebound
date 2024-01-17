@@ -41,6 +41,7 @@ public class FilthEntity extends AbstractHuskEntity implements GeoEntity, MeleeI
 	private static final RawAnimation ATTACK_LUNGE_ANIM = RawAnimation.begin().thenLoop("lunge");
 	private static final RawAnimation ATTACK_MOVING_ANIM = RawAnimation.begin().thenLoop("attackMoving");
 	private static final RawAnimation ATTACK_STATIONARY_ANIM = RawAnimation.begin().thenLoop("attackStationary");
+	private static final RawAnimation FALL_ANIM = RawAnimation.begin().thenPlay("fallStart").thenLoop("fall");
 	private final AnimatableInstanceCache cache = AzureLibUtil.createInstanceCache(this);
 	protected static final TrackedData<Boolean> RARE = DataTracker.registerData(FilthEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	protected static final TrackedData<Integer> ATTACK_COOLDOWN = DataTracker.registerData(FilthEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -98,8 +99,16 @@ public class FilthEntity extends AbstractHuskEntity implements GeoEntity, MeleeI
 		{
 			case ANIMATION_IDLE ->
 			{
-				controller.setAnimationSpeed(getVelocity().horizontalLengthSquared() > 0.03 ? 2f : 1f);
-				controller.setAnimation(event.isMoving() ? RUN_ANIM : IDLE_ANIM);
+				if(isOnGround())
+				{
+					controller.setAnimationSpeed(getVelocity().horizontalLengthSquared() > 0.03 ? 2f : 1f);
+					controller.setAnimation(event.isMoving() ? RUN_ANIM : IDLE_ANIM);
+				}
+				else
+				{
+					controller.setAnimationSpeed(2f);
+					controller.setAnimation(FALL_ANIM);
+				}
 			}
 			case ANIMATION_ATTACK_LUNGE -> controller.setAnimation(ATTACK_LUNGE_ANIM);
 			case ANIMATION_ATTACK_MOVING -> controller.setAnimation(ATTACK_MOVING_ANIM);

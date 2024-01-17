@@ -23,7 +23,6 @@ import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import mod.azure.azurelib.animatable.GeoEntity;
@@ -43,6 +42,7 @@ public class StrayEntity extends AbstractHuskEntity implements GeoEntity, Interr
 	private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
 	private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
 	private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenLoop("attack");
+	private static final RawAnimation FALL_ANIM = RawAnimation.begin().thenPlay("fallStart").thenLoop("fall");
 	private final AnimatableInstanceCache cache = AzureLibUtil.createInstanceCache(this);
 	private static final byte ANIMATION_IDLE = 0;
 	private static final byte ANIMATION_ATTACK = 1;
@@ -98,8 +98,16 @@ public class StrayEntity extends AbstractHuskEntity implements GeoEntity, Interr
 		{
 			case ANIMATION_IDLE ->
 			{
-				controller.setAnimationSpeed(getVelocity().horizontalLengthSquared() > 0.03 ? 2f : 1f);
-				controller.setAnimation(event.isMoving() ? WALK_ANIM : IDLE_ANIM);
+				if(isOnGround())
+				{
+					controller.setAnimationSpeed(getVelocity().horizontalLengthSquared() > 0.03 ? 2f : 1f);
+					controller.setAnimation(event.isMoving() ? WALK_ANIM : IDLE_ANIM);
+				}
+				else
+				{
+					controller.setAnimationSpeed(2f);
+					controller.setAnimation(FALL_ANIM);
+				}
 			}
 			case ANIMATION_ATTACK -> controller.setAnimation(ATTACK_ANIM);
 		}

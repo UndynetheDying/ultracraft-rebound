@@ -40,6 +40,7 @@ public class SchismEntity extends AbstractHuskEntity implements GeoEntity, Inter
 	private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
 	private static final RawAnimation ATTACK_VERTICAL_ANIM = RawAnimation.begin().thenLoop("attackVert");
 	private static final RawAnimation ATTACK_HORIZONTAL_ANIM = RawAnimation.begin().thenLoop("attackHor");
+	private static final RawAnimation FALL_ANIM = RawAnimation.begin().thenPlay("fallStart").thenLoop("fall");
 	private final AnimatableInstanceCache cache = AzureLibUtil.createInstanceCache(this);
 	private static final byte ANIMATION_IDLE = 0;
 	private static final byte ANIMATION_ATTACK_VERTICAL = 1;
@@ -80,9 +81,18 @@ public class SchismEntity extends AbstractHuskEntity implements GeoEntity, Inter
 		byte anim = dataTracker.get(ANIMATION);
 		AnimationController<?> controller = event.getController();
 		
+		controller.setAnimationSpeed(1f);
 		switch (anim)
 		{
-			case ANIMATION_IDLE -> controller.setAnimation(event.isMoving() ? WALK_ANIM : IDLE_ANIM);
+			case ANIMATION_IDLE -> {
+				if(isOnGround())
+					controller.setAnimation(event.isMoving() ? WALK_ANIM : IDLE_ANIM);
+				else
+				{
+					controller.setAnimationSpeed(2f);
+					controller.setAnimation(FALL_ANIM);
+				}
+			}
 			case ANIMATION_ATTACK_VERTICAL -> controller.setAnimation(ATTACK_VERTICAL_ANIM);
 			case ANIMATION_ATTACK_HORIZONTAL -> controller.setAnimation(ATTACK_HORIZONTAL_ANIM);
 		}

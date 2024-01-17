@@ -29,6 +29,6 @@ public class MovingHuskScreamSoundInstance extends MovingPlayerSoundInstance
 			volume = 0f;
 		PlayerEntity player = MinecraftClient.getInstance().player;
 		if(player != null)
-			pitch = Math.min(1f - Math.max((player.distanceTo(owner) - 8) / 24f, 0f), 1f);
+			pitch = Math.min(1f - Math.max((player.distanceTo(owner) - 8) / 24f, 0f), 1f) * 0.9f;
 	}
 }

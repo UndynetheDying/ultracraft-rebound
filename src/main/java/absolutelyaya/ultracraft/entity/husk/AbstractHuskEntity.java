@@ -6,6 +6,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.world.World;
@@ -20,7 +21,7 @@ public abstract class AbstractHuskEntity extends AbstractUltraHostileEntity
 	@Override
 	public boolean damage(DamageSource source, float amount)
 	{
-		if(!isOnGround())
+		if(!isOnGround() && !source.isOf(DamageTypes.FALL))
 			amount *= 1.5;
 		if(isOnFire() && !source.isIn(DamageTypeTags.IS_FIRE) && !source.isIn(DamageTypeTags.IS_EXPLOSION))
 			amount *= 1.5;
