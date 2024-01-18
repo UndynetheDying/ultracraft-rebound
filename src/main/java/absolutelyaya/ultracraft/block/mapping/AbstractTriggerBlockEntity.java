@@ -77,7 +77,8 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 	@Override
 	void tick()
 	{
-		boolean b = (containedEntities = world.getEntitiesByType(TypeFilter.instanceOf(getTargetClass()), getAreaBox(), i -> true)).size() > 0;
+		boolean b = (containedEntities = world.getEntitiesByType(TypeFilter.instanceOf(getTargetClass()), getAreaBox(),
+				i -> i.isAlive() && !i.isSpectator())).size() > 0;
 		boolean wasActive = isActive();
 		if(!b && active > 0 && (selfResetting || active < activateDelay))
 			active--;

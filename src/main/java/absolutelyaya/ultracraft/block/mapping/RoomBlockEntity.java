@@ -1,8 +1,13 @@
 package absolutelyaya.ultracraft.block.mapping;
 
+import absolutelyaya.ultracraft.block.CerberusBlock;
+import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
+import absolutelyaya.ultracraft.registry.BlockRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -110,6 +115,13 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 		for (AbstractMappingBlockEntity child : children.values())
 			if(child != null)
 				child.reset();
+		world.getEntitiesByType(TypeFilter.instanceOf(AbstractUltraHostileEntity.class), getAreaBox(), LivingEntity::isAlive)
+				.forEach(e -> e.remove(Entity.RemovalReason.DISCARDED));
+		forEachBlockInArea(pos -> {
+			BlockState state = world.getBlockState(pos);
+			if(state.isOf(BlockRegistry.CERBERUS))
+				world.setBlockState(pos, state.with(CerberusBlock.EMPTY, false).with(CerberusBlock.SPAWNING, false));
+		});
 	}
 	
 	public void registerChild(BlockPos pos, AbstractMappingBlockEntity blockEntity)
