@@ -68,7 +68,7 @@ public class SlabBlock extends Block implements IPunchableBlock
 		if (hit == null || !(player.getStackInHand(hand).isOf(Items.DEBUG_STICK) || player.isSneaking()))
 		{
 			world.setBlockState(pos, state.cycle(ACTIVE));
-			world.playSound(null, pos, state.get(ACTIVE) ? SoundRegistry.SLAB_ACTIVATE : SoundRegistry.SLAB_DEACTIVATE, SoundCategory.BLOCKS);
+			world.playSound(null, pos, state.get(ACTIVE) ? SoundRegistry.SLAB_DEACTIVATE : SoundRegistry.SLAB_ACTIVATE, SoundCategory.BLOCKS);
 			world.updateNeighbor(pos, IceBlock.getMeltedState().getBlock(), pos);
 			return ActionResult.SUCCESS;
 		}
