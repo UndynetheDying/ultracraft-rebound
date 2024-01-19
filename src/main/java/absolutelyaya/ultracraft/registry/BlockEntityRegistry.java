@@ -28,6 +28,7 @@ public class BlockEntityRegistry
 	public static final BlockEntityType<SoundListenerBlockEntity> MAP_SOUND;
 	public static final BlockEntityType<CheckpointBlockEntity> MAP_CHECKPOINT;
 	public static final BlockEntityType<ProgressionTriggerBlockEntity> MAP_PROGRESSION;
+	public static final BlockEntityType<TitleTriggerBlockEntity> MAP_TITLE;
 	
 	public static void register() {
 	}
@@ -83,5 +84,8 @@ public class BlockEntityRegistry
 		MAP_PROGRESSION = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				new Identifier(Ultracraft.MOD_ID, "map_progression"),
 				FabricBlockEntityTypeBuilder.create(ProgressionTriggerBlockEntity::new, BlockRegistry.MAP_PROGRESSION).build());
+		MAP_TITLE = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Ultracraft.MOD_ID, "map_title"),
+				FabricBlockEntityTypeBuilder.create(TitleTriggerBlockEntity::new, BlockRegistry.MAP_TITLE).build());
 	}
 }

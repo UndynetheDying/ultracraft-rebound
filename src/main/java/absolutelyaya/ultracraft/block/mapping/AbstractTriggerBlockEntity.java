@@ -15,7 +15,7 @@ import java.util.List;
 
 public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEntity implements FlagBindable
 {
-	int active, activateDelay = 10;
+	int active, activateDelay;
 	String flag;
 	boolean selfResetting = true;
 	List<? extends LivingEntity> containedEntities = new ArrayList<>();

@@ -149,6 +149,7 @@
   "block.ultracraft.map_sound": "Map Sound Listener",
   "block.ultracraft.map_checkpoint": "Map Checkpoint",
   "block.ultracraft.map_progression": "Map Progression",
+  "block.ultracraft.map_title": "Map Title",
 
   "entity.ultracraft.filth": "Filth",
   "entity.ultracraft.stray": "Stray",
@@ -633,6 +634,7 @@
   "ultrakill.game": "ULTRAKILL (real)",
   "yaya.support.kofi": "Support yayas endeavours",
 
+  "title.placeholder": "I'm a placeholder :3",
   "title.entrance.layer-0": "Layer 0 // Overworld",
   "title.entrance.layer-1": "Layer 1 // Limbo",
 

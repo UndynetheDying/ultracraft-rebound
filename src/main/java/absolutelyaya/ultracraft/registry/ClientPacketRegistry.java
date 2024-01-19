@@ -388,9 +388,12 @@ public class ClientPacketRegistry
 			float delay = buf.readFloat();
 			client.execute(() -> {
 				if(large)
-					TitleHUD.setBigTitle(client.player, text, delay);
+					TitleHUD.Instance.setBigTitle(text, delay);
 				else
-					TitleHUD.setBoxTitle(client.player, text, delay);
+				{
+					TitleHUD.Instance.setBoxTitle(text, delay);
+					client.player.playSound(SoundRegistry.RECEIVE_BOX_TITLE, 1f, 1f);
+				}
 			});
 		})));
 	}

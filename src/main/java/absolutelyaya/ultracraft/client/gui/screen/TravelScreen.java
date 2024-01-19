@@ -110,7 +110,7 @@ public class TravelScreen extends Screen
 		buf.writeInt(layer);
 		ClientPlayNetworking.send(PacketRegistry.TRAVEL_PACKET_ID, buf);
 		UltracraftClient.setTravelling(true);
-		TitleHUD.setBigTitle(client.player, Text.translatable("title.entrance.layer-" + layer), 10f);
+		TitleHUD.Instance.setBigTitle(Text.translatable("title.entrance.layer-" + layer), 10f);
 	}
 	
 	@Override

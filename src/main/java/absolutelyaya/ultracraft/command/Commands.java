@@ -2,8 +2,8 @@ package absolutelyaya.ultracraft.command;
 
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
-import absolutelyaya.ultracraft.client.gui.TitleHUD;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
+import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.config.Setting;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
@@ -361,10 +361,11 @@ public class Commands
 		Text text = context.getArgument("text", Text.class);
 		for (ServerPlayerEntity player : targets)
 		{
+			IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(player);
 			if(type.equals("large"))
-				TitleHUD.setBigTitle(player, text);
+				winged.sendBigTitle(text);
 			else
-				TitleHUD.setBoxTitle(player, text);
+				winged.sendBoxTitle(text);
 			if(targets.size() == 1)
 				context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.title.success-single", type, player.getName()), true);
 		}

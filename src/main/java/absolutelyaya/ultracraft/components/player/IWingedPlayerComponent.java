@@ -3,7 +3,9 @@ package absolutelyaya.ultracraft.components.player;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
 import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -44,4 +46,12 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	void setLastCheckpoint(BlockPos pos, World dimension);
 	
 	RegistryKey<World> getCheckpointDimension();
+	
+	void sendBigTitle(Text text, float delay);
+	
+	void sendBigTitle(Text text);
+	
+	void sendBoxTitle(Text text, float duration);
+	
+	void sendBoxTitle(Text text);
 }

@@ -5,10 +5,16 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
+import absolutelyaya.ultracraft.registry.PacketRegistry;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -159,6 +165,40 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	public RegistryKey<World> getCheckpointDimension()
 	{
 		return checkpointDimension;
+	}
+	
+	public void sendBigTitle(Text text, float delay)
+	{
+		if(!provider.getWorld().isClient)
+		{
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			buf.writeBoolean(true);
+			buf.writeText(text);
+			buf.writeFloat(delay);
+			ServerPlayNetworking.send((ServerPlayerEntity)provider, PacketRegistry.TITLE_PACKET_ID, buf);
+		}
+	}
+	
+	public void sendBigTitle(Text text)
+	{
+		sendBigTitle(text, 0f);
+	}
+	
+	public void sendBoxTitle(Text text, float duration)
+	{
+		if(!provider.getWorld().isClient)
+		{
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			buf.writeBoolean(false);
+			buf.writeText(text);
+			buf.writeFloat(duration);
+			ServerPlayNetworking.send((ServerPlayerEntity)provider, PacketRegistry.TITLE_PACKET_ID, buf);
+		}
+	}
+	
+	public void sendBoxTitle(Text text)
+	{
+		sendBoxTitle(text, 30f);
 	}
 	
 	@Override

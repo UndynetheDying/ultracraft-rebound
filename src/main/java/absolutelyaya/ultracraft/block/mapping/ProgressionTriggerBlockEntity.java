@@ -2,8 +2,8 @@ package absolutelyaya.ultracraft.block.mapping;
 
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
-import absolutelyaya.ultracraft.client.gui.TitleHUD;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
+import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
@@ -103,8 +103,11 @@ public class ProgressionTriggerBlockEntity extends AbstractTriggerBlockEntity
 					Item item = Registries.ITEM.get(progressionEntry);
 					if(giveAsItem && item != null)
 						player.giveItemStack(item.getDefaultStack());
-					if(message != null)
-						TitleHUD.setBoxTitle(player, Text.translatable(message, item.getName().getString()));
+					if(message != null && !world.isClient)
+					{
+						IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(player);
+						winged.sendBoxTitle(Text.translatable(message, item.getName().getString()));
+					}
 				}
 			}
 		});
