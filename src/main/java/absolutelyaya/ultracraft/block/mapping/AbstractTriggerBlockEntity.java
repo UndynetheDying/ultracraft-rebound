@@ -15,7 +15,7 @@ import java.util.List;
 
 public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEntity implements FlagBindable
 {
-	int active, activateDelay;
+	int active, activateDelay = 1, targetThreshold = 0;
 	String flag;
 	boolean selfResetting = true;
 	List<? extends LivingEntity> containedEntities = new ArrayList<>();
@@ -78,7 +78,7 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 	void tick()
 	{
 		boolean b = (containedEntities = world.getEntitiesByType(TypeFilter.instanceOf(getTargetClass()), getAreaBox(),
-				i -> i.isAlive() && !i.isSpectator())).size() > 0;
+				i -> i.isAlive() && !i.isSpectator())).size() > targetThreshold;
 		boolean wasActive = isActive();
 		if(!b && active > 0 && (selfResetting || active < activateDelay))
 			active--;
@@ -113,6 +113,8 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 			activateDelay = nbt.getInt("activateDelay");
 		if(nbt.contains("selfReset", NbtElement.BYTE_TYPE))
 			selfResetting = nbt.getBoolean("selfReset");
+		if(nbt.contains("targetThreshold", NbtElement.INT_TYPE))
+			targetThreshold = nbt.getInt("targetThreshold");
 	}
 	
 	@Override
@@ -123,5 +125,6 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 			nbt.putString("flag", flag);
 		nbt.putInt("activateDelay", activateDelay);
 		nbt.putBoolean("selfReset", selfResetting);
+		nbt.putInt("targetThreshold", targetThreshold);
 	}
 }

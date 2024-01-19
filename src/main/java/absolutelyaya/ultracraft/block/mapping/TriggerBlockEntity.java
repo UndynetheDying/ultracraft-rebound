@@ -53,25 +53,30 @@ public class TriggerBlockEntity extends AbstractTriggerBlockEntity
 	@Override
 	public void setAttribute(String s, String value)
 	{
-		if(s.equals("isSelfReset"))
-			selfResetting = Boolean.parseBoolean(value);
-		else if(s.equals("activationDelay"))
-			activateDelay = Math.max(Integer.parseInt(value), 1);
+		switch (s)
+		{
+			case "isSelfReset" -> selfResetting = Boolean.parseBoolean(value);
+			case "activationDelay" -> activateDelay = Math.max(Integer.parseInt(value), 1);
+			case "targetThreshold" -> targetThreshold = Math.max(Integer.parseInt(value), 0);
+		}
 		super.setAttribute(s, value);
 	}
 	
 	@Override
 	public String getAttribute(String attribute)
 	{
-		if(attribute.equals("isSelfReset"))
-			return String.valueOf(selfResetting);
-		else if(attribute.equals("activationDelay"))
-			return String.valueOf(activateDelay);
-		return null;
+		return switch (attribute)
+		{
+			case "isSelfReset" -> String.valueOf(selfResetting);
+			case "activationDelay" -> String.valueOf(activateDelay);
+			case "targetThreshold" -> String.valueOf(targetThreshold);
+			default -> null;
+		};
 	}
 	
 	static {
 		attributes.add("isSelfReset");
 		attributes.add("activationDelay");
+		attributes.add("targetThreshold");
 	}
 }
