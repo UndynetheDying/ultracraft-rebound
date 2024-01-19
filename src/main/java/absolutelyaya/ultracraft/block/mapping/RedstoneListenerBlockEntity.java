@@ -51,13 +51,13 @@ public class RedstoneListenerBlockEntity extends AbstractListenerBlockEntity
 	@Override
 	public boolean isActive()
 	{
-		return super.isActive() && (pulseDuration > 0 || pulseDuration == -1);
+		return super.isActive() && (pulseDuration > 0 || maxPulseDuration <= 0);
 	}
 	
 	@Override
 	void tick()
 	{
-		if(pulseDuration > 0 && !world.isClient)
+		if((pulseDuration > 0 || maxPulseDuration <= 0) && !world.isClient)
 		{
 			pulseDuration--;
 			if(pulseDuration == 0)
