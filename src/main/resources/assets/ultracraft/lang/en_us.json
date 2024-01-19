@@ -305,6 +305,8 @@
   "command.ultracraft.whitelist.remove": "[Ultracraft] removed %1$s from Whitelist '%2$s'.",
   "command.ultracraft.style.notfound": "[Ultracraft] Style bonus '%s' not found",
   "command.ultracraft.style.success": "[Ultracraft] Gave Style Bonus '%1$s' to %2$s",
+  "command.ultracraft.title.success-single": "[Ultracraft] Displaying %1$s title for %2$s",
+  "command.ultracraft.title.success-multiple": "[Ultracraft] Displaying %1$s title for %2$s targets",
 
   "gamerule.ultracraft.category.general": "ULTRACRAFT",
   "gamerule.ultracraft.category.world": "ULTRACRAFT (world)",
@@ -420,7 +422,7 @@
   "message.ultracraft.terminal-prot": "[§4Ultracraft§r] Only their Owners and Admins can break Terminals on this Server.",
   "message.ultracraft.hell_spawner.fail-spawn.blocked": "[§4Ultracraft§r] Hell Spawner at %s couldn't find a free spawn location.",
   "message.ultracraft.progression.unlock": "You have unlocked the %s!",
-  "message.ultracraft.progression.unlock.alt-revolver": "You can now use the Alternate Revolvers!",
+  "message.ultracraft.progression.unlock.alt-revolver": "You can now use the §6Alternate Revolvers§f! Go to a §bTerminals Weapon Tab§f to change your §bWeapon Loadout§f.",
 
   "intro.ultracraft.calibration": "BOOT UP SEQUENCE READY\n\nFIRMWARE\n  §aVERSION %s§r\n\nCALIBRATION\n  §4EXPIRED§r\n  §4NEW CALIBRATION REQUIRED§r\n\n",
   "intro.ultracraft.input": "Press any Key",
@@ -630,6 +632,9 @@
   "modmenu.descriptionTranslation.ultracraft": "Ultrakill moment\n\nMade after a Game by §6Arsi \"Hakita\" Patala§r\nGo play the real thing, it's much better than this mod lol",
   "ultrakill.game": "ULTRAKILL (real)",
   "yaya.support.kofi": "Support yayas endeavours",
+
+  "title.entrance.layer-0": "Layer 0 // Overworld",
+  "title.entrance.layer-1": "Layer 1 // Limbo",
 
   "limbo.slab_press.fail.spawn": "This must be activated from elsewhere",
   "limbo.slab_press.fail.active": "Your Actions cannot be undone",

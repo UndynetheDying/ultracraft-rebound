@@ -9,6 +9,7 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.ITrailEnjoyer;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.UltracraftClient;
+import absolutelyaya.ultracraft.client.gui.TitleHUD;
 import absolutelyaya.ultracraft.client.gui.screen.HellObserverScreen;
 import absolutelyaya.ultracraft.client.gui.screen.ServerConfigScreen;
 import absolutelyaya.ultracraft.client.gui.screen.TravelScreen;
@@ -379,6 +380,17 @@ public class ClientPacketRegistry
 			client.execute(() -> {
 				EditModeRenderer.Instance.newRoomBlocks = rooms;
 				EditModeRenderer.Instance.newOrphans = orphans;
+			});
+		})));
+		ClientPlayNetworking.registerGlobalReceiver(TITLE_PACKET_ID, (((client, handler, buf, responseSender) -> {
+			boolean large = buf.readBoolean();
+			Text text = buf.readText();
+			float delay = buf.readFloat();
+			client.execute(() -> {
+				if(large)
+					TitleHUD.setBigTitle(client.player, text, delay);
+				else
+					TitleHUD.setBoxTitle(client.player, text, delay);
 			});
 		})));
 	}

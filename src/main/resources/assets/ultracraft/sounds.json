@@ -497,6 +497,11 @@
       {"name": "ultracraft:placeholder", "type": "event"}
     ]
   },
+  "misc.box-title": {
+    "sounds": [
+      {"name": "ultracraft:placeholder", "type": "event"}
+    ]
+  },
   "misc.husk_scream": {
     "sounds": [
       "ultracraft:misc/husk_scream_seemless"

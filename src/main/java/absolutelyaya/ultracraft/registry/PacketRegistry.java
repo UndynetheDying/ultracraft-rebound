@@ -119,6 +119,7 @@ public class PacketRegistry
 	public static final Identifier STYLE_BONUS_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "style");
 	public static final Identifier TRAVEL_SCREEN_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "open_travel_screen");
 	public static final Identifier EDIT_PING_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "edit_ping");
+	public static final Identifier TITLE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "title");
 	
 	public static void registerC2S()
 	{

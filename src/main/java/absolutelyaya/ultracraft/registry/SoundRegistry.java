@@ -125,6 +125,7 @@ public class SoundRegistry
 	public static final SoundEvent PARRY = register("misc.parry");
 	public static final SoundEvent WATER_SKIM = register("misc.water_skim");
 	public static final SoundEvent LAUGH = register("misc.laugh");
+	public static final SoundEvent RECEIVE_BOX_TITLE = register("misc.box-title");
 	public static final SoundEvent HUSK_SCREAM_LOOP = register("misc.husk_scream");
 	public static final SoundEvent PLACEHOLDER = register("placeholder");
 	

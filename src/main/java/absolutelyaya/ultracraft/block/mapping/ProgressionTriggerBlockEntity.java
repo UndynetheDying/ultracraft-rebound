@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.block.mapping;
 
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.client.gui.TitleHUD;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.BlockState;
@@ -103,7 +104,7 @@ public class ProgressionTriggerBlockEntity extends AbstractTriggerBlockEntity
 					if(giveAsItem && item != null)
 						player.giveItemStack(item.getDefaultStack());
 					if(message != null)
-						player.sendMessage(Text.translatable(message, item.getName().getString()), true);
+						TitleHUD.setBoxTitle(player, Text.translatable(message, item.getName().getString()));
 				}
 			}
 		});

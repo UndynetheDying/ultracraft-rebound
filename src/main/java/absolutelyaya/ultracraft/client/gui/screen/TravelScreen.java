@@ -3,6 +3,7 @@ package absolutelyaya.ultracraft.client.gui.screen;
 import absolutelyaya.ultracraft.Layer;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.UltracraftClient;
+import absolutelyaya.ultracraft.client.gui.TitleHUD;
 import absolutelyaya.ultracraft.client.rendering.TitleBGRenderer;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -109,6 +110,7 @@ public class TravelScreen extends Screen
 		buf.writeInt(layer);
 		ClientPlayNetworking.send(PacketRegistry.TRAVEL_PACKET_ID, buf);
 		UltracraftClient.setTravelling(true);
+		TitleHUD.setBigTitle(client.player, Text.translatable("title.entrance.layer-" + layer), 10f);
 	}
 	
 	@Override

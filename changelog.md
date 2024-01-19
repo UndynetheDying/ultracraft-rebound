@@ -86,6 +86,8 @@
   - More Additions//Improvements to edit mode are already planned for the future; those will take longer to make than I'm willing to further delay this update though.
 - Made Flesh Blocks break faster using Hoes
 - Shotgun Pellets are now Parriable
+- Added Large Animated Titles
+- Added Text Box Titles
 ## Settings & Config
 - Removed almost all gamerules (only remaining is `ultra-startWithPiercer`)
 - Added Option to disable Screenshake
@@ -98,6 +100,8 @@
 - `/ultrawhitelist` can now be used by non-players
 - Fixed time unfreeze command not clearing the time freeze VFX on Clients
 - Added Command to trigger Style Bonuses `/ultracraft style`
+- Added Command to trigger large and box titles `/ultracraft title`
+- Added `/edit` to perform most edit mode interactions
 ## Tweaks
 - Buffed overpump damage towards others (10 Dmg -> 15 Dmg)
 - Hitscans don't cause Thorn Damage from Guardians anymore

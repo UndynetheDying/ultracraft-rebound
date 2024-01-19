@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.command;
 
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.client.gui.TitleHUD;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.config.Setting;
@@ -20,10 +21,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.command.CommandSource;
-import net.minecraft.command.argument.EntityArgumentType;
-import net.minecraft.command.argument.IdentifierArgumentType;
-import net.minecraft.command.argument.PosArgument;
-import net.minecraft.command.argument.Vec3ArgumentType;
+import net.minecraft.command.argument.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.boss.CommandBossBar;
@@ -47,6 +45,7 @@ import static com.mojang.brigadier.arguments.StringArgumentType.string;
 import static net.minecraft.command.argument.EntityArgumentType.player;
 import static net.minecraft.command.argument.EntityArgumentType.players;
 import static net.minecraft.command.argument.IdentifierArgumentType.identifier;
+import static net.minecraft.command.argument.TextArgumentType.text;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
@@ -72,7 +71,8 @@ public class Commands
 					.then(literal("revoke").then(argument("target", players()).then(argument("entry", identifier()).suggests(Commands::progressionListProvider).executes(Commands::executeProgressionRevoke)))))
 				.then(literal("reset").then(argument("target", players()).executes(Commands::executeProgressionReset))))
 			.then(literal("ultrabossbar").requires(source -> source.hasPermissionLevel(2)).then(argument("id", identifier()).executes(Commands::executeUltraBossbar)))
-			.then(literal("style").then(argument("target", players()).then(argument("entry", identifier()).suggests(Commands::styleBonusProvider).executes(Commands::executeStyle)))));
+			.then(literal("style").then(argument("target", players()).then(argument("entry", identifier()).suggests(Commands::styleBonusProvider).executes(Commands::executeStyle))))
+			.then(literal("title").then(argument("target", players()).then(argument("type", string()).suggests((context, builder) -> CommandSource.suggestMatching(List.of("large", "box"), builder)).then(argument("text", text()).executes(Commands::executeTitle))))));
 		dispatcher.register(literal("ultrasummon").requires(source -> source.hasPermissionLevel(2)).then(argument("type", string()).suggests((context, builder) -> CommandSource.suggestMatching(List.of("\"tundra//agony\""), builder)).then(argument("pos", Vec3ArgumentType.vec3()).then(argument("yaw", DoubleArgumentType.doubleArg()).executes(Commands::executeSpecialSpawn)))));
 	}
 	
@@ -351,6 +351,25 @@ public class Commands
 		}
 		UltraComponents.STYLE.get(player).styleBonusGet(StyleBonusManager.getBonuses().get(entry));
 		context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.style.success", entry, player.getName()), true);
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int executeTitle(CommandContext<ServerCommandSource> context) throws CommandSyntaxException
+	{
+		Collection<ServerPlayerEntity> targets = EntityArgumentType.getPlayers(context, "target");
+		String type = context.getArgument("type", String.class);
+		Text text = context.getArgument("text", Text.class);
+		for (ServerPlayerEntity player : targets)
+		{
+			if(type.equals("large"))
+				TitleHUD.setBigTitle(player, text);
+			else
+				TitleHUD.setBoxTitle(player, text);
+			if(targets.size() == 1)
+				context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.title.success-single", type, player.getName()), true);
+		}
+		if(targets.size() > 1)
+			context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.title.success-multiple", type, targets.size()), true);
 		return Command.SINGLE_SUCCESS;
 	}
 }
