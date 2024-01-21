@@ -18,6 +18,7 @@ public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 {
 	static List<String> attributes = new ArrayList<>();
 	Identifier close = new Identifier("spruce_planks"), open = new Identifier("air");
+	boolean skull = true;
 	
 	public DoorListenerBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -61,6 +62,11 @@ public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 		return true;
 	}
 	
+	public boolean shouldRenderSkull()
+	{
+		return skull && isActive();
+	}
+	
 	@Override
 	public Vector4f getAreaColor()
 	{
@@ -95,6 +101,7 @@ public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 			case "closedBlock" -> close = Identifier.tryParse(value);
 			case "openBlock" -> open = Identifier.tryParse(value);
 			case "delay" -> activationDelay = Integer.parseInt(value);
+			case "skull" -> skull = Boolean.parseBoolean(value);
 		}
 		super.setAttribute(s, value);
 	}
@@ -107,6 +114,7 @@ public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 			case "closedBlock" -> String.valueOf(close);
 			case "openBlock" -> String.valueOf(open);
 			case "delay" -> String.valueOf(activationDelay);
+			case "skull" -> String.valueOf(skull);
 			default -> null;
 		};
 	}
@@ -119,6 +127,8 @@ public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 			close = Identifier.tryParse(nbt.getString("closedBlock"));
 		if(nbt.contains("openBlock", NbtElement.STRING_TYPE))
 			open = Identifier.tryParse(nbt.getString("openBlock"));
+		if(nbt.contains("skull", NbtElement.BYTE_TYPE))
+			skull = nbt.getBoolean("skull");
 	}
 	
 	@Override
@@ -127,11 +137,13 @@ public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 		super.writeNbt(nbt);
 		nbt.putString("closedBlock", close.toString());
 		nbt.putString("openBlock", open.toString());
+		nbt.putBoolean("skull", skull);
 	}
 	
 	static {
 		attributes.add("closedBlock");
 		attributes.add("openBlock");
 		attributes.add("delay");
+		attributes.add("skull");
 	}
 }
