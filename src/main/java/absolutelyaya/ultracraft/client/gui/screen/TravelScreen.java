@@ -89,7 +89,7 @@ public class TravelScreen extends Screen
 			case LIMBO ->
 			{
 				buttons.add(new LevelButton(width / 2 - 55, height / 2 - 100, 110, 64, Text.translatable("level.ultracraft.1-1"),
-						"1_1", () -> travel(Layer.LIMBO)));
+						"1_1", () -> enterLevel(new Identifier(Ultracraft.MOD_ID, "1-1"))));
 				buttons.add(new LevelButton(width / 2 - 48, height / 2 - 32, 96, 64, Text.translatable("level.ultracraft.1-F"),
 						"1_freeroam", () -> travel(Layer.LIMBO)));
 				buttons.add(new LevelButton(width / 2 - 48, height / 2 + 36, 96, 64, Text.translatable("level.ultracraft.1-2"),
@@ -184,6 +184,13 @@ public class TravelScreen extends Screen
 		ClientPlayNetworking.send(PacketRegistry.TRAVEL_PACKET_ID, buf);
 		UltracraftClient.setTravelling(true);
 		TitleHUD.Instance.setBigTitle(Text.translatable("title.entrance.layer-" + layer.ordinal()), 10f);
+	}
+	
+	void enterLevel(Identifier id)
+	{
+		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeIdentifier(id);
+		ClientPlayNetworking.send(PacketRegistry.ENTER_LEVEL_PACKET_ID, buf);
 	}
 	
 	@Override

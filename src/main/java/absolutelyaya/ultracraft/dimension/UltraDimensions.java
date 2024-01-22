@@ -22,6 +22,7 @@ public class UltraDimensions
 	public static UltraDimensions Instance;
 	
 	final LimboManager LIMBO_MANAGER;
+	final LevelManager LEVEL_MANAGER;
 	final Map<Identifier, DimensionManager> managers = new HashMap<>();
 	
 	public UltraDimensions(MinecraftServer server)
@@ -29,6 +30,7 @@ public class UltraDimensions
 		Instance = this;
 		
 		managers.put(LimboManager.ID, LIMBO_MANAGER = new LimboManager(server.getWorld(LimboManager.WORLD_KEY)));
+		managers.put(LevelManager.ID, LEVEL_MANAGER = new LevelManager(server.getWorld(LevelManager.WORLD_KEY)));
 		
 		ServerWorldEvents.LOAD.register(this::onWorldLoad);
 	}

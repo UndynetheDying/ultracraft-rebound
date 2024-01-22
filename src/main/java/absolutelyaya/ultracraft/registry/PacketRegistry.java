@@ -19,6 +19,8 @@ import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.data.UltraRecipeManager;
+import absolutelyaya.ultracraft.dimension.LevelManager;
+import absolutelyaya.ultracraft.dimension.UltraDimensions;
 import absolutelyaya.ultracraft.entity.projectile.AbstractSkewerEntity;
 import absolutelyaya.ultracraft.entity.projectile.ThrownCoinEntity;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
@@ -29,6 +31,7 @@ import net.fabricmc.fabric.api.dimension.v1.FabricDimensions;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.BellBlock;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.MobEntity;
@@ -87,6 +90,7 @@ public class PacketRegistry
 	public static final Identifier SLAM_STATE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "slam_state");
 	public static final Identifier SYNC_LOADOUT_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "loadout");
 	public static final Identifier TRAVEL_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "travel");
+	public static final Identifier ENTER_LEVEL_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "enter_level");
 	
 	public static final Identifier FREEZE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "freeze");
 	public static final Identifier HITSCAN_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "scan");
@@ -609,11 +613,43 @@ public class PacketRegistry
 			});
 		});
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.TRAVEL_PACKET_ID, (server, player, handler, buf, sender) -> {
-			Layer layer = Layer.values()[buf.readInt()];
+			int id = buf.readInt();
+			Layer layer;
+			Identifier level;
+			if(id == -1)
+			{
+				layer = null;
+				level = buf.readIdentifier();
+			} else
+			{
+				level = null;
+				layer = Layer.values()[id];
+			}
 			server.execute(() -> {
-				ServerWorld world = server.getWorld(layer.worldKey);
-				BlockPos pos = layer.arrivalPos == null ? world.getSpawnPos() : layer.arrivalPos;
+				if(layer != null)
+				{
+					ServerWorld world = server.getWorld(layer.worldKey);
+					BlockPos pos = layer.arrivalPos == null ? world.getSpawnPos() : layer.arrivalPos;
+					FabricDimensions.teleport(player, world, new TeleportTarget(pos.toCenterPos(), Vec3d.ZERO, world.getSpawnAngle(), 0f));
+				}
+				else
+				{
+					ServerWorld world = server.getWorld(LevelManager.WORLD_KEY);
+					BlockPos pos = LevelManager.levels.get(level).getSpawnPos();
+					FabricDimensions.teleport(player, world, new TeleportTarget(pos.toCenterPos(), Vec3d.ZERO, world.getSpawnAngle(), 0f));
+				}
+			});
+		});
+		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.ENTER_LEVEL_PACKET_ID, (server, player, handler, buf, sender) -> {
+			Identifier level = buf.readIdentifier();
+			server.execute(() -> {
+				if(!LevelManager.Instance.instantiateLevel(level))
+					return;
+				ServerWorld world = server.getWorld(LevelManager.WORLD_KEY);
+				BlockPos pos = LevelManager.levels.get(level).getSpawnPos();
 				FabricDimensions.teleport(player, world, new TeleportTarget(pos.toCenterPos(), Vec3d.ZERO, world.getSpawnAngle(), 0f));
+				if(player.getWorld().getBlockState(player.getBlockPos().down()).isAir())
+					player.getWorld().setBlockState(player.getBlockPos().down(), BlockRegistry.PORTAL.getDefaultState());
 			});
 		});
 	}
