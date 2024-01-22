@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.Layer;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.TitleHUD;
+import absolutelyaya.ultracraft.client.gui.widget.LevelButton;
 import absolutelyaya.ultracraft.client.rendering.TitleBGRenderer;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -15,6 +16,7 @@ import net.minecraft.client.gui.CubeMapRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -30,8 +32,8 @@ public class TravelScreen extends Screen
 	float openAnimTime, closeAnimTime, blinkTimer;
 	boolean shouldClose;
 	TextRenderer textRenderer;
-	List<ButtonWidget> buttons = new ArrayList<>();
-	Layer curLayer;
+	List<ClickableWidget> buttons = new ArrayList<>(), layerButtons = new ArrayList<>(), levelButtons = new ArrayList<>();
+	Layer curLayer, selectedLayer;
 	
 	public TravelScreen(boolean closeImmediately)
 	{
@@ -44,18 +46,61 @@ public class TravelScreen extends Screen
 	protected void init()
 	{
 		super.init();
-		buttons.add(addDrawableChild(layerButton(0)));
-		buttons.add(addDrawableChild(layerButton(1)));
-		ButtonWidget button;
-		buttons.add(addDrawableChild(button = layerButton(2)));
-		button.active = false;
-		buttons.add(addDrawableChild(button = layerButton(3)));
-		button.active = false;
-		
-		buttons.add(addDrawableChild(ButtonWidget.builder(Text.translatable("screen.ultracraft.travel.close"), b -> shouldClose = true)
-								 .dimensions(width / 2 - 50, height - 32, 100, 20).build()));
+		buttons.clear();
+		if(selectedLayer == null)
+			layerButtons.addAll(initLayerButtons());
+		else
+			levelButtons.addAll(initLevelButtons());
+		buttons.addAll(layerButtons);
+		buttons.addAll(levelButtons);
 		
 		curLayer = Layer.fromRegistryKey(MinecraftClient.getInstance().world.getRegistryKey());
+	}
+	
+	List<ClickableWidget> initLayerButtons()
+	{
+		layerButtons.clear();
+		List<ClickableWidget> buttons = new ArrayList<>();
+		buttons.add(layerButton(0));
+		buttons.add(layerButton(1));
+		ButtonWidget button;
+		buttons.add(button = layerButton(2));
+		button.active = false;
+		buttons.add(button = layerButton(3));
+		button.active = false;
+		buttons.add(ButtonWidget.builder(Text.translatable("screen.ultracraft.travel.close"), b -> shouldClose = true)
+								 .dimensions(width / 2 - 50, height - 32, 100, 20).build());
+		return buttons;
+	}
+	
+	List<ClickableWidget> initLevelButtons()
+	{
+		levelButtons.clear();
+		List<ClickableWidget> buttons = new ArrayList<>();
+		switch(selectedLayer)
+		{
+			case OVERWORLD ->
+			{
+				buttons.add(new LevelButton(width / 2 - 48, height / 2 - 68, 96, 64, Text.translatable("level.ultracraft.0-F"),
+						"0_freeroam", () -> travel(Layer.OVERWORLD)));
+				buttons.add(new LevelButton(width / 2 - 48, height / 2, 96, 64, Text.translatable("level.ultracraft.0-1"),
+						"placeholder", () -> travel(Layer.OVERWORLD)));
+			}
+			case LIMBO ->
+			{
+				buttons.add(new LevelButton(width / 2 - 55, height / 2 - 100, 110, 64, Text.translatable("level.ultracraft.1-1"),
+						"1_1", () -> travel(Layer.LIMBO)));
+				buttons.add(new LevelButton(width / 2 - 48, height / 2 - 32, 96, 64, Text.translatable("level.ultracraft.1-F"),
+						"1_freeroam", () -> travel(Layer.LIMBO)));
+				buttons.add(new LevelButton(width / 2 - 48, height / 2 + 36, 96, 64, Text.translatable("level.ultracraft.1-2"),
+						"placeholder", () -> travel(Layer.LIMBO)));
+			}
+		}
+		buttons.add(ButtonWidget.builder(Text.translatable("screen.ultracraft.travel.back"), b -> {
+					selectedLayer = null;
+					initLayerButtons();
+				}).dimensions(width / 2 - 50, height - 32, 100, 20).build());
+		return buttons;
 	}
 	
 	ButtonWidget layerButton(int layer)
@@ -67,23 +112,14 @@ public class TravelScreen extends Screen
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta)
 	{
-		blinkTimer = (blinkTimer + delta / 20f) % 1f;
-		if(openAnimTime < 1f)
-		{
-			openAnimTime = Math.min(openAnimTime + delta / 10f, 1f);
-			buttons.forEach(b -> b.setAlpha(openAnimTime));
-		}
 		BG.setYOffset(-(1f - openAnimTime) * 5f + closeAnimTime * 5f);
 		BG.render(delta, 1f);
 		
-		if(!shouldClose)
-		{
-			context.drawCenteredTextWithShadow(textRenderer, Text.translatable("screen.ultracraft.travel.title"), width / 2, 16, 0xffffffff);
-			super.render(context, mouseX, mouseY, delta);
-			if(blinkTimer < 0.5f)
-				context.drawTexture(TEXTURE, width / 2 - 50 - 16, height / 2 + (curLayer.ordinal() - 2) * 30 + 6,
-						0, 60, 11, 8, 128, 128);
-		}
+		if(selectedLayer == null)
+			renderLayerSelection(context, mouseX, mouseY, delta);
+		else
+			renderLayerLevels(context, mouseX, mouseY, delta);
+		
 		if(shouldClose)
 		{
 			if(openAnimTime < 1f)
@@ -95,6 +131,37 @@ public class TravelScreen extends Screen
 		}
 	}
 	
+	void renderLayerSelection(DrawContext context, int mouseX, int mouseY, float delta)
+	{
+		blinkTimer = (blinkTimer + delta / 20f) % 1f;
+		if(openAnimTime < 1f)
+		{
+			openAnimTime = Math.min(openAnimTime + delta / 10f, 1f);
+			buttons.forEach(b -> b.setAlpha(openAnimTime));
+		}
+		
+		if(!shouldClose)
+		{
+			layerButtons.forEach(b -> b.render(context, mouseX, mouseY, delta));
+			context.drawCenteredTextWithShadow(textRenderer, Text.translatable("screen.ultracraft.travel.title"), width / 2, 16, 0xffffffff);
+			super.render(context, mouseX, mouseY, delta);
+			if(blinkTimer < 0.5f)
+				context.drawTexture(TEXTURE, width / 2 - 50 - 16, height / 2 + (curLayer.ordinal() - 2) * 30 + 6,
+						0, 60, 11, 8, 128, 128);
+		}
+	}
+	
+	private void renderLayerLevels(DrawContext context, int mouseX, int mouseY, float delta)
+	{
+		if(!shouldClose)
+		{
+			levelButtons.forEach(b -> b.render(context, mouseX, mouseY, delta));
+			context.drawCenteredTextWithShadow(textRenderer, Text.translatable("screen.ultracraft.travel.layer" + selectedLayer.ordinal()),
+					width / 2, 16, 0xffffffff);
+			super.render(context, mouseX, mouseY, delta);
+		}
+	}
+	
 	@Override
 	public boolean shouldCloseOnEsc()
 	{
@@ -103,20 +170,50 @@ public class TravelScreen extends Screen
 	
 	void selectLayer(int layer)
 	{
+		selectedLayer =	Layer.values()[layer];
+		levelButtons.addAll(initLevelButtons());
+	}
+	
+	void travel(Layer layer)
+	{
 		shouldClose = true;
-		if(Layer.values()[layer].worldKey.equals(curLayer.worldKey))
+		if(layer.worldKey.equals(curLayer.worldKey))
 			return;
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-		buf.writeInt(layer);
+		buf.writeInt(layer.ordinal());
 		ClientPlayNetworking.send(PacketRegistry.TRAVEL_PACKET_ID, buf);
 		UltracraftClient.setTravelling(true);
-		TitleHUD.Instance.setBigTitle(Text.translatable("title.entrance.layer-" + layer), 10f);
+		TitleHUD.Instance.setBigTitle(Text.translatable("title.entrance.layer-" + layer.ordinal()), 10f);
 	}
 	
 	@Override
 	public boolean shouldPause()
 	{
 		return !shouldClose;
+	}
+	
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button)
+	{
+		if(selectedLayer == null)
+		{
+			for (ClickableWidget widget : layerButtons)
+			{
+				boolean b = widget.mouseClicked(mouseX, mouseY, button);
+				if(b)
+					return true;
+			}
+		}
+		else
+		{
+			for (ClickableWidget widget : levelButtons)
+			{
+				boolean b = widget.mouseClicked(mouseX, mouseY, button);
+				if(b)
+					return true;
+			}
+		}
+		return super.mouseClicked(mouseX, mouseY, button);
 	}
 	
 	static class TravelButton extends ButtonWidget
