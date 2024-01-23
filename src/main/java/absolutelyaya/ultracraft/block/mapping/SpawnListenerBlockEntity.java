@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.block.mapping;
 
 import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.entity.demon.HideousMassEntity;
 import absolutelyaya.ultracraft.entity.demon.RodentEntity;
 import absolutelyaya.ultracraft.entity.machine.DestinyBondSwordsmachineEntity;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
@@ -52,6 +53,7 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 			{
 				case "ultracraft:destiny_swordsmachine" -> entities.addAll(DestinyBondSwordsmachineEntity.spawn(world, pos.toCenterPos(), 0f));
 				case "ultracraft:big_rodent" -> entities.add(RodentEntity.spawn(world, pos.toCenterPos(), 1));
+				case "ultracraft:hidden_mass" -> entities.add(HideousMassEntity.spawn(world, pos.toCenterPos(), true));
 				default -> entities.add(Registries.ENTITY_TYPE.get(entityType).spawn((ServerWorld)world, pos, SpawnReason.SPAWNER));
 			}
 		}

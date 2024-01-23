@@ -145,7 +145,7 @@ public class TravelScreen extends Screen
 			layerButtons.forEach(b -> b.render(context, mouseX, mouseY, delta));
 			context.drawCenteredTextWithShadow(textRenderer, Text.translatable("screen.ultracraft.travel.title"), width / 2, 16, 0xffffffff);
 			super.render(context, mouseX, mouseY, delta);
-			if(blinkTimer < 0.5f)
+			if(blinkTimer < 0.5f && curLayer != null)
 				context.drawTexture(TEXTURE, width / 2 - 50 - 16, height / 2 + (curLayer.ordinal() - 2) * 30 + 6,
 						0, 60, 11, 8, 128, 128);
 		}
@@ -177,7 +177,7 @@ public class TravelScreen extends Screen
 	void travel(Layer layer)
 	{
 		shouldClose = true;
-		if(layer.worldKey.equals(curLayer.worldKey))
+		if(curLayer != null && layer.worldKey.equals(curLayer.worldKey))
 			return;
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeInt(layer.ordinal());

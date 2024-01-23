@@ -173,6 +173,15 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		targetSelector.add(0, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
 	}
 	
+	public static HideousMassEntity spawn(World world, Vec3d pos, boolean hidden)
+	{
+		HideousMassEntity mass = new HideousMassEntity(EntityRegistry.HIDEOUS_MASS, world);
+		mass.setPosition(pos);
+		mass.dataTracker.set(HIDDEN, hidden);
+		world.spawnEntity(mass);
+		return mass;
+	}
+	
 	@Override
 	protected ServerBossBar initBossBar()
 	{
