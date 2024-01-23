@@ -50,4 +50,10 @@ public class DoorListenerRenderer implements BlockEntityRenderer<DoorListenerBlo
 		consumer.vertex(matrix, max.x, min.y, max.z).color(0xffffffff).texture(0, 1).overlay(OverlayTexture.DEFAULT_UV)
 				.light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(normal, 0, 1, 0).next();
 	}
+	
+	@Override
+	public boolean rendersOutsideBoundingBox(DoorListenerBlockEntity blockEntity)
+	{
+		return true;
+	}
 }

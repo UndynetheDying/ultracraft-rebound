@@ -193,6 +193,12 @@ public class TerminalBlockEntityRenderer extends GeoBlockRenderer<TerminalBlockE
 		GUI.drawTab(matrices, buffers, "terminal.bestiary", Tab.DEFAULT_RETURN_BUTTON);
 	}
 	
+	@Override
+	public boolean rendersOutsideBoundingBox(TerminalBlockEntity blockEntity)
+	{
+		return true;
+	}
+	
 	static {
 		textRenderer = MinecraftClient.getInstance().textRenderer;
 		GUI = new TerminalGuiRenderer();

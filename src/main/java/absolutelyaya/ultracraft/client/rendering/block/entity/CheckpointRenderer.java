@@ -20,7 +20,6 @@ import org.joml.Vector3f;
 public class CheckpointRenderer implements BlockEntityRenderer<CheckpointBlockEntity>
 {
 	final Identifier TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/block/checkpoint.png");
-	double time;
 	
 	@Override
 	public void render(CheckpointBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay)
@@ -29,7 +28,7 @@ public class CheckpointRenderer implements BlockEntityRenderer<CheckpointBlockEn
 		BlockPos lastCheckpoint = UltraComponents.WINGED_ENTITY.get(player).getLastCheckpoint();
 		if(lastCheckpoint != null && lastCheckpoint.equals(entity.getPos()))
 			return;
-		time += MinecraftClient.getInstance().getLastFrameDuration() / 120f;
+		entity.progressTime(MinecraftClient.getInstance().getLastFrameDuration() / 120f);
 		Box box = entity.getAreaBox().offset(entity.getPos().multiply(-1));
 		Vec3d center = box.getCenter();
 		Vector3f min, max;
@@ -50,7 +49,7 @@ public class CheckpointRenderer implements BlockEntityRenderer<CheckpointBlockEn
 		Matrix4f matrix = matrices.peek().getPositionMatrix();
 		Matrix3f normal = matrices.peek().getNormalMatrix();
 		//POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL
-		float minU = (float)time, maxU = minU + uSpan;
+		float minU = (float)entity.getTime(), maxU = minU + uSpan;
 		RenderSystem.setShaderTexture(0, TEXTURE);
 		consumer.vertex(matrix, min.x, min.y, min.z).color(0xffffffff).texture(maxU, 1).overlay(OverlayTexture.DEFAULT_UV)
 				.light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(normal, 0, 1, 0).next();
@@ -69,5 +68,11 @@ public class CheckpointRenderer implements BlockEntityRenderer<CheckpointBlockEn
 				.light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(normal, 0, 1, 0).next();
 		consumer.vertex(matrix, min.x, min.y, min.z).color(0xffffffff).texture(minU, 1).overlay(OverlayTexture.DEFAULT_UV)
 				.light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(normal, 0, 1, 0).next();
+	}
+	
+	@Override
+	public boolean rendersOutsideBoundingBox(CheckpointBlockEntity blockEntity)
+	{
+		return true;
 	}
 }

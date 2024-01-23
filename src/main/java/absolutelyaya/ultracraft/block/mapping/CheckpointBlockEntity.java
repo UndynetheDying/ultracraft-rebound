@@ -20,6 +20,7 @@ import java.util.List;
 public class CheckpointBlockEntity extends AbstractTriggerBlockEntity
 {
 	static List<String> attributes = new ArrayList<>();
+	double time;
 	
 	public CheckpointBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -102,5 +103,15 @@ public class CheckpointBlockEntity extends AbstractTriggerBlockEntity
 				}
 			}
 		});
+	}
+	
+	public double getTime()
+	{
+		return time;
+	}
+	
+	public void progressTime(double delta)
+	{
+		time += delta;
 	}
 }
