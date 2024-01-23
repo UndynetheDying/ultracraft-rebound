@@ -58,6 +58,7 @@ public class TriggerBlockEntity extends AbstractTriggerBlockEntity
 			case "isSelfReset" -> selfResetting = Boolean.parseBoolean(value);
 			case "activationDelay" -> activateDelay = Math.max(Integer.parseInt(value), 1);
 			case "targetThreshold" -> targetThreshold = Math.max(Integer.parseInt(value), 0);
+			case "invert" -> inverted = Boolean.parseBoolean(value);
 		}
 		super.setAttribute(s, value);
 	}
@@ -70,6 +71,7 @@ public class TriggerBlockEntity extends AbstractTriggerBlockEntity
 			case "isSelfReset" -> String.valueOf(selfResetting);
 			case "activationDelay" -> String.valueOf(activateDelay);
 			case "targetThreshold" -> String.valueOf(targetThreshold);
+			case "invert" -> String.valueOf(inverted);
 			default -> null;
 		};
 	}
@@ -78,5 +80,6 @@ public class TriggerBlockEntity extends AbstractTriggerBlockEntity
 		attributes.add("isSelfReset");
 		attributes.add("activationDelay");
 		attributes.add("targetThreshold");
+		attributes.add("invert");
 	}
 }

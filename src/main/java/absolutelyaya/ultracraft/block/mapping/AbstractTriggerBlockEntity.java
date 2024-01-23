@@ -17,7 +17,7 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 {
 	int active, activateDelay = 1, targetThreshold = 0;
 	String flag;
-	boolean selfResetting = true;
+	boolean selfResetting = true, inverted;
 	List<? extends LivingEntity> containedEntities = new ArrayList<>();
 	
 	public AbstractTriggerBlockEntity(BlockEntityType<? extends AbstractTriggerBlockEntity> type, BlockPos pos, BlockState state)
@@ -79,6 +79,8 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 	{
 		boolean b = (containedEntities = world.getEntitiesByType(TypeFilter.instanceOf(getTargetClass()), getAreaBox(),
 				i -> i.isAlive() && !i.isSpectator())).size() > targetThreshold;
+		if(inverted)
+			b = !b;
 		boolean wasActive = isActive();
 		if(!b && active > 0 && (selfResetting || active < activateDelay))
 			active--;
@@ -115,6 +117,8 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 			selfResetting = nbt.getBoolean("selfReset");
 		if(nbt.contains("targetThreshold", NbtElement.INT_TYPE))
 			targetThreshold = nbt.getInt("targetThreshold");
+		if(nbt.contains("invert", NbtElement.BYTE_TYPE))
+			inverted = nbt.getBoolean("invert");
 	}
 	
 	@Override
@@ -126,5 +130,6 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 		nbt.putInt("activateDelay", activateDelay);
 		nbt.putBoolean("selfReset", selfResetting);
 		nbt.putInt("targetThreshold", targetThreshold);
+		nbt.putBoolean("invert", inverted);
 	}
 }
