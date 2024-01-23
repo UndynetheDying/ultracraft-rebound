@@ -1,15 +1,15 @@
 package absolutelyaya.ultracraft.components.level;
 
+import absolutelyaya.ultracraft.Ultracraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.WorldProperties;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class UltraLevelComponent implements IUltraLevelComponent
 {
@@ -17,7 +17,7 @@ public class UltraLevelComponent implements IUltraLevelComponent
 	
 	boolean hivelWhitelistActive, graffitiWhitelistActive;
 	Map<UUID, String> hivelWhitelist = new HashMap<>(), graffitiWhitelist = new HashMap<>();
-	//TODO: add global progression tracker - aka, what layers are unlocked
+	List<Identifier> unlockedDestinations = new ArrayList<>();
 	
 	public UltraLevelComponent(WorldProperties properties)
 	{
@@ -73,6 +73,54 @@ public class UltraLevelComponent implements IUltraLevelComponent
 	}
 	
 	@Override
+	public boolean isDestinationUnlocked(Identifier id)
+	{
+		return unlockedDestinations.contains(id);
+	}
+	
+	@Override
+	public void unlockDestination(Identifier id)
+	{
+		if(!isDestinationUnlocked(id))
+			unlockedDestinations.add(id);
+	}
+	
+	@Override
+	public void unlockAllDestinations()
+	{
+		unlockDestination(new Identifier(Ultracraft.MOD_ID, "dimension.overworld"));
+		unlockDestination(new Identifier(Ultracraft.MOD_ID, "level.0-1"));
+		unlockDestination(new Identifier(Ultracraft.MOD_ID, "level.1-1"));
+		unlockDestination(new Identifier(Ultracraft.MOD_ID, "dimension.limbo"));
+	}
+	
+	@Override
+	public void lockDestination(Identifier id)
+	{
+		if(isDestinationUnlocked(id))
+			unlockedDestinations.remove(id);
+	}
+	
+	@Override
+	public void setDestinations(List<Identifier> ids)
+	{
+		unlockedDestinations = ids;
+	}
+	
+	@Override
+	public List<Identifier> getUnlockedDestinationList()
+	{
+		return unlockedDestinations;
+	}
+	
+	@Override
+	public void resetGlobalProgression()
+	{
+		unlockedDestinations.clear();
+		unlockedDestinations.add(new Identifier(Ultracraft.MOD_ID, "dimension.overworld"));
+	}
+	
+	@Override
 	public void readFromNbt(NbtCompound tag)
 	{
 		if(!tag.contains("whitelists", NbtElement.COMPOUND_TYPE))
@@ -110,6 +158,13 @@ public class UltraLevelComponent implements IUltraLevelComponent
 				});
 			}
 		}
+		NbtCompound progression = tag.getCompound("progression");
+		if(progression.contains("destinations", NbtElement.LIST_TYPE))
+		{
+			unlockedDestinations.clear();
+			NbtList list = progression.getList("destinations", NbtElement.STRING_TYPE);
+			list.forEach(i -> unlockedDestinations.add(Identifier.tryParse(i.asString())));
+		}
 	}
 	
 	@Override
@@ -120,23 +175,25 @@ public class UltraLevelComponent implements IUltraLevelComponent
 		NbtCompound hivel = new NbtCompound();
 		hivel.putBoolean("active", hivelWhitelistActive);
 		NbtList hivelList = new NbtList();
-		for (Map.Entry<UUID, String> entry : hivelWhitelist.entrySet())
-		{
-			hivelList.add(NbtString.of(entry.getKey() + "@" + entry.getValue()));
-		}
+		hivelWhitelist.forEach((key, value) -> hivelList.add(NbtString.of(key + "@" + value)));
 		hivel.put("entries", hivelList);
 		whitelists.put("hivel", hivel);
 		
 		NbtCompound graffiti = new NbtCompound();
 		graffiti.putBoolean("active", graffitiWhitelistActive);
 		NbtList graffitiList = new NbtList();
-		for (Map.Entry<UUID, String> entry : graffitiWhitelist.entrySet())
-		{
-			graffitiList.add(NbtString.of(entry.getKey() + "@" + entry.getValue()));
-		}
+		graffitiWhitelist.forEach((key, value) -> graffitiList.add(NbtString.of(key + "@" + value)));
 		graffiti.put("entries", graffitiList);
 		whitelists.put("graffiti", graffiti);
 		
+		NbtCompound progression = new NbtCompound();
+		
+		NbtList destinations = new NbtList();
+		unlockedDestinations.forEach(i -> destinations.add(NbtString.of(i.toString())));
+		
+		progression.put("destinations", destinations);
+		
 		tag.put("whitelists", whitelists);
+		tag.put("progression", progression);
 	}
 }

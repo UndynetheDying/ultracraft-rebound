@@ -92,7 +92,7 @@ public class LevelManager implements DimensionManager
 	}
 	
 	static {
-		registerLevel(new Identifier(Ultracraft.MOD_ID, "1-1"), new LevelData(/*new Identifier(Ultracraft.MOD_ID, "level/1-1")*/
+		registerLevel(new Identifier(Ultracraft.MOD_ID, "level.1-1"), new LevelData(/*new Identifier(Ultracraft.MOD_ID, "level/1-1")*/
 				new Identifier(Ultracraft.MOD_ID, "limbo/ruin1"), new BlockPos(0, 64, 0), new BlockPos(0, 0, 0)));
 	}
 }

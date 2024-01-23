@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.command;
 
 import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.config.ServerConfig;
@@ -51,7 +52,8 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 public class Commands
 {
-	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
+	public static void register(CommandDispatcher<ServerCommandSource> dispatcher)
+	{
 		dispatcher.register(literal("ultracraft")
 			.then(literal("info").requires(ServerCommandSource::isExecutedByPlayer).executes(Commands::executeInfo))
 			.then(literal("config").requires(ServerCommandSource::isExecutedByPlayer).requires(source -> source.hasPermissionLevel(2)).executes(Commands::executeConfig))
@@ -176,7 +178,7 @@ public class Commands
 	
 	static CompletableFuture<Suggestions> progressionListTypeProvider(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder)
 	{
-		return builder.suggest("unlocked").suggest("obtained").buildFuture();
+		return builder.suggest("unlocked").suggest("obtained").suggest("level").buildFuture();
 	}
 	
 	static List<Identifier> getProgressionList(ServerPlayerEntity target, String type)
@@ -186,6 +188,10 @@ public class Commands
 		{
 			case "unlocked" -> progression.getUnlockedList();
 			case "obtained" -> progression.getOwnedList();
+			case "level" -> {
+				IUltraLevelComponent global = UltraComponents.GLOBAL.get(target.getWorld().getLevelProperties());
+				yield global.getUnlockedDestinationList();
+			}
 			default -> new ArrayList<>();
 		};
 	}
@@ -229,6 +235,10 @@ public class Commands
 			{
 				case "unlocked" -> progression.unlock(entry);
 				case "obtained" -> progression.obtain(entry);
+				case "level" -> {
+					IUltraLevelComponent global = UltraComponents.GLOBAL.get(target.getWorld().getLevelProperties());
+					global.unlockDestination(entry);
+				}
 				default -> {
 					context.getSource().sendError(Text.translatable("command.ultracraft.progression.invalid_list"));
 					return Command.SINGLE_SUCCESS;
@@ -257,6 +267,10 @@ public class Commands
 			{
 				case "unlocked" -> progression.lock(entry);
 				case "obtained" -> progression.disown(entry);
+				case "level" -> {
+					IUltraLevelComponent global = UltraComponents.GLOBAL.get(target.getWorld().getLevelProperties());
+					global.lockDestination(entry);
+				}
 				default ->
 				{
 					context.getSource().sendError(Text.translatable("command.ultracraft.progression.invalid_list"));
@@ -303,6 +317,10 @@ public class Commands
 			{
 				case "unlocked" -> progression.unlockAll();
 				case "obtained" -> progression.obtainAll();
+				case "level" -> {
+					IUltraLevelComponent global = UltraComponents.GLOBAL.get(target.getWorld().getLevelProperties());
+					global.unlockAllDestinations();
+				}
 				default -> {
 					context.getSource().sendError(Text.translatable("command.ultracraft.progression.invalid_list"));
 					return Command.SINGLE_SUCCESS;

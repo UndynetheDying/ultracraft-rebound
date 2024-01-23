@@ -16,6 +16,7 @@ import absolutelyaya.ultracraft.client.gui.screen.TravelScreen;
 import absolutelyaya.ultracraft.client.rendering.EditModeRenderer;
 import absolutelyaya.ultracraft.client.rendering.UltraHudRenderer;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
+import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.data.UltraRecipeManager;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
@@ -394,6 +395,18 @@ public class ClientPacketRegistry
 					TitleHUD.Instance.setBoxTitle(text, delay);
 					client.player.playSound(SoundRegistry.RECEIVE_BOX_TITLE, 1f, 1f);
 				}
+			});
+		})));
+		ClientPlayNetworking.registerGlobalReceiver(SEND_DESTINATIONS_PACKET_ID, (((client, handler, buf, responseSender) -> {
+			int length = buf.readInt();
+			List<Identifier> ids = new ArrayList<>();
+			for (int i = 0; i < length; i++)
+				ids.add(buf.readIdentifier());
+			client.execute(() -> {
+				IUltraLevelComponent global = UltraComponents.GLOBAL.get(client.player.getWorld().getLevelProperties());
+				global.setDestinations(ids);
+				if(client.currentScreen instanceof TravelScreen travel)
+					travel.initButtons();
 			});
 		})));
 	}

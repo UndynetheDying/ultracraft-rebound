@@ -102,6 +102,7 @@
 - Added Command to trigger Style Bonuses `/ultracraft style`
 - Added Command to trigger large and box titles `/ultracraft title`
 - Added `/edit` to perform most edit mode interactions
+- Added `level` list to progression command; this list is effective globally//server-wide!
 ## Tweaks
 - Buffed overpump damage towards others (10 Dmg -> 15 Dmg)
 - Hitscans don't cause Thorn Damage from Guardians anymore

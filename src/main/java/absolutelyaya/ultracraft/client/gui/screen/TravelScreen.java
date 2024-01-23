@@ -46,6 +46,13 @@ public class TravelScreen extends Screen
 	protected void init()
 	{
 		super.init();
+		initButtons();
+		ClientPlayNetworking.send(PacketRegistry.REQUEST_DESTINATIONS_PACKET_ID, new PacketByteBuf(Unpooled.buffer()));
+		curLayer = Layer.fromRegistryKey(MinecraftClient.getInstance().world.getRegistryKey());
+	}
+	
+	public void initButtons()
+	{
 		buttons.clear();
 		if(selectedLayer == null)
 			layerButtons.addAll(initLayerButtons());
@@ -53,8 +60,6 @@ public class TravelScreen extends Screen
 			levelButtons.addAll(initLevelButtons());
 		buttons.addAll(layerButtons);
 		buttons.addAll(levelButtons);
-		
-		curLayer = Layer.fromRegistryKey(MinecraftClient.getInstance().world.getRegistryKey());
 	}
 	
 	List<ClickableWidget> initLayerButtons()
@@ -82,23 +87,23 @@ public class TravelScreen extends Screen
 			case OVERWORLD ->
 			{
 				buttons.add(new LevelButton(width / 2 - 48, height / 2 - 68, 96, 64, Text.translatable("level.ultracraft.0-F"),
-						"0_freeroam", () -> travel(Layer.OVERWORLD)));
+						"0_freeroam", new Identifier(Ultracraft.MOD_ID, "dimension.overworld"), d -> travel(Layer.OVERWORLD)));
 				buttons.add(new LevelButton(width / 2 - 48, height / 2, 96, 64, Text.translatable("level.ultracraft.0-1"),
-						"placeholder", () -> travel(Layer.OVERWORLD)));
+						"placeholder", new Identifier(Ultracraft.MOD_ID, "level.0-1"), this::enterLevel));
 			}
 			case LIMBO ->
 			{
 				buttons.add(new LevelButton(width / 2 - 55, height / 2 - 100, 110, 64, Text.translatable("level.ultracraft.1-1"),
-						"1_1", () -> enterLevel(new Identifier(Ultracraft.MOD_ID, "1-1"))));
+						"1_1", new Identifier(Ultracraft.MOD_ID, "level.1-1"), this::enterLevel));
 				buttons.add(new LevelButton(width / 2 - 48, height / 2 - 32, 96, 64, Text.translatable("level.ultracraft.1-F"),
-						"1_freeroam", () -> travel(Layer.LIMBO)));
+						"1_freeroam", new Identifier(Ultracraft.MOD_ID, "dimension.limbo"), d -> travel(Layer.LIMBO)));
 				buttons.add(new LevelButton(width / 2 - 48, height / 2 + 36, 96, 64, Text.translatable("level.ultracraft.1-2"),
-						"placeholder", () -> travel(Layer.LIMBO)));
+						"placeholder", new Identifier(Ultracraft.MOD_ID, "level.1-2"), this::enterLevel));
 			}
 		}
 		buttons.add(ButtonWidget.builder(Text.translatable("screen.ultracraft.travel.back"), b -> {
 					selectedLayer = null;
-					initLayerButtons();
+					layerButtons.addAll(initLayerButtons());
 				}).dimensions(width / 2 - 50, height - 32, 100, 20).build());
 		return buttons;
 	}
