@@ -1,7 +1,6 @@
 package absolutelyaya.ultracraft.mixin.client.render;
 
 import absolutelyaya.ultracraft.UltraComponents;
-import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.client.rendering.entity.feature.ArmFeature;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
@@ -72,7 +71,7 @@ public abstract class HandRendererMixin
 			setArmVisibility(model, right ? Arm.LEFT : Arm.RIGHT, true, true);
 			
 			if(playerAccessor.getKnuckleBlastProgress(tickDelta) > 0)
-				Ultracraft.positionKnuckleBlast(matrices, equipProgress, !right);
+				positionKnuckleBlastArm(matrices, equipProgress, !right);
 			else
 				positionPunchArm(matrices, equipProgress, !right, !item.isEmpty());
 			
@@ -174,6 +173,29 @@ public abstract class HandRendererMixin
 		matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(flip * yaw * 30.0f));
 		matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(flip * roll * -20.0f));
 		positionBaseArm(matrices, flipped);
+	}
+	
+	void positionKnuckleBlastArm(MatrixStack matrices, float equipProgress, boolean flipped)
+	{
+		if (!(MinecraftClient.getInstance().player instanceof LivingEntityAccessor living))
+			return;
+		float blast = living.getKnuckleBlastProgress(MinecraftClient.getInstance().getTickDelta());
+		int flip = flipped ? 1 : -1;
+		float swing = MathHelper.sqrt(blast);
+		float x = 0.1f * Math.min(MathHelper.sin(swing * (float)Math.PI + 0.25f), 0.5f) * 2f;
+		float y = -0.05f * (MathHelper.sin(swing * (float)Math.PI + 0.25f));
+		float z = 0.4f * Math.min(MathHelper.sin(blast * (float)Math.PI + 0.25f), 0.5f) * 2f;
+		matrices.translate(flip * (x + 0.64000005f), y - 0.6f + equipProgress * -0.6f, z - 0.71999997f);
+		matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(flip * 45.0f));
+		float roll = MathHelper.sin(blast * blast * (float)Math.PI) / 2f;
+		float yaw = MathHelper.sin(swing * (float)Math.PI) / 1.5f;
+		matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(flip * yaw * 30.0f));
+		matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(flip * roll * -20.0f));
+		matrices.translate(flip * -1.0f, 3.6f, 3.5f);
+		matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(flip * 120.0f));
+		matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(200.0f));
+		matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(flip * -135.0f));
+		matrices.translate(flip * 5.6f, 0.0f, 0.0f);
 	}
 	
 	void positionBaseArm(MatrixStack matrices, boolean flipped)

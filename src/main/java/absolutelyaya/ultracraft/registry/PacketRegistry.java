@@ -37,6 +37,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.ShieldItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
@@ -173,6 +174,12 @@ public class PacketRegistry
 					ServerConfig config = ServerConfig.INSTANCE;
 					target.damage(DamageSources.get(world, knuckle ? DamageSources.KNUCKLE_PUNCH : DamageSources.PUNCH, player),
 							knuckle ? config.knuckleblasterDamage.getValue() : config.feedbackerDamage.getValue());
+					
+					if(knuckle && target instanceof PlayerEntity hitPlayer && hitPlayer.getActiveItem().getItem() instanceof ShieldItem)
+					{
+						hitPlayer.disableShield(true);
+						UltraComponents.STYLE.get(player).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "shieldbreak")));
+					}
 					
 					boolean fatal = !target.isAlive();
 					Vec3d vel = forward.multiply(fatal ? 1.5f : 0.75f);

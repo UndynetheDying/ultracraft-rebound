@@ -248,39 +248,16 @@ public class Ultracraft implements ModInitializer
             if(supporter && client)
             {
                 Ultracraft.LOGGER.info("[ULTRACRAFT] " + uuid + " has been verified as a Supporter!");
-                supporterCacheAdditions.put(uuid, -1);
+                supporterCache.put(uuid, -1);
             }
             else
-                supporterCacheAdditions.put(uuid, 600); //if not a supporter, only check again after 30 seconds
+                supporterCache.put(uuid, 600); //if not a supporter, only check again after 30 seconds
         }
         catch (IOException e)
         {
             Ultracraft.LOGGER.error("[ULTRACRAFT] Failed to fetch Supporters.", e);
         }
         return supporter;
-    }
-    
-    public static void positionKnuckleBlast(MatrixStack matrices, float equipProgress, boolean flipped)
-    {
-        if (!(MinecraftClient.getInstance().player instanceof LivingEntityAccessor living))
-            return;
-        float blast = living.getKnuckleBlastProgress(MinecraftClient.getInstance().getLastFrameDuration());
-        int flip = flipped ? 1 : -1;
-        float swing = MathHelper.sqrt(blast);
-        float x = 0.1f * Math.min(MathHelper.sin(swing * (float)Math.PI + 0.25f), 0.5f) * 2f;
-        float y = -0.05f * (MathHelper.sin(swing * (float)Math.PI + 0.25f));
-        float z = 0.4f * Math.min(MathHelper.sin(blast * (float)Math.PI + 0.25f), 0.5f) * 2f;
-        matrices.translate(flip * (x + 0.64000005f), y - 0.6f + equipProgress * -0.6f, z - 0.71999997f);
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(flip * 45.0f));
-        float roll = MathHelper.sin(blast * blast * (float)Math.PI) / 2f;
-        float yaw = MathHelper.sin(swing * (float)Math.PI) / 1.5f;
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(flip * yaw * 30.0f));
-        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(flip * roll * -20.0f));
-        matrices.translate(flip * -1.0f, 3.6f, 3.5f);
-        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(flip * 120.0f));
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(200.0f));
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(flip * -135.0f));
-        matrices.translate(flip * 5.6f, 0.0f, 0.0f);
     }
     
     public static void screenshake(PlayerEntity player, float strength)
