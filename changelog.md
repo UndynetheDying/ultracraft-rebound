@@ -108,6 +108,7 @@
 - Buffed overpump damage towards others (10 Dmg -> 15 Dmg)
 - Hitscans don't cause Thorn Damage from Guardians anymore
   - Player Armor Thorns still do damage though to stay consistent with Minecrafts inconsistent logic
+- Reduced Filths Health (2 -> 1)
 ## Minor Changes
 - Fixed water skimming not playing sounds
 - Removed the "vents" MOTD from the non-essential resources
