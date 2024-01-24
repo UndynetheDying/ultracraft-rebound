@@ -20,6 +20,7 @@ import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.control.LookControl;
 import net.minecraft.entity.ai.control.MoveControl;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
@@ -33,6 +34,7 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.BlockStateParticleEffect;
@@ -67,6 +69,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	{
 		super(entityType, world);
 		this.moveControl = new MaliciousMoveControl(this);
+		this.lookControl = new MaliciousLookControl(this);
 		((LivingEntityAccessor)this).setTakePunchKnockbackSupplier(() -> false); //disable knockback
 	}
 	
@@ -542,6 +545,21 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		{
 			Box box = face.getBoundingBox().offset(direction.multiply(0.5));
 			return !face.getWorld().isSpaceEmpty(face, box);
+		}
+	}
+	
+	static class MaliciousLookControl extends LookControl
+	{
+		public MaliciousLookControl(MobEntity entity)
+		{
+			super(entity);
+		}
+		
+		@Override
+		public void tick()
+		{
+			if(entity.isAlive())
+				super.tick();
 		}
 	}
 	

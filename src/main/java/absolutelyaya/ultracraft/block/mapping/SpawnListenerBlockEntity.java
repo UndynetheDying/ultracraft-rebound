@@ -60,8 +60,10 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 		else if(!newState)
 		{
 			entities.forEach(e -> {
-				if(e != null) e.remove(Entity.RemovalReason.DISCARDED);
+				if(e != null && e.isAlive())
+					e.remove(Entity.RemovalReason.DISCARDED);
 			});
+			entities.clear();
 		}
 		super.onStateChanged(newState);
 	}
