@@ -89,6 +89,7 @@
 - Added Large Animated Titles
 - Added Text Box Titles
 - Punching a Player using a Shield with a Knuckleblaster will now disable their Shield and give the `+ GUARD BREAK` style bonus
+- Streetcleaners now actually pathfind to their target
 ## Settings & Config
 - Removed almost all gamerules (only remaining is `ultra-startWithPiercer`)
 - Added Option to disable Screenshake

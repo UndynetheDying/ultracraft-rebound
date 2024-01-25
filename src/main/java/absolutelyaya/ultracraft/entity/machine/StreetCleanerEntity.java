@@ -295,7 +295,9 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 		@Override
 		public void tick()
 		{
-			if(entity.getDataTracker().get(ROTATION_DELAY) == 0 && entity.getTarget() != null)
+			if(!entity.getDataTracker().get(ATTACKING))
+				super.tick();
+			else if(entity.getDataTracker().get(ROTATION_DELAY) == 0 && entity.getTarget() != null)
 			{
 				double e = entity.getTarget().getX() - entity.getX();
 				double f = entity.getTarget().getZ() - entity.getZ();
@@ -325,8 +327,10 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 		@Override
 		public void tick()
 		{
-			 if (this.state == MoveControl.State.MOVE_TO)
-			 {
+			if(!entity.getDataTracker().get(ATTACKING))
+				super.tick();
+			else if (this.state == MoveControl.State.MOVE_TO)
+			{
 				this.state = MoveControl.State.WAIT;
 				double dx = targetX - entity.getX();
 				double dz = targetZ - entity.getZ();
@@ -337,7 +341,7 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 					entity.setForwardSpeed(0.0F);
 					return;
 				}
-				
+			
 				entity.setMovementSpeed((float)(speed * entity.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED)));
 				BlockPos blockPos = entity.getBlockPos();
 				BlockState blockState = entity.getWorld().getBlockState(blockPos);
@@ -349,14 +353,14 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 					entity.getJumpControl().setActive();
 					state = MoveControl.State.JUMPING;
 				}
-			 }
-			 else if (state == MoveControl.State.JUMPING)
-			 {
+			}
+			else if (state == MoveControl.State.JUMPING)
+			{
 				entity.setMovementSpeed((float)(speed * entity.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED)));
 				if (entity.isOnGround())
 					state = MoveControl.State.WAIT;
-			 }
-			 else
+			}
+			else
 				entity.setForwardSpeed(0.0F);
 		}
 	}
@@ -398,7 +402,7 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 		@Override
 		public void tick()
 		{
-			float distance = cleaner.distanceTo(target);
+			float distance = cleaner.distanceTo(target) + (float)Math.abs(cleaner.getY() - target.getY()) * 5f;
 			if(cleaner.dataTracker.get(ROTATION_DELAY) == 0 && distance > 5f)
 				cleaner.navigation.startMovingTo(target, distance < 6f ? 1f : 1.25f);
 			
