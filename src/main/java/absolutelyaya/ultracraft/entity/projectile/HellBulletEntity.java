@@ -10,7 +10,6 @@ import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
-import absolutelyaya.ultracraft.registry.GameruleRegistry;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import dev.lambdaurora.lambdynlights.DynamicLightSource;
 import dev.lambdaurora.lambdynlights.LambDynLights;
@@ -19,6 +18,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
@@ -40,6 +40,7 @@ public class HellBulletEntity extends ThrownItemEntity implements ProjectileEnti
 	Class<? extends LivingEntity> ignore;
 	private boolean shot;
 	protected boolean difficultySpeed;
+	protected DamageSource damageSource = getDamageSources().thrown(this, this.getOwner());
 	
 	public HellBulletEntity(EntityType<? extends ThrownItemEntity> entityType, World world)
 	{
@@ -82,7 +83,7 @@ public class HellBulletEntity extends ThrownItemEntity implements ProjectileEnti
 		if(entity instanceof AbstractUltraHostileEntity)
 			amount *= 0.25f;
 		if(!entity.getClass().equals(ignore) && !((ProjectileEntityAccessor)this).isParried())
-			entity.damage(getDamageSources().thrown(this, this.getOwner()), amount);
+			entity.damage(damageSource, amount);
 	}
 	
 	@Override

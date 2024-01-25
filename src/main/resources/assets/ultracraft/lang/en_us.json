@@ -193,6 +193,7 @@
   "effect.ultracraft.instant_energy": "Instant Energy",
   "effect.ultracraft.impaled": "Impaled",
   "effect.ultracraft.retaliation": "§4Retaliation",
+  "effect.ultracraft.cancerous": "Cancerous",
 
   "death.attack.shockwave": "%s got crushed by a shockwave",
   "death.attack.shockwave.player": "%1$s got crushed by a shockwave caused by %2$s",

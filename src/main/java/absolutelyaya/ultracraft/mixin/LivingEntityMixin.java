@@ -19,6 +19,7 @@ import absolutelyaya.ultracraft.entity.IAntiCheeseBoss;
 import absolutelyaya.ultracraft.entity.machine.V2Entity;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
+import absolutelyaya.ultracraft.registry.StatusEffectRegistry;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -26,6 +27,7 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
@@ -86,6 +88,8 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	@Shadow public abstract float getMaxHealth();
 	
 	@Shadow public abstract @Nullable LivingEntity getAttacker();
+	
+	@Shadow public abstract boolean addStatusEffect(StatusEffectInstance effect);
 	
 	int punchDuration = 60;
 	Supplier<Boolean> canBleedSupplier = () -> true, takePunchKnockpackSupplier = this::isPushable; //TODO: add Sandy Enemies (eventually)
@@ -161,6 +165,8 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 			timeUntilRegen = 9;
 		if(source.isOf(DamageSources.SWORDSMACHINE))
 			timeUntilRegen = 12;
+		if(source.isOf(DamageSources.CANCER))
+			addStatusEffect(new StatusEffectInstance(StatusEffectRegistry.CANCEROUS, (int)(60 * amount)));
 	}
 	
 	@SuppressWarnings("EqualsBetweenInconvertibleTypes")

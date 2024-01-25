@@ -153,6 +153,7 @@
   - The value would only naturally go above 1 if parry-chaining is enabled
 - You can now Right Click with the Knuckleblaster Item to grant yourself the Progression Entry
 - Husks now scream when falling from a lethal height
+- Added Cancerous Status Effect
 ## Resource Changes
 - Continued Adding Sounds
 - Shotgun Animations now have a few sound keyframes
