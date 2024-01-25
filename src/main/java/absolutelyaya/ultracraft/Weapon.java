@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft;
 
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;

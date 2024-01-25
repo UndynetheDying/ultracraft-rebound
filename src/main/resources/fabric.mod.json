@@ -38,13 +38,13 @@
       "absolutelyaya.ultracraft.compat.REIClientPlugin"
     ],
     "cardinal-components-entity": [
-      "absolutelyaya.ultracraft.UltraComponents"
+      "absolutelyaya.ultracraft.components.UltraComponents"
     ],
     "cardinal-components-level": [
-      "absolutelyaya.ultracraft.UltraComponents"
+      "absolutelyaya.ultracraft.components.UltraComponents"
     ],
     "cardinal-components-world": [
-      "absolutelyaya.ultracraft.UltraComponents"
+      "absolutelyaya.ultracraft.components.UltraComponents"
     ]
   },
   "mixins": [
@@ -76,7 +76,8 @@
       "ultracraft:loadout",
       "ultracraft:editor",
       "ultracraft:global_data",
-      "ultracraft:dimension_data"
+      "ultracraft:dimension_data",
+      "ultracraft:living"
     ]
   },
   "accessWidener": "ultracraft.accesswidener"

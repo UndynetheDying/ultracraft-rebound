@@ -7,6 +7,7 @@ import absolutelyaya.ultracraft.block.HellObserverBlockEntity;
 import absolutelyaya.ultracraft.block.IPunchableBlock;
 import absolutelyaya.ultracraft.block.PedestalBlock;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
 import absolutelyaya.ultracraft.components.player.IHivelComponent;

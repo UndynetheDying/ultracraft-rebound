@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.item;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.rendering.item.OverheatNailgunRenderer;
 import absolutelyaya.ultracraft.entity.projectile.NailEntity;

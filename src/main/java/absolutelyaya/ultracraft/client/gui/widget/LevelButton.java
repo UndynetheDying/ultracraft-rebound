@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.client.gui.widget;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
 import com.mojang.blaze3d.systems.RenderSystem;

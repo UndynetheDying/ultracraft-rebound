@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.mixin;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;

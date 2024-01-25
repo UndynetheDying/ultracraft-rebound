@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.block.mapping;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;

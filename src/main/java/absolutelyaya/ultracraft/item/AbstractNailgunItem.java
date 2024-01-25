@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.item;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Weapon;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.registry.ItemRegistry;

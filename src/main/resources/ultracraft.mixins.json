@@ -48,6 +48,7 @@
     "client.render.EntityRenderDispatcherMixin",
     "client.render.EntityRendererMixin",
     "client.render.GameRendererMixin",
+    "client.render.GeoEntityRendererMixin",
     "client.render.HandRendererMixin",
     "client.render.HeldItemFeatureRendererMixin",
     "client.render.ItemRendererMixin",

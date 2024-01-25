@@ -1,7 +1,7 @@
 package absolutelyaya.ultracraft.mixin;
 
 import absolutelyaya.ultracraft.ExplosionHandler;
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
@@ -361,6 +361,20 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	{
 		if(source.isIn(DamageTypeTags.REDUCED_KNOCKBACK))
 			args.set(0, (double)args.get(0) / 4f);
+	}
+	
+	@Inject(method = "onStatusEffectApplied", at = @At("HEAD"))
+	void onApplyEffect(StatusEffectInstance effect, Entity source, CallbackInfo ci)
+	{
+		if(effect.getEffectType().equals(StatusEffectRegistry.CANCEROUS))
+			UltraComponents.LIVING.get(this).setCanerous(true);
+	}
+	
+	@Inject(method = "onStatusEffectRemoved", at = @At("HEAD"))
+	void onRemoveEffect(StatusEffectInstance effect, CallbackInfo ci)
+	{
+		if(effect.getEffectType().equals(StatusEffectRegistry.CANCEROUS))
+			UltraComponents.LIVING.get(this).setCanerous(false);
 	}
 	
 	void punchTick()

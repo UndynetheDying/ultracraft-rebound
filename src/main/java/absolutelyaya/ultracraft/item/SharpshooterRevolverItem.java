@@ -1,7 +1,7 @@
 package absolutelyaya.ultracraft.item;
 
 import absolutelyaya.ultracraft.ServerHitscanHandler;
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.rendering.item.SharpshooterRevolverRenderer;
 import absolutelyaya.ultracraft.damage.DamageSources;

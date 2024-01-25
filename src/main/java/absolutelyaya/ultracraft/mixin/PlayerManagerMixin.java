@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.mixin;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.block.mapping.CheckpointBlockEntity;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import net.minecraft.server.PlayerManager;

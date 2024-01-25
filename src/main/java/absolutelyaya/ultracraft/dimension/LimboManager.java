@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.dimension;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.block.SlabBlock;
 import absolutelyaya.ultracraft.components.world.IDimensionDataComponent;
@@ -22,7 +22,6 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 
 public class LimboManager implements DimensionManager
 {

@@ -1,7 +1,7 @@
 package absolutelyaya.ultracraft.client;
 
 import absolutelyaya.goop.client.GoopClient;
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.api.terminal.TerminalCodeRegistry;

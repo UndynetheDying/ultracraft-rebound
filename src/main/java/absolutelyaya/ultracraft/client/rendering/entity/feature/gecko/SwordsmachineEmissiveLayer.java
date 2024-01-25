@@ -3,6 +3,7 @@ package absolutelyaya.ultracraft.client.rendering.entity.feature.gecko;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.entity.machine.DestinyBondSwordsmachineEntity;
 import absolutelyaya.ultracraft.entity.machine.SwordsmachineEntity;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -33,8 +34,9 @@ public class SwordsmachineEmissiveLayer extends GeoRenderLayer<SwordsmachineEnti
 		else
 			armorRenderType = RenderLayer.getEntityTranslucentEmissive(TEXTURE);
 		
+		float[] col = RenderSystem.getShaderColor();
 		getRenderer().reRender(getDefaultBakedModel(animatable), poseStack, bufferSource, animatable, armorRenderType,
 				bufferSource.getBuffer(armorRenderType), partialTick, packedLight, OverlayTexture.DEFAULT_UV,
-				1, 1, 1, 1);
+				col[0], col[1], col[2], col[3]);
 	}
 }

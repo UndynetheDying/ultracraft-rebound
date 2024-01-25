@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.mixin.client.render;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.client.rendering.entity.feature.ArmFeature;
 import absolutelyaya.ultracraft.components.player.IArmComponent;

@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.item;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.Weapon;
 import absolutelyaya.ultracraft.accessor.MeleeInterruptable;

@@ -2,7 +2,7 @@ package absolutelyaya.ultracraft.mixin;
 
 import absolutelyaya.ultracraft.ExplosionHandler;
 import absolutelyaya.ultracraft.ServerHitscanHandler;
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.ChainParryAccessor;
 import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;

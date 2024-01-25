@@ -1,5 +1,8 @@
-package absolutelyaya.ultracraft;
+package absolutelyaya.ultracraft.components;
 
+import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.components.entity.ILivingComponent;
+import absolutelyaya.ultracraft.components.entity.LivingComponent;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
 import absolutelyaya.ultracraft.components.level.UltraLevelComponent;
 import absolutelyaya.ultracraft.components.player.*;
@@ -14,6 +17,7 @@ import dev.onyxstudios.cca.api.v3.level.LevelComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.level.LevelComponentInitializer;
 import dev.onyxstudios.cca.api.v3.world.WorldComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.world.WorldComponentInitializer;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 
 public final class UltraComponents implements EntityComponentInitializer, LevelComponentInitializer, WorldComponentInitializer
@@ -37,6 +41,9 @@ public final class UltraComponents implements EntityComponentInitializer, LevelC
 	public static final ComponentKey<IEditorComponent> EDITOR =
 			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "editor"), IEditorComponent.class);
 	
+	public static final ComponentKey<ILivingComponent> LIVING =
+			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "living"), ILivingComponent.class);
+	
 	public static final ComponentKey<IUltraLevelComponent> GLOBAL =
 			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "global_data"), IUltraLevelComponent.class);
 	
@@ -55,6 +62,8 @@ public final class UltraComponents implements EntityComponentInitializer, LevelC
 		registry.registerForPlayers(HIVEL, HivelComponent::new, RespawnCopyStrategy.NEVER_COPY);
 		registry.registerForPlayers(LOADOUT, LoadoutComponent::new, RespawnCopyStrategy.ALWAYS_COPY);
 		registry.registerForPlayers(EDITOR, EditorComponent::new, RespawnCopyStrategy.ALWAYS_COPY);
+		
+		registry.registerFor(LivingEntity.class, LIVING, LivingComponent::new);
 	}
 	
 	@Override

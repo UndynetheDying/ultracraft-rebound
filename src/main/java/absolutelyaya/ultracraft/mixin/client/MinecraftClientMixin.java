@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.mixin.client;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.block.TerminalBlock;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
 import absolutelyaya.ultracraft.block.TerminalDisplayBlock;

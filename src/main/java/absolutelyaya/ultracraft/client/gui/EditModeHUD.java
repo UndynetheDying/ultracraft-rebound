@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.client.gui;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.block.mapping.AbstractMappingBlockEntity;
 import absolutelyaya.ultracraft.block.mapping.RoomBlockEntity;
 import absolutelyaya.ultracraft.components.player.IEditorComponent;

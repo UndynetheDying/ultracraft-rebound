@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.block.mapping;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IEditorComponent;
 import net.minecraft.block.*;
 import net.minecraft.entity.LivingEntity;

@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.client.gui.screen;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WidgetAccessor;
 import absolutelyaya.ultracraft.client.ClientConfig;

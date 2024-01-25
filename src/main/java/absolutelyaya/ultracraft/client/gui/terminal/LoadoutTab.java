@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.client.gui.terminal;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Weapon;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
 import absolutelyaya.ultracraft.client.gui.terminal.elements.Button;

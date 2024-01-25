@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.command;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.Command;

@@ -1,6 +1,5 @@
 package absolutelyaya.ultracraft.mixin.client;
 
-import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;

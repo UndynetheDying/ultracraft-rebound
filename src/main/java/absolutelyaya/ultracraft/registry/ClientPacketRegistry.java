@@ -4,7 +4,7 @@ import absolutelyaya.goop.api.WaterHandling;
 import absolutelyaya.goop.client.GoopClient;
 import absolutelyaya.goop.particles.GoopDropParticleEffect;
 import absolutelyaya.ultracraft.ExplosionHandler;
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.ITrailEnjoyer;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;

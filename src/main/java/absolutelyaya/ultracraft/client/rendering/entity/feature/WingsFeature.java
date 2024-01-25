@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.client.rendering.entity.feature;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.HideWingsSetting;
 import absolutelyaya.ultracraft.client.RenderLayers;

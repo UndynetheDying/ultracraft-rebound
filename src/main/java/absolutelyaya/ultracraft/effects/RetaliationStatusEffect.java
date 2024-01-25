@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.effects;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IEasterComponent;
 import absolutelyaya.ultracraft.entity.demon.RetaliationEntity;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
