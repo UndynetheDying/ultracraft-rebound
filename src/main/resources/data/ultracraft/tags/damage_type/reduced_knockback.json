@@ -1,8 +1,6 @@
 {
   "replace": false,
   "values": [
-    "minecraft:on_fire",
-    "minecraft:in_fire",
     "ultracraft:gun",
     "ultracraft:nail"
   ]

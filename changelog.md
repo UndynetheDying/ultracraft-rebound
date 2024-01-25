@@ -145,6 +145,10 @@
   - `#ultracraft:machines`
   - `#ultracraft:angels` (empty for now obv)
   - `#ultracraft:funis` (the joke entities)
+  - `#ultracraft:streetcleaner_dodge` (entities streetcleaners will try to dodge)
+  - `#ultracraft:streetcleaner_counter` (entities streetcleaners will try to counter)
+- Added Damage type tag `#ultracraft:reduced_knockback`
+  - Nails use this for example
 - Added `{parries:<count>}` NBT tag to all Projectiles
   - The value would only naturally go above 1 if parry-chaining is enabled
 - You can now Right Click with the Knuckleblaster Item to grant yourself the Progression Entry

@@ -9,6 +9,7 @@ import absolutelyaya.ultracraft.entity.projectile.EjectedCoreEntity;
 import absolutelyaya.ultracraft.entity.projectile.FlameProjectileEntity;
 import absolutelyaya.ultracraft.entity.projectile.ShotgunPelletEntity;
 import absolutelyaya.ultracraft.particle.ParryIndicatorParticleEffect;
+import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -28,6 +29,7 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.util.TypeFilter;
@@ -167,12 +169,12 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 			damage(DamageSources.get(getWorld(), DamageSources.SHORT_CIRCUIT), 999f);
 		if(isCanCounter())
 		{
-			List<EjectedCoreEntity> counterCandidates = getWorld().getEntitiesByType(TypeFilter.instanceOf(EjectedCoreEntity.class),
-					getBoundingBox(), (e) -> true);
+			List<Entity> counterCandidates = getWorld().getOtherEntities(this, getBoundingBox().expand(5f),
+					(e) -> e.getType().isIn(EntityRegistry.STREETCLEANER_COUNTER));
 			if(counterCandidates.size() > 0)
 			{
-				EjectedCoreEntity target = counterCandidates.get(0);
-				target.setVelocity(getRotationVector().rotateY(-90).add(0, 0.1, 0));
+				Entity target = counterCandidates.get(0);
+				target.setVelocity(getRotationVector().rotateY((float)Math.toRadians(-90)).add(0, 0.1, 0));
 				dataTracker.set(ANIMATION, ANIMATION_COUNTER);
 				dataTracker.set(ANIM_TIME, 0);
 				dataTracker.set(COUNTER_COOLDOWN, 100);
@@ -180,8 +182,8 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 		}
 		if(isCanDodge())
 		{
-			List<ShotgunPelletEntity> dodgeCandidates = getWorld().getEntitiesByType(TypeFilter.instanceOf(ShotgunPelletEntity.class),
-					getBoundingBox().expand(5f), (e) -> true);
+			List<Entity> dodgeCandidates = getWorld().getOtherEntities(this, getBoundingBox().expand(5f),
+					(e) -> e.getType().isIn(EntityRegistry.STREETCLEANER_DODGE));
 			if(dodgeCandidates.size() > 0)
 			{
 				Entity target = dodgeCandidates.get(0);

@@ -350,6 +350,13 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 		});
 	}
 	
+	@ModifyArgs(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;takeKnockback(DDD)V"))
+	void onKnockback(Args args, DamageSource source, float damage)
+	{
+		if(source.isIn(DamageTypeTags.REDUCED_KNOCKBACK))
+			args.set(0, (double)args.get(0) / 4f);
+	}
+	
 	void punchTick()
 	{
 		int i = Math.round(punchDuration * (fatique > 30 ? 1.5f : 1f));

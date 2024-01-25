@@ -164,6 +164,8 @@ public class EntityRegistry
 	public static final TagKey<EntityType<?>> DEMONS = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "demons"));
 	public static final TagKey<EntityType<?>> ANGELS = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "angels"));
 	public static final TagKey<EntityType<?>> BIG_FUNIS = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "funis"));
+	public static final TagKey<EntityType<?>> STREETCLEANER_DODGE = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "streetcleaner_dodge"));
+	public static final TagKey<EntityType<?>> STREETCLEANER_COUNTER = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "streetcleaner_counter"));
 	
 	public static void register()
 	{

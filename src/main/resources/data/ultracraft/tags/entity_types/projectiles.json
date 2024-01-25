@@ -10,6 +10,8 @@
     "ultracraft:mortar",
     "ultracraft:thrown_coin",
     "ultracraft:flame",
-    "ultracraft:shotgun_pellet"
+    "ultracraft:shotgun_pellet",
+    "ultracraft:ejected_core",
+    "ultracraft:beam"
   ]
 }
