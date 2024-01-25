@@ -8,6 +8,7 @@ import absolutelyaya.ultracraft.client.gui.screen.HellObserverScreen;
 import absolutelyaya.ultracraft.client.gui.screen.WingCustomizationScreen;
 import com.chocohead.mm.api.ClassTinkerers;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.client.render.Camera;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
@@ -131,7 +132,7 @@ public abstract class CameraMixin
 				setPos(new Vec3d(pos.x + offset.x, pos.y + offset.y, pos.z + offset.z));
 			}
 		}
-		if(focusedEntity instanceof WingedPlayerEntity winged)
+		if(!(focusedEntity instanceof OtherClientPlayerEntity) && focusedEntity instanceof WingedPlayerEntity winged)
 		{
 			if(winged.getScreenShake() > 0.001f)
 			{
