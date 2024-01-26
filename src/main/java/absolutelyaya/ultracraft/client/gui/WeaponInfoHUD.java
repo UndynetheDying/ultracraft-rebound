@@ -48,7 +48,7 @@ public class WeaponInfoHUD
 			float f = attractor.getNbt(stack, "magnets") / 3f;
 			context.setShaderColor(0.4f, 0.4f, 0.4f, 1f);
 			context.drawTexture(TEXTURE, x, y + 24, 0, 7, 91, 7, 128, 128);
-			float partial = (1 - UltraComponents.WINGED_ENTITY.get(MinecraftClient.getInstance().player)
+			float partial = (1 - UltraComponents.WINGED.get(MinecraftClient.getInstance().player)
 							  .getGunCooldownManager().getCooldownPercent(attractor, GunCooldownManager.SECONDARY)) * 0.33f;
 			if(partial == 0.33f)
 				partial = 0f;

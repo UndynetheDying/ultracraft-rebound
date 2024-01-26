@@ -123,7 +123,7 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 	@Override
 	public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(user).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(user).getGunCooldownManager();
 		int charges = getNbt(stack, "charges");
 		if(remainingUseTicks <= 0)
 		{
@@ -223,14 +223,14 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 	@Override
 	public boolean isItemBarVisible(ItemStack stack)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		return !cdm.isUsable(getCooldownClass(stack), GunCooldownManager.PRIMARY) || getNbt(stack, "charges") < (isAlternate() ? 1 : 3);
 	}
 	
 	@Override
 	public int getItemBarStep(ItemStack stack)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		if(!cdm.isUsable(this, GunCooldownManager.PRIMARY))
 			return (int)(cdm.getCooldownPercent(getCooldownClass(stack), GunCooldownManager.PRIMARY) * 14);
 		else
@@ -240,7 +240,7 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 	@Override
 	public int getItemBarColor(ItemStack stack)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		if(cdm.isUsable(this, GunCooldownManager.PRIMARY))
 			return 0xdfb728;
 		return 0xdf2828;

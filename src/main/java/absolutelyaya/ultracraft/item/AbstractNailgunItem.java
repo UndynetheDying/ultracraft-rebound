@@ -60,7 +60,7 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 		super.inventoryTick(stack, world, entity, slot, selected);
 		if(world.isClient)
 			return;
-		boolean inactive = (!selected || (entity instanceof PlayerEntity player && !UltraComponents.WINGED_ENTITY.get(player).isPrimaryFiring()));
+		boolean inactive = (!selected || (entity instanceof PlayerEntity player && !UltraComponents.WINGED.get(player).isPrimaryFiring()));
 		int nails = getNbt(stack, "nails");
 		if(nails < 100 && entity.age % 5 == 0 && (inactive || nails == 0))
 			setNbt(stack, "nails", nails + 1);
@@ -123,7 +123,7 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 	protected void onBeforeSwitch(PlayerEntity user, World world)
 	{
 		super.onBeforeSwitch(user, world);
-		IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(user);
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(user);
 		if(winged.isPrimaryFiring())
 			onPrimaryFireStop(world, user);
 	}
@@ -132,7 +132,7 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 	protected void onSwitch(PlayerEntity user, World world)
 	{
 		super.onSwitch(user, world);
-		IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(user);
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(user);
 		if(winged.isPrimaryFiring())
 			onPrimaryFireStart(world, user);
 	}

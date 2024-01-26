@@ -94,7 +94,7 @@ public class TravelScreen extends Screen
 			case LIMBO ->
 			{
 				buttons.add(new LevelButton(width / 2 - 55, height / 2 - 100, 110, 64, Text.translatable("level.ultracraft.1-1"),
-						"1_1", new Identifier(Ultracraft.MOD_ID, "level.1-1"), this::enterLevel));
+						"1_1", new Identifier(Ultracraft.MOD_ID, "limbo1"), this::enterLevel));
 				buttons.add(new LevelButton(width / 2 - 48, height / 2 - 32, 96, 64, Text.translatable("level.ultracraft.1-F"),
 						"1_freeroam", new Identifier(Ultracraft.MOD_ID, "dimension.limbo"), d -> travel(Layer.LIMBO)));
 				buttons.add(new LevelButton(width / 2 - 48, height / 2 + 36, 96, 64, Text.translatable("level.ultracraft.1-2"),
@@ -193,6 +193,7 @@ public class TravelScreen extends Screen
 	
 	void enterLevel(Identifier id)
 	{
+		shouldClose = true;
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeIdentifier(id);
 		ClientPlayNetworking.send(PacketRegistry.ENTER_LEVEL_PACKET_ID, buf);

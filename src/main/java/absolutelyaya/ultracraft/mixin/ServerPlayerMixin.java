@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.mixin;
 
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.dimension.LevelManager;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.RegistryKey;
@@ -15,6 +16,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayerEntity.class)
@@ -30,7 +32,7 @@ public abstract class ServerPlayerMixin extends PlayerEntity
 	@Inject(method = "getSpawnPointPosition", at = @At("HEAD"), cancellable = true)
 	void onGetSpawnPoint(CallbackInfoReturnable<BlockPos> cir)
 	{
-		IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(this);
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(this);
 		if(winged.getLastCheckpoint() != null)
 		{
 			if(getServerWorld().getRegistryKey().equals(winged.getCheckpointDimension()))
@@ -48,8 +50,16 @@ public abstract class ServerPlayerMixin extends PlayerEntity
 	@Inject(method = "getSpawnPointDimension", at = @At("HEAD"), cancellable = true)
 	void onGetSpawnDimension(CallbackInfoReturnable<RegistryKey<World>> cir)
 	{
-		IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(this);
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(this);
 		if(winged.getLastCheckpoint() != null && winged.getCheckpointDimension() != null)
 			cir.setReturnValue(winged.getCheckpointDimension());
+	}
+	
+	@Inject(method = "worldChanged", at = @At("HEAD"))
+	void onWorldChanged(ServerWorld origin, CallbackInfo ci)
+	{
+		if(!origin.getRegistryKey().equals(LevelManager.WORLD_KEY))
+			return;
+		UltraComponents.WINGED.get(this).setCurrentLevel(null);
 	}
 }

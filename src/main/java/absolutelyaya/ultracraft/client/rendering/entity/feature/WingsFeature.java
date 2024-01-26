@@ -61,7 +61,7 @@ public class WingsFeature<T extends PlayerEntity, M extends PlayerEntityModel<T>
 			}
 			case NONE -> {}
 		}
-		IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(entity);
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(entity);
 		IWingDataComponent wings = UltraComponents.WING_DATA.get(entity);
 		VertexConsumer vertexConsumer;
 		if(wings.isActive() || (entity.isMainPlayer() && WingCustomizationScreen.MenuOpen))

@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
+import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
@@ -15,6 +16,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +31,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	AbstractWeaponItem lastPrimaryWeapon;
 	BlockPos lastCheckpoint;
 	RegistryKey<World> checkpointDimension;
+	Identifier currentLevel;
 	
 	public WingedPlayerComponent(PlayerEntity provider)
 	{
@@ -199,6 +202,21 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	public void sendBoxTitle(Text text)
 	{
 		sendBoxTitle(text, 30f);
+	}
+	
+	@Override
+	public Identifier getCurrentLevel()
+	{
+		return currentLevel;
+	}
+	
+	@Override
+	public void setCurrentLevel(Identifier id)
+	{
+		Identifier lastId = currentLevel;
+		currentLevel = id;
+		if(!provider.getWorld().isClient && id == null)
+			LevelManager.Instance.destroyIfEmpty(lastId);
 	}
 	
 	@Override

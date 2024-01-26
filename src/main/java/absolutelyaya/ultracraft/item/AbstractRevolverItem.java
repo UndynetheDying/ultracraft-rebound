@@ -39,7 +39,7 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 	@Override
 	public boolean onPrimaryFire(World world, PlayerEntity user, Vec3d userVelocity)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(user).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(user).getGunCooldownManager();
 		if(isCanFirePrimary(user))
 		{
 			if(world.isClient)
@@ -83,7 +83,7 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 		if(!(entity instanceof PlayerEntity player))
 			return;
 		super.inventoryTick(stack, world, entity, slot, selected);
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(player).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(player).getGunCooldownManager();
 		//Marksman Coin Tick
 		int coins = getNbt(stack, "coins");
 		if(coins < 4 && cdm.isUsable(this, GunCooldownManager.SECONDARY))
@@ -130,7 +130,7 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 	
 	protected void hammerPull(PlayerEntity user, ItemStack stack, ServerWorld world)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(user).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(user).getGunCooldownManager();
 		cdm.setCooldown(this, 14, GunCooldownManager.PRIMARY);
 		triggerAnim(user, GeoItem.getOrAssignId(stack, world), getControllerName(), "hammerpull" + (b ? "2" : ""));
 		b = !b;

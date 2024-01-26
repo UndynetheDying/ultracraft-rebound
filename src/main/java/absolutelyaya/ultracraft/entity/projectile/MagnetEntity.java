@@ -116,7 +116,7 @@ public class MagnetEntity extends AbstractSkewerEntity implements GeoEntity, IIg
 					 .forEach(n -> n.setVelocity(Vec3d.ZERO.addRandom(random, 1f).normalize().multiply((float)n.getVelocity().length())));
 			if(getOwner() instanceof PlayerEntity player)
 			{
-				IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(player);
+				IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
 				winged.setMagnets(Math.max(winged.getMagnets() - 1, 0));
 				GunCooldownManager gcdm = winged.getGunCooldownManager();
 				if(gcdm.isUsable(ItemRegistry.ATTRACTOR_NAILGUN, GunCooldownManager.SECONDARY))

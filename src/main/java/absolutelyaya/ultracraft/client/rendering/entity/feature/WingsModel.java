@@ -182,7 +182,7 @@ public class WingsModel<T extends LivingEntity> extends AnimalModel<T>
 		Vec3d[] curPose = getPoseFromIndex((byte)0, time);
 		if(entity instanceof WingedPlayerEntity wingedPlayer)
 		{
-			IWingedPlayerComponent wingedData = UltraComponents.WINGED_ENTITY.get(wingedPlayer);
+			IWingedPlayerComponent wingedData = UltraComponents.WINGED.get(wingedPlayer);
 			Vec3d[] lastPose = wingedPlayer.getWingPose();
 			Vec3d[] desiredPose = getPoseFromIndex(wingedData.getWingState(), time);
 			

@@ -293,7 +293,7 @@ public class PacketRegistry
 			byte action = buf.readByte();
 			Vec3d velocity = action > 0 ? new Vec3d(buf.readVector3f()) : Vec3d.ZERO;
 			server.execute(() -> {
-				IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(player);
+				IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
 				if (player.getMainHandStack().getItem() instanceof AbstractWeaponItem gun)
 				{
 					winged.setPrimaryFiring(action > 0);
@@ -634,6 +634,7 @@ public class PacketRegistry
 				layer = Layer.values()[id];
 			}
 			server.execute(() -> {
+				UltraComponents.WINGED.get(player).setCurrentLevel(null);
 				if(layer != null)
 				{
 					ServerWorld world = server.getWorld(layer.worldKey);
@@ -643,7 +644,7 @@ public class PacketRegistry
 				else
 				{
 					ServerWorld world = server.getWorld(LevelManager.WORLD_KEY);
-					BlockPos pos = LevelManager.levels.get(level).getSpawnPos();
+					BlockPos pos = LevelManager.getSpawnPos(level);
 					FabricDimensions.teleport(player, world, new TeleportTarget(pos.toCenterPos(), Vec3d.ZERO, world.getSpawnAngle(), 0f));
 				}
 			});
@@ -651,10 +652,11 @@ public class PacketRegistry
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.ENTER_LEVEL_PACKET_ID, (server, player, handler, buf, sender) -> {
 			Identifier level = buf.readIdentifier();
 			server.execute(() -> {
-				if(!LevelManager.Instance.instantiateLevel(level))
+				if(!LevelManager.Instance.instantiateLevelOrReloadIfEmpty(player, level))
 					return;
+				UltraComponents.WINGED.get(player).setCurrentLevel(level);
 				ServerWorld world = server.getWorld(LevelManager.WORLD_KEY);
-				BlockPos pos = LevelManager.levels.get(level).getSpawnPos();
+				BlockPos pos = LevelManager.getSpawnPos(level);
 				FabricDimensions.teleport(player, world, new TeleportTarget(pos.toCenterPos(), Vec3d.ZERO, world.getSpawnAngle(), 0f));
 				if(player.getWorld().getBlockState(player.getBlockPos().down()).isAir())
 					player.getWorld().setBlockState(player.getBlockPos().down(), BlockRegistry.PORTAL.getDefaultState());

@@ -121,7 +121,7 @@ public abstract class MinecraftClientMixin
 				ClientPlayNetworking.send(PacketRegistry.PRIMARY_SHOT_C2S_PACKET_ID, buf);
 				w.onPrimaryFire(world, player, player.getVelocity());
 				isShooting = options.attackKey.isPressed();
-				UltraComponents.WINGED_ENTITY.get(player).setPrimaryFiring(isShooting);
+				UltraComponents.WINGED.get(player).setPrimaryFiring(isShooting);
 			}
 			if(isShooting && !(player.getInventory().getMainHandStack().getItem() instanceof AbstractWeaponItem))
 				stopShooting();
@@ -143,7 +143,7 @@ public abstract class MinecraftClientMixin
 		buf.writeByte(0);
 		ClientPlayNetworking.send(PacketRegistry.PRIMARY_SHOT_C2S_PACKET_ID, buf);
 		isShooting = false;
-		UltraComponents.WINGED_ENTITY.get(player).setPrimaryFiring(false);
+		UltraComponents.WINGED.get(player).setPrimaryFiring(false);
 	}
 	
 	@Inject(method = "doAttack", at = @At("HEAD"), cancellable = true)

@@ -122,7 +122,7 @@ public class ClientPacketRegistry
 				if(client.player.squaredDistanceTo(pos) < 10 && !water)
 				{
 					UltracraftClient.addBlood(amount / (shotgun ? 10f : 30f));
-					IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(client.player);
+					IWingedPlayerComponent winged = UltraComponents.WINGED.get(client.player);
 					if(!winged.isJustPlayedBloodhealNoise())
 					{
 						client.player.playSound(SoundRegistry.BLOOD_HEAL, SoundCategory.PLAYERS, 0.8f, 1.7f);
@@ -137,7 +137,7 @@ public class ClientPacketRegistry
 			int idx = buf.readInt();
 			client.execute(() -> {
 				if(client.player != null && item instanceof AbstractWeaponItem weapon)
-					UltraComponents.WINGED_ENTITY.get(client.player).getGunCooldownManager().setCooldown(weapon, ticks, idx);
+					UltraComponents.WINGED.get(client.player).getGunCooldownManager().setCooldown(weapon, ticks, idx);
 			});
 		}));
 		ClientPlayNetworking.registerGlobalReceiver(PacketRegistry.CATCH_FISH_PACKET_ID, ((client, handler, buf, sender) -> {

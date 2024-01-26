@@ -62,7 +62,7 @@ public class FlamethrowerItem extends AbstractWeaponItem implements GeoItem
 	{
 		if(!(user instanceof WingedPlayerEntity winged))
 			return false;
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(winged).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(winged).getGunCooldownManager();
 		if(!cdm.isUsable(this, GunCooldownManager.PRIMARY))
 			return false;
 		ItemStack stack = user.getMainHandStack();
@@ -112,7 +112,7 @@ public class FlamethrowerItem extends AbstractWeaponItem implements GeoItem
 		if(world.isClient)
 			return;
 		int heat = getNbt(stack, "heat");
-		IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(entity);
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(entity);
 		if(heat > 0 && entity.age % 2 == 0 && (!winged.isPrimaryFiring() || winged.getGunCooldownManager().getCooldown(this, GunCooldownManager.PRIMARY) > 5))
 			setNbt(stack, "heat", heat - 1);
 	}

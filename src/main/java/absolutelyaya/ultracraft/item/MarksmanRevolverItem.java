@@ -63,7 +63,7 @@ public class MarksmanRevolverItem extends AbstractRevolverItem
 		ItemStack itemStack = user.getStackInHand(hand);
 		if(hand.equals(Hand.OFF_HAND))
 			return TypedActionResult.fail(itemStack);
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(user).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(user).getGunCooldownManager();
 		user.setCurrentHand(hand);
 		int coins = getNbt(itemStack, "coins");
 		if(coins <= 0)
@@ -147,14 +147,14 @@ public class MarksmanRevolverItem extends AbstractRevolverItem
 	@Override
 	public boolean isItemBarVisible(ItemStack stack)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		return !cdm.isUsable(getCooldownClass(stack), GunCooldownManager.PRIMARY) || getNbt(stack, "coins") < 4;
 	}
 	
 	@Override
 	public int getItemBarStep(ItemStack stack)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		if(!cdm.isUsable(this, GunCooldownManager.PRIMARY))
 			return (int)(cdm.getCooldownPercent(getCooldownClass(stack), GunCooldownManager.PRIMARY) * 14);
 		else
@@ -164,7 +164,7 @@ public class MarksmanRevolverItem extends AbstractRevolverItem
 	@Override
 	public int getItemBarColor(ItemStack stack)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		if(cdm.isUsable(this, GunCooldownManager.PRIMARY))
 			return 0xdfb728;
 		return 0x28df53;

@@ -74,7 +74,7 @@ public class PumpShotgunItem extends AbstractShotgunItem
 		Hand hand = user.getActiveHand();
 		if(hand.equals(Hand.OFF_HAND))
 			return;
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(user).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(user).getGunCooldownManager();
 		if(!cdm.isUsable(this, GunCooldownManager.SECONDARY))
 			return;
 		user.setCurrentHand(hand);
@@ -112,7 +112,7 @@ public class PumpShotgunItem extends AbstractShotgunItem
 		ItemStack itemStack = user.getMainHandStack();
 		boolean overcharge = getPelletCount(itemStack) == 0;
 		boolean b = super.onPrimaryFire(world, user, userVelocity);
-		IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(user);
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(user);
 		if(!b)
 			return false;
 		setNbt(itemStack, "charge", 0);

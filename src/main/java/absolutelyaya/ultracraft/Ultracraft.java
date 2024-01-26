@@ -13,6 +13,7 @@ import absolutelyaya.ultracraft.config.Setting;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.data.TerminalScreensaverManager;
 import absolutelyaya.ultracraft.data.UltraRecipeManager;
+import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.dimension.UltraDimensions;
 import absolutelyaya.ultracraft.item.AbstractNailgunItem;
 import absolutelyaya.ultracraft.item.MarksmanRevolverItem;
@@ -25,6 +26,7 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
@@ -40,6 +42,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import org.slf4j.Logger;
 
@@ -84,6 +87,7 @@ public class Ultracraft implements ModInitializer
         new UltraRecipeManager();
         new TerminalScreensaverManager();
         new StyleBonusManager();
+        new LevelManager();
         
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             new UltraDimensions(server);
@@ -93,8 +97,12 @@ public class Ultracraft implements ModInitializer
                     return editor.useBlock(player, hitResult.getBlockPos());
                 return UltraDimensions.Instance.onBlockInteract(player, world, hand, hitResult);
             });
+            
             AttackBlockCallback.EVENT.register(((player, world, hand, pos, direction) -> UltraDimensions.Instance.onAttackBlock(player, world, hand, pos, direction)));
             //UseItemCallback.EVENT.register(((player, world, hand) -> UltraDimensions.Instance.onUseItem(player, world, hand)));
+        });
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+            LevelManager.Instance.destroyAllLevels();
         });
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             Commands.register(dispatcher);
@@ -142,6 +150,8 @@ public class Ultracraft implements ModInitializer
             if(player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)) == 0)
                 if(player.getWorld().getGameRules().getBoolean(GameruleRegistry.START_WITH_PIERCER))
                     player.giveItemStack(ItemRegistry.PIERCE_REVOLVER.getDefaultStack());
+            if(player.getWorld().getRegistryKey().equals(LevelManager.WORLD_KEY))
+                LevelManager.Instance.rescueIfNecessary(player);
         }));
         ServerLifecycleEvents.SERVER_STARTING.register(this::loadConfig);
         ServerLifecycleEvents.START_DATA_PACK_RELOAD.register((server, handler) -> loadConfig(server));

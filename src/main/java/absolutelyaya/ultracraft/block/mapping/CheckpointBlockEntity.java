@@ -89,7 +89,7 @@ public class CheckpointBlockEntity extends AbstractTriggerBlockEntity
 		containedEntities.forEach(e -> {
 			if(e instanceof PlayerEntity player)
 			{
-				IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(player);
+				IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
 				if(!pos.equals(winged.getLastCheckpoint()))
 				{
 					winged.setLastCheckpoint(pos, world);

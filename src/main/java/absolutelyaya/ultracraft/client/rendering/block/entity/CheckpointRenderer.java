@@ -25,7 +25,7 @@ public class CheckpointRenderer implements BlockEntityRenderer<CheckpointBlockEn
 	public void render(CheckpointBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay)
 	{
 		PlayerEntity player = MinecraftClient.getInstance().player;
-		BlockPos lastCheckpoint = UltraComponents.WINGED_ENTITY.get(player).getLastCheckpoint();
+		BlockPos lastCheckpoint = UltraComponents.WINGED.get(player).getLastCheckpoint();
 		if(lastCheckpoint != null && lastCheckpoint.equals(entity.getPos()))
 			return;
 		entity.progressTime(MinecraftClient.getInstance().getLastFrameDuration() / 120f);

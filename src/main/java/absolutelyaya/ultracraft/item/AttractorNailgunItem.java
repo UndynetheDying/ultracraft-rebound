@@ -78,7 +78,7 @@ public class AttractorNailgunItem extends AbstractNailgunItem
 		world.spawnEntity(magnet);
 		ItemStack stack = user.getMainHandStack();
 		setNbt(stack, "magnets", getNbt(stack, "magnets") - 1);
-		IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(user);
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(user);
 		winged.setMagnets(winged.getMagnets() + 1);
 		if(!world.isClient)
 			triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(), "alt_fire");
@@ -87,7 +87,7 @@ public class AttractorNailgunItem extends AbstractNailgunItem
 	@Override
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand)
 	{
-		int magnets = UltraComponents.WINGED_ENTITY.get(user).getMagnets();
+		int magnets = UltraComponents.WINGED.get(user).getMagnets();
 		ItemStack stack = user.getStackInHand(hand);
 		if((magnets >= 3 && !world.isClient) || getNbt(stack, "magnets") <= 0)
 			return TypedActionResult.fail(stack);
@@ -99,7 +99,7 @@ public class AttractorNailgunItem extends AbstractNailgunItem
 	{
 		if(entity instanceof PlayerEntity)
 		{
-			IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(entity);
+			IWingedPlayerComponent winged = UltraComponents.WINGED.get(entity);
 			GunCooldownManager gcdm = winged.getGunCooldownManager();
 			if(gcdm.isUsable(this, GunCooldownManager.SECONDARY) && getNbt(stack, "magnets") < 3 - winged.getMagnets())
 			{
@@ -166,14 +166,14 @@ public class AttractorNailgunItem extends AbstractNailgunItem
 	@Override
 	public boolean isItemBarVisible(ItemStack stack)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		return !cdm.isUsable(getCooldownClass(stack), GunCooldownManager.SECONDARY);
 	}
 	
 	@Override
 	public int getItemBarStep(ItemStack stack)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		if(!cdm.isUsable(this, GunCooldownManager.SECONDARY))
 			return (int)(cdm.getCooldownPercent(getCooldownClass(stack), GunCooldownManager.SECONDARY) * 14);
 		return 0;

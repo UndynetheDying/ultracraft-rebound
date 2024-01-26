@@ -319,7 +319,7 @@ public class ServerHitscanHandler
 			boolean disableExplosion = false;
 			IWingedPlayerComponent winged = null;
 			if(owner instanceof WingedPlayerEntity)
-				winged = UltraComponents.WINGED_ENTITY.get(owner);
+				winged = UltraComponents.WINGED.get(owner);
 			boolean explodeProjectile = type == SHARPSHOOTER && winged != null && winged.getSharpshooterCooldown() <= 0;
 			for (int i = 0; i < entities.size(); i++)
 			{

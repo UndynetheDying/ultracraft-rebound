@@ -379,7 +379,7 @@ public class Commands
 		Text text = context.getArgument("text", Text.class);
 		for (ServerPlayerEntity player : targets)
 		{
-			IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(player);
+			IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
 			if(type.equals("large"))
 				winged.sendBigTitle(text);
 			else

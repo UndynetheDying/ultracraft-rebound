@@ -98,7 +98,7 @@ public class PierceRevolverItem extends AbstractRevolverItem
 	@Override
 	public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(user).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(user).getGunCooldownManager();
 		if(remainingUseTicks <= 0)
 		{
 			if(user instanceof PlayerEntity player)

@@ -87,7 +87,7 @@ public class TitleTriggerBlockEntity extends AbstractTriggerBlockEntity
 		containedEntities.forEach(e -> {
 			if(e instanceof PlayerEntity player && !lastContained.contains(player))
 			{
-				IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(player);
+				IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
 				if(large)
 					winged.sendBigTitle(Text.translatable(text));
 				else

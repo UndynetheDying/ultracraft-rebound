@@ -148,7 +148,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 			else
 				timeUntilRegen = 11 + HivelConfig.INSTANCE.iFrames.getValue();
 		}
-		UltraComponents.WINGED_ENTITY.get(this).setBloodHealCooldown(4);
+		UltraComponents.WINGED.get(this).setBloodHealCooldown(4);
 	}
 	
 	@Inject(method = "isSwimming", at = @At("HEAD"), cancellable = true)

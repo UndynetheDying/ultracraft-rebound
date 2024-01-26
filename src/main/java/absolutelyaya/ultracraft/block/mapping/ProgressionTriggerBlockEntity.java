@@ -105,7 +105,7 @@ public class ProgressionTriggerBlockEntity extends AbstractTriggerBlockEntity
 						player.giveItemStack(item.getDefaultStack());
 					if(message != null && !world.isClient)
 					{
-						IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(player);
+						IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
 						winged.sendBoxTitle(Text.translatable(message, item.getName().getString()));
 					}
 				}

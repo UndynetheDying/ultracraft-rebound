@@ -6,6 +6,7 @@ import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -54,4 +55,8 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	void sendBoxTitle(Text text, float duration);
 	
 	void sendBoxTitle(Text text);
+	
+	Identifier getCurrentLevel();
+	
+	void setCurrentLevel(Identifier id);
 }

@@ -1,0 +1,14 @@
+{
+  "title": "level.ultracraft.example.title",
+  "description": "level.ultracraft.example.description",
+  "par-time": "4:20:69",
+  "author": "yaya",
+  "author-link": "https://absolutelyaya.neocities.org/",
+  "structure": "ultracraft:example_level",
+  "thumbnail": "ultracraft:textures/level/placeholder.png",
+  "spawn-offset":{
+    "x": 16,
+    "y": 8,
+    "z": 9
+  }
+}

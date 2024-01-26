@@ -2,13 +2,11 @@ package absolutelyaya.ultracraft.dimension;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -30,7 +28,8 @@ public class UltraDimensions
 		Instance = this;
 		
 		managers.put(LimboManager.ID, LIMBO_MANAGER = new LimboManager(server.getWorld(LimboManager.WORLD_KEY)));
-		managers.put(LevelManager.ID, LEVEL_MANAGER = new LevelManager(server.getWorld(LevelManager.WORLD_KEY)));
+		managers.put(LevelManager.ID, LEVEL_MANAGER = LevelManager.Instance);
+		LevelManager.Instance.init(server.getWorld(LevelManager.WORLD_KEY));
 		
 		ServerWorldEvents.LOAD.register(this::onWorldLoad);
 	}
@@ -39,7 +38,7 @@ public class UltraDimensions
 	{
 		for (DimensionManager manager : managers.values())
 		{
-			if(manager.getWorld().getPlayers().size() > 0)
+			if(manager.getWorld() != null && manager.getWorld().getPlayers().size() > 0)
 				manager.tick();
 		}
 	}

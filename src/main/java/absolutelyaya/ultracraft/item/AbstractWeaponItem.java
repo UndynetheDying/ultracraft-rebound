@@ -43,7 +43,7 @@ public abstract class AbstractWeaponItem extends Item
 	
 	protected boolean isCanFirePrimary(PlayerEntity user)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(user).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(user).getGunCooldownManager();
 		return (user instanceof WingedPlayerEntity && cdm.isUsable(this, GunCooldownManager.PRIMARY)) && user.isAlive();
 	}
 	
@@ -74,7 +74,7 @@ public abstract class AbstractWeaponItem extends Item
 	public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected)
 	{
 		super.inventoryTick(stack, world, entity, slot, selected);
-		if(world.isClient && UltraComponents.WINGED_ENTITY.get(entity).isPrimaryFiring() && selected &&
+		if(world.isClient && UltraComponents.WINGED.get(entity).isPrimaryFiring() && selected &&
 				   onPrimaryFire(world, (PlayerEntity)entity, entity.getVelocity()))
 		{
 			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
@@ -99,14 +99,14 @@ public abstract class AbstractWeaponItem extends Item
 	@Override
 	public boolean isItemBarVisible(ItemStack stack)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		return !cdm.isUsable(getCooldownClass(stack), GunCooldownManager.PRIMARY);
 	}
 	
 	@Override
 	public int getItemBarStep(ItemStack stack)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		return (int)(cdm.getCooldownPercent(getCooldownClass(stack), GunCooldownManager.PRIMARY) * 14);
 	}
 	
@@ -192,7 +192,7 @@ public abstract class AbstractWeaponItem extends Item
 		ItemStack nextStack = replaceVariant(stack, player, player.getInventory().selectedSlot, nextItem);
 		if(nextItem instanceof AbstractWeaponItem weapon)
 		{
-			UltraComponents.WINGED_ENTITY.get(player).getGunCooldownManager().setCooldown(weapon, weapon.getSwitchCooldown(nextStack), GunCooldownManager.PRIMARY);
+			UltraComponents.WINGED.get(player).getGunCooldownManager().setCooldown(weapon, weapon.getSwitchCooldown(nextStack), GunCooldownManager.PRIMARY);
 			weapon.onSwitch(player, player.getWorld());
 		}
 	}

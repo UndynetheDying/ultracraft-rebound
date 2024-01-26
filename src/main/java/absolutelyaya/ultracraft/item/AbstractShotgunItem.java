@@ -38,7 +38,7 @@ public abstract class AbstractShotgunItem extends AbstractWeaponItem implements 
 	@Override
 	public boolean onPrimaryFire(World world, PlayerEntity user, Vec3d userVelocity)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(user).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(user).getGunCooldownManager();
 		Vec3d dir = new Vec3d(0f, 0f, 1f);
 		dir = dir.rotateX((float)Math.toRadians(-user.getPitch()));
 		dir = dir.rotateY((float)Math.toRadians(-user.getHeadYaw()));

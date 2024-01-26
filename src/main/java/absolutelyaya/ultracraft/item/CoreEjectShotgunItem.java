@@ -61,7 +61,7 @@ public class CoreEjectShotgunItem extends AbstractShotgunItem
 		ItemStack itemStack = user.getStackInHand(hand);
 		if(hand.equals(Hand.OFF_HAND))
 			return TypedActionResult.fail(itemStack);
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(user).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(user).getGunCooldownManager();
 		if(!cdm.isUsable(this, 0))
 			return TypedActionResult.fail(itemStack);
 		user.setCurrentHand(hand);

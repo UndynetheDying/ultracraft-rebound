@@ -427,6 +427,7 @@
   "message.ultracraft.hell_spawner.fail-spawn.blocked": "[§4Ultracraft§r] Hell Spawner at %s couldn't find a free spawn location.",
   "message.ultracraft.progression.unlock": "You have unlocked the %s!",
   "message.ultracraft.progression.unlock.alt-revolver": "You can now use the §6Alternate Revolvers§f! Go to a §bTerminals Weapon Tab§f to change your §bWeapon Loadout§f.",
+  "message.ultracraft.level-destroyed": "The Level you were in was Destroyed; You were brought back to the Overworlds Spawn Position.",
 
   "intro.ultracraft.calibration": "BOOT UP SEQUENCE READY\n\nFIRMWARE\n  §aVERSION %s§r\n\nCALIBRATION\n  §4EXPIRED§r\n  §4NEW CALIBRATION REQUIRED§r\n\n",
   "intro.ultracraft.input": "Press any Key",
@@ -511,12 +512,18 @@
   "screen.ultracraft.travel.layer3": "Gluttony",
   "screen.ultracraft.travel.close": "Close",
   "screen.ultracraft.travel.back": "Back",
+  "screen.ultracraft.level.author": "Author: %s",
+  "screen.ultracraft.level.partime": "P-Rank Time: %s",
 
+  "level.ultracraft.custom.unnamed": "Unnamed Level",
+  "level.ultracraft.author.unknown": "Unknown",
   "level.ultracraft.0-F": "Freeroam",
   "level.ultracraft.0-1": "Abandoned Facility",
   "level.ultracraft.1-1": "Illusionary Paradise",
   "level.ultracraft.1-F": "Freeroam",
   "level.ultracraft.1-2": "Clair de Lune",
+  "level.ultracraft.example.title": "Example Level",
+  "level.ultracraft.example.description": "An Example Level for Datapack//Level Creators.",
 
   "terminal.coming-soon": "Coming Soon",
   "terminal.button": "Button",

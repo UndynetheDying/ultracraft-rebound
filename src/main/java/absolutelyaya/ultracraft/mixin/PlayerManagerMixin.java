@@ -17,7 +17,7 @@ public class PlayerManagerMixin
 	@Inject(method = "respawnPlayer", at = @At(value = "HEAD"))
 	void onRespawn(ServerPlayerEntity player, boolean alive, CallbackInfoReturnable<ServerPlayerEntity> cir)
 	{
-		IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(player);
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
 		BlockPos pos = winged.getLastCheckpoint();
 		if(pos != null && player.getWorld().getRegistryKey().equals(winged.getCheckpointDimension()) &&
 				   player.getWorld().getBlockEntity(winged.getLastCheckpoint()) instanceof CheckpointBlockEntity checkpoint)

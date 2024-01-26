@@ -24,7 +24,7 @@ public final class UltraComponents implements EntityComponentInitializer, LevelC
 {
 	public static final ComponentKey<IWingDataComponent> WING_DATA =
 			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "wing_data"), IWingDataComponent.class);
-	public static final ComponentKey<IWingedPlayerComponent> WINGED_ENTITY =
+	public static final ComponentKey<IWingedPlayerComponent> WINGED =
 			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "winged"), IWingedPlayerComponent.class);
 	public static final ComponentKey<IProgressionComponent> PROGRESSION =
 			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "progression"), IProgressionComponent.class);
@@ -54,7 +54,7 @@ public final class UltraComponents implements EntityComponentInitializer, LevelC
 	public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry)
 	{
 		registry.registerForPlayers(WING_DATA, WingDataComponent::new, RespawnCopyStrategy.ALWAYS_COPY);
-		registry.registerForPlayers(WINGED_ENTITY, WingedPlayerComponent::new, RespawnCopyStrategy.ALWAYS_COPY);
+		registry.registerForPlayers(WINGED, WingedPlayerComponent::new, RespawnCopyStrategy.ALWAYS_COPY);
 		registry.registerForPlayers(PROGRESSION, ProgressionComponent::new, RespawnCopyStrategy.ALWAYS_COPY);
 		registry.registerForPlayers(EASTER, EasterComponent::new, RespawnCopyStrategy.ALWAYS_COPY);
 		registry.registerForPlayers(ARMS, ArmComponent::new, RespawnCopyStrategy.ALWAYS_COPY);

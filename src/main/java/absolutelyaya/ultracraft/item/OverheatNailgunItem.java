@@ -44,7 +44,7 @@ public class OverheatNailgunItem extends AbstractNailgunItem
 		if(isCanFirePrimary(user))
 		{
 			boolean heatsinkActive = getNbt(stack, "heatsinking") == 1;
-			GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(user).getGunCooldownManager();
+			GunCooldownManager cdm = UltraComponents.WINGED.get(user).getGunCooldownManager();
 			user.playSound(SoundRegistry.NAILGUN_FIRE, 1f, 1.5f + user.getRandom().nextFloat() * 0.1f);
 			if(world.isClient)
 			{
