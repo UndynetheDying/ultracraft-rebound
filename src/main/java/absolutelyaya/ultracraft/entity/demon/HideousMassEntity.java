@@ -26,7 +26,9 @@ import mod.azure.azurelib.core.animation.AnimatableManager;
 import mod.azure.azurelib.core.animation.AnimationController;
 import mod.azure.azurelib.core.animation.AnimationState;
 import mod.azure.azurelib.core.animation.RawAnimation;
+import mod.azure.azurelib.core.keyframe.event.SoundKeyframeEvent;
 import mod.azure.azurelib.core.object.PlayState;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityStatuses;
 import net.minecraft.entity.EntityType;
@@ -48,6 +50,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.Direction;
@@ -193,8 +197,19 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 	@Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar)
 	{
-		controllerRegistrar.add(new AnimationController<>(this, "main", this::predicate),
+		controllerRegistrar.add(new AnimationController<>(this, "main", this::predicate).setSoundKeyframeHandler(this::handleSoundKeyFrames),
 								new AnimationController<>(this, "turn", this::turnPredicate));
+	}
+	
+	private void handleSoundKeyFrames(SoundKeyframeEvent<GeoAnimatable> event)
+	{
+		SoundEvent sound = switch(event.getKeyframeData().getSound())
+		{
+			case "mortar" -> SoundRegistry.HIDEOUS_MASS_MORTAR;
+			case "emerge" -> SoundRegistry.HIDEOUS_MASS_EMERGE;
+			default -> SoundRegistry.PLACEHOLDER;
+		};
+		getWorld().playSound(MinecraftClient.getInstance().player, getBlockPos(), sound, SoundCategory.HOSTILE, 1f, 0.95f + random.nextFloat());
 	}
 	
 	@Override
@@ -390,7 +405,8 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 			partPositions[i] = partPositions[i].lerp(dest[i], 1f / 5f);
 			positionPart(parts[i], partPositions[i]);
 		}
-		
+		if(!getWorld().isClient && prevYaw != getYaw() && age % 8 == 0 && random.nextFloat() <= 0.75f)
+			playSound(SoundRegistry.HIDEOUS_MASS_TURN, 0.3f, 1f);
 		setBodyYaw(headYaw);
 	}
 	
@@ -895,7 +911,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		public void start()
 		{
 			super.start();
-			mob.playSound(SoundRegistry.HIDEOUS_MASS_UNHIDE, 1f, 1f);
+			mob.playSound(SoundRegistry.HIDEOUS_MASS_EMERGE, 1f, 1f);
 		}
 		
 		@Override

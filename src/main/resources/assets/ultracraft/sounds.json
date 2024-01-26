@@ -118,9 +118,19 @@
     ]
   },
 
-  "entity.hideous_mass.unhide": {
+  "entity.hideous_mass.emerge_step": {
     "sounds": [
-      {"name":"ultracraft:placeholder","type":"event"}
+      {"name":"minecraft:block.calcite.break","type":"event","pitch": 0.5}
+    ]
+  },
+  "entity.hideous_mass.turn": {
+    "sounds": [
+      {"name":"minecraft:entity.spider.step","type":"event","pitch": 0.75}
+    ]
+  },
+  "entity.hideous_mass.mortar": {
+    "sounds": [
+      {"name":"minecraft:entity.arrow.shoot","type":"event","pitch": 0.05}
     ]
   },
   "entity.hideous_mass.tell.stomp": {
@@ -507,9 +517,14 @@
       "ultracraft:misc/husk_scream_seemless"
     ]
   },
+  "misc.spin": {
+    "sounds": [
+      "ultracraft:misc/spin"
+    ]
+  },
   "placeholder": {
     "sounds": [
-      "ultracraft:misc/talon_screaming_seemless"
+      "ultracraft:placeholder"
     ]
   },
 

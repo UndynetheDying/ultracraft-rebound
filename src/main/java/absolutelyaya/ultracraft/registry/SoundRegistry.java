@@ -38,7 +38,9 @@ public class SoundRegistry
 	
 	public static final SoundEvent STREET_CLEANER_BREATHE = register("entity.street_cleaner.breathe");
 	
-	public static final SoundEvent HIDEOUS_MASS_UNHIDE = register("entity.hideous_mass.unhide");
+	public static final SoundEvent HIDEOUS_MASS_EMERGE = register("entity.hideous_mass.emerge_step");
+	public static final SoundEvent HIDEOUS_MASS_TURN = register("entity.hideous_mass.turn");
+	public static final SoundEvent HIDEOUS_MASS_MORTAR = register("entity.hideous_mass.mortar");
 	public static final SoundEvent HIDEOUS_MASS_SLAM_TELL = register("entity.hideous_mass.tell.stomp");
 	public static final SoundEvent HIDEOUS_MASS_CLAP_TELL = register("entity.hideous_mass.tell.clap");
 	public static final SoundEvent HIDEOUS_MASS_HARPOON_TELL = register("entity.hideous_mass.tell.harpoon");
@@ -127,6 +129,7 @@ public class SoundRegistry
 	public static final SoundEvent LAUGH = register("misc.laugh");
 	public static final SoundEvent RECEIVE_BOX_TITLE = register("misc.box-title");
 	public static final SoundEvent HUSK_SCREAM_LOOP = register("misc.husk_scream");
+	public static final SoundEvent SPIN = register("misc.spin");
 	public static final SoundEvent PLACEHOLDER = register("placeholder");
 	
 	//MUSIC

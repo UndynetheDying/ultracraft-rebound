@@ -15,7 +15,7 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
 
-public class CancerBulletEntity extends HellBulletEntity implements ProjectileEntityAccessor
+public class CancerBulletEntity extends HellBulletEntity implements ProjectileEntityAccessor, IHomingProjectile
 {
 	LivingEntity target;
 	

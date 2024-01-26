@@ -5,11 +5,13 @@ import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
+import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.Item;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Pair;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
@@ -18,7 +20,7 @@ import org.joml.Vector2d;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-public class HideousMortarEntity extends HellBulletEntity implements ProjectileEntityAccessor
+public class HideousMortarEntity extends HellBulletEntity implements ProjectileEntityAccessor, IHomingProjectile
 {
 	LivingEntity target;
 	
@@ -76,6 +78,8 @@ public class HideousMortarEntity extends HellBulletEntity implements ProjectileE
 		}
 		if(getVelocity().y > -1.5)
 			setVelocity(getVelocity().subtract(0, 0.0275f, 0));
+		if(!getWorld().isClient && age % 6 == 0)
+			playSound(SoundRegistry.SPIN, 1f, 1.25f);
 	}
 	
 	Pair<Vector3f, Vector3f> getPoint()
