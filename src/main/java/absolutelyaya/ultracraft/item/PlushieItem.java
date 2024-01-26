@@ -37,6 +37,7 @@ public class PlushieItem extends Item implements GeoItem
 	final RawAnimation BREAKDANCE = RawAnimation.begin().thenPlay("breakdance");
 	final RawAnimation HELL_NEOW = RawAnimation.begin().thenPlay("hellneow");
 	final RawAnimation POSE_V2 = RawAnimation.begin().thenPlay("v2");
+	final RawAnimation POSE_COLE = RawAnimation.begin().thenPlay("cole");
 	//Swordsmachine Exclusive Animations
 	final RawAnimation SM_SIT = RawAnimation.begin().thenPlay("sit");
 	final RawAnimation SM_HELD = RawAnimation.begin().thenPlay("held");
@@ -56,6 +57,7 @@ public class PlushieItem extends Item implements GeoItem
 			case "pitrpoin" -> new ItemStack(ItemRegistry.PITR_POIN);
 			case "talon" -> new ItemStack(ItemRegistry.TALON);
 			case "v2" -> new ItemStack(ItemRegistry.V2);
+			case "ashenwulf" -> new ItemStack(ItemRegistry.ASHEN);
 			default -> new ItemStack(this);
 		};
 		NbtCompound nbt = stack.getOrCreateNbt();
@@ -104,6 +106,7 @@ public class PlushieItem extends Item implements GeoItem
 			case "agony" -> Type.SWORDSMACHINE_AGONY;
 			case "talon" -> Type.TALON;
 			case "v2" -> Type.V2;
+			case "ashenwulf" -> Type.ASHEN;
 		};
 	}
 	
@@ -146,6 +149,7 @@ public class PlushieItem extends Item implements GeoItem
 			case V1 -> controller.setAnimation(POSE_SLIDE);
 			case TALON -> controller.setAnimation(ANIM_BOW);
 			case V2 -> controller.setAnimation(POSE_V2);
+			case ASHEN -> controller.setAnimation(POSE_COLE);
 		}
 		return PlayState.CONTINUE;
 	}
@@ -179,7 +183,8 @@ public class PlushieItem extends Item implements GeoItem
 		SWORDSMACHINE_TUNDRA("Tundra", "item.ultracraft.plushie.swordsmachine.tundra-lore"),
 		SWORDSMACHINE_AGONY("Agony", "item.ultracraft.plushie.swordsmachine.agony-lore"),
 		TALON("TalonMC", "item.ultracraft.plushie.talon-lore"),
-		V2("V2", "item.ultracraft.plushie.v2-lore");
+		V2("V2", "item.ultracraft.plushie.v2-lore"),
+		ASHEN("AshenWulf", "item.ultracraft.plushie.ashenwulf-lore");
 		
 		Type(String name, String lore)
 		{

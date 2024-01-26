@@ -1,0 +1,67 @@
+{
+	"credit": "Made by AshenWulf",
+	"format_version": "1.8.0",
+	"animations": {
+		"cole": {
+			"loop": true,
+			"bones": {
+				"root": {
+					"position": {
+						"vector": [0, -4, 0]
+					}
+				},
+				"head2": {
+					"rotation": {
+						"vector": [7.47178, -0.65182, 4.95744]
+					}
+				},
+				"ear1": {
+					"rotation": {
+						"vector": [10, -5, 10]
+					}
+				},
+				"body": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"tail": {
+					"rotation": {
+						"vector": [-78.40564, -76.85464, -29.13278]
+					}
+				},
+				"right_arm": {
+					"rotation": {
+						"vector": [-22.37174, -37.80946, 14.1614]
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"vector": [-9.08184, -20.5385, 5.88253]
+					}
+				},
+				"right_leg": {
+					"rotation": {
+						"vector": [-88.09753, 2.97991, -12.39595]
+					},
+					"position": {
+						"vector": [0, -1, -1]
+					}
+				},
+				"left_leg": {
+					"rotation": {
+						"vector": [-89.11955, -9.96156, 4.92327]
+					},
+					"position": {
+						"vector": [0, -1, -1]
+					}
+				},
+				"ear2": {
+					"rotation": {
+						"vector": [7.5, 0, 5]
+					}
+				}
+			}
+		}
+	}
+}

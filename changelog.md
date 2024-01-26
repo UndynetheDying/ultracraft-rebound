@@ -153,6 +153,10 @@
   - The value would only naturally go above 1 if parry-chaining is enabled
 - You can now Right Click with the Knuckleblaster Item to grant yourself the Progression Entry
 - Husks now scream when falling from a lethal height
+- Added AshenWulf Plushie
+  - Model, Texture & Pose were made by AshenWulf
+  - Please don't ask to get a Plushie (unless you're an ultrakill dev, then it's fine)
+- Decided to hide PitrPoin Plushie since it's too much of a niche reference to be featured so prominently
 - Added Cancerous Status Effect
 ## Resource Changes
 - Continued Adding Sounds

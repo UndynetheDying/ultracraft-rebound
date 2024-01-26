@@ -174,6 +174,8 @@ public class ItemRegistry
 			new Identifier(Ultracraft.MOD_ID, "talon"), new TalonItem(new FabricItemSettings()));
 	public static final V2Item V2 = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "v2"), new V2Item(new FabricItemSettings()));
+	public static final AnthroPlushieItem ASHEN = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "ashenwulf"), new AnthroPlushieItem(new FabricItemSettings()));
 	
 	//Special
 	public static final TerminalItem TERMINAL = Registry.register(Registries.ITEM,
@@ -282,15 +284,15 @@ public class ItemRegistry
 			content.add(SOUL_ORB);
 			content.add(BLOOD_ORB);
 			content.add(PLUSHIE.getDefaultStack("yaya"));
+			content.add(TALON.getDefaultStack("talon"));
+			content.add(ASHEN.getDefaultStack("ashenwulf"));
 			content.add(PLUSHIE.getDefaultStack("hakita"));
 			content.add(PITR.getDefaultStack("pitr"));
-			content.add(PITR_POIN.getDefaultStack("pitrpoin"));
 			content.add(PLUSHIE.getDefaultStack("v1"));
-			content.add(TALON.getDefaultStack("talon"));
+			content.add(V2.getDefaultStack("v2"));
 			content.add(SWORDSMACHINE.getDefaultStack("swordsmachine"));
 			content.add(SWORDSMACHINE.getDefaultStack("tundra"));
 			content.add(SWORDSMACHINE.getDefaultStack("agony"));
-			content.add(V2.getDefaultStack("v2"));
 			content.add(DRONE_MASK);
 			content.add(CLAIR_DE_LUNE_DISK);
 			for (TerminalBlockEntity.Base b : TerminalBlockEntity.Base.values())

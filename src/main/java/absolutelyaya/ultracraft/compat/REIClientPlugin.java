@@ -38,7 +38,8 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 				EntryStacks.of(ItemRegistry.MINCED_MEAT),
 				EntryStacks.of(ItemRegistry.KNUCKLEBLASTER),
 				EntryStacks.of(ItemRegistry.PLACEHOLDER),
-				EntryStacks.of(ItemRegistry.FLORP)));
+				EntryStacks.of(ItemRegistry.FLORP),
+				EntryStacks.of(ItemRegistry.PITR_POIN)));
 	}
 	
 	@Override
