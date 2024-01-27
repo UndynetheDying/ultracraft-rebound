@@ -1,6 +1,5 @@
 package absolutelyaya.ultracraft.client.sound;
 
-import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;

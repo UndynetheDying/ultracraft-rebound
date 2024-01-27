@@ -126,6 +126,7 @@ public class PacketRegistry
 	public static final Identifier EDIT_PING_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "edit_ping");
 	public static final Identifier TITLE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "title");
 	public static final Identifier SEND_DESTINATIONS_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "destinations_s2c");
+	public static final Identifier SEND_LEVELS_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "levels_s2c");
 	
 	public static void registerC2S()
 	{

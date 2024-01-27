@@ -19,6 +19,8 @@ import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.data.UltraRecipeManager;
+import absolutelyaya.ultracraft.dimension.LevelData;
+import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.particle.ParryIndicatorParticleEffect;
 import absolutelyaya.ultracraft.recipe.UltraRecipe;
@@ -408,6 +410,16 @@ public class ClientPacketRegistry
 				if(client.currentScreen instanceof TravelScreen travel)
 					travel.initButtons();
 			});
+		})));
+		ClientPlayNetworking.registerGlobalReceiver(SEND_LEVELS_PACKET_ID, (((client, handler, buf, responseSender) -> {
+			for (int i = 0; i <= 1; i++)
+			{
+				List<LevelData> list = buf.readList(LevelData::deserialize);
+				ImmutableMap.Builder<Identifier, LevelData> builder = ImmutableMap.builder();
+				for(LevelData level : list)
+					builder.put(level.id(), level);
+				LevelManager.setLevels(builder.build(), i == 0);
+			}
 		})));
 	}
 }

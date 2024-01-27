@@ -164,11 +164,11 @@ public class UltraRecipe
 		return json;
 	}
 	
-	public static void serialize(PacketByteBuf buf, Pair<Identifier, UltraRecipe> pair)
+	public static void serialize(PacketByteBuf buf, Map.Entry<Identifier, UltraRecipe> pair)
 	{
-		UltraRecipe recipe = pair.getRight();
+		UltraRecipe recipe = pair.getValue();
 		NbtCompound nbt = new NbtCompound();
-		nbt.putString("id", pair.getLeft().toString());
+		nbt.putString("id", pair.getKey().toString());
 		NbtList materials = new NbtList();
 		for (Map.Entry<Item, Integer> entry : recipe.material.entrySet())
 		{

@@ -136,6 +136,7 @@ public class Ultracraft implements ModInitializer
             ServerPlayerEntity player = networkHandler.player;
             config.syncAll(player);
             UltraRecipeManager.sync(player);
+            LevelManager.sync(player);
             Setting hivel = config.hivel.getValue();
             if(!hivel.equals(Setting.FREE))
             {
@@ -154,7 +155,13 @@ public class Ultracraft implements ModInitializer
                 LevelManager.Instance.rescueIfNecessary(player);
         }));
         ServerLifecycleEvents.SERVER_STARTING.register(this::loadConfig);
-        ServerLifecycleEvents.START_DATA_PACK_RELOAD.register((server, handler) -> loadConfig(server));
+        ServerLifecycleEvents.START_DATA_PACK_RELOAD.register((server, handler) -> {
+            loadConfig(server);
+            server.getPlayerManager().getPlayerList().forEach(player -> {
+                UltraRecipeManager.sync(player);
+                LevelManager.sync(player);
+            });
+        });
         
         FabricLoader.getInstance().getModContainer(MOD_ID).ifPresent(modContainer -> VERSION = modContainer.getMetadata().getVersion().getFriendlyString());
         FabricLoader.getInstance().getModContainer("lambdynlights").ifPresent(container -> DYN_LIGHTS = true);

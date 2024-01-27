@@ -3,16 +3,21 @@ package absolutelyaya.ultracraft.dimension;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.registry.PacketRegistry;
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.dimension.v1.FabricDimensions;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.resource.JsonDataLoader;
@@ -45,8 +50,8 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 	public static final Identifier ID = new Identifier(Ultracraft.MOD_ID, "levels");
 	public static final RegistryKey<World> WORLD_KEY = RegistryKey.of(RegistryKeys.WORLD, ID);
 	ServerWorld world;
-	public static final Map<Identifier, LevelData> levels = new HashMap<>();
-	public static final Map<Identifier, LevelData> customLevels = new HashMap<>();
+	public static Map<Identifier, LevelData> levels = new HashMap<>();
+	public static Map<Identifier, LevelData> customLevels = new HashMap<>();
 	static final Map<Identifier, BlockPos> instantiated = new HashMap<>();
 	static BlockPos nextLevelPos = new BlockPos(0, 0, 0);
 	
@@ -81,8 +86,8 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 	{
 		destroyAllLevels();
 		nextLevelPos = new BlockPos(0, 0, 0);
-		levels.clear();
-		customLevels.clear();
+		ImmutableMap.Builder<Identifier, LevelData> builtinBuilder = ImmutableMap.builder();
+		ImmutableMap.Builder<Identifier, LevelData> customBuilder = ImmutableMap.builder();
 		prepared.forEach((id, element) -> {
 			JsonObject json = element.getAsJsonObject();
 			boolean builtin = JsonHelper.getBoolean(json, "builtin", false);
@@ -91,10 +96,10 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 				Ultracraft.LOGGER.warn((builtin ? "Level '" : "Custom Level '") + id + "' does not have a structure parameter!");
 				return;
 			}
-			Text author = Text.translatable(JsonHelper.getString(json, "author", "level.author.unknown"));
+			String author = JsonHelper.getString(json, "author", "level.author.unknown");
 			String authorlink = JsonHelper.getString(json, "author-link", "");
-			Text title = Text.translatable(JsonHelper.getString(json, "title", "level.unnamed"));
-			Text description = Text.translatable(JsonHelper.getString(json, "description", ""));
+			String title = JsonHelper.getString(json, "title", "level.unnamed");
+			String description = JsonHelper.getString(json, "description", "");
 			Identifier structure = Identifier.tryParse(JsonHelper.getString(json, "structure"));
 			Identifier thumbnail = json.has("thumbnail") ? Identifier.tryParse(JsonHelper.getString(json, "thumbnail")) : PLACEHOLDER_THUMBNAIL;
 			BlockPos spawnOffset = new BlockPos(0, 0, 0);
@@ -106,34 +111,9 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 						JsonHelper.getInt(pos, "y", 0),
 						JsonHelper.getInt(pos, "z", 0));
 			}
-			long parTime = -1;
-			String timeString = "";
+			LevelData level = new LevelData(id, title, description, author, authorlink, structure, thumbnail, spawnOffset);
 			if(json.has("par-time"))
-			{
-				timeString = JsonHelper.getString(json, "par-time");
-				try
-				{
-					String[] segments = timeString.split(":");
-					for (int i = Math.min(segments.length - 1, 3); i >= 0; i--)
-					{
-						long ms = Long.parseLong(segments[i]);
-						if(i > 2)
-							ms *= 60; //hours to minutes
-						if(i > 1)
-							ms *= 60; //minutes to seconds
-						if(i > 0)
-							ms *= 1000; //seconds to millisecond
-						parTime += ms;
-					}
-					parTime++; //add 1 because parTime starts at -1
-				}
-				catch (NumberFormatException e)
-				{
-					timeString = "";
-					Ultracraft.LOGGER.warn("Couldn't parse par-time for '" + id + "'; Number Format Exception");
-				}
-			}
-			LevelData level = new LevelData(title, description, author, authorlink, parTime, timeString, thumbnail, structure, spawnOffset);
+				level.parTime(JsonHelper.getString(json, "par-time"));
 			if(json.has("music"))
 			{
 				JsonObject music = json.getAsJsonObject("music");
@@ -145,11 +125,29 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 				level.music(calm, fight);
 			}
 			if(builtin)
-				levels.put(id, level);
+				builtinBuilder.put(id, level);
 			else
-				customLevels.put(id, level);
+				customBuilder.put(id, level);
 		});
+		setLevels(builtinBuilder.build(), true);
+		setLevels(customBuilder.build(), false);
 		Ultracraft.LOGGER.info("Loaded " + levels.size() + " Builtin Levels and " + customLevels.size() + " Custom Levels");
+	}
+	
+	public static void sync(ServerPlayerEntity player)
+	{
+		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeCollection(levels.entrySet(), LevelData::serialize);
+		buf.writeCollection(customLevels.entrySet(), LevelData::serialize);
+		ServerPlayNetworking.send(player, PacketRegistry.SEND_LEVELS_PACKET_ID, buf);
+	}
+	
+	public static void setLevels(ImmutableMap<Identifier, LevelData> map, boolean builtin)
+	{
+		if(builtin)
+			levels = map;
+		else
+			customLevels = map;
 	}
 	
 	public static BlockPos getSpawnPos(Identifier level)
