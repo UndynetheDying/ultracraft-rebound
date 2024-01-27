@@ -23,6 +23,9 @@ public class ClientConfig implements ConfigData
 	@ConfigEntry.Gui.Tooltip(count = 2)
 	public boolean freezeVFX = true;
 	@ConfigEntry.Gui.Tooltip
+	@ConfigEntry.BoundedDiscrete(min = 1, max = 40)
+	public int musicTransitionSpeed = 10;
+	@ConfigEntry.Gui.Tooltip
 	public HideWingsSetting hideWings = HideWingsSetting.NONE;
 	@ConfigEntry.Category("ultra-hud")
 	@ConfigEntry.Gui.Tooltip

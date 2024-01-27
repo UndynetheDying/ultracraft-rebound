@@ -31,9 +31,6 @@ import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.LocalTime;
-import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -116,16 +113,37 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 				timeString = JsonHelper.getString(json, "par-time");
 				try
 				{
-					LocalTime time = LocalTime.parse(timeString);
-					parTime = time.get(ChronoField.MILLI_OF_DAY);
+					String[] segments = timeString.split(":");
+					for (int i = Math.min(segments.length - 1, 3); i >= 0; i--)
+					{
+						long ms = Long.parseLong(segments[i]);
+						if(i > 2)
+							ms *= 60; //hours to minutes
+						if(i > 1)
+							ms *= 60; //minutes to seconds
+						if(i > 0)
+							ms *= 1000; //seconds to millisecond
+						parTime += ms;
+					}
+					parTime++; //add 1 because parTime starts at -1
 				}
-				catch (DateTimeParseException e)
+				catch (NumberFormatException e)
 				{
-					Ultracraft.LOGGER.warn("couldn't parse par-time!");
+					timeString = "";
+					Ultracraft.LOGGER.warn("Couldn't parse par-time for '" + id + "'; Number Format Exception");
 				}
 			}
-			System.out.println(parTime + " -> " + id + " par-time milliseconds");
 			LevelData level = new LevelData(title, description, author, authorlink, parTime, timeString, thumbnail, structure, spawnOffset);
+			if(json.has("music"))
+			{
+				JsonObject music = json.getAsJsonObject("music");
+				Identifier calm = null, fight = null;
+				if(music.has("calm"))
+					calm = Identifier.tryParse(JsonHelper.getString(music, "calm"));
+				if(music.has("fight"))
+					fight = Identifier.tryParse(JsonHelper.getString(music, "fight"));
+				level.music(calm, fight);
+			}
 			if(builtin)
 				levels.put(id, level);
 			else

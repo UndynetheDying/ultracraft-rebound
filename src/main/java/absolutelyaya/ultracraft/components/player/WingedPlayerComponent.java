@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.dimension.LevelManager;
+import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
@@ -12,6 +13,7 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -32,6 +34,8 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	BlockPos lastCheckpoint;
 	RegistryKey<World> checkpointDimension;
 	Identifier currentLevel;
+	boolean fighting;
+	int fightCheckCooldown;
 	
 	public WingedPlayerComponent(PlayerEntity provider)
 	{
@@ -216,19 +220,36 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 		Identifier lastId = currentLevel;
 		currentLevel = id;
 		if(!provider.getWorld().isClient && id == null)
-			LevelManager.Instance.destroyIfEmpty(lastId);
+		{
+			if(id == null)
+				LevelManager.Instance.destroyIfEmpty(lastId);
+			UltraComponents.WINGED.sync(provider);
+		}
+	}
+	
+	@Override
+	public boolean isInFight()
+	{
+		if(fightCheckCooldown-- > 0)
+			return fighting;
+		fighting = provider.getWorld().getOtherEntities(provider, provider.getBoundingBox().expand(32f),
+				e -> e instanceof AbstractUltraHostileEntity && e.isAlive()).size() > 0;
+		fightCheckCooldown = 10;
+		return fighting;
 	}
 	
 	@Override
 	public void readFromNbt(NbtCompound tag)
 	{
-	
+		if(tag.contains("level", NbtElement.STRING_TYPE))
+			currentLevel = new Identifier(tag.getString("level"));
 	}
 	
 	@Override
 	public void writeToNbt(NbtCompound tag)
 	{
-	
+		if(getCurrentLevel() != null)
+			tag.putString("level", getCurrentLevel().toString());
 	}
 	
 	@Override

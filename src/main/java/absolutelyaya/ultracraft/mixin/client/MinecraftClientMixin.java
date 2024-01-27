@@ -7,6 +7,8 @@ import absolutelyaya.ultracraft.block.TerminalDisplayBlock;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.screen.IntroScreen;
 import absolutelyaya.ultracraft.client.gui.screen.TravelScreen;
+import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.BlockRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
@@ -27,12 +29,14 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.item.Items;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.resource.ResourceReload;
 import net.minecraft.sound.MusicSound;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -87,6 +91,17 @@ public abstract class MinecraftClientMixin
 	@Inject(method = "getMusicType", at = @At("RETURN"), cancellable = true)
 	void onGetMusicType(CallbackInfoReturnable<MusicSound> cir)
 	{
+		if(player != null)
+		{
+			IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
+			Identifier level = winged.getCurrentLevel();
+			if(level != null)
+			{
+				//Registries.SOUND_EVENT.get();
+				cir.setReturnValue(null);
+				return;
+			}
+		}
 		if (cir.getReturnValue().equals(MusicType.MENU) && UltracraftClient.REPLACE_MENU_MUSIC)
 		{
 			RegistryEntry.Reference<SoundEvent> music = switch(UltracraftClient.getConfig().BGID)

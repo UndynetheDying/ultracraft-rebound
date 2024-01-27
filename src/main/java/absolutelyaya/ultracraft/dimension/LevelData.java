@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.dimension;
 
+import absolutelyaya.ultracraft.client.sound.ModularLevelMusic;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -15,6 +16,7 @@ public final class LevelData
 	private final Identifier structure;
 	private final BlockPos spawnOffset;
 	private final String parTimeString;
+	ModularLevelMusic music;
 	
 	public LevelData(Text title, Text description, Text author, String authorLink, long parTime, String parTimeString, Identifier thumbnail, Identifier structure, BlockPos spawnOffset)
 	{
@@ -72,6 +74,16 @@ public final class LevelData
 	public String parTimeString()
 	{
 		return parTimeString;
+	}
+	
+	public void music(Identifier calm, Identifier fight)
+	{
+		music = new ModularLevelMusic(calm, fight);
+	}
+	
+	public ModularLevelMusic getMusic()
+	{
+		return music;
 	}
 	
 	@Override

@@ -749,5 +749,8 @@
   "text.autoconfig.ultracraft.option.deathScreen.@Tooltip": "Replaces the Death Screen with the one from Ultrakill",
 
   "text.autoconfig.ultracraft.option.screenshake": "Screenshake",
-  "text.autoconfig.ultracraft.option.screenshake.@Tooltip": "Whether Firing Weapons or nearby Explosions cause your screen to shake"
+  "text.autoconfig.ultracraft.option.screenshake.@Tooltip": "Whether Firing Weapons or nearby Explosions cause your screen to shake",
+
+  "text.autoconfig.ultracraft.option.musicTransitionSpeed": "Music Transition Speed",
+  "text.autoconfig.ultracraft.option.musicTransitionSpeed.@Tooltip": "How quickly a levels music should transition between calm and fighting tracks"
 }

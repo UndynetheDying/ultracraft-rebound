@@ -33,6 +33,7 @@
     "client.KeybindMixin",
     "client.KeyboardInputMixin",
     "client.MinecraftClientMixin",
+    "client.MusicTrackerMixin",
     "client.OtherClientPlayerMixin",
     "client.gui.AccessibilityScreenMixin",
     "client.gui.BossbarHudMixin",
