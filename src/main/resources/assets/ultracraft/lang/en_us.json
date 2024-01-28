@@ -521,6 +521,7 @@
 
   "level.ultracraft.error.title": "Invalid ID",
   "level.ultracraft.error.description": "The ID for this buttons level wasn't found. This shouldn't really ever happen.",
+  "level.ultracraft.unimplemented": "Coming Soon",
   "level.ultracraft.custom.unnamed": "Unnamed Level",
   "level.ultracraft.author.unknown": "Unknown",
   "level.ultracraft.0-F": "Freeroam",

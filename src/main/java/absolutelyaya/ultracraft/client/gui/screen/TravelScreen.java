@@ -80,19 +80,23 @@ public class TravelScreen extends AbstractTravelScreen
 						new Identifier(Ultracraft.MOD_ID, "textures/level/0_freeroam.png"), new Identifier(Ultracraft.MOD_ID, "dimension.overworld"),
 						d -> travel(Layer.OVERWORLD)));
 				buttons.add(new LevelButton(width / 2, height / 2 - 32,
-						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "prelude1")), d -> travel(Layer.OVERWORLD)));
+						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "prelude1")), this::enterLevel));
 				buttons.add(new LevelButton(width / 2, height / 2 + 36,
-						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "prelude2")), d -> travel(Layer.OVERWORLD)));
+						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "prelude2")), this::enterLevel));
 			}
 			case LIMBO ->
 			{
 				buttons.add(new LevelButton(width / 2, height / 2 - 100,
 						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "limbo1")), this::enterLevel));
-				buttons.add(new LevelButton(width / 2, height / 2 - 32, Text.translatable("level.ultracraft.1-F"),
+				LevelButton freeroam = new LevelButton(width / 2, height / 2 - 32, Text.translatable("level.ultracraft.1-F"),
 						new Identifier(Ultracraft.MOD_ID, "textures/level/1_freeroam.png"), new Identifier(Ultracraft.MOD_ID, "dimension.limbo"),
-						d -> travel(Layer.LIMBO)));
+						d -> travel(Layer.LIMBO));
+				buttons.add(freeroam);
 				buttons.add(new LevelButton(width / 2, height / 2 + 36,
 						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "luna")), ignored -> {}));
+				
+				buttons.add(new LevelButton(width / 2 + freeroam.getWidth() + 16, height / 2 - 32,
+						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "limbo-challenge")), this::enterLevel));
 			}
 		}
 		buttons.add(ButtonWidget.builder(Text.translatable("screen.ultracraft.travel.back"), b -> {
@@ -154,11 +158,14 @@ public class TravelScreen extends AbstractTravelScreen
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button)
 	{
+		boolean b = super.mouseClicked(mouseX, mouseY, button);
+		if(b)
+			return true;
 		if(selectedLayer == null)
 		{
 			for (ClickableWidget widget : layerButtons)
 			{
-				boolean b = widget.mouseClicked(mouseX, mouseY, button);
+				b = widget.mouseClicked(mouseX, mouseY, button);
 				if(b)
 					return true;
 			}
@@ -167,11 +174,11 @@ public class TravelScreen extends AbstractTravelScreen
 		{
 			for (ClickableWidget widget : levelButtons)
 			{
-				boolean b = widget.mouseClicked(mouseX, mouseY, button);
+				b = widget.mouseClicked(mouseX, mouseY, button);
 				if(b)
 					return true;
 			}
 		}
-		return super.mouseClicked(mouseX, mouseY, button);
+		return false;
 	}
 }

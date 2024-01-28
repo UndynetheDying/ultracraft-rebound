@@ -56,7 +56,7 @@ public class CustomLevelSelectScreen extends AbstractTravelScreen
 		{
 			int y = (int)(button.getY() + curListoffset);
 			button.setAlpha(Math.min((y - 12) / 20f, 1f) - MathHelper.clamp(Math.max(y - height + 125, 0) / 20f, 0f, 1f));
-			button.render(context, mouseX, mouseY, delta);
+			button.render(context, mouseX, mouseY - (int)curListoffset, delta);
 		}
 		matrices.pop();
 	}
@@ -71,10 +71,13 @@ public class CustomLevelSelectScreen extends AbstractTravelScreen
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button)
 	{
+		boolean b = super.mouseClicked(mouseX, mouseY, button);
+		if(b)
+			return true;
 		for (LevelButton lb : levelButtons)
-			if(lb.mouseClicked(mouseX, mouseY, button))
+			if(lb.mouseClicked(mouseX, mouseY - curListoffset, button))
 				return true;
-		return super.mouseClicked(mouseX, mouseY, button);
+		return false;
 	}
 	
 	@Override

@@ -417,7 +417,7 @@ public class ClientPacketRegistry
 				List<LevelData> list = buf.readList(LevelData::deserialize);
 				ImmutableMap.Builder<Identifier, LevelData> builder = ImmutableMap.builder();
 				for(LevelData level : list)
-					builder.put(level.id(), level);
+					builder.put(level.getID(), level);
 				LevelManager.setLevels(builder.build(), i == 0);
 			}
 		})));

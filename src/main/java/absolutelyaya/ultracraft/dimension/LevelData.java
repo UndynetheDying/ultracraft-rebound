@@ -23,6 +23,7 @@ public final class LevelData
 	String parTimeString;
 	long parTime;
 	ModularLevelMusic music;
+	boolean unimplemented, hidden;
 	
 	public LevelData(Identifier id, String title, String description, String author, String authorLink, Identifier structure, Identifier thumbnail, BlockPos spawnOffset, boolean builtin)
 	{
@@ -37,27 +38,27 @@ public final class LevelData
 		this.builtin = builtin;
 	}
 	
-	public Identifier id()
+	public Identifier getID()
 	{
 		return id;
 	}
 	
-	public Text title()
+	public Text getTitle()
 	{
 		return Text.translatable(title);
 	}
 	
-	public Text description()
+	public Text getDescription()
 	{
 		return Text.translatable(description);
 	}
 	
-	public Text author()
+	public Text getAuthor()
 	{
 		return Text.translatable(author);
 	}
 	
-	public String authorLink()
+	public String getAuthorLink()
 	{
 		return authorLink;
 	}
@@ -67,27 +68,27 @@ public final class LevelData
 		return parTime > 0 && parTimeString.length() > 0;
 	}
 	
-	public long parTime()
+	public long getParTime()
 	{
 		return parTime;
 	}
 	
-	public String parTimeString()
+	public String getParTimeString()
 	{
 		return parTimeString;
 	}
 	
-	public Identifier thumbnail()
+	public Identifier getThumbnail()
 	{
 		return thumbnail;
 	}
 	
-	public Identifier structure()
+	public Identifier getStructure()
 	{
 		return structure;
 	}
 	
-	public BlockPos spawnOffset()
+	public BlockPos getSpawnOffset()
 	{
 		return spawnOffset;
 	}
@@ -97,17 +98,17 @@ public final class LevelData
 		return music != null;
 	}
 	
-	public void music(Identifier calm, Identifier fight)
+	public void setMusic(Identifier calm, Identifier fight)
 	{
 		music = new ModularLevelMusic(calm, fight);
 	}
 	
-	public ModularLevelMusic music()
+	public ModularLevelMusic getMusic()
 	{
 		return music;
 	}
 	
-	public void parTime(String string)
+	public void setParTime(String string)
 	{
 		try
 		{
@@ -135,7 +136,7 @@ public final class LevelData
 		}
 	}
 	
-	public void parTime(long time)
+	public void setParTime(long time)
 	{
 		long milli = time % 1000, sec = time / 1000, min = sec / 60, hour = min / 60;
 		StringBuilder builder = new StringBuilder();
@@ -151,9 +152,29 @@ public final class LevelData
 		parTime = time;
 	}
 	
-	public boolean builtin()
+	public boolean getBuiltin()
 	{
 		return builtin;
+	}
+	
+	public void setUnimplemented(boolean unimplemented)
+	{
+		this.unimplemented = unimplemented;
+	}
+	
+	public boolean isUnimplemented()
+	{
+		return unimplemented;
+	}
+	
+	public void setHidden(boolean hidden)
+	{
+		this.hidden = hidden;
+	}
+	
+	public boolean isHidden()
+	{
+		return hidden;
 	}
 	
 	public NbtCompound asNbt()
@@ -172,6 +193,8 @@ public final class LevelData
 		spawnOffset.putInt("z", this.spawnOffset.getZ());
 		nbt.put("spawnOffset", spawnOffset);
 		nbt.putBoolean("builtin", builtin);
+		nbt.putBoolean("unimplemented", unimplemented);
+		nbt.putBoolean("hidden", hidden);
 		if(hasParTime())
 			nbt.putLong("parTime", parTime);
 		if(hasMusic())
@@ -203,7 +226,7 @@ public final class LevelData
 		LevelData data = new LevelData(Identifier.tryParse(id), title, description, author, authorLink,
 				Identifier.tryParse(structure), Identifier.tryParse(thumbnail), spawnOffset, builtin);
 		if(nbt.contains("parTime", NbtElement.LONG_TYPE))
-			data.parTime(nbt.getLong("parTime"));
+			data.setParTime(nbt.getLong("parTime"));
 		if(nbt.contains("music", NbtElement.COMPOUND_TYPE))
 		{
 			NbtCompound music = nbt.getCompound("music");
@@ -212,8 +235,10 @@ public final class LevelData
 				calm = Identifier.tryParse(music.getString("calm"));
 			if(music.contains("fight", NbtElement.STRING_TYPE))
 				fight = Identifier.tryParse(music.getString("fight"));
-			data.music(calm, fight);
+			data.setMusic(calm, fight);
 		}
+		data.setUnimplemented(nbt.getBoolean("unimplemented"));
+		data.setHidden(nbt.getBoolean("hidden"));
 		return data;
 	}
 	

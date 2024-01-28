@@ -76,7 +76,7 @@ public class UltraLevelComponent implements IUltraLevelComponent
 	@Override
 	public boolean isDestinationUnlocked(Identifier id)
 	{
-		return unlockedDestinations.contains(id) || (!LevelManager.getLevelData(id).builtin()); //TODO: config all custom levels unlocked
+		return unlockedDestinations.contains(id) || (!LevelManager.getLevelData(id).getBuiltin()); //TODO: config all custom levels unlocked
 	}
 	
 	@Override

@@ -33,18 +33,18 @@ public class LevelButton extends ClickableWidget
 	final Text description, author;
 	final String authorLink, parTime;
 	final Consumer<Identifier> action;
-	boolean isUnlocked;
+	boolean isUnlocked, isUnimplemented, isHidden;
 	
 	public LevelButton(int x, int y, LevelData data, Consumer<Identifier> action)
 	{
-		super(x, y, 96, 64, data.title());
-		description = data.description();
-		if(data.builtin())
+		super(x, y, 96, 64, data.getTitle());
+		description = data.getDescription();
+		if(data.getBuiltin())
 			author = Text.of("");
 		else
 			author = Text.translatable("screen.ultracraft.level.author",
-					data.author().getString().length() > 0 ? data.author() : Text.translatable("level.ultracaft.author.unknown"));
-		String authorLink = data.authorLink();
+					data.getAuthor().getString().length() > 0 ? data.getAuthor() : Text.translatable("level.ultracaft.author.unknown"));
+		String authorLink = data.getAuthorLink();
 		if(authorLink.length() > 0)
 		{
 			try
@@ -54,13 +54,15 @@ public class LevelButton extends ClickableWidget
 			catch (MalformedURLException e)
 			{
 				authorLink = "";
-				Ultracraft.LOGGER.warn("authorLink for level '" + data.id() + "' is an invalid URL! (" + data.authorLink() + ")");
+				Ultracraft.LOGGER.warn("authorLink for level '" + data.getID() + "' is an invalid URL! (" + data.getAuthorLink() + ")");
 			}
 		}
 		this.authorLink = authorLink;
-		preview = data.thumbnail();
-		destination = data.id();
-		parTime = data.parTimeString();
+		preview = data.getThumbnail();
+		destination = data.getID();
+		parTime = data.getParTimeString();
+		isHidden = data.isHidden();
+		isUnimplemented = data.isUnimplemented();
 		this.action = action;
 		PlayerEntity player = MinecraftClient.getInstance().player;
 		if(player == null)
@@ -69,7 +71,7 @@ public class LevelButton extends ClickableWidget
 			return;
 		}
 		IUltraLevelComponent global = UltraComponents.GLOBAL.get(player.getWorld().getLevelProperties());
-		isUnlocked = global.isDestinationUnlocked(destination) || true;
+		isUnlocked = global.isDestinationUnlocked(destination);
 		if(!isUnlocked)
 			setMessage(Text.of(getMessage().getString().replaceAll("[^ ]", "?")));
 		calcDimensions();
@@ -90,7 +92,7 @@ public class LevelButton extends ClickableWidget
 			return;
 		}
 		IUltraLevelComponent global = UltraComponents.GLOBAL.get(player.getWorld().getLevelProperties());
-		isUnlocked = global.isDestinationUnlocked(destination) || true;
+		isUnlocked = global.isDestinationUnlocked(destination);
 		if(!isUnlocked)
 			setMessage(Text.of(getMessage().getString().replaceAll("[^ ]", "?")));
 		calcDimensions();
@@ -106,6 +108,13 @@ public class LevelButton extends ClickableWidget
 	@Override
 	protected void renderButton(DrawContext context, int mouseX, int mouseY, float delta)
 	{
+		if(isHidden && !isUnlocked)
+			return;
+		if(isUnimplemented && isUnlocked)
+		{
+			renderUnimplemented(context);
+			return;
+		}
 		RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
 		MatrixStack matrices = context.getMatrices();
 		matrices.push();
@@ -135,12 +144,35 @@ public class LevelButton extends ClickableWidget
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 	}
 	
+	void renderUnimplemented(DrawContext context)
+	{
+		RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
+		MatrixStack matrices = context.getMatrices();
+		matrices.push();
+		matrices.translate(getX(), getY(), 0f);
+		context.fill(0, 0, width, height, 0x88000000);
+		Text t = Text.translatable("level.ultracraft.unimplemented");
+		context.drawText(tRenderer, t, (width - tRenderer.getWidth(t)) / 2, height / 2 - 6, 0xffffffff, true);
+		matrices.pop();
+		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+	}
+	
 	@Override
 	protected boolean clicked(double mouseX, double mouseY)
 	{
 		boolean b = super.clicked(mouseX, mouseY);
 		//TODO: open authorLink
-		if(b && isUnlocked && alpha > 0.5)
+		if(b && isUnlocked && !isUnimplemented && !isHidden && alpha > 0.5)
+			action.accept(destination);
+		return b;
+	}
+	
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button)
+	{
+		boolean b = super.mouseClicked(mouseX, mouseY, button);
+		//TODO: open authorLink
+		if(b && isUnlocked && !isUnimplemented && !isHidden && alpha > 0.5)
 			action.accept(destination);
 		return b;
 	}

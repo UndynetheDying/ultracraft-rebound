@@ -117,7 +117,7 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 			}
 			LevelData level = new LevelData(id, title, description, author, authorlink, structure, thumbnail, spawnOffset, builtin);
 			if(json.has("par-time"))
-				level.parTime(JsonHelper.getString(json, "par-time"));
+				level.setParTime(JsonHelper.getString(json, "par-time"));
 			if(json.has("music"))
 			{
 				JsonObject music = json.getAsJsonObject("music");
@@ -126,8 +126,12 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 					calm = Identifier.tryParse(JsonHelper.getString(music, "calm"));
 				if(music.has("fight"))
 					fight = Identifier.tryParse(JsonHelper.getString(music, "fight"));
-				level.music(calm, fight);
+				level.setMusic(calm, fight);
 			}
+			if(json.has("unimplemented"))
+				level.setUnimplemented(JsonHelper.getBoolean(json, "unimplemented"));
+			if(json.has("hidden"))
+				level.setHidden(JsonHelper.getBoolean(json, "hidden"));
 			if(builtin)
 				builtinBuilder.put(id, level);
 			else
@@ -172,7 +176,7 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 			Ultracraft.LOGGER.warn("Getting spawnpoint for level '" + level + "' failed; Level wasn't instantiated!");
 			return null;
 		}
-		return instantiated.get(level).add(data.spawnOffset());
+		return instantiated.get(level).add(data.getSpawnOffset());
 	}
 	
 	public static LevelData getLevelData(Identifier id)
@@ -206,7 +210,7 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 			return true;
 		}
 		LevelData data = getLevelData(id);
-		Identifier structure = data.structure();
+		Identifier structure = data.getStructure();
 		if(structure == null)
 		{
 			Ultracraft.LOGGER.info("Level Structure " + id + " instantiation failed; structure is null");
@@ -270,7 +274,7 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 			Ultracraft.LOGGER.warn("Level Structure " + id + " destruction failed; level data not found!");
 			return false;
 		}
-		Identifier structure = level.structure();
+		Identifier structure = level.getStructure();
 		if(structure == null)
 		{
 			Ultracraft.LOGGER.info("Level Structure " + id + " destruction failed; structure is null");

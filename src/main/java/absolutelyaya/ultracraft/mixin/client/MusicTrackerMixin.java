@@ -53,7 +53,7 @@ public abstract class MusicTrackerMixin
 		Identifier level = winged.getCurrentLevel();
 		ModularLevelMusic music = null;
 		if(level != null)
-			music = LevelManager.getLevelData(level).music();
+			music = LevelManager.getLevelData(level).getMusic();
 		if(music == null)
 		{
 			if(curLevelMusic != null)

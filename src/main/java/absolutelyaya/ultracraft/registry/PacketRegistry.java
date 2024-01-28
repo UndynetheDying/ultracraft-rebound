@@ -624,37 +624,19 @@ public class PacketRegistry
 		});
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.TRAVEL_PACKET_ID, (server, player, handler, buf, sender) -> {
 			int id = buf.readInt();
-			Layer layer;
-			Identifier level;
-			if(id == -1)
-			{
-				layer = null;
-				level = buf.readIdentifier();
-			} else
-			{
-				level = null;
-				layer = Layer.values()[id];
-			}
+			Layer layer = Layer.values()[id];
 			server.execute(() -> {
-				if(!UltraComponents.GLOBAL.get(player.getWorld().getLevelProperties()).isDestinationUnlocked(level))
+				Identifier progression = layer.progression;
+				if(!UltraComponents.GLOBAL.get(player.getWorld().getLevelProperties()).isDestinationUnlocked(progression))
 				{
 					player.sendMessage(Text.translatable("message.ultracraft.travel.error-notunlocked"));
-					Ultracraft.LOGGER.warn(player + " tried to travel to locked destination: '" + level + "'");
+					Ultracraft.LOGGER.warn(player + " tried to travel to locked destination: '" + progression + "'");
 					return;
 				}
 				UltraComponents.WINGED.get(player).setCurrentLevel(null);
-				if(layer != null)
-				{
-					ServerWorld world = server.getWorld(layer.worldKey);
-					BlockPos pos = layer.arrivalPos == null ? world.getSpawnPos() : layer.arrivalPos;
-					FabricDimensions.teleport(player, world, new TeleportTarget(pos.toCenterPos(), Vec3d.ZERO, world.getSpawnAngle(), 0f));
-				}
-				else
-				{
-					ServerWorld world = server.getWorld(LevelManager.WORLD_KEY);
-					BlockPos pos = LevelManager.getSpawnPos(level);
-					FabricDimensions.teleport(player, world, new TeleportTarget(pos.toCenterPos(), Vec3d.ZERO, world.getSpawnAngle(), 0f));
-				}
+				ServerWorld world = server.getWorld(layer.worldKey);
+				BlockPos pos = layer.arrivalPos == null ? world.getSpawnPos() : layer.arrivalPos;
+				FabricDimensions.teleport(player, world, new TeleportTarget(pos.toCenterPos(), Vec3d.ZERO, world.getSpawnAngle(), 0f));
 			});
 		});
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.ENTER_LEVEL_PACKET_ID, (server, player, handler, buf, sender) -> {
