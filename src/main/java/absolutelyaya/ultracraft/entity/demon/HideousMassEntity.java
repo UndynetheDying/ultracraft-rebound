@@ -700,7 +700,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		@Override
 		public boolean canStart()
 		{
-			if(mob.isDying() || mob.isDead())
+			if(mob.isDying() || mob.isDead() || mob.isHidden())
 				return false;
 			return super.canStart() && !mob.dataTracker.get(LAYING) && mob.random.nextFloat() > 0.5;
 		}
@@ -737,7 +737,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		@Override
 		public boolean canStart()
 		{
-			if(mob.isDying() || mob.isDead())
+			if(mob.isDying() || mob.isDead() || mob.isHidden())
 				return false;
 			return super.canStart() && ((standing && !mob.dataTracker.get(LAYING) && mob.dataTracker.get(MORTAR_COUNTER) > 0 && mob.random.nextFloat() > 0.5f) ||
 												(!standing && mob.dataTracker.get(LAYING)));
@@ -778,7 +778,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		@Override
 		public boolean canStart()
 		{
-			if(mob.isDying() || mob.isDead())
+			if(mob.isDying() || mob.isDead() || mob.isHidden())
 				return false;
 			return super.canStart() && mob.dataTracker.get(LAYING) && mob.dataTracker.get(SLAM_COUNTER) > 0 && mob.random.nextFloat() < 0.3f;
 		}
@@ -809,7 +809,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		@Override
 		public boolean canStart()
 		{
-			if(mob.isDying() || mob.isDead())
+			if(mob.isDying() || mob.isDead() || mob.isHidden())
 				return false;
 			return super.canStart() && mob.isHasHarpoon() && mob.dataTracker.get(LAYING) && mob.dataTracker.get(SLAM_COUNTER) > 0 && mob.random.nextFloat() < 0.5f;
 		}
@@ -842,7 +842,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		@Override
 		public boolean canStart()
 		{
-			if(mob.isDying() || mob.isDead())
+			if(mob.isDying() || mob.isDead() || mob.isHidden())
 				return false;
 			return super.canStart() && mob.getHealth() < 50f || (mob.isHasHarpoon() && mob.dataTracker.get(LAYING) && mob.dataTracker.get(SLAM_COUNTER) > 2);
 		}
@@ -868,7 +868,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		@Override
 		public boolean canStart()
 		{
-			if(mob.isDying() || mob.isDead())
+			if(mob.isDying() || mob.isDead() || mob.isHidden())
 				return false;
 			if(mob.getCooldown() > 0 || mob.getAnimation() != ANIMATION_IDLE)
 				return false;
@@ -902,7 +902,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 				return false;
 			if(mob.getAnimation() != ANIMATION_IDLE)
 				return false;
-			List<PlayerEntity> nearby = mob.getWorld().getPlayers(TargetPredicate.DEFAULT.setPredicate(e -> e.distanceTo(mob) < 24f), mob,
+			List<PlayerEntity> nearby = mob.getWorld().getPlayers(TargetPredicate.DEFAULT.setPredicate(e -> e.distanceTo(mob) < 16f), mob,
 					mob.getBoundingBox().expand(64));
 			return mob.getTarget() != null && mob.isHidden() && nearby.size() > 0;
 		}

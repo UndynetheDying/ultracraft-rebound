@@ -159,6 +159,7 @@
 - Decided to hide PitrPoin Plushie since it's too much of a niche reference to be featured so prominently
 - Added Cancerous Status Effect
 - Fixed a bug that caused the scrolling in Wing Pattern-//Preset-Lists to get more abrupt the more options there were.
+- Fixed Hideous Mass still Attacking when in its Hidden State
 ## Resource Changes
 - Continued Adding Sounds
 - Shotgun Animations now have a few sound keyframes
