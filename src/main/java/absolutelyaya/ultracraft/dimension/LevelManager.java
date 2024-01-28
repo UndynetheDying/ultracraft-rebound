@@ -237,7 +237,8 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 	
 	public void destroyAllLevels()
 	{
-		instantiated.keySet().forEach(this::destroyLevel);
+		for (Identifier id : instantiated.keySet().toArray(new Identifier[0]))
+			destroyLevel(id);
 	}
 	
 	public boolean destroyIfEmpty(Identifier id)

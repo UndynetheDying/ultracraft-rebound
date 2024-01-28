@@ -60,4 +60,12 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	void setCurrentLevel(Identifier id);
 	
 	boolean isInFight();
+	
+	boolean isTimerRunning();
+	
+	void startTimer();
+	
+	void stopTimer(boolean interrupted);
+	
+	long getElapsedTimer();
 }

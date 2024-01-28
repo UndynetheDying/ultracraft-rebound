@@ -25,7 +25,7 @@ public class RedstoneListenerBlockEntity extends AbstractListenerBlockEntity
 	@Override
 	public Text getAreaLabel()
 	{
-		return Text.of("R-" + flag + "->" + id);
+		return Text.of("Ro-" + flag + "->" + id);
 	}
 	
 	@Override

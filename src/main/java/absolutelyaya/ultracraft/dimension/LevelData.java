@@ -1,7 +1,7 @@
 package absolutelyaya.ultracraft.dimension;
 
-import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.sound.ModularLevelMusic;
+import absolutelyaya.ultracraft.util.TimeUtil;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
@@ -110,46 +110,15 @@ public final class LevelData
 	
 	public void setParTime(String string)
 	{
-		try
-		{
-			String[] segments = string.split(":");
-			long parTime = 0;
-			for (int i = Math.min(segments.length - 1, 3); i >= 0; i--)
-			{
-				long ms = Long.parseLong(segments[i]);
-				if(i > 2)
-					ms *= 60; //hours to minutes
-				if(i > 1)
-					ms *= 60; //minutes to seconds
-				if(i > 0)
-					ms *= 1000; //seconds to millisecond
-				parTime += ms;
-			}
-			this.parTime = parTime;
+		parTime = TimeUtil.parseToMilli(string);
+		if(parTime > -1)
 			parTimeString = string;
-		}
-		catch (NumberFormatException e)
-		{
-			parTimeString = "";
-			parTime = -1;
-			Ultracraft.LOGGER.warn("Couldn't parse par-time for '" + id + "'; Number Format Exception");
-		}
 	}
 	
 	public void setParTime(long time)
 	{
-		long milli = time % 1000, sec = time / 1000, min = sec / 60, hour = min / 60;
-		StringBuilder builder = new StringBuilder();
-		if(hour > 0)
-			builder.append(String.format("%d:", hour));
-		if(min > 0)
-			builder.append(String.format("%02d:", min));
-		if(sec > 0)
-			builder.append(String.format("%02d:", sec));
-		if(milli > 0)
-			builder.append(String.format("%04d:", milli));
-		parTimeString = builder.toString();
 		parTime = time;
+		parTimeString = TimeUtil.milliToString(time);
 	}
 	
 	public boolean getBuiltin()

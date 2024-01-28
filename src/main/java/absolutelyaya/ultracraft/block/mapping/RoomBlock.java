@@ -29,6 +29,4 @@ public class RoomBlock extends AbstractMappingBlock
 	{
 		return RoomBlockEntity::tick;
 	}
-	
-	//TODO: reset timer that resets all child map blocks
 }

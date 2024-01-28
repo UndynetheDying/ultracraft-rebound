@@ -21,6 +21,7 @@ public class BlockEntityRegistry
 	public static final BlockEntityType<RoomBlockEntity> MAP_ROOM;
 	public static final BlockEntityType<TriggerBlockEntity> MAP_TRIGGER;
 	public static final BlockEntityType<RedstoneListenerBlockEntity> MAP_REDSTONE;
+	public static final BlockEntityType<RedstoneReceiverBlockEntity> MAP_RECEIVER;
 	public static final BlockEntityType<DoorListenerBlockEntity> MAP_DOOR;
 	public static final BlockEntityType<SpawnListenerBlockEntity> MAP_SPAWNER;
 	public static final BlockEntityType<EnemyTriggerBlockEntity> MAP_ENEMY_TRIGGER;
@@ -29,6 +30,7 @@ public class BlockEntityRegistry
 	public static final BlockEntityType<CheckpointBlockEntity> MAP_CHECKPOINT;
 	public static final BlockEntityType<ProgressionTriggerBlockEntity> MAP_PROGRESSION;
 	public static final BlockEntityType<TitleTriggerBlockEntity> MAP_TITLE;
+	public static final BlockEntityType<TimerBlockEntity> MAP_TIMER;
 	
 	public static void register() {
 	}
@@ -63,6 +65,9 @@ public class BlockEntityRegistry
 		MAP_REDSTONE = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				new Identifier(Ultracraft.MOD_ID, "map_redstone"),
 				FabricBlockEntityTypeBuilder.create(RedstoneListenerBlockEntity::new, BlockRegistry.MAP_REDSTONE).build());
+		MAP_RECEIVER = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Ultracraft.MOD_ID, "map_receiver"),
+				FabricBlockEntityTypeBuilder.create(RedstoneReceiverBlockEntity::new, BlockRegistry.MAP_RECEIVER).build());
 		MAP_DOOR = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				new Identifier(Ultracraft.MOD_ID, "map_door"),
 				FabricBlockEntityTypeBuilder.create(DoorListenerBlockEntity::new, BlockRegistry.MAP_DOOR).build());
@@ -87,5 +92,8 @@ public class BlockEntityRegistry
 		MAP_TITLE = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				new Identifier(Ultracraft.MOD_ID, "map_title"),
 				FabricBlockEntityTypeBuilder.create(TitleTriggerBlockEntity::new, BlockRegistry.MAP_TITLE).build());
+		MAP_TIMER = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Ultracraft.MOD_ID, "map_timer"),
+				FabricBlockEntityTypeBuilder.create(TimerBlockEntity::new, BlockRegistry.MAP_TIMER).build());
 	}
 }

@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.components.player;
 
+import absolutelyaya.ultracraft.client.gui.LevelHUD;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
@@ -8,6 +9,7 @@ import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
+import absolutelyaya.ultracraft.util.TimeUtil;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -23,9 +25,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+
 public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSyncedComponent
 {
 	PlayerEntity provider;
+	HashMap<Identifier, Long> bestTimes = new HashMap<>();
 	GunCooldownManager gunCDM;
 	boolean primaryFiring, justPlayedBloodhealNoise;
 	byte wingState, lastState;
@@ -36,6 +41,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	Identifier currentLevel;
 	boolean fighting;
 	int fightCheckCooldown;
+	long timerStart = -1;
 	
 	public WingedPlayerComponent(PlayerEntity provider)
 	{
@@ -217,12 +223,13 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	@Override
 	public void setCurrentLevel(Identifier id)
 	{
+		if(isTimerRunning())
+			stopTimer(true);
 		Identifier lastId = currentLevel;
 		currentLevel = id;
 		if(!provider.getWorld().isClient && id == null)
 		{
-			if(id == null)
-				LevelManager.Instance.destroyIfEmpty(lastId);
+			LevelManager.Instance.destroyIfEmpty(lastId);
 			UltraComponents.WINGED.sync(provider);
 		}
 	}
@@ -239,10 +246,50 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	}
 	
 	@Override
+	public boolean isTimerRunning()
+	{
+		return timerStart > -1;
+	}
+	
+	@Override
+	public void startTimer()
+	{
+		if(currentLevel == null)
+			return;
+		timerStart = System.currentTimeMillis();
+		if(provider.getWorld().isClient)
+			LevelHUD.Instance.initTimer(bestTimes.getOrDefault(currentLevel, Long.MAX_VALUE), LevelManager.getLevelData(currentLevel).getParTime());
+	}
+	
+	@Override
+	public void stopTimer(boolean interruption)
+	{
+		if(!interruption && currentLevel != null)
+		{
+			long elapsedTime = getElapsedTimer();
+			if(bestTimes.getOrDefault(currentLevel, 0L) > elapsedTime && provider.getWorld().isClient)
+			{
+				bestTimes.put(currentLevel, elapsedTime);
+				Text levelName = LevelManager.getLevelData(currentLevel).getTitle();
+				provider.sendMessage(Text.translatable("message.ultracraft.level.new-pb-time", levelName, TimeUtil.milliToString(elapsedTime)));
+			}
+		}
+		timerStart = -1;
+	}
+	
+	@Override
+	public long getElapsedTimer()
+	{
+		if(!isTimerRunning())
+			return -1;
+		return System.currentTimeMillis() - timerStart;
+	}
+	
+	@Override
 	public void readFromNbt(NbtCompound tag)
 	{
 		if(tag.contains("level", NbtElement.STRING_TYPE))
-			currentLevel = new Identifier(tag.getString("level"));
+			currentLevel = new Identifier(tag.getString("level")); //TODO: save//load best times
 	}
 	
 	@Override

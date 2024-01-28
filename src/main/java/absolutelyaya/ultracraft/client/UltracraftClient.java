@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.client;
 
 import absolutelyaya.goop.client.GoopClient;
+import absolutelyaya.ultracraft.client.gui.LevelHUD;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
@@ -106,6 +107,7 @@ public class UltracraftClient implements ClientModInitializer
 	static WeaponInfoHUD weaponInfoHUD;
 	static EditModeHUD editModeHUD;
 	static TitleHUD titleHUD;
+	static LevelHUD levelHUD;
 	static ConfigHolder<ClientConfig> config;
 	
 	@Override
@@ -213,10 +215,12 @@ public class UltracraftClient implements ClientModInitializer
 		weaponInfoHUD = new WeaponInfoHUD();
 		editModeHUD = new EditModeHUD();
 		titleHUD = new TitleHUD();
+		levelHUD = new LevelHUD();
 		HudRenderCallback.EVENT.register((context, delta) -> {
 			weaponInfoHUD.render(context, delta);
 			editModeHUD.render(context, delta);
 			titleHUD.render(context, delta);
+			levelHUD.render(context, delta);
 		});
 		
 		ClientPlayConnectionEvents.INIT.register((handler, client) -> {
