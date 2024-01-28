@@ -185,9 +185,9 @@ public class WingCustomizationScreen extends Screen
 		
 		if(tab == Tab.PRESETS || tab == Tab.PATTERNS)
 		{
+			curpreviewButtonscroll = MathHelper.lerp(delta, curpreviewButtonscroll, targetScroll);
 			previewButtons.forEach(pb -> {
 				WidgetAccessor widget = ((WidgetAccessor)pb);
-				curpreviewButtonscroll = MathHelper.lerp(delta / 10, curpreviewButtonscroll, targetScroll);
 				widget.setOffset(new Vector2i(0, Math.round(WingCustomizationScreen.this.curpreviewButtonscroll)));
 				int y = pb.getY();
 				pb.setAlphaCap(Math.min((y - 22) / 20f, 1f) - MathHelper.clamp(Math.max(y - height + 105, 0) / 20f, 0f, 1f));
