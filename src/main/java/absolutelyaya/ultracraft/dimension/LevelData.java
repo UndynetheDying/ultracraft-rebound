@@ -19,11 +19,12 @@ public final class LevelData
 	final String title, description, author, authorLink;
 	final Identifier thumbnail, structure;
 	final BlockPos spawnOffset;
+	final boolean builtin;
 	String parTimeString;
 	long parTime;
 	ModularLevelMusic music;
 	
-	public LevelData(Identifier id, String title, String description, String author, String authorLink, Identifier structure, Identifier thumbnail, BlockPos spawnOffset)
+	public LevelData(Identifier id, String title, String description, String author, String authorLink, Identifier structure, Identifier thumbnail, BlockPos spawnOffset, boolean builtin)
 	{
 		this.id = id;
 		this.title = title;
@@ -33,6 +34,7 @@ public final class LevelData
 		this.structure = structure;
 		this.thumbnail = thumbnail;
 		this.spawnOffset = spawnOffset;
+		this.builtin = builtin;
 	}
 	
 	public Identifier id()
@@ -149,6 +151,11 @@ public final class LevelData
 		parTime = time;
 	}
 	
+	public boolean builtin()
+	{
+		return builtin;
+	}
+	
 	public NbtCompound asNbt()
 	{
 		NbtCompound nbt = new NbtCompound();
@@ -164,6 +171,7 @@ public final class LevelData
 		spawnOffset.putInt("y", this.spawnOffset.getY());
 		spawnOffset.putInt("z", this.spawnOffset.getZ());
 		nbt.put("spawnOffset", spawnOffset);
+		nbt.putBoolean("builtin", builtin);
 		if(hasParTime())
 			nbt.putLong("parTime", parTime);
 		if(hasMusic())
@@ -191,8 +199,9 @@ public final class LevelData
 		String thumbnail = nbt.getString("thumbnail");
 		NbtCompound spawnOffsetNbt = nbt.getCompound("spawnOffset");
 		BlockPos spawnOffset = new BlockPos(spawnOffsetNbt.getInt("x"), spawnOffsetNbt.getInt("y"), spawnOffsetNbt.getInt("z"));
+		boolean builtin = nbt.getBoolean("builtin");
 		LevelData data = new LevelData(Identifier.tryParse(id), title, description, author, authorLink,
-				Identifier.tryParse(structure), Identifier.tryParse(thumbnail), spawnOffset);
+				Identifier.tryParse(structure), Identifier.tryParse(thumbnail), spawnOffset, builtin);
 		if(nbt.contains("parTime", NbtElement.LONG_TYPE))
 			data.parTime(nbt.getLong("parTime"));
 		if(nbt.contains("music", NbtElement.COMPOUND_TYPE))

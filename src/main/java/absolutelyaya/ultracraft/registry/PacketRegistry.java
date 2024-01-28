@@ -46,6 +46,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
@@ -635,6 +636,12 @@ public class PacketRegistry
 				layer = Layer.values()[id];
 			}
 			server.execute(() -> {
+				if(!UltraComponents.GLOBAL.get(player.getWorld().getLevelProperties()).isDestinationUnlocked(level))
+				{
+					player.sendMessage(Text.translatable("message.ultracraft.travel.error-notunlocked"));
+					Ultracraft.LOGGER.warn(player + " tried to travel to locked destination: '" + level + "'");
+					return;
+				}
 				UltraComponents.WINGED.get(player).setCurrentLevel(null);
 				if(layer != null)
 				{
@@ -653,6 +660,12 @@ public class PacketRegistry
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.ENTER_LEVEL_PACKET_ID, (server, player, handler, buf, sender) -> {
 			Identifier level = buf.readIdentifier();
 			server.execute(() -> {
+				if(!UltraComponents.GLOBAL.get(player.getWorld().getLevelProperties()).isDestinationUnlocked(level))
+				{
+					player.sendMessage(Text.translatable("message.ultracraft.travel.error-notunlocked"));
+					Ultracraft.LOGGER.warn(player + " tried to travel to locked destination: '" + level + "'");
+					return;
+				}
 				if(!LevelManager.Instance.instantiateLevelOrReloadIfEmpty(player, level))
 					return;
 				UltraComponents.WINGED.get(player).setCurrentLevel(level);

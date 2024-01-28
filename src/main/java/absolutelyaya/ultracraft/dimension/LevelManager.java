@@ -44,7 +44,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LevelManager extends JsonDataLoader implements DimensionManager
 {
-	private static final Identifier PLACEHOLDER_THUMBNAIL = new Identifier(Ultracraft.MOD_ID, "textures/level/placeholder.png");
+	public static final LevelData ERR_DATA = new LevelData(new Identifier(Ultracraft.MOD_ID, "placeholder"),
+			"level.ultracraft.error.title", "level.ultracraft.error.description", "", "", null,
+			new Identifier(Ultracraft.MOD_ID, "textures/level/err.png"), BlockPos.ORIGIN, true);
+	public static final Identifier PLACEHOLDER_THUMB = new Identifier(Ultracraft.MOD_ID, "textures/level/placeholder.png");
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 	public static LevelManager Instance;
 	public static final Identifier ID = new Identifier(Ultracraft.MOD_ID, "levels");
@@ -101,7 +104,8 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 			String title = JsonHelper.getString(json, "title", "level.unnamed");
 			String description = JsonHelper.getString(json, "description", "");
 			Identifier structure = Identifier.tryParse(JsonHelper.getString(json, "structure"));
-			Identifier thumbnail = json.has("thumbnail") ? Identifier.tryParse(JsonHelper.getString(json, "thumbnail")) : PLACEHOLDER_THUMBNAIL;
+			Identifier thumbnail = json.has("thumbnail") ? Identifier.tryParse(JsonHelper.getString(json, "thumbnail")) :
+										   LevelManager.PLACEHOLDER_THUMB;
 			BlockPos spawnOffset = new BlockPos(0, 0, 0);
 			if(json.has("spawn-offset"))
 			{
@@ -111,7 +115,7 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 						JsonHelper.getInt(pos, "y", 0),
 						JsonHelper.getInt(pos, "z", 0));
 			}
-			LevelData level = new LevelData(id, title, description, author, authorlink, structure, thumbnail, spawnOffset);
+			LevelData level = new LevelData(id, title, description, author, authorlink, structure, thumbnail, spawnOffset, builtin);
 			if(json.has("par-time"))
 				level.parTime(JsonHelper.getString(json, "par-time"));
 			if(json.has("music"))
@@ -150,6 +154,11 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 			customLevels = map;
 	}
 	
+	public static Map<Identifier, LevelData> getAllCustomLevels()
+	{
+		return customLevels;
+	}
+	
 	public static BlockPos getSpawnPos(Identifier level)
 	{
 		LevelData data = getLevelData(level);
@@ -175,7 +184,7 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 		else
 		{
 			Ultracraft.LOGGER.warn("Couldn't find Level '" + id + "' in loaded lists!");
-			return null;
+			return ERR_DATA;
 		}
 	}
 	
@@ -186,7 +195,7 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 	
 	public boolean instantiateLevel(Identifier id, BlockPos pos)
 	{
-		if(!levels.containsKey(id))
+		if(!levels.containsKey(id) && !customLevels.containsKey(id))
 		{
 			Ultracraft.LOGGER.warn("Level Structure " + id + " instantiation failed; level data not found!");
 			return false;
@@ -196,9 +205,14 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 			Ultracraft.LOGGER.info("Level Structure " + id + " already exists; no instantiation necessary");
 			return true;
 		}
-		LevelData data = levels.get(id);
-		StructureTemplateManager templateManager = world.getStructureTemplateManager();
+		LevelData data = getLevelData(id);
 		Identifier structure = data.structure();
+		if(structure == null)
+		{
+			Ultracraft.LOGGER.info("Level Structure " + id + " instantiation failed; structure is null");
+			return true;
+		}
+		StructureTemplateManager templateManager = world.getStructureTemplateManager();
 		Ultracraft.LOGGER.info("Placing Level Structure " + structure);
 		AtomicBoolean success = new AtomicBoolean(false);
 		templateManager.getTemplate(structure)
@@ -256,8 +270,13 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 			Ultracraft.LOGGER.warn("Level Structure " + id + " destruction failed; level data not found!");
 			return false;
 		}
-		StructureTemplateManager templateManager = world.getStructureTemplateManager();
 		Identifier structure = level.structure();
+		if(structure == null)
+		{
+			Ultracraft.LOGGER.info("Level Structure " + id + " destruction failed; structure is null");
+			return true;
+		}
+		StructureTemplateManager templateManager = world.getStructureTemplateManager();
 		Ultracraft.LOGGER.info("Destroying Level Structure " + structure);
 		templateManager.getTemplate(structure)
 				.ifPresent(i -> {
@@ -322,6 +341,11 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 			}
 		}
 		return empty;
+	}
+	
+	public static boolean isCustomLevelsPresent()
+	{
+		return customLevels.size() > 0;
 	}
 	
 	@Override
