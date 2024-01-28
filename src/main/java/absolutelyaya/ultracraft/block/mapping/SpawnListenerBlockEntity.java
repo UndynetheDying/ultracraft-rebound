@@ -22,9 +22,10 @@ import java.util.List;
 
 public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 {
+	static List<String> attributes = new ArrayList<>();
 	List<Entity> entities = new ArrayList<>();
 	Identifier entityType = new Identifier(Ultracraft.MOD_ID, "stray");
-	static List<String> attributes = new ArrayList<>();
+	float yaw;
 	
 	public SpawnListenerBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -51,11 +52,16 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 		{
 			switch(entityType.toString())
 			{
-				case "ultracraft:destiny_swordsmachine" -> entities.addAll(DestinyBondSwordsmachineEntity.spawn(world, pos.toCenterPos(), 0f));
+				case "ultracraft:destiny_swordsmachine" -> entities.addAll(DestinyBondSwordsmachineEntity.spawn(world, pos.toCenterPos(), yaw));
 				case "ultracraft:big_rodent" -> entities.add(RodentEntity.spawn(world, pos.toCenterPos(), 1));
 				case "ultracraft:hidden_mass" -> entities.add(HideousMassEntity.spawn(world, pos.toCenterPos(), true));
 				default -> entities.add(Registries.ENTITY_TYPE.get(entityType).spawn((ServerWorld)world, pos, SpawnReason.SPAWNER));
 			}
+			entities.forEach(e -> {
+				e.setYaw(yaw);
+				e.setBodyYaw(yaw);
+				e.setHeadYaw(yaw);
+			});
 		}
 		else if(!newState)
 		{
@@ -89,21 +95,25 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 	@Override
 	public void setAttribute(String s, String value)
 	{
-		if(s.equals("entityType"))
-			entityType = Identifier.tryParse(value);
-		else if(s.equals("delay"))
-			activationDelay = Integer.parseInt(value);
+		switch (s)
+		{
+			case "entityType" -> entityType = Identifier.tryParse(value);
+			case "delay" -> activationDelay = Integer.parseInt(value);
+			case "yaw" -> yaw = Float.parseFloat(value);
+		}
 		super.setAttribute(s, value);
 	}
 	
 	@Override
 	public String getAttribute(String attribute)
 	{
-		if(attribute.equals("entityType"))
-			return String.valueOf(entityType);
-		else if(attribute.equals("delay"))
-			return String.valueOf(activationDelay);
-		return null;
+		return switch (attribute)
+		{
+			case "entityType" -> String.valueOf(entityType);
+			case "delay" -> String.valueOf(activationDelay);
+			case "yaw" -> String.valueOf(yaw);
+			default -> null;
+		};
 	}
 	
 	@Override
@@ -112,6 +122,8 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 		super.readNbt(nbt);
 		if(nbt.contains("entityType", NbtElement.STRING_TYPE))
 			entityType = Identifier.tryParse(nbt.getString("entityType"));
+		if(nbt.contains("yaw", NbtElement.FLOAT_TYPE))
+			yaw = nbt.getFloat("yaw");
 	}
 	
 	@Override
@@ -119,10 +131,12 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 	{
 		super.writeNbt(nbt);
 		nbt.putString("entityType", entityType.toString());
+		nbt.putFloat("yaw", yaw);
 	}
 	
 	static {
 		attributes.add("entityType");
 		attributes.add("delay");
+		attributes.add("yaw");
 	}
 }

@@ -19,6 +19,7 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 	String flag;
 	boolean selfResetting = true, inverted;
 	List<? extends LivingEntity> containedEntities = new ArrayList<>();
+	boolean justReset = true;
 	
 	public AbstractTriggerBlockEntity(BlockEntityType<? extends AbstractTriggerBlockEntity> type, BlockPos pos, BlockState state)
 	{
@@ -77,30 +78,29 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 	@Override
 	void tick()
 	{
-		boolean b = (containedEntities = world.getEntitiesByType(TypeFilter.instanceOf(getTargetClass()), getAreaBox(),
+		boolean condition = (containedEntities = world.getEntitiesByType(TypeFilter.instanceOf(getTargetClass()), getAreaBox(),
 				i -> i.isAlive() && !i.isSpectator())).size() > targetThreshold;
 		if(inverted)
-			b = !b;
+			condition = !condition; //invert
 		boolean wasActive = isActive();
-		if(!b && active > 0 && (selfResetting || active < activateDelay))
+		if(!condition && active > 0 && (selfResetting || active < activateDelay || (justReset && inverted)))
 			active--;
-		if(b && active < activateDelay * 2)
+		if(condition && active < activateDelay * 2)
 			active++;
 		active = MathHelper.clamp(active, 0, activateDelay * 2);
 		
-		if(flag != null && getParent() != null && world.getBlockEntity(getParent()) instanceof RoomBlockEntity room)
+		if(flag != null && getParent() != null && world.getBlockEntity(getParent()) instanceof RoomBlockEntity room && isActive() != wasActive)
 		{
-			if(isActive() && !wasActive)
-				room.setFlag(flag, true);
-			if(!isActive() && wasActive)
-				room.setFlag(flag, false);
+			justReset = false;
+			room.setFlag(flag, isActive());
 		}
 	}
 	
 	@Override
 	public void reset()
 	{
-		active = 0;
+		active = inverted ? activateDelay * 2 : 0;
+		justReset = true;
 	}
 	
 	abstract Class<? extends LivingEntity> getTargetClass();
@@ -119,6 +119,8 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 			targetThreshold = nbt.getInt("targetThreshold");
 		if(nbt.contains("invert", NbtElement.BYTE_TYPE))
 			inverted = nbt.getBoolean("invert");
+		if(nbt.contains("justReset", NbtElement.BYTE_TYPE))
+			justReset = nbt.getBoolean("justReset");
 	}
 	
 	@Override
@@ -131,5 +133,6 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 		nbt.putBoolean("selfReset", selfResetting);
 		nbt.putInt("targetThreshold", targetThreshold);
 		nbt.putBoolean("invert", inverted);
+		nbt.putBoolean("justReset", justReset);
 	}
 }
