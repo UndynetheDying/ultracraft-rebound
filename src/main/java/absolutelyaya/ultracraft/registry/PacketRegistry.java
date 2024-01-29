@@ -201,7 +201,7 @@ public class PacketRegistry
 				Vec3d pos = player.getEyePos();
 				Box check = new Box(pos.x - 0.3f, pos.y - 0.3f, pos.z - 0.3f,
 						pos.x + 0.3f, pos.y + 0.3f, pos.z + 0.3f)
-									.stretch(forward.multiply(0.9)).offset(new Vec3d(clientVel.mul(-0.5f)))
+									.stretch(forward.multiply(0.9)).offset(new Vec3d(clientVel.mul(0.25f)))
 									.stretch(clientVel.x * 16, clientVel.y * 16, clientVel.z * 16).stretch(0, -1, 0);
 				//Get Projectiles that absolutely are in the Parry Check
 				List<ProjectileEntity> projectiles = player.getWorld().getEntitiesByClass(ProjectileEntity.class, check,
@@ -269,7 +269,11 @@ public class PacketRegistry
 				pa.setParried(true, player);
 				parried.setVelocity(forward.multiply(chainingAllowed ? 2f + 0.2f * ((ChainParryAccessor)pa).getParryCount() : 2.5f));
 				if(heal && !(parried instanceof ThrownCoinEntity))
-					player.heal(6f);
+				{
+					player.heal(player.getMaxHealth() - player.getHealth()); //full heal
+					if(player instanceof WingedPlayerEntity winged)
+						winged.onParry();
+				}
 			});
 		});
 		ServerPlayNetworking.registerGlobalReceiver(PUNCH_BLOCK_PACKET_ID, (server, player, handler, buf, sender) -> {

@@ -44,4 +44,6 @@ public interface WingedPlayerEntity
 	boolean isSlamming();
 	
 	void setSlamming(boolean v);
+	
+	void onParry();
 }

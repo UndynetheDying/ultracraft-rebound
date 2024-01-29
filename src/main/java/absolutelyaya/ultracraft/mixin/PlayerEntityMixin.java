@@ -67,6 +67,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	
 	Multimap<EntityAttribute, EntityAttributeModifier> curSpeedMod;
 	BackTank backtank;
+	int parryIFrames;
 	
 	private final Vec3d[] curWingPose = new Vec3d[] {new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f)};
 	
@@ -259,6 +260,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	{
 		if(UltraComponents.EDITOR.get(this).isNoClip())
 			noClip = true;
+		if(parryIFrames > 0)
+			parryIFrames--;
 	}
 	
 	@Inject(method = "tick", at = @At("TAIL"))
@@ -386,6 +389,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 		return instance.playerAttack(attacker);
 	}
 	
+	@Inject(method = "canBeHitByProjectile", at = @At("HEAD"), cancellable = true)
+	void canBeHitByProjectiles(CallbackInfoReturnable<Boolean> cir)
+	{
+		if(parryIFrames > 0)
+			cir.setReturnValue(false);
+	}
+	
 	@Override
 	public boolean canBreatheInWater()
 	{
@@ -438,6 +448,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	public void setSlamming(boolean v)
 	{
 		dataTracker.set(SLAMMING, v);
+	}
+	
+	@Override
+	public void onParry()
+	{
+		timeUntilRegen = 11 + HivelConfig.INSTANCE.iFrames.getValue();
 	}
 	
 	@Override

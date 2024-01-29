@@ -112,6 +112,9 @@
 - Hitscans don't cause Thorn Damage from Guardians anymore
   - Player Armor Thorns still do damage though to stay consistent with Minecrafts inconsistent logic
 - Reduced Filths Health (2 -> 1)
+- Tweaked parry area yet again
+- Successful Parries now do full heals
+- Successful Parries now make you unhittable for projectiles for a few ticks
 ## Minor Changes
 - Fixed water skimming not playing sounds
 - Removed the "vents" MOTD from the non-essential resources
