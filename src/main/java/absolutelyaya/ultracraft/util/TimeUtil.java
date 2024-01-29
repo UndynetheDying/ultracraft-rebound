@@ -10,9 +10,10 @@ public class TimeUtil
 		{
 			String[] segments = string.split(":");
 			long parTime = 0;
-			for (int i = Math.min(segments.length - 1, 3); i >= 0; i--)
+			int length = Math.min(segments.length, 3);
+			for (int i = 0; i < length; i++)
 			{
-				long ms = Long.parseLong(segments[i]);
+				long ms = Long.parseLong(segments[length - i - 1]);
 				if(i > 2)
 					ms *= 60; //hours to minutes
 				if(i > 1)

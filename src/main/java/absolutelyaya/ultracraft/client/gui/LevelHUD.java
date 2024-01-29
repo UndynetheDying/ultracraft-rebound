@@ -2,18 +2,19 @@ package absolutelyaya.ultracraft.client.gui;
 
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
-import absolutelyaya.ultracraft.util.ColorUtil;
 import absolutelyaya.ultracraft.util.TimeUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.ColorHelper;
 
 public class LevelHUD
 {
 	public static LevelHUD Instance;
-	long pb, par;
+	long pb, par, last;
+	float displayFinishedTimer;
 	
 	public LevelHUD()
 	{
@@ -22,10 +23,13 @@ public class LevelHUD
 	
 	public void render(DrawContext context, float tickDelta)
 	{
-		PlayerEntity player = MinecraftClient.getInstance().player;
-		IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(MinecraftClient.getInstance().player);
 		if(winged.isTimerRunning())
 			renderTimer(context, winged.getElapsedTimer());
+		else if(displayFinishedTimer > 0)
+			renderTimer(context, last);
+		if(displayFinishedTimer > 0)
+			displayFinishedTimer -= MinecraftClient.getInstance().getLastFrameDuration() / 30f;
 	}
 	
 	public void initTimer(long pb, long par)
@@ -34,16 +38,36 @@ public class LevelHUD
 		this.par = par;
 	}
 	
+	public void stopTimer()
+	{
+		displayFinishedTimer += 10f;
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(MinecraftClient.getInstance().player);
+		last = winged.getElapsedTimer();
+	}
+	
 	void renderTimer(DrawContext context, long elapsedTimer)
 	{
 		TextRenderer tRenderer = MinecraftClient.getInstance().textRenderer;
 		int width = context.getScaledWindowWidth();
-		int col = 0xff888888;
-		if(elapsedTimer < par)
-			col = 0xfff47e1b;
-		else if(elapsedTimer < pb)
-			col = 0xfff4c71b;
-		Text t = Text.of(TimeUtil.milliToString(elapsedTimer));
-		context.drawText(tRenderer, t, (width - tRenderer.getWidth(t)) / 2, 32, col, true);
+		if(displayFinishedTimer > 0)
+		{
+			MutableText t = Text.of(TimeUtil.milliToString(elapsedTimer)).copy();
+			if(elapsedTimer < par)
+				t.append(Text.translatable("screen.ultracraft.timer.perfect"));
+			if(elapsedTimer < pb)
+				t.append(Text.translatable("screen.ultracraft.timer.best"));
+			context.drawText(tRenderer, t, (width - tRenderer.getWidth(t)) / 2, 32,
+					ColorHelper.Argb.getArgb((int)(Math.min(1f, displayFinishedTimer) * 255), 255, 255, 255), true);
+		}
+		else
+		{
+			int col = 0xff888888;
+			if(elapsedTimer < par)
+				col = 0xfff47e1b;
+			else if(elapsedTimer < pb)
+				col = 0xfff4c71b;
+			Text t = Text.of(TimeUtil.milliToString(elapsedTimer));
+			context.drawText(tRenderer, t, (width - tRenderer.getWidth(t)) / 2, 32, col, true);
+		}
 	}
 }

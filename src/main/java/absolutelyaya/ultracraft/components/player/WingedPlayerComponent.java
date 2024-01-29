@@ -267,12 +267,18 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 		if(!interruption && currentLevel != null)
 		{
 			long elapsedTime = getElapsedTimer();
-			if(bestTimes.getOrDefault(currentLevel, 0L) > elapsedTime && provider.getWorld().isClient)
+			boolean pb = bestTimes.getOrDefault(currentLevel, Long.MAX_VALUE) > elapsedTime;
+			if(pb)
 			{
 				bestTimes.put(currentLevel, elapsedTime);
-				Text levelName = LevelManager.getLevelData(currentLevel).getTitle();
-				provider.sendMessage(Text.translatable("message.ultracraft.level.new-pb-time", levelName, TimeUtil.milliToString(elapsedTime)));
+				if(provider.getWorld().isClient)
+				{
+					Text levelName = LevelManager.getLevelData(currentLevel).getTitle();
+					provider.sendMessage(Text.translatable("message.ultracraft.level.new-pb-time", levelName, TimeUtil.milliToString(elapsedTime)));
+				}
 			}
+			if(provider.getWorld().isClient)
+				LevelHUD.Instance.stopTimer();
 		}
 		timerStart = -1;
 	}
