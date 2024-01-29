@@ -10,6 +10,7 @@ import absolutelyaya.ultracraft.components.player.*;
 import absolutelyaya.ultracraft.config.HivelConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.DamageTypeTags;
+import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.entity.other.BackTank;
 import absolutelyaya.ultracraft.item.IOverrideMeleeDamageType;
 import absolutelyaya.ultracraft.registry.*;
@@ -171,6 +172,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 			cir.setReturnValue(Optional.of(hit.getPos().add(0f, 0.1f, 0f)));
 			entity.remove(RemovalReason.DISCARDED);
 		}
+	}
+	
+	@Inject(method="dropInventory", at = @At("HEAD"), cancellable = true)
+	void onDropInventory(CallbackInfo ci)
+	{
+		if(getWorld().getRegistryKey().equals(LevelManager.WORLD_KEY))
+			ci.cancel();
 	}
 	
 	@Inject(method = "isSwimming", at = @At("HEAD"), cancellable = true)

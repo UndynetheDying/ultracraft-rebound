@@ -8,14 +8,14 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.stat.Stat;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -28,6 +28,10 @@ public abstract class ServerPlayerMixin extends PlayerEntity
 	}
 	
 	@Shadow public abstract ServerWorld getServerWorld();
+	
+	@Shadow public abstract void increaseStat(Stat<?> stat, int amount);
+	
+	@Shadow public abstract boolean isSpectator();
 	
 	@Inject(method = "getSpawnPointPosition", at = @At("HEAD"), cancellable = true)
 	void onGetSpawnPoint(CallbackInfoReturnable<BlockPos> cir)
@@ -56,5 +60,13 @@ public abstract class ServerPlayerMixin extends PlayerEntity
 		if(!origin.getRegistryKey().equals(LevelManager.WORLD_KEY))
 			return;
 		UltraComponents.WINGED.get(this).setCurrentLevel(null);
+	}
+	
+	@Redirect(method = "copyFrom", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;isSpectator()Z"))
+	boolean shouldKeepInventory(ServerPlayerEntity instance)
+	{
+		if(instance.getWorld().getRegistryKey().equals(LevelManager.WORLD_KEY))
+			return true;
+		return isSpectator();
 	}
 }

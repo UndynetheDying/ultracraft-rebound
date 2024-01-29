@@ -176,7 +176,7 @@ public class StrayEntity extends AbstractHuskEntity implements GeoEntity, Interr
 	@Override
 	public Vec3d getChargeOffset()
 	{
-		return new Vec3d(-0.4, 2.25, 0.5).rotateY((float)Math.toRadians(-bodyYaw));
+		return new Vec3d(-0.4, 2.75, 0.5).rotateY((float)Math.toRadians(-bodyYaw));
 	}
 	
 	static class GetOutOfMyPersonalSpaceGoal extends Goal
