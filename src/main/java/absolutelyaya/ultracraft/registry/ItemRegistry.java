@@ -209,6 +209,7 @@ public class ItemRegistry
 			new Identifier(Ultracraft.MOD_ID, "fake_hell_spawner"), new Item(new FabricItemSettings().maxCount(0)));
 	
 	public static final RegistryKey<ItemGroup> ULTRACRAFT_TAB = RegistryKey.of(RegistryKeys.ITEM_GROUP, new Identifier(Ultracraft.MOD_ID, "item"));
+	public static final RegistryKey<ItemGroup> EDIT_MODE_TAB = RegistryKey.of(RegistryKeys.ITEM_GROUP, new Identifier(Ultracraft.MOD_ID, "edit"));
 	
 	public static void register()
 	{
@@ -367,6 +368,24 @@ public class ItemRegistry
 					stack.decrement(1);
 				return stack;
 			}
+		});
+		Registry.register(Registries.ITEM_GROUP, EDIT_MODE_TAB,
+				FabricItemGroup.builder().displayName(Text.translatable("itemGroup.ultracraft.edit")).icon(() -> new ItemStack(BlockRegistry.MAP_TRIGGER)).build());
+		ItemGroupEvents.modifyEntriesEvent(EDIT_MODE_TAB).register(content -> {
+			content.add(BlockRegistry.MAP_ROOM);
+			content.add(BlockRegistry.MAP_TRIGGER);
+			content.add(BlockRegistry.MAP_ENEMY_TRIGGER);
+			content.add(BlockRegistry.MAP_CHECKPOINT);
+			content.add(BlockRegistry.MAP_PROGRESSION);
+			content.add(BlockRegistry.MAP_TIMER);
+			content.add(BlockRegistry.MAP_TRAVEL);
+			content.add(BlockRegistry.MAP_REDSTONE);
+			content.add(BlockRegistry.MAP_RECEIVER);
+			content.add(BlockRegistry.MAP_DOOR);
+			content.add(BlockRegistry.MAP_SPAWNER);
+			content.add(BlockRegistry.MAP_SOUND);
+			content.add(BlockRegistry.MAP_EXPLOSION);
+			content.add(BlockRegistry.MAP_LEVEL);
 		});
 	}
 }

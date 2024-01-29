@@ -10,5 +10,6 @@
     "y": 8,
     "z": 9
   },
-  "hidden": true
+  "hidden": true,
+  "version": 1
 }

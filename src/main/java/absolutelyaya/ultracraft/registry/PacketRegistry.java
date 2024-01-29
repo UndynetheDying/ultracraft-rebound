@@ -49,7 +49,10 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.*;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.ArrayUtils;
@@ -658,7 +661,8 @@ public class PacketRegistry
 				ServerWorld world = server.getWorld(LevelManager.WORLD_KEY);
 				BlockPos pos = LevelManager.getSpawnPos(level);
 				FabricDimensions.teleport(player, world, new TeleportTarget(pos.toCenterPos(), Vec3d.ZERO, world.getSpawnAngle(), 0f));
-				if(player.getWorld().getBlockState(player.getBlockPos().down()).isAir())
+				BlockHitResult groundScan = player.getWorld().raycast(new RaycastContext(player.getPos(), player.getPos().subtract(0, 32, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
+				if(groundScan.getType().equals(HitResult.Type.MISS))
 					player.getWorld().setBlockState(player.getBlockPos().down(), BlockRegistry.PORTAL.getDefaultState());
 			});
 		});

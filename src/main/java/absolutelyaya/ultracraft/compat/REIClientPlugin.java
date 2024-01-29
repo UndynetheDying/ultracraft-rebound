@@ -2,7 +2,6 @@ package absolutelyaya.ultracraft.compat;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
-import absolutelyaya.ultracraft.block.mapping.AbstractMappingBlock;
 import absolutelyaya.ultracraft.item.TerminalItem;
 import absolutelyaya.ultracraft.registry.BlockRegistry;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
@@ -55,11 +54,16 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 				EntryStacks.of(BlockRegistry.MAP_ENEMY_TRIGGER),
 				EntryStacks.of(BlockRegistry.MAP_CHECKPOINT),
 				EntryStacks.of(BlockRegistry.MAP_REDSTONE),
+				EntryStacks.of(BlockRegistry.MAP_RECEIVER),
 				EntryStacks.of(BlockRegistry.MAP_DOOR),
 				EntryStacks.of(BlockRegistry.MAP_SPAWNER),
 				EntryStacks.of(BlockRegistry.MAP_EXPLOSION),
 				EntryStacks.of(BlockRegistry.MAP_SOUND),
-				EntryStacks.of(BlockRegistry.MAP_PROGRESSION));
+				EntryStacks.of(BlockRegistry.MAP_PROGRESSION),
+				EntryStacks.of(BlockRegistry.MAP_LEVEL),
+				EntryStacks.of(BlockRegistry.MAP_TIMER),
+				EntryStacks.of(BlockRegistry.MAP_TRAVEL),
+				EntryStacks.of(BlockRegistry.MAP_TITLE));
 		registry.group(new Identifier(Ultracraft.MOD_ID, "mapping"), Text.translatable("rei-group.ultracraft.mapping"), entries);
 	}
 }

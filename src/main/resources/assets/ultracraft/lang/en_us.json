@@ -280,6 +280,7 @@
   "death.attack.devoured.item": "%1$s was devoured by %2$s using %3$s",
 
   "itemGroup.ultracraft.item": "ULTRACRAFT",
+  "itemGroup.ultracraft.edit": "Edit Mode Blocks",
 
   "command.ultracraft.block.client-success": "[Ultracraft] Block Successful! The User will now only be displayed with default wings.",
   "command.ultracraft.block.client-fail": "[Ultracraft] That User is already blocked.",
