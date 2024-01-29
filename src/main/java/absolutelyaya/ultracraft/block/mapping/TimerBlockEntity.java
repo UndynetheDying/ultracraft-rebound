@@ -45,6 +45,12 @@ public class TimerBlockEntity extends AbstractTriggerBlockEntity
 	}
 	
 	@Override
+	public float getAreaLabelSize()
+	{
+		return 0f;
+	}
+	
+	@Override
 	public List<String> getAttributes()
 	{
 		return attributes;

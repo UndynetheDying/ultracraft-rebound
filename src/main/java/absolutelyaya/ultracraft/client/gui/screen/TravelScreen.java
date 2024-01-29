@@ -17,15 +17,22 @@ import java.util.List;
 
 public class TravelScreen extends AbstractTravelScreen
 {
+	final boolean forced;
 	float blinkTimer;
 	TextRenderer textRenderer;
 	List<ClickableWidget> buttons = new ArrayList<>(), layerButtons = new ArrayList<>(), levelButtons = new ArrayList<>();
 	
 	public TravelScreen(boolean closeImmediately)
 	{
+		this(closeImmediately, false);
+	}
+	
+	public TravelScreen(boolean closeImmediately, boolean forced)
+	{
 		super(Text.of("travel"));
 		textRenderer = MinecraftClient.getInstance().textRenderer;
 		shouldClose = closeImmediately;
+		this.forced = forced;
 	}
 	
 	@Override
@@ -57,8 +64,9 @@ public class TravelScreen extends AbstractTravelScreen
 		button.active = false;
 		buttons.add(button = layerButton(3));
 		button.active = false;
-		buttons.add(ButtonWidget.builder(Text.translatable("screen.ultracraft.travel.close"), b -> shouldClose = true)
-								 .dimensions(width / 2 - 50, height - 32, 100, 20).build());
+		if(!forced)
+			buttons.add(ButtonWidget.builder(Text.translatable("screen.ultracraft.travel.close"), b -> shouldClose = true)
+								 	.dimensions(width / 2 - 50, height - 32, 100, 20).build());
 		if(LevelManager.isCustomLevelsPresent())
 		{
 			Text t = Text.translatable("screen.ultracraft.travel.custom").append(Text.of("..."));

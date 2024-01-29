@@ -19,7 +19,7 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 	String flag;
 	boolean selfResetting = true, inverted;
 	List<? extends LivingEntity> containedEntities = new ArrayList<>();
-	boolean justReset = true;
+	boolean justReset = inverted;
 	
 	public AbstractTriggerBlockEntity(BlockEntityType<? extends AbstractTriggerBlockEntity> type, BlockPos pos, BlockState state)
 	{

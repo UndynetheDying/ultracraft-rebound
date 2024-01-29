@@ -71,15 +71,17 @@
     - Triggers can be set to have an activation period, requiring something to stay in the trigger for a certain amount of time to actually set the bound flag; same for deactivating
     - Progression Triggers grant a progression entry and optionally give an item as well once entered by a player; if the progression entry is already unlocked//obtained, it won't give an item
     - Redstone Receivers set a flag when their redstone power state changes
-    - Timer Triggers start or stop a Players Timer; only works inside Levels.
+    - Timer Triggers start or stop a Players Timer; only works inside Levels
+    - Force Travel Triggers open the Travel Screen for a Player that enters it; the close button is removed though, forcing them to travel
   - Listener Blocks
     - Listen for the state of the bound Flag being changed and performs an action based on its type
-    - All Listeners can have a set delay for their action; if the bound flag is deactivated again before the activation cooldown is run out, it'll be cancelled.
+    - All Listeners can have a set delay for their action; if the bound flag is deactivated again before the activation cooldown is run out, it'll be cancelled
     - Door Listeners fill their area with a chosen Block Type when activated; Same for deactivating. When the door closes, it will only fill blocks of the "open" block-type in it's area, opening works the opposite way; this means doorframes and stuff stay unaffected as long as they're not of either of the door block's block types
-    - Spawn Listeners spawn a chosen mob when activated and if it's still alive when deactivated, despawns it again.
-    - Redstone Listeners give off a redstone Signal of a chosen duration when activated.
+    - Spawn Listeners spawn a chosen mob when activated and if it's still alive when deactivated, despawns it again
+    - Redstone Listeners give off a redstone Signal of a chosen duration when activated
     - Explosion Listeners perform an explosion of chosen radius and damage when activated. These do not Break blocks, but could be used in conjunction with a Door Block to get the same effect
     - Sound Listeners play a sound when activated
+    - Level Unlock Listeners unlock a Level globally
   - Checkpoints
     - Checkpoints tick regardless of if the room is ative; placing their Block and Area outside the Rooms is recommended to make room resets work properly
     - Checkpoints set the Spawnpoint of a player that enters its area to the position of the Block itself.

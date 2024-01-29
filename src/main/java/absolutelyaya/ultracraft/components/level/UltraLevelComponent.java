@@ -80,10 +80,11 @@ public class UltraLevelComponent implements IUltraLevelComponent
 	}
 	
 	@Override
-	public void unlockDestination(Identifier id)
+	public boolean unlockDestination(Identifier id)
 	{
 		if(!isDestinationUnlocked(id))
-			unlockedDestinations.add(id);
+			return unlockedDestinations.add(id);
+		return false;
 	}
 	
 	@Override

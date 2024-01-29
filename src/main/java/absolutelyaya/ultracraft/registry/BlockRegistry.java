@@ -97,6 +97,8 @@ public class BlockRegistry
 	public static final Block MAP_PROGRESSION = register("map_progression", new ProgressionTriggerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_TITLE = register("map_title", new TitleTriggerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_TIMER = register("map_timer", new TimerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
+	public static final Block MAP_LEVEL = register("map_level", new LevelUnlockBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
+	public static final Block MAP_TRAVEL = register("map_travel", new ForceTravelBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	
 	@SuppressWarnings("SameParameterValue")
 	private static Block register(String name, Block block, boolean item, int burn, int spread)
