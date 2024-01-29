@@ -1,6 +1,8 @@
 package absolutelyaya.ultracraft.dimension;
 
 import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.block.mapping.AbstractMappingBlockEntity;
+import absolutelyaya.ultracraft.block.mapping.RoomBlockEntity;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
@@ -132,6 +134,10 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 				level.setUnimplemented(JsonHelper.getBoolean(json, "unimplemented"));
 			if(json.has("hidden"))
 				level.setHidden(JsonHelper.getBoolean(json, "hidden"));
+			if(json.has("version"))
+				level.setVersion(JsonHelper.getInt(json, "version"));
+			if(json.has("spawn-rot"))
+				level.setSpawnRot(JsonHelper.getFloat(json, "spawn-rot"));
 			if(builtin)
 				builtinBuilder.put(id, level);
 			else
@@ -223,11 +229,14 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 				.ifPresent(i -> {
 					i.place(world, pos, new BlockPos(0, 0, 0), new StructurePlacementData(), world.getRandom(), 2);
 					success.set(true);
+					BlockBox box = i.calculateBoundingBox(pos, BlockRotation.NONE, new BlockPos(0, 0, 0), BlockMirror.NONE);
+					Iterable<BlockPos> blocks = BlockPos.iterate(pos, pos.add(box.getBlockCountX(), box.getBlockCountY(), box.getBlockCountZ()));
+					blocks.forEach(block -> {
+						if(world.getBlockEntity(block) instanceof RoomBlockEntity room)
+							room.reset();
+					});
 					if(pos.equals(nextLevelPos))
-					{
-						BlockBox box = i.calculateBoundingBox(pos, BlockRotation.NONE, new BlockPos(0, 0, 0), BlockMirror.NONE);
 						nextLevelPos = pos.add(box.getBlockCountX() + 128, 0, 0);
-					}
 				});
 		instantiated.put(id, pos);
 		if(!success.get())

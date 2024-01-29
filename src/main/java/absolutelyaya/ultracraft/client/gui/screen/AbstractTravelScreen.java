@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.TitleHUD;
 import absolutelyaya.ultracraft.client.rendering.TitleBGRenderer;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.netty.buffer.Unpooled;
@@ -85,6 +86,7 @@ public abstract class AbstractTravelScreen extends Screen
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeIdentifier(id);
 		ClientPlayNetworking.send(PacketRegistry.ENTER_LEVEL_PACKET_ID, buf);
+		UltraComponents.WINGED.get(client.player).stopTimer(true);
 	}
 	
 	protected void selectLayer(int layer)

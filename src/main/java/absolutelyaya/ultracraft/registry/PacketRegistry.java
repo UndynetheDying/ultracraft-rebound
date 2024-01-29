@@ -660,7 +660,7 @@ public class PacketRegistry
 				UltraComponents.WINGED.get(player).setCurrentLevel(level);
 				ServerWorld world = server.getWorld(LevelManager.WORLD_KEY);
 				BlockPos pos = LevelManager.getSpawnPos(level);
-				FabricDimensions.teleport(player, world, new TeleportTarget(pos.toCenterPos(), Vec3d.ZERO, world.getSpawnAngle(), 0f));
+				FabricDimensions.teleport(player, world, new TeleportTarget(pos.toCenterPos(), Vec3d.ZERO, LevelManager.getLevelData(level).getSpawnRot(), 0f));
 				BlockHitResult groundScan = player.getWorld().raycast(new RaycastContext(player.getPos(), player.getPos().subtract(0, 32, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
 				if(groundScan.getType().equals(HitResult.Type.MISS))
 					player.getWorld().setBlockState(player.getBlockPos().down(), BlockRegistry.PORTAL.getDefaultState());

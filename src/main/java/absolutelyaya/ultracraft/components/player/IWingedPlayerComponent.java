@@ -68,4 +68,8 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	void stopTimer(boolean interrupted);
 	
 	long getElapsedTimer();
+	
+	void removePerfect();
+	
+	boolean isPerfect();
 }

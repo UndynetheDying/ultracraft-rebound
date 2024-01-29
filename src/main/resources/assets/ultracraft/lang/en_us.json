@@ -526,6 +526,7 @@
   "screen.ultracraft.level.par-time": "P-Rank: %s",
   "screen.ultracraft.level.pb-time": "Best: %s",
   "screen.ultracraft.timer.perfect": " [§6P§r]",
+  "screen.ultracraft.timer.imperfect": " [§4S§r]",
   "screen.ultracraft.timer.best": " New Record!",
 
   "level.ultracraft.error.title": "Invalid ID",

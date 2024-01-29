@@ -118,9 +118,14 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 		if(nbt.contains("targetThreshold", NbtElement.INT_TYPE))
 			targetThreshold = nbt.getInt("targetThreshold");
 		if(nbt.contains("invert", NbtElement.BYTE_TYPE))
+		{
 			inverted = nbt.getBoolean("invert");
+			active = inverted ? activateDelay * 2 : 0;
+		}
 		if(nbt.contains("justReset", NbtElement.BYTE_TYPE))
 			justReset = nbt.getBoolean("justReset");
+		else
+			justReset = inverted;
 	}
 	
 	@Override

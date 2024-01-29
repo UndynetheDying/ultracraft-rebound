@@ -53,7 +53,13 @@ public class LevelHUD
 		{
 			MutableText t = Text.of(TimeUtil.milliToString(elapsedTimer)).copy();
 			if(elapsedTimer < par)
-				t.append(Text.translatable("screen.ultracraft.timer.perfect"));
+			{
+				IWingedPlayerComponent winged = UltraComponents.WINGED.get(MinecraftClient.getInstance().player);
+				if(winged.isPerfect())
+					t.append(Text.translatable("screen.ultracraft.timer.perfect"));
+				else
+					t.append(Text.translatable("screen.ultracraft.timer.imperfect"));
+			}
 			if(elapsedTimer < pb)
 				t.append(Text.translatable("screen.ultracraft.timer.best"));
 			context.drawText(tRenderer, t, (width - tRenderer.getWidth(t)) / 2, 32,

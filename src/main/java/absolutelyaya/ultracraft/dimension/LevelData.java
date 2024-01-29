@@ -24,6 +24,8 @@ public final class LevelData
 	long parTime;
 	ModularLevelMusic music;
 	boolean unimplemented, hidden;
+	float spawnRot;
+	int version;
 	
 	public LevelData(Identifier id, String title, String description, String author, String authorLink, Identifier structure, Identifier thumbnail, BlockPos spawnOffset, boolean builtin)
 	{
@@ -146,6 +148,26 @@ public final class LevelData
 		return hidden;
 	}
 	
+	public float getSpawnRot()
+	{
+		return spawnRot;
+	}
+	
+	public void setSpawnRot(float spawnRot)
+	{
+		this.spawnRot = spawnRot;
+	}
+	
+	public int getVersion()
+	{
+		return version;
+	}
+	
+	public void setVersion(int version)
+	{
+		this.version = version;
+	}
+	
 	public NbtCompound asNbt()
 	{
 		NbtCompound nbt = new NbtCompound();
@@ -177,6 +199,8 @@ public final class LevelData
 				music.putString("fight", fight.value().getId().toString());
 			nbt.put("music", music);
 		}
+		nbt.putFloat("spawnRot", spawnRot);
+		nbt.putInt("version", version);
 		return nbt;
 	}
 	
@@ -208,6 +232,8 @@ public final class LevelData
 		}
 		data.setUnimplemented(nbt.getBoolean("unimplemented"));
 		data.setHidden(nbt.getBoolean("hidden"));
+		data.setSpawnRot(nbt.getFloat("spawnRot"));
+		data.setVersion(nbt.getInt("version"));
 		return data;
 	}
 	

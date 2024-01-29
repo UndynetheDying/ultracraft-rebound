@@ -39,7 +39,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	BlockPos lastCheckpoint;
 	RegistryKey<World> checkpointDimension;
 	Identifier currentLevel;
-	boolean fighting;
+	boolean fighting, perfect;
 	int fightCheckCooldown;
 	long timerStart = -1;
 	
@@ -223,8 +223,8 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	@Override
 	public void setCurrentLevel(Identifier id)
 	{
-		if(isTimerRunning())
-			stopTimer(true);
+		perfect = true;
+		stopTimer(true);
 		Identifier lastId = currentLevel;
 		currentLevel = id;
 		if(!provider.getWorld().isClient && id == null)
@@ -292,17 +292,40 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	}
 	
 	@Override
+	public void removePerfect()
+	{
+		perfect = false;
+	}
+	
+	@Override
+	public boolean isPerfect()
+	{
+		return perfect;
+	}
+	
+	@Override
 	public void readFromNbt(NbtCompound tag)
 	{
 		if(tag.contains("level", NbtElement.STRING_TYPE))
 			currentLevel = new Identifier(tag.getString("level")); //TODO: save//load best times
+		if(tag.contains("timerStart", NbtElement.LONG_TYPE))
+			timerStart = tag.getLong("timerStart");
+		if(tag.contains("timerStart", NbtElement.LONG_TYPE))
+			timerStart = tag.getLong("timerStart");
+		if(tag.contains("perfect", NbtElement.BYTE_TYPE))
+			perfect = tag.getBoolean("perfect");
 	}
 	
 	@Override
 	public void writeToNbt(NbtCompound tag)
 	{
 		if(getCurrentLevel() != null)
+		{
 			tag.putString("level", getCurrentLevel().toString());
+			tag.putBoolean("perfect", perfect);
+		}
+		if(timerStart != -1)
+			tag.putLong("timerStart", timerStart);
 	}
 	
 	@Override

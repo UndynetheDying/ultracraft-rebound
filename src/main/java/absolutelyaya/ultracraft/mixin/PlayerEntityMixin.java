@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.mixin;
 
+import absolutelyaya.ultracraft.block.mapping.CheckpointBlockEntity;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.accessor.EntityAccessor;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
@@ -27,12 +28,16 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.*;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -44,6 +49,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Mixin(value = PlayerEntity.class)
@@ -150,6 +156,21 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 				timeUntilRegen = 11 + HivelConfig.INSTANCE.iFrames.getValue();
 		}
 		UltraComponents.WINGED.get(this).setBloodHealCooldown(4);
+	}
+	
+	@Inject(method="findRespawnPosition", at = @At("HEAD"), cancellable = true)
+	private static void onFindRespawnPosition(ServerWorld world, BlockPos pos, float angle, boolean forced, boolean alive, CallbackInfoReturnable<Optional<Vec3d>> cir)
+	{
+		if(world.getBlockEntity(pos) instanceof CheckpointBlockEntity)
+		{
+			SnowballEntity entity = new SnowballEntity(EntityType.SNOWBALL, world);
+			entity.setPosition(pos.toCenterPos());
+			world.spawnEntity(entity);
+			BlockHitResult hit = world.raycast(new RaycastContext(pos.toCenterPos(), pos.add(0, -32, 0).toCenterPos(),
+					RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, entity));
+			cir.setReturnValue(Optional.of(hit.getPos().add(0f, 0.1f, 0f)));
+			entity.remove(RemovalReason.DISCARDED);
+		}
 	}
 	
 	@Inject(method = "isSwimming", at = @At("HEAD"), cancellable = true)

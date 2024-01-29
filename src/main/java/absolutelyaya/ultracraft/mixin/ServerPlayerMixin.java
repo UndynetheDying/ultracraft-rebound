@@ -36,12 +36,7 @@ public abstract class ServerPlayerMixin extends PlayerEntity
 		if(winged.getLastCheckpoint() != null)
 		{
 			if(getServerWorld().getRegistryKey().equals(winged.getCheckpointDimension()))
-			{
-				BlockPos pos = winged.getLastCheckpoint();
-				BlockHitResult hit = getServerWorld().raycast(new RaycastContext(pos.toCenterPos(), pos.add(0, -32, 0).toCenterPos(),
-						RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, this));
-				cir.setReturnValue(BlockPos.ofFloored(hit.getPos().add(0f, 0.1f, 0f)));
-			}
+				cir.setReturnValue(winged.getLastCheckpoint());
 			else
 				winged.setLastCheckpoint(null, null);
 		}
