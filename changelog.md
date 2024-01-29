@@ -92,7 +92,7 @@
 - Shotgun Pellets are now Parriable
 - Added Large Animated Titles
 - Added Text Box Titles
-- Punching a Player using a Shield with a Knuckleblaster will now disable their Shield and give the `+ GUARD BREAK` style bonus
+- Punching//Blasting a Player that is using a Shield with a Knuckleblaster, will now disable their Shield and give the `+ GUARD BREAK` style bonus
 - Streetcleaners now actually pathfind to their target
 - Fixed a Bug that made hugging swordsmachine plushies not work properly; you can now hug them again by putting them in your offhand :D
 ## Settings & Config
@@ -139,6 +139,7 @@
 - Fixed a rare nullref involving the Sharpshooter and Tundra//Agony
 - Added Block Tag `#ultracraft:cannot_connect`
   - allows to designate Blocks that fences and walls cannot connect to; because for some reason base Minecraft doesn't do that and checks block states indiviually in an `or` chain
+- Added Block Tag `#ultracraft:knuckle_blast_breakable`
 - Added Proper Spawn Restrictions to all basic Enemies
 - Fixed the first person Arm staying hidden when dying while focused on a Terminal
 - Bloodheal noise can no longer be triggered multiple times on the same tick

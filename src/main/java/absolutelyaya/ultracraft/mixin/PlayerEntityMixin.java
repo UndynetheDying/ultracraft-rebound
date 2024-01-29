@@ -72,6 +72,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	
 	@Shadow protected abstract Vec3d adjustMovementForSneaking(Vec3d movement, MovementType type);
 	
+	@Shadow public abstract void disableShield(boolean sprinting);
+	
 	Multimap<EntityAttribute, EntityAttributeModifier> curSpeedMod;
 	BackTank backtank;
 	int parryIFrames;
@@ -144,6 +146,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 			else
 				UltraComponents.STYLE.get(this).takeDamage(amount);
 		}
+		if(source.isOf(DamageSources.KNUCKLE_BLAST))
+			disableShield(true);
 	}
 	
 	@Inject(method = "damage", at = @At("TAIL"))

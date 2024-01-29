@@ -14,6 +14,7 @@ public class TagRegistry
 	public static final TagKey<Block> EXPLOSION_BREAKABLE = TagKey.of(RegistryKeys.BLOCK, new Identifier(Ultracraft.MOD_ID, "explosion_breakable"));
 	public static final TagKey<Block> PUNCH_BREAKABLE = TagKey.of(RegistryKeys.BLOCK, new Identifier(Ultracraft.MOD_ID, "punch_breakable"));
 	public static final TagKey<Block> KNUCKLE_BREAKABLE = TagKey.of(RegistryKeys.BLOCK, new Identifier(Ultracraft.MOD_ID, "knuckle_breakable"));
+	public static final TagKey<Block> KNUCKLE_BLAST_BREAKABLE = TagKey.of(RegistryKeys.BLOCK, new Identifier(Ultracraft.MOD_ID, "knuckle_blast_breakable"));
 	public static final TagKey<Block> SLAM_BREAKABLE = TagKey.of(RegistryKeys.BLOCK, new Identifier(Ultracraft.MOD_ID, "slam_breakable"));
 	public static final TagKey<Block> CANNOT_CONNECT = TagKey.of(RegistryKeys.BLOCK, new Identifier(Ultracraft.MOD_ID, "cannot_connect"));
 	

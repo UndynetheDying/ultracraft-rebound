@@ -9,6 +9,7 @@ import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.TagRegistry;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.TntBlock;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -106,7 +107,9 @@ public class ExplosionHandler
 			});
 		}
 		emitScreenshake(world, pos, radius * 2f, damage, damage * 0.8f);
-		Entity exploder = source.getSource();
+		Entity exploder = source.getAttacker();
+		if(source.getSource() instanceof PlayerEntity p)
+			exploder = p;
 		GameRules rules = world.getGameRules();
 		if(breakBlocks && ServerConfig.INSTANCE.explosionBlockBreaking.getValue() && (exploder instanceof PlayerEntity || rules.getBoolean(GameRules.DO_MOB_GRIEFING)))
 		{
@@ -125,7 +128,8 @@ public class ExplosionHandler
 						//and are used for misc block breaking like the piercer revolvers alt fire
 						if(!exploder.canModifyAt(world, pos1))
 							continue;
-						if (tntPriming && world.getBlockState(pos1).getBlock() instanceof TntBlock)
+						BlockState state = world.getBlockState(pos1);
+						if (tntPriming && state.getBlock() instanceof TntBlock)
 						{
 							TntEntity tntEntity = new TntEntity(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5,
 									source.getSource() instanceof LivingEntity living ? living : null);
@@ -133,7 +137,13 @@ public class ExplosionHandler
 							world.spawnEntity(tntEntity);
 							world.breakBlock(pos1, false, exploder);
 						}
-						else if(world.getBlockState(pos1).isIn(damage > 0f ? TagRegistry.EXPLOSION_BREAKABLE : TagRegistry.FRAGILE))
+						else if(source.isOf(DamageSources.KNUCKLE_BLAST))
+						{
+							//not using && intentionally
+							if(state.isIn(TagRegistry.KNUCKLE_BLAST_BREAKABLE))
+								world.breakBlock(pos1, true, exploder);
+						}
+						else if(state.isIn(damage > 0f ? TagRegistry.EXPLOSION_BREAKABLE : TagRegistry.FRAGILE))
 							world.breakBlock(pos1, true, exploder);
 					}
 				}
