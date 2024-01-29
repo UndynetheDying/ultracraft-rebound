@@ -94,6 +94,7 @@
 - Added Text Box Titles
 - Punching a Player using a Shield with a Knuckleblaster will now disable their Shield and give the `+ GUARD BREAK` style bonus
 - Streetcleaners now actually pathfind to their target
+- Fixed a Bug that made hugging swordsmachine plushies not work properly; you can now hug them again by putting them in your offhand :D
 ## Settings & Config
 - Removed almost all gamerules (only remaining is `ultra-startWithPiercer`)
 - Added Option to disable Screenshake
