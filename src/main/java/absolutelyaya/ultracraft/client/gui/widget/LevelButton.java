@@ -160,11 +160,11 @@ public class LevelButton extends ClickableWidget
 	@Override
 	protected boolean clicked(double mouseX, double mouseY)
 	{
-		boolean b = super.clicked(mouseX, mouseY);
-		//TODO: open authorLink
-		if(b && isUnlocked && !isUnimplemented && !isHidden && alpha > 0.5)
-			action.accept(destination);
-		return b;
+		//boolean b = super.clicked(mouseX, mouseY);
+		////TODO: open authorLink
+		//if(b && isUnlocked && !isUnimplemented && !isHidden && alpha > 0.5)
+		//	action.accept(destination);
+		return super.clicked(mouseX, mouseY);
 	}
 	
 	@Override

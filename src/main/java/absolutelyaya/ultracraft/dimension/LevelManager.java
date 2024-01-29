@@ -217,7 +217,7 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 			return true;
 		}
 		StructureTemplateManager templateManager = world.getStructureTemplateManager();
-		Ultracraft.LOGGER.info("Placing Level Structure " + structure);
+		Ultracraft.LOGGER.info("Placing Level Structure " + structure + " at " + nextLevelPos);
 		AtomicBoolean success = new AtomicBoolean(false);
 		templateManager.getTemplate(structure)
 				.ifPresent(i -> {
@@ -232,6 +232,8 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 		instantiated.put(id, pos);
 		if(!success.get())
 			Ultracraft.LOGGER.warn("Level Structure " + structure + " placement failed; won't teleport Player.");
+		else
+			Ultracraft.LOGGER.info("Level Structure " + structure + " placed successfully.");
 		return success.get();
 	}
 	
@@ -288,8 +290,11 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 					BlockBox box = i.calculateBoundingBox(pos, BlockRotation.NONE, new BlockPos(0, 0, 0), BlockMirror.NONE);
 					Iterable<BlockPos> blocks = BlockPos.iterate(pos, pos.add(box.getBlockCountX(), box.getBlockCountY(), box.getBlockCountZ()));
 					blocks.forEach(block -> world.setBlockState(block, Blocks.AIR.getDefaultState()));
-					world.getOtherEntities(null, new Box(pos, new BlockPos(box.getBlockCountX(), box.getBlockCountY(), box.getBlockCountZ())))
-							.forEach(e -> e.remove(Entity.RemovalReason.DISCARDED));
+					List<Entity> list = world.getOtherEntities(null, new Box(box.getMinX(), box.getMinY(), box.getMinZ(), box.getMaxX(), box.getMaxY(), box.getMaxZ()));
+					list.forEach(e -> {
+						if(!(e instanceof PlayerEntity))
+							e.remove(Entity.RemovalReason.DISCARDED);
+					});
 				});
 		instantiated.remove(id);
 		Ultracraft.LOGGER.info("Finished Destroying Level Structure " + structure);
