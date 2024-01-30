@@ -435,6 +435,7 @@
   "message.ultracraft.level-destroyed": "The Level you were in was Destroyed; You were brought back to the Overworlds Spawn Position.",
   "message.ultracraft.level.new-pb-time": "New Personal Best Time for level §b%1$s§r: %2$s!",
   "message.ultracraft.travel.error-notunlocked": "That Destination isn't unlocked on the Server!",
+  "message.ultracraft.travel.error-instance": "Failed to instantiate Level Structure!",
   "message.ultracraft.travel.new-destination": "New Level '%s' has been unlocked!",
 
   "intro.ultracraft.calibration": "BOOT UP SEQUENCE READY\n\nFIRMWARE\n  §aVERSION %s§r\n\nCALIBRATION\n  §4EXPIRED§r\n  §4NEW CALIBRATION REQUIRED§r\n\n",
@@ -521,6 +522,7 @@
   "screen.ultracraft.travel.close": "Close",
   "screen.ultracraft.travel.back": "Back",
   "screen.ultracraft.travel.custom": "Custom Levels",
+  "screen.ultracraft.travel.waiting": "Waiting for Server...",
   "screen.ultracraft.level.author": "Author: %s",
   "screen.ultracraft.level.time-header": "Time",
   "screen.ultracraft.level.par-time": "P-Rank: %s",

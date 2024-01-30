@@ -4,6 +4,7 @@ import absolutelyaya.goop.api.WaterHandling;
 import absolutelyaya.goop.client.GoopClient;
 import absolutelyaya.goop.particles.GoopDropParticleEffect;
 import absolutelyaya.ultracraft.ExplosionHandler;
+import absolutelyaya.ultracraft.client.gui.screen.AbstractTravelScreen;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.ITrailEnjoyer;
@@ -421,6 +422,10 @@ public class ClientPacketRegistry
 					builder.put(level.getID(), level);
 				LevelManager.setLevels(builder.build(), i == 0);
 			}
+		})));
+		ClientPlayNetworking.registerGlobalReceiver(FINISH_TRAVELLING_PACKET_ID, (((client, handler, buf, responseSender) -> {
+			if(client.currentScreen instanceof AbstractTravelScreen travel)
+				travel.setShouldClose();
 		})));
 	}
 }

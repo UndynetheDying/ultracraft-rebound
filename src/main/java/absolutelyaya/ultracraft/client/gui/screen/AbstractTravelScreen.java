@@ -26,7 +26,7 @@ public abstract class AbstractTravelScreen extends Screen
 	protected static final Identifier TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/travel.png");
 	public static final TitleBGRenderer BG = new TitleBGRenderer(new CubeMapRenderer(new Identifier(Ultracraft.MOD_ID, "aaa")));
 	protected float openAnimTime, closeAnimTime;
-	protected boolean shouldClose;
+	protected boolean shouldClose, awaitingFeedback;
 	protected Layer curLayer, selectedLayer;
 	
 	protected AbstractTravelScreen(Text title)
@@ -51,7 +51,8 @@ public abstract class AbstractTravelScreen extends Screen
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta)
 	{
-		super.render(context, mouseX, mouseY, delta);
+		if(!awaitingFeedback)
+			super.render(context, mouseX, mouseY, delta);
 		BG.setYOffset(-(1f - openAnimTime) * 5f + closeAnimTime * 5f);
 		BG.render(delta, 1f);
 		
@@ -70,9 +71,12 @@ public abstract class AbstractTravelScreen extends Screen
 	
 	protected void travel(Layer layer)
 	{
-		shouldClose = true;
 		if(curLayer != null && layer.worldKey.equals(curLayer.worldKey))
+		{
+			setShouldClose();
 			return;
+		}
+		awaitingFeedback = true;
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeInt(layer.ordinal());
 		ClientPlayNetworking.send(PacketRegistry.TRAVEL_PACKET_ID, buf);
@@ -82,7 +86,7 @@ public abstract class AbstractTravelScreen extends Screen
 	
 	protected void enterLevel(Identifier id)
 	{
-		shouldClose = true;
+		awaitingFeedback = true;
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeIdentifier(id);
 		ClientPlayNetworking.send(PacketRegistry.ENTER_LEVEL_PACKET_ID, buf);
@@ -98,6 +102,11 @@ public abstract class AbstractTravelScreen extends Screen
 	public boolean shouldPause()
 	{
 		return !shouldClose;
+	}
+	
+	public void setShouldClose()
+	{
+		shouldClose = true;
 	}
 	
 	protected static class LayerButton extends ButtonWidget

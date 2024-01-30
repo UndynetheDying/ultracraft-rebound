@@ -117,6 +117,12 @@ public class TravelScreen extends AbstractTravelScreen
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta)
 	{
+		if(awaitingFeedback)
+		{
+			context.drawCenteredTextWithShadow(textRenderer, Text.translatable("screen.ultracraft.travel.waiting"), width / 2, 16, 0xffffffff);
+			super.render(context, mouseX, mouseY, delta);
+			return;
+		}
 		super.render(context, mouseX, mouseY, delta);
 		if(openAnimTime < 1f)
 			buttons.forEach(b -> b.setAlpha(openAnimTime));

@@ -46,6 +46,12 @@ public class CustomLevelSelectScreen extends AbstractTravelScreen
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta)
 	{
+		if(awaitingFeedback)
+		{
+			context.drawCenteredTextWithShadow(textRenderer, Text.translatable("screen.ultracraft.travel.waiting"), width / 2, 16, 0xffffffff);
+			super.render(context, mouseX, mouseY, delta);
+			return;
+		}
 		context.drawCenteredTextWithShadow(textRenderer, Text.translatable("screen.ultracraft.travel.custom"), width / 2, 16, 0xffffffff);
 		super.render(context, mouseX, mouseY, delta);
 		MatrixStack matrices = context.getMatrices();

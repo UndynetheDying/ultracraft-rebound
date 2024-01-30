@@ -131,6 +131,7 @@ public class PacketRegistry
 	public static final Identifier TITLE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "title");
 	public static final Identifier SEND_DESTINATIONS_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "destinations_s2c");
 	public static final Identifier SEND_LEVELS_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "levels_s2c");
+	public static final Identifier FINISH_TRAVELLING_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "travel_end");
 	
 	public static void registerC2S()
 	{
@@ -638,12 +639,14 @@ public class PacketRegistry
 				{
 					player.sendMessage(Text.translatable("message.ultracraft.travel.error-notunlocked"));
 					Ultracraft.LOGGER.warn(player + " tried to travel to locked destination: '" + progression + "'");
+					onTravelFinished(player);
 					return;
 				}
 				UltraComponents.WINGED.get(player).setCurrentLevel(null);
 				ServerWorld world = server.getWorld(layer.worldKey);
 				BlockPos pos = layer.arrivalPos == null ? world.getSpawnPos() : layer.arrivalPos;
 				FabricDimensions.teleport(player, world, new TeleportTarget(pos.toCenterPos(), Vec3d.ZERO, world.getSpawnAngle(), 0f));
+				onTravelFinished(player);
 			});
 		});
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.ENTER_LEVEL_PACKET_ID, (server, player, handler, buf, sender) -> {
@@ -653,10 +656,15 @@ public class PacketRegistry
 				{
 					player.sendMessage(Text.translatable("message.ultracraft.travel.error-notunlocked"));
 					Ultracraft.LOGGER.warn(player + " tried to travel to locked destination: '" + level + "'");
+					onTravelFinished(player);
 					return;
 				}
 				if(!LevelManager.Instance.instantiateLevelOrReloadIfEmpty(player, level))
+				{
+					player.sendMessage(Text.translatable("message.ultracraft.travel.error-instance"));
+					onTravelFinished(player);
 					return;
+				}
 				UltraComponents.WINGED.get(player).setCurrentLevel(level);
 				ServerWorld world = server.getWorld(LevelManager.WORLD_KEY);
 				BlockPos pos = LevelManager.getSpawnPos(level);
@@ -664,6 +672,7 @@ public class PacketRegistry
 				BlockHitResult groundScan = player.getWorld().raycast(new RaycastContext(player.getPos(), player.getPos().subtract(0, 32, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
 				if(groundScan.getType().equals(HitResult.Type.MISS))
 					player.getWorld().setBlockState(player.getBlockPos().down(), BlockRegistry.PORTAL.getDefaultState());
+				onTravelFinished(player);
 			});
 		});
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.REQUEST_DESTINATIONS_PACKET_ID, (server, player, handler, buf, sender) -> {
@@ -700,5 +709,10 @@ public class PacketRegistry
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeVector3f(pos.toVector3f());
 		ServerPlayNetworking.send(p, DEBUG_PACKET_ID, buf);
+	}
+	
+	static void onTravelFinished(ServerPlayerEntity player)
+	{
+		ServerPlayNetworking.send(player, FINISH_TRAVELLING_PACKET_ID, new PacketByteBuf(Unpooled.buffer()));
 	}
 }
