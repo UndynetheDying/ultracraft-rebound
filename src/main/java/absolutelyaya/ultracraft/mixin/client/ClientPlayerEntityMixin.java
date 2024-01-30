@@ -577,7 +577,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	{
 		IWingDataComponent wings = UltraComponents.WING_DATA.get(this);
 		//cancel normal sprint triggers when in HiVelMode
-		if(!wings.isActive())
+		if(!wings.isActive() || isSpectator() || getAbilities().flying)
 			setSprinting(sprinting);
 	}
 	
@@ -593,7 +593,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	void onIsSneaking(CallbackInfoReturnable<Boolean> cir)
 	{
 		IWingDataComponent wings = UltraComponents.WING_DATA.get(this);
-		if(wings.isActive())
+		if(wings.isActive() && !(isSpectator() || getAbilities().flying))
 			cir.setReturnValue(false);
 	}
 	
