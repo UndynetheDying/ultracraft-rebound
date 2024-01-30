@@ -1,10 +1,10 @@
 {
-  "type": "minecraft:overworld",
+  "type": "ultracraft:levels",
   "generator" : {
     "settings": {
       "lakes": false,
-      "features": true,
-      "biome": "minecraft:the_void",
+      "features": false,
+      "biome": "ultracraft:void",
       "structures": {
         "structures": {}
       },

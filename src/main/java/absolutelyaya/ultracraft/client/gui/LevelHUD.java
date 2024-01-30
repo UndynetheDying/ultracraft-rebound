@@ -3,12 +3,12 @@ package absolutelyaya.ultracraft.client.gui;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.util.TimeUtil;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.ColorHelper;
 
 public class LevelHUD
 {
@@ -62,8 +62,9 @@ public class LevelHUD
 			}
 			if(elapsedTimer < pb)
 				t.append(Text.translatable("screen.ultracraft.timer.best"));
-			context.drawText(tRenderer, t, (width - tRenderer.getWidth(t)) / 2, 32,
-					ColorHelper.Argb.getArgb((int)(Math.min(1f, displayFinishedTimer) * 255), 255, 255, 255), true);
+			RenderSystem.setShaderColor(1f, 1f, 1f, Math.min(1f, displayFinishedTimer));
+			context.drawText(tRenderer, t, (width - tRenderer.getWidth(t)) / 2, 32, 0xffffffff, true);
+			RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		}
 		else
 		{
