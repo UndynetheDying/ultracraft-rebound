@@ -129,6 +129,8 @@ public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 			open = Identifier.tryParse(nbt.getString("openBlock"));
 		if(nbt.contains("skull", NbtElement.BYTE_TYPE))
 			skull = nbt.getBoolean("skull");
+		if(nbt.contains("active", NbtElement.BYTE_TYPE))
+			state = nbt.getBoolean("active");
 	}
 	
 	@Override
@@ -138,6 +140,7 @@ public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 		nbt.putString("closedBlock", close.toString());
 		nbt.putString("openBlock", open.toString());
 		nbt.putBoolean("skull", skull);
+		nbt.putBoolean("active", state);
 	}
 	
 	static {
