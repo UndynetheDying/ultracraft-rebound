@@ -510,7 +510,10 @@ public class PacketRegistry
 				{
 					ItemStack stack;
 					if(alt)
-						stack =  Registries.ITEM.get(Weapon.values()[weaponType].getAlt(weapon)).getDefaultStack();
+					{
+						stack = Registries.ITEM.get(Weapon.values()[weaponType].getAlt(weapon)).getDefaultStack();
+						System.out.println(Weapon.values()[weaponType].getAlt(weapon));
+					}
 					else
 						stack = Registries.ITEM.get(weapon).getDefaultStack();
 					player.giveItemStack(stack);

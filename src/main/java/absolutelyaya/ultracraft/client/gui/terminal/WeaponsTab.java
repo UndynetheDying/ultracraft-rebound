@@ -147,7 +147,7 @@ public class WeaponsTab extends Tab
 				if(progression.isOwned(itemID) && !isResultTypeHeld() && (loadout.isInLoadout(selectedCategory, itemID) || alt))
 				{
 					PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-					buf.writeIdentifier(alt ? selectedCategory.getAlt(itemID) : itemID);
+					buf.writeIdentifier(itemID);
 					buf.writeInt(selectedCategory.ordinal());
 					buf.writeBoolean(alt);
 					ClientPlayNetworking.send(PacketRegistry.TERMINAL_WEAPON_DISPENSE_PACKET_ID, buf);
