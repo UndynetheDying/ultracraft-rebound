@@ -142,6 +142,8 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 		if(victim != null)
 			return;
 		Entity entity = entityHitResult.getEntity();
+		if(entity.isPartOf(owner))
+			return;
 		victim = entity;
 		dataTracker.set(IMPACT_YAW, getYaw());
 		dataTracker.set(IMPACT_PITCH, getPitch());
