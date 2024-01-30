@@ -72,4 +72,6 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	void removePerfect();
 	
 	boolean isPerfect();
+	
+	long getBestTime(Identifier id);
 }

@@ -3,9 +3,11 @@ package absolutelyaya.ultracraft.client.gui.widget;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
+import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.dimension.LevelData;
 import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.util.RenderingUtil;
+import absolutelyaya.ultracraft.util.TimeUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -15,9 +17,11 @@ import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.OrderedText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import org.joml.Vector4f;
 
@@ -34,6 +38,7 @@ public class LevelButton extends ClickableWidget
 	final String authorLink, parTime;
 	final Consumer<Identifier> action;
 	boolean isUnlocked, isUnimplemented, isHidden;
+	float hoverAnim;
 	
 	public LevelButton(int x, int y, LevelData data, Consumer<Identifier> action)
 	{
@@ -120,12 +125,49 @@ public class LevelButton extends ClickableWidget
 		matrices.push();
 		matrices.translate(getX(), getY(), 0f);
 		context.fill(0, 0, width, height, 0x88000000);
+		hoverAnim = MathHelper.lerp(delta / 5f, hoverAnim, isHovered() && isUnlocked && alpha > 0.5 ? 1f : 0f);
 		if(isHovered() && isUnlocked && alpha > 0.5)
+			context.drawBorder(-1, -1, width, height, 0xffffffff);
+		if(hoverAnim > 0f)
 		{
-			context.fill(-1, -1, 0, height + 1, 0xffffffff);
-			context.fill(width - 1, -1, width, height + 1, 0xffffffff);
-			context.fill(0, -1, width - 1, 0, 0xffffffff);
-			context.fill(0, height, width - 1, height + 1, 0xffffffff);
+			IWingedPlayerComponent winged = UltraComponents.WINGED.get(MinecraftClient.getInstance().player);
+			RenderSystem.setShaderColor(1f, 1f, 1f, (hoverAnim - 0.5f) * 2f);
+			matrices.push();
+			matrices.translate(0f, 0f, Math.max(hoverAnim * 10f - 7.5f, 0f));
+			//time-panel
+			if(parTime.length() > 0)
+			{
+				Text par = Text.translatable("screen.ultracraft.level.par-time", parTime);
+				long pbTime = winged.getBestTime(destination);
+				Text pb = Text.translatable("screen.ultracraft.level.pb-time", pbTime == -1 ? "-" : TimeUtil.milliToString(pbTime));
+				int timeBoxWidth = Math.max(tRenderer.getWidth(par), tRenderer.getWidth(pb)) + 6;
+				matrices.push();
+				matrices.translate((-timeBoxWidth - 8) * hoverAnim, 0f, 0f);
+				context.fill(0, 0, timeBoxWidth, tRenderer.fontHeight * 3 + 12, 0xff000000);
+				context.drawBorder(0, 0, timeBoxWidth, tRenderer.fontHeight * 3 + 12, 0xffffffff);
+				context.drawText(tRenderer, Text.translatable("screen.ultracraft.level.time-header").getWithStyle(Style.EMPTY.withUnderline(true)).get(0),
+						3, 3, 0xffffffff, true);
+				context.drawText(tRenderer, par, 3, 7 + tRenderer.fontHeight, 0xffffffff, true);
+				context.drawText(tRenderer, pb, 3, 9 + tRenderer.fontHeight * 2, 0xffffffff, true);
+				matrices.pop();
+			}
+			//description-panel
+			if(description.getString().length() > 0)
+			{
+				matrices.push();
+				int descBoxWidth = 128, descBoxHeight = tRenderer.getWrappedLinesHeight(description, descBoxWidth) + 8;
+				matrices.translate((width + 8) * hoverAnim, 0f, 0f);
+				context.fill(0, 0, descBoxWidth, descBoxHeight, 0xff000000);
+				context.drawBorder(0, 0, descBoxWidth, descBoxHeight, 0xffffffff);
+				for (OrderedText line : tRenderer.wrapLines(description, descBoxWidth - 6))
+				{
+					context.drawText(tRenderer, line, 3, 3, 0xffffffff, true);
+					matrices.translate(0, tRenderer.fontHeight + 1, 0f);
+				}
+				matrices.pop();
+			}
+			matrices.pop();
+			RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		}
 		List<Text> t = getMessage().getWithStyle(Style.EMPTY.withUnderline(true));
 		if(t.size() > 0)

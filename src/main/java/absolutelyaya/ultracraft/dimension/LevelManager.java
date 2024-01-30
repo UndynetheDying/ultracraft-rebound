@@ -1,7 +1,6 @@
 package absolutelyaya.ultracraft.dimension;
 
 import absolutelyaya.ultracraft.Ultracraft;
-import absolutelyaya.ultracraft.block.mapping.AbstractMappingBlockEntity;
 import absolutelyaya.ultracraft.block.mapping.RoomBlockEntity;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
@@ -234,6 +233,11 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 					blocks.forEach(block -> {
 						if(world.getBlockEntity(block) instanceof RoomBlockEntity room)
 							room.reset();
+					});
+					List<Entity> list = world.getOtherEntities(null, new Box(box.getMinX(), box.getMinY(), box.getMinZ(), box.getMaxX(), box.getMaxY(), box.getMaxZ()));
+					list.forEach(e -> {
+						if(!(e instanceof PlayerEntity))
+							e.remove(Entity.RemovalReason.DISCARDED);
 					});
 					if(pos.equals(nextLevelPos))
 						nextLevelPos = pos.add(box.getBlockCountX() + 128, 0, 0);

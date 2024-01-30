@@ -26,6 +26,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSyncedComponent
 {
@@ -304,16 +305,28 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	}
 	
 	@Override
+	public long getBestTime(Identifier id)
+	{
+		return bestTimes.getOrDefault(id, -1L);
+	}
+	
+	@Override
 	public void readFromNbt(NbtCompound tag)
 	{
 		if(tag.contains("level", NbtElement.STRING_TYPE))
-			currentLevel = new Identifier(tag.getString("level")); //TODO: save//load best times
+			currentLevel = new Identifier(tag.getString("level"));
 		if(tag.contains("timerStart", NbtElement.LONG_TYPE))
 			timerStart = tag.getLong("timerStart");
 		if(tag.contains("timerStart", NbtElement.LONG_TYPE))
 			timerStart = tag.getLong("timerStart");
 		if(tag.contains("perfect", NbtElement.BYTE_TYPE))
 			perfect = tag.getBoolean("perfect");
+		if(tag.contains("records", NbtElement.COMPOUND_TYPE))
+		{
+			NbtCompound records = tag.getCompound("records");
+			for(String key : records.getKeys())
+				bestTimes.put(Identifier.tryParse(key), records.getLong(key));
+		}
 	}
 	
 	@Override
@@ -326,6 +339,13 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 		}
 		if(timerStart != -1)
 			tag.putLong("timerStart", timerStart);
+		if(bestTimes.size() > 0)
+		{
+			NbtCompound records = new NbtCompound();
+			for (Map.Entry<Identifier, Long> e : bestTimes.entrySet())
+				records.putLong(e.getKey().toString(), e.getValue());
+			tag.put("records", records);
+		}
 	}
 	
 	@Override
