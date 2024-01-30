@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.Enrageable;
 import absolutelyaya.ultracraft.accessor.IAnimatedEnemy;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
@@ -17,6 +18,7 @@ import mod.azure.azurelib.animatable.GeoEntity;
 import mod.azure.azurelib.util.AzureLibUtil;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
@@ -31,7 +33,10 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
 import mod.azure.azurelib.core.animation.AnimatableManager;
@@ -242,6 +247,29 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 		super.tickMovement();
 		if(isHeadFixed())
 			bodyYaw = headYaw;
+	}
+	
+	@Override
+	public void move(MovementType movementType, Vec3d movement)
+	{
+		BlockHitResult hit = getWorld().raycast(new RaycastContext(getPos(), getPos().subtract(0, 2, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, this));
+		if(ServerConfig.INSTANCE.smSafeLedges.getValue() && !hit.getType().equals(HitResult.Type.MISS) && !isEnraged())
+		{
+			for (int x = -1; x <= 1; x++)
+			{
+				for (int z = -1; z <= 1; z++)
+				{
+					if(x == 0 && z == 0)
+						continue;
+					if(getWorld().isSpaceEmpty(getBoundingBox().expand(0.1).offset(movement).offset(x * 0.4, -2, z * 0.4)))
+					{
+						movement = movement.multiply(1f - Math.abs(x), 1f, 1f - Math.abs(z));
+						setVelocity(getVelocity().multiply(1f - Math.abs(x), 1f, 1f - Math.abs(z)));
+					}
+				}
+			}
+		}
+		super.move(movementType, movement);
 	}
 	
 	@Override
