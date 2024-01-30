@@ -231,8 +231,8 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 		if(!provider.getWorld().isClient && id == null)
 		{
 			LevelManager.Instance.destroyIfEmpty(lastId);
-			UltraComponents.WINGED.sync(provider);
 		}
+		UltraComponents.WINGED.sync(provider);
 	}
 	
 	@Override
@@ -296,6 +296,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	public void removePerfect()
 	{
 		perfect = false;
+		UltraComponents.WINGED.sync(provider);
 	}
 	
 	@Override
