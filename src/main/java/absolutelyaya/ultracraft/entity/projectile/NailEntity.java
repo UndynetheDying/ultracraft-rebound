@@ -5,7 +5,6 @@ import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.entity.other.StainedGlassWindow;
-import absolutelyaya.ultracraft.registry.GameruleRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;
@@ -65,7 +64,7 @@ public class NailEntity extends ProjectileEntity implements ProjectileEntityAcce
 			return;
 		super.onEntityHit(entityHitResult);
 		float amount = 0.3f;
-		entity.damage(DamageSources.get(getWorld(), DamageSources.NAIL, this, getOwner()),
+		entity.damage(DamageSources.get(getWorld(), DamageSources.NAIL, this, getWorld().isClient ? null : getOwner()),
 				amount * ServerConfig.INSTANCE.nailgunDamage.getValue());
 		if(isHot())
 			entity.setFireTicks(100);

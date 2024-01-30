@@ -139,6 +139,8 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 		{
 			timeUntilRegen = 4;
 			lastDamageTaken = 0f;
+			if(!getWorld().isClient)
+				bleed(getPos(), getHeight() / 2f, source, amount * 0.25f);
 			cir.setReturnValue(true);
 			return;
 		}
@@ -174,7 +176,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	public void bleed(Vec3d pos, float halfheight, DamageSource source, float amount)
 	{
 		List<PlayerEntity> nearby = getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(32), e -> !e.equals(this));
-		List<PlayerEntity> heal = getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(2), e -> !e.equals(this));
+		List<PlayerEntity> heal = getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(4), e -> !e.equals(this));
 		for (PlayerEntity player : nearby)
 		{
 			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());

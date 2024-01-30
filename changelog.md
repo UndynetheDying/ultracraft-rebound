@@ -118,6 +118,8 @@
 - Tweaked parry area yet again
 - Successful Parries now do full heals
 - Successful Parries now make you unhittable for projectiles for a few ticks
+- Increased Blood Heal Radius (2 -> 4 Blocks)
+- Decreased Nail Blood Heal Amount (x0.25)
 ## Minor Changes
 - Fixed water skimming not playing sounds
 - Removed the "vents" MOTD from the non-essential resources

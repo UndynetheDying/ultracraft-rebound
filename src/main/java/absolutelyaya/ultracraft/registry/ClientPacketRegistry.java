@@ -128,7 +128,7 @@ public class ClientPacketRegistry
 					IWingedPlayerComponent winged = UltraComponents.WINGED.get(client.player);
 					if(!winged.isJustPlayedBloodhealNoise())
 					{
-						client.player.playSound(SoundRegistry.BLOOD_HEAL, SoundCategory.PLAYERS, 0.8f, 1.7f);
+						client.player.playSound(SoundRegistry.BLOOD_HEAL, SoundCategory.PLAYERS, 0.6f * Math.min(1f, amount * 2), 1.7f);
 						winged.setJustPlayedBloodhealNoise();
 					}
 				}
