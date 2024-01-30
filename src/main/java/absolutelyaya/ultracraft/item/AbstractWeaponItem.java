@@ -99,6 +99,8 @@ public abstract class AbstractWeaponItem extends Item
 	@Override
 	public boolean isItemBarVisible(ItemStack stack)
 	{
+		if(Ultracraft.SERVER_SIDE)
+			return false;
 		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		return !cdm.isUsable(getCooldownClass(stack), GunCooldownManager.PRIMARY);
 	}
@@ -106,6 +108,8 @@ public abstract class AbstractWeaponItem extends Item
 	@Override
 	public int getItemBarStep(ItemStack stack)
 	{
+		if(Ultracraft.SERVER_SIDE)
+			return 14;
 		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		return (int)(cdm.getCooldownPercent(getCooldownClass(stack), GunCooldownManager.PRIMARY) * 14);
 	}

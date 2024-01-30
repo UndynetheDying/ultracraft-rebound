@@ -26,7 +26,6 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
@@ -42,7 +41,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import org.slf4j.Logger;
 
@@ -59,7 +57,7 @@ public class Ultracraft implements ModInitializer
     public static final Logger LOGGER = LogUtils.getLogger();
     static final String SUPPORTER_LIST = "https://raw.githubusercontent.com/absolutelyaya/absolutelyaya/main/cool-people.json";
     public static String VERSION;
-	public static boolean DYN_LIGHTS;
+	public static boolean DYN_LIGHTS, SERVER_SIDE;
 	static int freezeTicks;
     static Map<UUID, Integer> supporterCache = new HashMap<>(), supporterCacheAdditions = new HashMap<>();
     static ServerConfig config;
@@ -165,6 +163,8 @@ public class Ultracraft implements ModInitializer
         
         FabricLoader.getInstance().getModContainer(MOD_ID).ifPresent(modContainer -> VERSION = modContainer.getMetadata().getVersion().getFriendlyString());
         FabricLoader.getInstance().getModContainer("lambdynlights").ifPresent(container -> DYN_LIGHTS = true);
+        try { Class.forName("net.minecraft.client.class_310"); } catch (ClassNotFoundException e) { SERVER_SIDE = true; }
+        System.out.println("Server " + SERVER_SIDE);
         LOGGER.info("Ultracraft initialized.");
     }
     

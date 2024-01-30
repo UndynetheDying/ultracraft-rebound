@@ -2,10 +2,14 @@ package absolutelyaya.ultracraft.block.mapping;
 
 import absolutelyaya.ultracraft.client.gui.screen.TravelScreen;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
+import absolutelyaya.ultracraft.registry.PacketRegistry;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import org.joml.Vector4f;
@@ -15,6 +19,7 @@ import java.util.List;
 
 public class ForceTravelBlockEntity extends AbstractTriggerBlockEntity
 {
+	List<? extends LivingEntity> lastContained = new ArrayList<>();
 	static List<String> attributes = new ArrayList<>();
 	
 	public ForceTravelBlockEntity(BlockPos pos, BlockState state)
@@ -58,10 +63,18 @@ public class ForceTravelBlockEntity extends AbstractTriggerBlockEntity
 	{
 		super.tick();
 		if(!world.isClient)
-			return;
-		MinecraftClient client = MinecraftClient.getInstance();
-		if(containedEntities.contains(client.player) && !(client.currentScreen instanceof TravelScreen))
-			client.setScreen(new TravelScreen(false, true));
+		{
+			for (LivingEntity e : containedEntities)
+			{
+				if(!lastContained.contains(e) && e instanceof ServerPlayerEntity player)
+				{
+					PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+					buf.writeBoolean(true);
+					ServerPlayNetworking.send(player, PacketRegistry.TRAVEL_SCREEN_PACKET_ID, buf);
+				}
+			}
+			lastContained = containedEntities;
+		}
 	}
 	
 	@Override

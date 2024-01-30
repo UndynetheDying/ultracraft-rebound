@@ -28,7 +28,6 @@ import mod.azure.azurelib.core.animation.AnimationState;
 import mod.azure.azurelib.core.animation.RawAnimation;
 import mod.azure.azurelib.core.keyframe.event.SoundKeyframeEvent;
 import mod.azure.azurelib.core.object.PlayState;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityStatuses;
 import net.minecraft.entity.EntityType;
@@ -203,13 +202,16 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 	
 	private void handleSoundKeyFrames(SoundKeyframeEvent<GeoAnimatable> event)
 	{
+		if(!getWorld().isClient)
+			return;
 		SoundEvent sound = switch(event.getKeyframeData().getSound())
 		{
 			case "mortar" -> SoundRegistry.HIDEOUS_MASS_MORTAR;
 			case "emerge" -> SoundRegistry.HIDEOUS_MASS_EMERGE;
 			default -> SoundRegistry.PLACEHOLDER;
 		};
-		getWorld().playSound(MinecraftClient.getInstance().player, getBlockPos(), sound, SoundCategory.HOSTILE, 1f, 0.95f + random.nextFloat());
+		getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(16f), p -> true)
+				.forEach(p -> getWorld().playSound(p, getBlockPos(), sound, SoundCategory.HOSTILE, 1f, 0.95f + random.nextFloat()));
 	}
 	
 	@Override

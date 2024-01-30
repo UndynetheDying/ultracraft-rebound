@@ -25,7 +25,11 @@ public class PortalBlock extends Block
 	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit)
 	{
 		if(!world.isClient)
-			ServerPlayNetworking.send((ServerPlayerEntity)player, PacketRegistry.TRAVEL_SCREEN_PACKET_ID, new PacketByteBuf(Unpooled.buffer()));
+		{
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			buf.writeBoolean(false);
+			ServerPlayNetworking.send((ServerPlayerEntity)player, PacketRegistry.TRAVEL_SCREEN_PACKET_ID, buf);
+		}
 		return ActionResult.PASS;
 	}
 }

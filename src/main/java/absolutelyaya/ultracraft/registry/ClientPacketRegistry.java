@@ -362,8 +362,9 @@ public class ClientPacketRegistry
 			});
 		})));
 		ClientPlayNetworking.registerGlobalReceiver(TRAVEL_SCREEN_PACKET_ID, (((client, handler, buf, responseSender) -> {
+			boolean forced = buf.readBoolean();
 			client.execute(() -> {
-				client.setScreen(new TravelScreen(false));
+				client.setScreen(new TravelScreen(false, forced));
 			});
 		})));
 		ClientPlayNetworking.registerGlobalReceiver(EDIT_PING_PACKET_ID, (((client, handler, buf, responseSender) -> {
