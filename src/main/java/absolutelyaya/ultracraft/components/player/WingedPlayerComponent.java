@@ -40,6 +40,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	BlockPos lastCheckpoint;
 	RegistryKey<World> checkpointDimension;
 	Identifier currentLevel;
+	String currentLevelInstance;
 	boolean fighting, perfect;
 	int fightCheckCooldown;
 	long timerStart = -1;
@@ -216,23 +217,32 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	}
 	
 	@Override
+	public void enterLevel(Identifier levelId, String instance)
+	{
+		perfect = true;
+		stopTimer(true);
+		String lastInstance = currentLevelInstance;
+		currentLevelInstance = instance;
+		if(!provider.getWorld().isClient && instance == null)
+		{
+			LevelManager.Instance.destroyIfEmpty(lastInstance);
+			if(lastInstance != null)
+				LevelManager.Instance.onLeaveLevel((ServerPlayerEntity)provider, lastInstance);
+		}
+		currentLevel = levelId;
+		UltraComponents.WINGED.sync(provider);
+	}
+	
+	@Override
 	public Identifier getCurrentLevel()
 	{
 		return currentLevel;
 	}
 	
 	@Override
-	public void setCurrentLevel(Identifier id)
+	public String getCurrentLevelInstance()
 	{
-		perfect = true;
-		stopTimer(true);
-		Identifier lastId = currentLevel;
-		currentLevel = id;
-		if(!provider.getWorld().isClient && id == null)
-		{
-			LevelManager.Instance.destroyIfEmpty(lastId);
-		}
-		UltraComponents.WINGED.sync(provider);
+		return currentLevelInstance;
 	}
 	
 	@Override

@@ -59,7 +59,7 @@ public abstract class ServerPlayerMixin extends PlayerEntity
 	{
 		if(!origin.getRegistryKey().equals(LevelManager.WORLD_KEY))
 			return;
-		UltraComponents.WINGED.get(this).setCurrentLevel(null);
+		UltraComponents.WINGED.get(this).enterLevel(null, null);
 	}
 	
 	@Redirect(method = "copyFrom", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;isSpectator()Z"))

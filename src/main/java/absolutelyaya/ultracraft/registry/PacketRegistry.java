@@ -49,6 +49,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.*;
@@ -645,7 +646,7 @@ public class PacketRegistry
 					onTravelFinished(player);
 					return;
 				}
-				UltraComponents.WINGED.get(player).setCurrentLevel(null);
+				UltraComponents.WINGED.get(player).enterLevel(null, null);
 				ServerWorld world = server.getWorld(layer.worldKey);
 				BlockPos pos = layer.arrivalPos == null ? world.getSpawnPos() : layer.arrivalPos;
 				FabricDimensions.teleport(player, world, new TeleportTarget(pos.toCenterPos(), Vec3d.ZERO, world.getSpawnAngle(), 0f));
@@ -654,6 +655,7 @@ public class PacketRegistry
 		});
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.ENTER_LEVEL_PACKET_ID, (server, player, handler, buf, sender) -> {
 			Identifier level = buf.readIdentifier();
+			String instanceId = buf.readString();
 			server.execute(() -> {
 				if(!UltraComponents.GLOBAL.get(player.getWorld().getLevelProperties()).isDestinationUnlocked(level))
 				{
@@ -662,20 +664,33 @@ public class PacketRegistry
 					onTravelFinished(player);
 					return;
 				}
-				if(!LevelManager.Instance.instantiateLevelOrReloadIfEmpty(player, level))
+				Pair<String, LevelManager.LevelInstance> instance = null;
+				IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
+				if(instanceId.length() > 0)
+				{
+					instance = new Pair<>(instanceId, LevelManager.Instance.getInstance(instanceId));
+					if(winged.getCurrentLevelInstance().equals(instanceId))
+					{
+						if(instance.getRight().getOwner().equals(player))
+							LevelManager.Instance.reloadInstance(instanceId);
+					}
+					LevelManager.Instance.onJoinLevel(player, instanceId);
+				}
+				else if((instance = LevelManager.Instance.instantiateLevel(level)) == null)
 				{
 					player.sendMessage(Text.translatable("message.ultracraft.travel.error-instance"));
 					onTravelFinished(player);
 					return;
 				}
-				UltraComponents.WINGED.get(player).setCurrentLevel(level);
+				winged.enterLevel(level, instance.getLeft());
 				ServerWorld world = server.getWorld(LevelManager.WORLD_KEY);
-				BlockPos pos = LevelManager.getSpawnPos(level);
+				BlockPos pos = LevelManager.getSpawnPos(instance.getLeft());
 				FabricDimensions.teleport(player, world, new TeleportTarget(pos.toCenterPos(), Vec3d.ZERO, LevelManager.getLevelData(level).getSpawnRot(), 0f));
 				BlockHitResult groundScan = player.getWorld().raycast(new RaycastContext(player.getPos(), player.getPos().subtract(0, 32, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
 				if(groundScan.getType().equals(HitResult.Type.MISS))
 					player.getWorld().setBlockState(player.getBlockPos().down(), BlockRegistry.PORTAL.getDefaultState());
 				onTravelFinished(player);
+				LevelManager.Instance.onJoinLevel(player, instance.getLeft());
 			});
 		});
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.REQUEST_DESTINATIONS_PACKET_ID, (server, player, handler, buf, sender) -> {

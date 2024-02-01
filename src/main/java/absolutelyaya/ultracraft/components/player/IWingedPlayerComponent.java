@@ -55,9 +55,11 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	
 	void sendBoxTitle(Text text);
 	
+	void enterLevel(Identifier levelId, String instance);
+	
 	Identifier getCurrentLevel();
 	
-	void setCurrentLevel(Identifier id);
+	String getCurrentLevelInstance();
 	
 	boolean isInFight();
 	

@@ -89,6 +89,7 @@ public abstract class AbstractTravelScreen extends Screen
 		awaitingFeedback = true;
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeIdentifier(id);
+		buf.writeString(""); //TODO
 		ClientPlayNetworking.send(PacketRegistry.ENTER_LEVEL_PACKET_ID, buf);
 		UltraComponents.WINGED.get(client.player).stopTimer(true);
 	}

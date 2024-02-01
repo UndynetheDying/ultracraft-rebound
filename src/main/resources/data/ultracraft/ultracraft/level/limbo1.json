@@ -7,7 +7,7 @@
   "thumbnail": "ultracraft:textures/level/1_1.png",
   "spawn-offset":{
     "x": 3,
-    "y": 35,
+    "y": 40,
     "z": 53
   },
   "spawn-rot": -90,
