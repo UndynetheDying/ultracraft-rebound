@@ -235,12 +235,10 @@ public abstract class AbstractTravelScreen extends Screen
 			buttons.add(new LevelInstanceButton(pos.x, pos.y, entry.getKey(), entry.getValue(), this::enterInstance));
 			usedPositions.add(pos);
 		}
-		buttons.add(ButtonWidget.builder(Text.translatable("screen.ultracraft.travel.instance.new"), b -> {
-			enterInstance("");
-		}).dimensions(width / 2 - 100, height - 54, 99, 20).build());
-		buttons.add(ButtonWidget.builder(Text.translatable("screen.ultracraft.travel.instance.new-private"), b -> {
-			enterInstance("private");
-		}).dimensions(width / 2 + 1, height - 54, 99, 20).build());
+		buttons.add(ButtonWidget.builder(Text.translatable("screen.ultracraft.travel.instance.new"), b -> enterInstance(""))
+							.dimensions(width / 2 - 100, height - 54, 99, 20).build());
+		buttons.add(ButtonWidget.builder(Text.translatable("screen.ultracraft.travel.instance.new-private"), b -> enterInstance("private"))
+							.dimensions(width / 2 + 1, height - 54, 99, 20).build());
 		buttons.add(ButtonWidget.builder(Text.translatable("screen.ultracraft.travel.back"), b -> {
 			selectedLevel = null;
 			instanceButtons.clear();

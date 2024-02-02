@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.entity;
 
+import absolutelyaya.ultracraft.api.HeavyEntities;
 import absolutelyaya.ultracraft.particle.ParryIndicatorParticleEffect;
 import absolutelyaya.ultracraft.particle.TeleportParticleEffect;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
@@ -18,7 +19,6 @@ import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
-import net.minecraft.registry.tag.EntityTypeTags;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -85,7 +85,8 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 	{
 		super.onSpawnPacket(packet);
 		getWorld().addParticle(new TeleportParticleEffect(getTeleportParticleSize()), packet.getX(), packet.getY(), packet.getZ(), 0f, 0f, 0f);
-		getWorld().playSound(getX(), getY(), getZ(), SoundRegistry.GENERIC_SPAWN, SoundCategory.HOSTILE, 0.75f, 1.3f + random.nextFloat() * 0.15f, false);
+		float pitch = HeavyEntities.isHeavy(getType()) ? 0.65f : 1.3f;
+		getWorld().playSound(getX(), getY(), getZ(), SoundRegistry.GENERIC_SPAWN, SoundCategory.HOSTILE, 0.75f,  pitch+ random.nextFloat() * 0.15f, false);
 	}
 	
 	protected ServerBossBar initBossBar()
