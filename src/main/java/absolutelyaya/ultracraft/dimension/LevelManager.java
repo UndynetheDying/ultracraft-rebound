@@ -19,6 +19,7 @@ import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -222,13 +223,13 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 		}
 	}
 	
-	public Pair<String, LevelInstance> instantiateLevel(Identifier levelId)
+	public Pair<String, LevelInstance> instantiateLevel(Identifier levelId, boolean privat)
 	{
 		LevelInstancePool pool = instances.get(levelId);
-		return instantiateLevel(levelId, pool == null ? new BlockPos(nextLevelBaseX, 0, 0) : pool.getFirstFreePos());
+		return instantiateLevel(levelId, pool == null ? new BlockPos(nextLevelBaseX, 0, 0) : pool.getFirstFreePos(), privat);
 	}
 	
-	public Pair<String, LevelInstance> instantiateLevel(Identifier levelId, BlockPos pos)
+	public Pair<String, LevelInstance> instantiateLevel(Identifier levelId, BlockPos pos, boolean privat)
 	{
 		if(!levels.containsKey(levelId) && !customLevels.containsKey(levelId))
 		{
@@ -265,6 +266,8 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 					});
 					int idx = pool.getFirstFreeIndex();
 					LevelInstance newInstance = new LevelInstance(pos, idx);
+					if(privat)
+						newInstance.setPrivate();
 					String newId = levelId.toString() + "_" + idx;
 					levelIdForInstanceId.put(newId, levelId);
 					inst.set(new Pair<>(newId, newInstance));
@@ -351,7 +354,7 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 		winged.enterLevel(null, null);
 	}
 	
-	public void reloadInstance(String id)
+	public void reloadInstance(String id, boolean privat)
 	{
 		Ultracraft.LOGGER.info("Re-Placing Level Instance " + id);
 		LevelInstance old = getInstance(id);
@@ -360,8 +363,9 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 			Ultracraft.LOGGER.info("Tried reloading a level instance that didn't exist: (" + id + ")");
 			return;
 		}
-		Pair<String, LevelInstance> newInstance = instantiateLevel(levelIdForInstanceId.get(id));
-		old.players.forEach(p -> joinInstance(p, newInstance.getLeft()));
+		Pair<String, LevelInstance> newInstance = instantiateLevel(levelIdForInstanceId.get(id), privat);
+		for (ServerPlayerEntity p : new ArrayList<>(old.players))
+			joinInstance(p, newInstance.getLeft());
 	}
 	
 	public void joinInstance(ServerPlayerEntity player, String id)
@@ -371,6 +375,8 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 			rescue(player, RescueReason.INSTANCE_NULL);
 		if(!instance.players.contains(player))
 			instance.players.add(player);
+		if(instance.getOwner() == null)
+			instance.setOwner(player);
 		IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
 		//teleport player
 		ServerWorld world = getWorld().getServer().getWorld(LevelManager.WORLD_KEY);
@@ -459,10 +465,10 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 		{
 			for (int i = 0; i < 8; i++)
 			{
-				instantiateLevel(id);
+				instantiateLevel(id, false);
 				done++;
 				for (PlayerEntity player : world.getServer().getPlayerManager().getPlayerList())
-					player.sendMessage(Text.translatable("command.ultracraft.debug.level-instance.progress", i, id, done, total));
+					player.sendMessage(Text.translatable("command.ultracraft.debug.level-instance.progress", i + 1, id, done, total));
 			}
 		}
 	}
@@ -470,6 +476,24 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 	public boolean isInstanceExistant(String instanceId)
 	{
 		return levelIdForInstanceId.containsKey(instanceId);
+	}
+	
+	public NbtCompound serializePool(Identifier levelId)
+	{
+		NbtCompound nbt = new NbtCompound();
+		LevelInstancePool pool = instances.get(levelId);
+		if(pool == null)
+			return nbt;
+		for (Map.Entry<String, LevelInstance> entry : pool.getAll().entrySet())
+		{
+			LevelInstance val = entry.getValue();
+			if( val.isPrivate())
+				continue;
+			NbtCompound instance = new NbtCompound();
+			instance.putUuid("owner", val.getOwner() == null ? UUID.randomUUID() : val.getOwner().getUuid());
+			nbt.put(entry.getKey(), instance);
+		}
+		return nbt;
 	}
 	
 	public static class LevelInstancePool
@@ -513,6 +537,11 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 		{
 			return instances.put(id, instance);
 		}
+		
+		public HashMap<String, LevelInstance> getAll()
+		{
+			return instances;
+		}
 	}
 	
 	public static class LevelInstance implements Comparable<LevelInstance>
@@ -521,6 +550,7 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 		public final BlockPos pos;
 		public final int index;
 		public ServerPlayerEntity owner;
+		public boolean privat;
 		
 		public LevelInstance(BlockPos pos, int index)
 		{
@@ -543,6 +573,16 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 		{
 			if(!players.contains(player))
 				players.add(player);
+		}
+		
+		public void setPrivate()
+		{
+			privat = true;
+		}
+		
+		public boolean isPrivate()
+		{
+			return privat;
 		}
 		
 		@Override

@@ -51,9 +51,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static absolutelyaya.ultracraft.registry.PacketRegistry.*;
 
@@ -414,7 +412,7 @@ public class ClientPacketRegistry
 			});
 		})));
 		ClientPlayNetworking.registerGlobalReceiver(SEND_LEVELS_PACKET_ID, (((client, handler, buf, responseSender) -> {
-			for (int i = 0; i <= 1; i++)
+			for (int i = 0; i <= 1; i++) //execute twice; once to get levels and again to get custom levels
 			{
 				List<LevelData> list = buf.readList(LevelData::deserialize);
 				ImmutableMap.Builder<Identifier, LevelData> builder = ImmutableMap.builder();
@@ -422,6 +420,20 @@ public class ClientPacketRegistry
 					builder.put(level.getID(), level);
 				LevelManager.setLevels(builder.build(), i == 0);
 			}
+		})));
+		ClientPlayNetworking.registerGlobalReceiver(SEND_LEVEL_INSTANCES_PACKET_ID, (((client, handler, buf, responseSender) -> {
+			NbtCompound nbt = buf.readNbt();
+			Map<String, UUID> map = new HashMap<>();
+			for (String id : nbt.getKeys())
+			{
+				NbtCompound instance = nbt.getCompound(id);
+				UUID owner = instance.getUuid("owner");
+				map.put(id, owner);
+			}
+			client.execute(() -> {
+				if(client.currentScreen instanceof AbstractTravelScreen travel)
+					travel.setInstanceMap(map);
+			});
 		})));
 		ClientPlayNetworking.registerGlobalReceiver(FINISH_TRAVELLING_PACKET_ID, (((client, handler, buf, responseSender) -> {
 			if(client.currentScreen instanceof AbstractTravelScreen travel)

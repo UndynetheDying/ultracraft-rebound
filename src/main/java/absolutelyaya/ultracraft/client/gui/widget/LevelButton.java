@@ -127,7 +127,7 @@ public class LevelButton extends ClickableWidget
 		context.fill(0, 0, width, height, 0x88000000);
 		hoverAnim = MathHelper.lerp(delta / 5f, hoverAnim, isHovered() && isUnlocked && alpha > 0.5 ? 1f : 0f);
 		if(isHovered() && isUnlocked && alpha > 0.5)
-			context.drawBorder(-1, -1, width, height, 0xffffffff);
+			context.drawBorder(-1, -1, width + 2, height + 2, 0xffffffff);
 		if(hoverAnim > 0f)
 		{
 			IWingedPlayerComponent winged = UltraComponents.WINGED.get(MinecraftClient.getInstance().player);
@@ -197,16 +197,6 @@ public class LevelButton extends ClickableWidget
 		context.drawText(tRenderer, t, (width - tRenderer.getWidth(t)) / 2, height / 2 - 6, 0xffffffff, true);
 		matrices.pop();
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-	}
-	
-	@Override
-	protected boolean clicked(double mouseX, double mouseY)
-	{
-		//boolean b = super.clicked(mouseX, mouseY);
-		////TODO: open authorLink
-		//if(b && isUnlocked && !isUnimplemented && !isHidden && alpha > 0.5)
-		//	action.accept(destination);
-		return super.clicked(mouseX, mouseY);
 	}
 	
 	@Override

@@ -12,8 +12,7 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class TravelScreen extends AbstractTravelScreen
 {
@@ -88,14 +87,14 @@ public class TravelScreen extends AbstractTravelScreen
 						new Identifier(Ultracraft.MOD_ID, "textures/level/0_freeroam.png"), new Identifier(Ultracraft.MOD_ID, "dimension.overworld"),
 						d -> travel(Layer.OVERWORLD)));
 				buttons.add(new LevelButton(width / 2, height / 2 - 32,
-						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "prelude1")), this::enterLevel));
+						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "prelude1")), this::selectLevel));
 				buttons.add(new LevelButton(width / 2, height / 2 + 36,
-						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "prelude2")), this::enterLevel));
+						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "prelude2")), this::selectLevel));
 			}
 			case LIMBO ->
 			{
 				buttons.add(new LevelButton(width / 2, height / 2 - 100,
-						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "limbo1")), this::enterLevel));
+						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "limbo1")), this::selectLevel));
 				LevelButton freeroam = new LevelButton(width / 2, height / 2 - 32, Text.translatable("level.ultracraft.1-F"),
 						new Identifier(Ultracraft.MOD_ID, "textures/level/1_freeroam.png"), new Identifier(Ultracraft.MOD_ID, "dimension.limbo"),
 						d -> travel(Layer.LIMBO));
@@ -104,13 +103,13 @@ public class TravelScreen extends AbstractTravelScreen
 						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "luna")), ignored -> {}));
 				
 				buttons.add(new LevelButton(width / 2 + freeroam.getWidth() + 16, height / 2 - 32,
-						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "limbo-challenge")), this::enterLevel));
+						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "limbo-challenge")), this::selectLevel));
 			}
 		}
 		buttons.add(ButtonWidget.builder(Text.translatable("screen.ultracraft.travel.back"), b -> {
-					selectedLayer = null;
-					layerButtons.addAll(initLayerButtons());
-				}).dimensions(width / 2 - 50, height - 32, 100, 20).build());
+			selectedLayer = null;
+			layerButtons.addAll(initLayerButtons());
+		}).dimensions(width / 2 - 50, height - 32, 100, 20).build());
 		return buttons;
 	}
 	
@@ -126,34 +125,34 @@ public class TravelScreen extends AbstractTravelScreen
 		super.render(context, mouseX, mouseY, delta);
 		if(openAnimTime < 1f)
 			buttons.forEach(b -> b.setAlpha(openAnimTime));
-		if(selectedLayer == null)
-			renderLayerSelection(context, mouseX, mouseY, delta);
-		else
+		if(selectedLevel != null)
+			return;
+		if(selectedLayer != null)
 			renderLayerLevels(context, mouseX, mouseY, delta);
+		else
+			renderLayerSelection(context, mouseX, mouseY, delta);
 	}
 	
 	void renderLayerSelection(DrawContext context, int mouseX, int mouseY, float delta)
 	{
 		blinkTimer = (blinkTimer + delta / 20f) % 1f;
 		
-		if(!shouldClose)
-		{
-			layerButtons.forEach(b -> b.render(context, mouseX, mouseY, delta));
-			context.drawCenteredTextWithShadow(textRenderer, Text.translatable("screen.ultracraft.travel.title"), width / 2, 16, 0xffffffff);
-			if(blinkTimer < 0.5f && curLayer != null)
-				context.drawTexture(TEXTURE, width / 2 - 50 - 16, height / 2 + (curLayer.ordinal() - 2) * 30 + 6,
-						0, 60, 11, 8, 128, 128);
-		}
+		if(shouldClose)
+			return;
+		layerButtons.forEach(b -> b.render(context, mouseX, mouseY, delta));
+		context.drawCenteredTextWithShadow(textRenderer, Text.translatable("screen.ultracraft.travel.title"), width / 2, 16, 0xffffffff);
+		if(blinkTimer < 0.5f && curLayer != null)
+			context.drawTexture(TEXTURE, width / 2 - 50 - 16, height / 2 + (curLayer.ordinal() - 2) * 30 + 6,
+					0, 60, 11, 8, 128, 128);
 	}
 	
-	private void renderLayerLevels(DrawContext context, int mouseX, int mouseY, float delta)
+	void renderLayerLevels(DrawContext context, int mouseX, int mouseY, float delta)
 	{
-		if(!shouldClose)
-		{
-			levelButtons.forEach(b -> b.render(context, mouseX, mouseY, delta));
-			context.drawCenteredTextWithShadow(textRenderer, Text.translatable("screen.ultracraft.travel.layer" + selectedLayer.ordinal()),
-					width / 2, 16, 0xffffffff);
-		}
+		if(shouldClose)
+			return;
+		levelButtons.forEach(b -> b.render(context, mouseX, mouseY, delta));
+		context.drawCenteredTextWithShadow(textRenderer, Text.translatable("screen.ultracraft.travel.layer" + selectedLayer.ordinal()),
+				width / 2, 16, 0xffffffff);
 	}
 	
 	@Override
@@ -172,6 +171,10 @@ public class TravelScreen extends AbstractTravelScreen
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button)
 	{
+		if(selectedLevel != null)
+			return super.mouseClicked(mouseX,mouseY,button);
+		if(awaitingFeedback)
+			return false;
 		boolean b = super.mouseClicked(mouseX, mouseY, button);
 		if(b)
 			return true;

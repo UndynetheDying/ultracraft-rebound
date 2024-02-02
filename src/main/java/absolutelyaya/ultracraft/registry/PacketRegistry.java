@@ -94,6 +94,7 @@ public class PacketRegistry
 	public static final Identifier TRAVEL_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "travel");
 	public static final Identifier ENTER_LEVEL_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "enter_level");
 	public static final Identifier REQUEST_DESTINATIONS_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "destinations_c2s");
+	public static final Identifier REQUEST_INSTANCES_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "instances_c2s");
 	
 	public static final Identifier FREEZE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "freeze");
 	public static final Identifier HITSCAN_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "scan");
@@ -129,6 +130,7 @@ public class PacketRegistry
 	public static final Identifier TITLE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "title");
 	public static final Identifier SEND_DESTINATIONS_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "destinations_s2c");
 	public static final Identifier SEND_LEVELS_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "levels_s2c");
+	public static final Identifier SEND_LEVEL_INSTANCES_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "instances_s2c");
 	public static final Identifier FINISH_TRAVELLING_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "travel_end");
 	
 	public static void registerC2S()
@@ -653,7 +655,17 @@ public class PacketRegistry
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.ENTER_LEVEL_PACKET_ID, (server, player, handler, buf, sender) -> {
 			Identifier level = buf.readIdentifier();
 			String instanceId = buf.readString();
+			boolean privat;
+			if(instanceId.equals("private"))
+			{
+				instanceId = "";
+				privat = true;
+			}
+			else
+				privat = false;
+			String finalInstanceId = instanceId;
 			server.execute(() -> {
+				
 				if(!UltraComponents.GLOBAL.get(player.getWorld().getLevelProperties()).isDestinationUnlocked(level))
 				{
 					player.sendMessage(Text.translatable("message.ultracraft.travel.error-notunlocked"));
@@ -663,15 +675,16 @@ public class PacketRegistry
 				}
 				Pair<String, LevelManager.LevelInstance> instance;
 				IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
-				if(instanceId.length() > 0 && LevelManager.Instance.isInstanceExistant(instanceId))
+				if(finalInstanceId.length() > 0 && LevelManager.Instance.isInstanceExistant(finalInstanceId))
 				{
-					instance = new Pair<>(instanceId, LevelManager.Instance.getInstance(instanceId));
-					if(winged.getCurrentLevelInstance().equals(instanceId) && instance.getRight().getOwner().equals(player))
-						LevelManager.Instance.reloadInstance(instanceId);
+					instance = new Pair<>(finalInstanceId, LevelManager.Instance.getInstance(finalInstanceId));
+					if(winged.getCurrentLevelInstance() != null && winged.getCurrentLevelInstance().equals(finalInstanceId) &&
+							   instance.getRight().getOwner() != null && instance.getRight().getOwner().equals(player))
+						LevelManager.Instance.reloadInstance(finalInstanceId, privat);
 					else
-						LevelManager.Instance.joinInstance(player, instanceId);
+						LevelManager.Instance.joinInstance(player, finalInstanceId);
 				}
-				else if((instance = LevelManager.Instance.instantiateLevel(level)) != null)
+				else if((instance = LevelManager.Instance.instantiateLevel(level, privat)) != null)
 					LevelManager.Instance.joinInstance(player, instance.getLeft());
 				else
 					player.sendMessage(Text.translatable("message.ultracraft.travel.error-instance"));
@@ -686,6 +699,17 @@ public class PacketRegistry
 				cbuf.writeInt(ids.size());
 				ids.forEach(cbuf::writeIdentifier);
 				ServerPlayNetworking.send(player, SEND_DESTINATIONS_PACKET_ID, cbuf);
+			});
+		});
+		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.REQUEST_INSTANCES_PACKET_ID, (server, player, handler, buf, sender) -> {
+			Identifier levelId = buf.readIdentifier();
+			server.execute(() -> {
+				NbtCompound nbt = LevelManager.Instance.serializePool(levelId);
+				if(nbt.getKeys().size() == 0)
+					return;
+				PacketByteBuf cbuf = new PacketByteBuf(Unpooled.buffer());
+				cbuf.writeNbt(nbt);
+				ServerPlayNetworking.send(player, SEND_LEVEL_INSTANCES_PACKET_ID, cbuf);
 			});
 		});
 	}

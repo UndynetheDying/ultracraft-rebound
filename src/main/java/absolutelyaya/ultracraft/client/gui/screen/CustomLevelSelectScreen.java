@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.dimension.LevelManager;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
@@ -15,7 +16,7 @@ import java.util.List;
 public class CustomLevelSelectScreen extends AbstractTravelScreen
 {
 	final Screen parent;
-	List<LevelButton> levelButtons = new ArrayList<>();
+	List<ClickableWidget> levelButtons = new ArrayList<>();
 	float curListoffset, targetListOffset;
 	int listHeight, maxScroll;
 	
@@ -31,12 +32,12 @@ public class CustomLevelSelectScreen extends AbstractTravelScreen
 	protected void init()
 	{
 		super.init();
-		addDrawableChild(ButtonWidget.builder(Text.translatable("screen.ultracraft.travel.close"), b -> client.setScreen(parent))
+		levelButtons.add(ButtonWidget.builder(Text.translatable("screen.ultracraft.travel.close"), b -> client.setScreen(parent))
 							.dimensions(width / 2 - 50, height - 32, 100, 20).build());
 		levelButtons = new ArrayList<>();
 		listHeight = 32;
 		LevelManager.getAllCustomLevels().forEach((id, data) -> {
-			LevelButton b = new LevelButton(width / 2, listHeight, data, this::enterLevel);
+			LevelButton b = new LevelButton(width / 2, listHeight, data, this::selectLevel);
 			levelButtons.add(b);
 			maxScroll = listHeight - 32;
 			listHeight += b.getHeight() + 8;
@@ -52,13 +53,15 @@ public class CustomLevelSelectScreen extends AbstractTravelScreen
 			super.render(context, mouseX, mouseY, delta);
 			return;
 		}
-		context.drawCenteredTextWithShadow(textRenderer, Text.translatable("screen.ultracraft.travel.custom"), width / 2, 16, 0xffffffff);
 		super.render(context, mouseX, mouseY, delta);
+		if(selectedLevel != null)
+			return;
+		context.drawCenteredTextWithShadow(textRenderer, Text.translatable("screen.ultracraft.travel.custom"), width / 2, 16, 0xffffffff);
 		MatrixStack matrices = context.getMatrices();
 		curListoffset = MathHelper.lerp(delta, curListoffset, targetListOffset);
 		matrices.push();
 		matrices.translate(0, curListoffset, -10);
-		for (LevelButton button : levelButtons)
+		for (ClickableWidget button : levelButtons)
 		{
 			int y = (int)(button.getY() + curListoffset);
 			button.setAlpha(Math.min((y - 12) / 20f, 1f) - MathHelper.clamp(Math.max(y - height + 125, 0) / 20f, 0f, 1f));
@@ -80,8 +83,8 @@ public class CustomLevelSelectScreen extends AbstractTravelScreen
 		boolean b = super.mouseClicked(mouseX, mouseY, button);
 		if(b)
 			return true;
-		for (LevelButton lb : levelButtons)
-			if(lb.mouseClicked(mouseX, mouseY - curListoffset, button))
+		for (ClickableWidget i : levelButtons)
+			if(i.mouseClicked(mouseX, mouseY - curListoffset, button))
 				return true;
 		return false;
 	}
