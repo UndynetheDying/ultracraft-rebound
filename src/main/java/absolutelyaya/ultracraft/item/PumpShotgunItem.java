@@ -131,6 +131,7 @@ public class PumpShotgunItem extends AbstractShotgunItem
 	public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected)
 	{
 		super.inventoryTick(stack, world, entity, slot, selected);
+		selected = isMainHandstack(stack, entity);
 		if(!selected && stack.hasNbt() && stack.getNbt().contains("charge"))
 			stack.getNbt().remove("charge");
 		else if(stack.hasNbt() && getNbt(stack, "charge") == 3 && entity.age % 6 == 4)

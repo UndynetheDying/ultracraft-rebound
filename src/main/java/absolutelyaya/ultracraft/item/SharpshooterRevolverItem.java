@@ -75,6 +75,7 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 	@Override
 	public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected)
 	{
+		selected = isMainHandstack(stack, entity);
 		if(world.isClient && (approxUseTime > 5 || isAlternate()))
 		{
 			float f = Math.min((approxUseTime - (isAlternate() ? 0 : 5)) / (isAlternate() ? 5f : 35f), 1f);

@@ -15,7 +15,6 @@
     "MinecartMixin",
     "PlayerEntityMixin",
     "PlayerInteractEntityC2SPacketMixin",
-    "PlayerInventoryMixin",
     "PlayerManagerMixin",
     "ProjectileEntityMixin",
     "ServerEntityHandlerMixin",

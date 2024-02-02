@@ -70,6 +70,13 @@ public abstract class AbstractWeaponItem extends Item
 		Ultracraft.screenshake(user, altRecoil / 135f);
 	}
 	
+	protected boolean isMainHandstack(ItemStack stack, Entity entity)
+	{
+		if(entity instanceof PlayerEntity player)
+			return stack.equals(player.getMainHandStack());
+		return true;
+	}
+	
 	@Override
 	public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected)
 	{
