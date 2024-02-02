@@ -9,7 +9,6 @@ import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
 import java.util.UUID;
@@ -18,7 +17,7 @@ import java.util.function.Consumer;
 public class LevelInstanceButton extends ClickableWidget
 {
 	final TextRenderer tRenderer;
-	final ServerPlayerEntity owner;
+	//final ServerPlayerEntity owner;
 	final PlayerListEntry ownerPlayerListEntry;
 	final Consumer<String> action;
 	final String id;
@@ -28,11 +27,11 @@ public class LevelInstanceButton extends ClickableWidget
 		super(x, y, 32, 32, Text.of(""));
 		MinecraftClient client = MinecraftClient.getInstance();
 		this.id = id;
-		this.owner = client.getServer().getPlayerManager().getPlayer(owner);
-		if(this.owner != null)
+		if(client.player.networkHandler.getPlayerUuids().contains(owner))
 		{
-			setMessage(this.owner.getDisplayName());
-			ownerPlayerListEntry = client.player.networkHandler.getPlayerListEntry(this.owner.getUuid());
+			ownerPlayerListEntry = client.player.networkHandler.getPlayerListEntry(owner);
+			Text name = ownerPlayerListEntry.getDisplayName();
+			setMessage(name == null ? Text.of(ownerPlayerListEntry.getProfile().getName()) : name);
 		}
 		else
 		{
