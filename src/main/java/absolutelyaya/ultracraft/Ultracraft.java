@@ -100,7 +100,7 @@ public class Ultracraft implements ModInitializer
             //UseItemCallback.EVENT.register(((player, world, hand) -> UltraDimensions.Instance.onUseItem(player, world, hand)));
         });
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
-            LevelManager.Instance.destroyAllLevels();
+            LevelManager.Instance.destroyAllInstances();
         });
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             Commands.register(dispatcher);

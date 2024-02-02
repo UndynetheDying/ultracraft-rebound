@@ -221,14 +221,10 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	{
 		perfect = true;
 		stopTimer(true);
-		String lastInstance = currentLevelInstance;
+		String lastInstance = currentLevelInstance; //prevents infinite loop when rescuing from null instance
 		currentLevelInstance = instance;
-		if(!provider.getWorld().isClient && instance == null)
-		{
-			LevelManager.Instance.destroyIfEmpty(lastInstance);
-			if(lastInstance != null)
-				LevelManager.Instance.onLeaveLevel((ServerPlayerEntity)provider, lastInstance);
-		}
+		if(!provider.getWorld().isClient && lastInstance != null)
+			LevelManager.Instance.leaveInstance((ServerPlayerEntity)provider, lastInstance);
 		currentLevel = levelId;
 		UltraComponents.WINGED.sync(provider);
 	}

@@ -8,6 +8,7 @@ import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.config.Setting;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
+import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.entity.machine.DestinyBondSwordsmachineEntity;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import com.chocohead.mm.api.ClassTinkerers;
@@ -20,6 +21,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.dimension.v1.FabricDimensions;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.*;
@@ -33,6 +35,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.function.TriFunction;
 
@@ -64,7 +67,10 @@ public class Commands
 				.then(literal("unfreeze").executes(Commands::executeUnfreeze)))
 			.then(literal("debug").requires(source -> source.hasPermissionLevel(2))
 				.then(literal("ricoshot_warn").then(argument("pos", Vec3ArgumentType.vec3()).executes(Commands::executeDebugRicoshotWarn)))
-				.then(literal("screenshake").then(argument("strength", FloatArgumentType.floatArg()).executes(Commands::executeDebugScreenshake))))
+				.then(literal("screenshake").then(argument("strength", FloatArgumentType.floatArg()).executes(Commands::executeDebugScreenshake)))
+				.then(literal("levels").requires(ServerCommandSource::isExecutedByPlayer)
+					.then(literal("instance-everything-several-times").then(literal("confirm").executes(Commands::executeDebugLevelInstancing)).executes(Commands::executeDebugLevelInstancingWarning))
+					.then(literal("destroy-all-instances").executes(Commands::executeDebugLevelDestruction))))
 			.then(literal("progression").requires(source -> source.hasPermissionLevel(2))
 				.then(argument("list", string()).suggests(Commands::progressionListTypeProvider)
 					.then(literal("list").then(argument("target", player()).executes(Commands::executeProgressionList)))
@@ -389,6 +395,31 @@ public class Commands
 		}
 		if(targets.size() > 1)
 			context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.title.success-multiple", type, targets.size()), true);
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int executeDebugLevelInstancingWarning(CommandContext<ServerCommandSource> context)
+	{
+		context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.level-instance.warn"), false);
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int executeDebugLevelInstancing(CommandContext<ServerCommandSource> context)
+	{
+		int levels = LevelManager.levels.size() + LevelManager.customLevels.size();
+		context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.level-instance.start", levels, levels * 8), true);
+		LevelManager.Instance.debugInstanceEverythingALot();
+		FabricDimensions.teleport(context.getSource().getPlayer(), LevelManager.Instance.getWorld(),
+				new TeleportTarget(new Vec3d(0, 64, 0), Vec3d.ZERO, 0f, 0f));
+		context.getSource().getPlayer();
+		context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.level-instance.finish"), true);
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int executeDebugLevelDestruction(CommandContext<ServerCommandSource> context)
+	{
+		LevelManager.Instance.destroyAllInstances();
+		context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.level-instance.destroy"), true);
 		return Command.SINGLE_SUCCESS;
 	}
 }

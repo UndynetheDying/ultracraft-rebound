@@ -110,6 +110,9 @@
 - Added Command to trigger large and box titles `/ultracraft title`
 - Added `/edit` to perform most edit mode interactions
 - Added `level` list to progression command; this list is effective globally//server-wide!
+- Added Debug Commands for level instancing//destruction level instances
+  - DO NOT USE THESE!!!
+  - I mean, you could if you want to, but they are very likely to crash servers.
 ## Tweaks
 - Buffed overpump damage towards others (10 Dmg -> 15 Dmg)
 - Hitscans don't cause Thorn Damage from Guardians anymore

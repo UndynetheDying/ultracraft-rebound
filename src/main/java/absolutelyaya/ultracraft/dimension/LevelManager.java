@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.block.mapping.AbstractMappingBlockEntity;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.registry.BlockRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
@@ -31,10 +32,13 @@ import net.minecraft.structure.StructureTemplateManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.*;
 import net.minecraft.util.profiler.Profiler;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -53,10 +57,10 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 	ServerWorld world;
 	public static Map<Identifier, LevelData> levels = new HashMap<>();
 	public static Map<Identifier, LevelData> customLevels = new HashMap<>();
-	static final Map<Identifier, HashMap<String, LevelInstance>> instances = new HashMap<>();
-	static final Map<Identifier, BlockBox> levelBounds = new HashMap<>();
+	
+	static final Map<Identifier, LevelInstancePool> instances = new HashMap<>();
 	static final Map<String, Identifier> levelIdForInstanceId = new HashMap<>();
-	static BlockPos nextLevelPos = new BlockPos(0, 0, 0); //TODO make it so that positions are picked based on level type and instances of each
+	static int nextLevelBaseX = 0;
 	
 	public LevelManager()
 	{
@@ -87,8 +91,8 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 	@Override
 	protected void apply(Map<Identifier, JsonElement> prepared, ResourceManager manager, Profiler profiler)
 	{
-		destroyAllLevels();
-		nextLevelPos = new BlockPos(0, 0, 0);
+		destroyAllInstances();
+		nextLevelBaseX = 0;
 		ImmutableMap.Builder<Identifier, LevelData> builtinBuilder = ImmutableMap.builder();
 		ImmutableMap.Builder<Identifier, LevelData> customBuilder = ImmutableMap.builder();
 		prepared.forEach((id, element) -> {
@@ -151,10 +155,10 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 		Identifier level = levelIdForInstanceId.get(id);
 		if(level == null)
 			return null;
-		Map<String, LevelInstance> instanceMap = instances.get(level);
+		LevelInstancePool pool = instances.get(level);
 		if(level == null)
 			return null;
-		return instanceMap.get(id);
+		return pool.get(id);
 	}
 	
 	public void removeInstance(String id)
@@ -220,7 +224,8 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 	
 	public Pair<String, LevelInstance> instantiateLevel(Identifier levelId)
 	{
-		return instantiateLevel(levelId, nextLevelPos);
+		LevelInstancePool pool = instances.get(levelId);
+		return instantiateLevel(levelId, pool == null ? new BlockPos(nextLevelBaseX, 0, 0) : pool.getFirstFreePos());
 	}
 	
 	public Pair<String, LevelInstance> instantiateLevel(Identifier levelId, BlockPos pos)
@@ -238,8 +243,7 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 			return null;
 		}
 		StructureTemplateManager templateManager = world.getStructureTemplateManager();
-		Ultracraft.LOGGER.info("Placing Level Structure " + structure + " at " + nextLevelPos);
-		HashMap<String, LevelInstance> pool = instances.computeIfAbsent(levelId, k -> new HashMap<>());
+		Ultracraft.LOGGER.info("Placing Level Structure " + structure + " at " + pos);
 		AtomicReference<Pair<String, LevelInstance>> inst = new AtomicReference<>();
 		templateManager.getTemplate(structure)
 				.ifPresent(i -> {
@@ -255,11 +259,13 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 						if(!(e instanceof PlayerEntity))
 							e.remove(Entity.RemovalReason.DISCARDED);
 					});
-					if(pos.equals(nextLevelPos))
-						nextLevelPos = pos.add(box.getBlockCountX() + 128, 0, 0);
-					LevelInstance newInstance = new LevelInstance(pos);
-					levelBounds.put(levelId, box);
-					String newId = levelId.toString() + "_" + pool.size();
+					LevelInstancePool pool = instances.computeIfAbsent(levelId, k -> {
+						nextLevelBaseX += box.getBlockCountX() + 128;
+						return new LevelInstancePool(pos, box);
+					});
+					int idx = pool.getFirstFreeIndex();
+					LevelInstance newInstance = new LevelInstance(pos, idx);
+					String newId = levelId.toString() + "_" + idx;
 					levelIdForInstanceId.put(newId, levelId);
 					inst.set(new Pair<>(newId, newInstance));
 					pool.put(newId, newInstance);
@@ -271,47 +277,41 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 		return inst.get();
 	}
 	
-	public void destroyAllLevels()
+	public void destroyAllInstances()
 	{
-		for (HashMap<String, LevelInstance> instances : instances.values())
-			for (String id : new ArrayList<>(instances.keySet()))
+		for (LevelInstancePool pool : instances.values())
+			for (String id : new ArrayList<>(pool.instances.keySet()))
 				destroyInstance(id);
 		instances.clear();
-		levelBounds.clear();
 		levelIdForInstanceId.clear();
+		nextLevelBaseX = 0;
 	}
 	
-	public boolean destroyIfEmpty(String id)
+	public void destroyIfEmpty(@Nullable PlayerEntity except, String id)
 	{
-		if(!isLevelEmpty(null, id))
-			return false;
+		if(!isLevelEmpty(except, id))
+			return;
 		removeInstance(id);
-		return true;
 	}
 	
-	public boolean destroyInstance(String id)
+	public void destroyInstance(String id)
 	{
-		return destroyInstance(id, false);
+		destroyInstance(id, false);
 	}
 	
-	public boolean destroyInstance(String instanceId, boolean reload)
+	public void destroyInstance(String instanceId, boolean reload)
 	{
 		Identifier levelId = levelIdForInstanceId.get(instanceId);
 		if(levelId == null)
-			return true; //no levels of this type instantiated at all, no destruction necessary
-		instances.get(levelId);
-		if(levelId == null)
-			return true; //level not instantiated, no destruction necessary
-		LevelInstance instance = instances.get(levelId).get(instanceId);
+			return; //no levels of this type instantiated at all, no destruction necessary
+		LevelInstancePool pool = instances.get(levelId);
+		if(pool == null)
+			return; //level type not instantiated at all, no destruction necessary
+		LevelInstance instance = pool.get(instanceId);
 		if(instance == null)
 		{
 			Ultracraft.LOGGER.warn("Level Structure " + instanceId + " destruction failed; level instance not found!");
-			return false;
-		}
-		if(!levelBounds.containsKey(levelId))
-		{
-			Ultracraft.LOGGER.warn("Level Structure " + instanceId + " destruction failed; level bounds not found!");
-			return false;
+			return;
 		}
 		if(!reload)
 		{
@@ -320,7 +320,7 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 		}
 		Ultracraft.LOGGER.info("Destroying Level Instance " + instanceId);
 		BlockPos pos = instance.pos;
-		BlockBox box = levelBounds.get(levelId);
+		BlockBox box = pool.bounds;
 		Iterable<BlockPos> blocks = BlockPos.iterate(pos, pos.add(box.getBlockCountX(), box.getBlockCountY(), box.getBlockCountZ()));
 		blocks.forEach(block -> {
 			world.setBlockState(block, Blocks.AIR.getDefaultState());
@@ -333,7 +333,6 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 		});
 		instances.get(levelId).remove(instanceId);
 		Ultracraft.LOGGER.info("Finished Destroying Level Instance " + instanceId);
-		return true;
 	}
 	
 	public void rescueIfNecessary(ServerPlayerEntity player)
@@ -352,31 +351,41 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 		winged.enterLevel(null, null);
 	}
 	
-	public LevelInstance reloadInstance(String id)
+	public void reloadInstance(String id)
 	{
 		Ultracraft.LOGGER.info("Re-Placing Level Instance " + id);
 		LevelInstance old = getInstance(id);
 		if(old == null)
 		{
 			Ultracraft.LOGGER.info("Tried reloading a level instance that didn't exist: (" + id + ")");
-			return null;
+			return;
 		}
 		Pair<String, LevelInstance> newInstance = instantiateLevel(levelIdForInstanceId.get(id));
-		old.players.forEach(p -> onJoinLevel(p, newInstance.getLeft()));
-		destroyInstance(id);
-		return newInstance.getRight();
+		old.players.forEach(p -> joinInstance(p, newInstance.getLeft()));
 	}
 	
-	public void onJoinLevel(ServerPlayerEntity player, String id)
+	public void joinInstance(ServerPlayerEntity player, String id)
 	{
 		LevelInstance instance = getInstance(id);
 		if(instance == null)
 			rescue(player, RescueReason.INSTANCE_NULL);
-		instance.players.add(player);
-		UltraComponents.WINGED.get(player).enterLevel(levelIdForInstanceId.get(id), id);
+		if(!instance.players.contains(player))
+			instance.players.add(player);
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
+		//teleport player
+		ServerWorld world = getWorld().getServer().getWorld(LevelManager.WORLD_KEY);
+		BlockPos spawnPos = LevelManager.getSpawnPos(id);
+		FabricDimensions.teleport(player, world, new TeleportTarget(spawnPos.toCenterPos(), Vec3d.ZERO,
+				LevelManager.getLevelData(levelIdForInstanceId.get(id)).getSpawnRot(), 0f));
+		BlockHitResult groundScan = player.getWorld().raycast(new RaycastContext(player.getPos(), player.getPos().subtract(0, 32, 0),
+				RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
+		if(groundScan.getType().equals(HitResult.Type.MISS))
+			player.getWorld().setBlockState(player.getBlockPos().down(), BlockRegistry.PORTAL.getDefaultState());
+		
+		winged.enterLevel(levelIdForInstanceId.get(id), id);
 	}
 	
-	public void onLeaveLevel(ServerPlayerEntity player, String id)
+	public void leaveInstance(ServerPlayerEntity player, String id)
 	{
 		LevelInstance instance = getInstance(id);
 		if(instance == null)
@@ -385,17 +394,7 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 			return;
 		}
 		instance.players.remove(player);
-		if(instance.players.isEmpty())
-			removeInstance(id);
-	}
-	
-	public Pair<String, LevelInstance> ReloadIfEmpty(PlayerEntity except, String id)
-	{
-		Identifier level = levelIdForInstanceId.get(id);
-		if(level != null && instances.containsKey(level))
-			if(isLevelEmpty(except, id))
-				return new Pair<>(id, reloadInstance(id));
-		return instantiateLevel(level);
+		destroyIfEmpty(player, id);
 	}
 	
 	boolean isLevelEmpty(@Nullable PlayerEntity except, String id)
@@ -451,15 +450,82 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 	
 	}
 	
-	public static class LevelInstance
+	public void debugInstanceEverythingALot()
+	{
+		List<Identifier> allLevels = new ArrayList<>(levels.keySet());
+		allLevels.addAll(customLevels.keySet());
+		int total = allLevels.size() * 8, done = 0;
+		for (Identifier id : allLevels)
+		{
+			for (int i = 0; i < 8; i++)
+			{
+				instantiateLevel(id);
+				done++;
+				for (PlayerEntity player : world.getServer().getPlayerManager().getPlayerList())
+					player.sendMessage(Text.translatable("command.ultracraft.debug.level-instance.progress", i, id, done, total));
+			}
+		}
+	}
+	
+	public boolean isInstanceExistant(String instanceId)
+	{
+		return levelIdForInstanceId.containsKey(instanceId);
+	}
+	
+	public static class LevelInstancePool
+	{
+		static final int separation = 128;
+		public final HashMap<String, LevelInstance> instances = new HashMap<>();
+		public final BlockPos basePos;
+		public final BlockBox bounds;
+		
+		public LevelInstancePool(BlockPos basePos, BlockBox bounds)
+		{
+			this.basePos = basePos;
+			this.bounds = bounds;
+		}
+		
+		int getFirstFreeIndex()
+		{
+			List<LevelInstance> instance =  instances.values().stream().sorted().toList();
+			for (int i = 0; i < instances.size(); i++)
+				if(instance.get(i).index != i)
+					return i;
+			return instance.size();
+		}
+		
+		BlockPos getFirstFreePos()
+		{
+			return basePos.add(0, 0, getFirstFreeIndex() * (bounds.getBlockCountZ() + separation));
+		}
+		
+		public LevelInstance get(String id)
+		{
+			return instances.get(id);
+		}
+		
+		public LevelInstance remove(String id)
+		{
+			return instances.remove(id);
+		}
+		
+		public LevelInstance put(String id, LevelInstance instance)
+		{
+			return instances.put(id, instance);
+		}
+	}
+	
+	public static class LevelInstance implements Comparable<LevelInstance>
 	{
 		public final List<ServerPlayerEntity> players = new ArrayList<>();
 		public final BlockPos pos;
+		public final int index;
 		public ServerPlayerEntity owner;
 		
-		public LevelInstance(BlockPos pos)
+		public LevelInstance(BlockPos pos, int index)
 		{
 			this.pos = pos;
+			this.index = index;
 		}
 		
 		public ServerPlayerEntity getOwner()
@@ -477,6 +543,12 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 		{
 			if(!players.contains(player))
 				players.add(player);
+		}
+		
+		@Override
+		public int compareTo(@NotNull LevelManager.LevelInstance o)
+		{
+			return index - o.index;
 		}
 	}
 	
