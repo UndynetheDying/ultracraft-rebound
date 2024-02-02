@@ -129,6 +129,16 @@ public abstract class AbstractTravelScreen extends Screen
 	protected void selectLevel(Identifier id)
 	{
 		selectedLevel = id;
+		if(Screen.hasShiftDown())
+		{
+			enterInstance("");
+			return;
+		}
+		else if(Screen.hasAltDown())
+		{
+			enterInstance("private");
+			return;
+		}
 		instanceButtons = initInstanceButtons();
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeIdentifier(id);
