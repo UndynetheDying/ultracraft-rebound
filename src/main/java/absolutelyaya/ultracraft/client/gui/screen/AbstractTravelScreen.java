@@ -34,6 +34,7 @@ public abstract class AbstractTravelScreen extends Screen
 	public static final TitleBGRenderer BG = new TitleBGRenderer(new CubeMapRenderer(new Identifier(Ultracraft.MOD_ID, "aaa")));
 	protected float openAnimTime, closeAnimTime;
 	protected boolean shouldClose, awaitingFeedback;
+	protected long waitingSince;
 	protected Layer curLayer, selectedLayer;
 	protected Identifier selectedLevel;
 	Map<String, UUID> instanceMap = new HashMap<>();
@@ -65,6 +66,11 @@ public abstract class AbstractTravelScreen extends Screen
 	{
 		if(!awaitingFeedback)
 			super.render(context, mouseX, mouseY, delta);
+		else if(shouldCloseOnEsc())
+		{
+			Text t = Text.translatable("screen.ultracraft.travel.waiting-long");
+			context.drawText(textRenderer, t, (width - textRenderer.getWidth(t)) / 2, 64, 0xffffffff, true);
+		}
 		BG.setYOffset(-(1f - openAnimTime) * 5f + closeAnimTime * 5f);
 		BG.render(delta, 1f);
 		
@@ -82,6 +88,12 @@ public abstract class AbstractTravelScreen extends Screen
 		
 		if(selectedLevel != null && !awaitingFeedback)
 			renderInstanceSelection(context, mouseX, mouseY, delta);
+	}
+	
+	@Override
+	public boolean shouldCloseOnEsc()
+	{
+		return awaitingFeedback && (System.currentTimeMillis() - waitingSince > 10 * 1000);
 	}
 	
 	void renderInstanceSelection(DrawContext context, int mouseX, int mouseY, float delta)
@@ -106,6 +118,7 @@ public abstract class AbstractTravelScreen extends Screen
 			return;
 		}
 		awaitingFeedback = true;
+		waitingSince = System.currentTimeMillis();
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeInt(layer.ordinal());
 		ClientPlayNetworking.send(PacketRegistry.TRAVEL_PACKET_ID, buf);
@@ -128,6 +141,7 @@ public abstract class AbstractTravelScreen extends Screen
 	protected void enterInstance(String instance)
 	{
 		awaitingFeedback = true;
+		waitingSince = System.currentTimeMillis();
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeIdentifier(selectedLevel);
 		buf.writeString(instance == null ? "" : instance);

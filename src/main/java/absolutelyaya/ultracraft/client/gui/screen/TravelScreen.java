@@ -156,12 +156,6 @@ public class TravelScreen extends AbstractTravelScreen
 	}
 	
 	@Override
-	public boolean shouldCloseOnEsc()
-	{
-		return false;
-	}
-	
-	@Override
 	protected void selectLayer(int layer)
 	{
 		super.selectLayer(layer);

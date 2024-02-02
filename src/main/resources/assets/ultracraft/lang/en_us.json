@@ -530,6 +530,7 @@
   "screen.ultracraft.travel.back": "Back",
   "screen.ultracraft.travel.custom": "Custom Levels",
   "screen.ultracraft.travel.waiting": "Waiting for Server...",
+  "screen.ultracraft.travel.waiting-long": "This has been taking a while... You can now Press ESC to close this Screen.",
   "screen.ultracraft.travel.instance.title": "Instances of '%s'",
   "screen.ultracraft.travel.instance.empty": "No open Instances found",
   "screen.ultracraft.travel.instance.new": "New Instance",
