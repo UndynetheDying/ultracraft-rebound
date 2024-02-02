@@ -76,4 +76,6 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	boolean isPerfect();
 	
 	long getBestTime(Identifier id);
+	
+	int getLastPlayedLevelVersion(Identifier levelId);
 }

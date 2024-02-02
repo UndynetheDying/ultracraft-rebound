@@ -22,6 +22,7 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec2f;
 import org.joml.Vector4f;
 
@@ -32,13 +33,15 @@ import java.util.function.Consumer;
 
 public class LevelButton extends ClickableWidget
 {
+	static final Identifier UPDATE_MARKER_TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/particle/shock.png");
 	static final TextRenderer tRenderer;
 	public final Identifier preview, destination;
 	final Text description, author;
 	final String authorLink, parTime;
 	final Consumer<Identifier> action;
+	final int version;
 	boolean isUnlocked, isUnimplemented, isHidden;
-	float hoverAnim;
+	float hoverAnim, animTime;
 	
 	public LevelButton(int x, int y, LevelData data, Consumer<Identifier> action)
 	{
@@ -68,6 +71,7 @@ public class LevelButton extends ClickableWidget
 		parTime = data.getParTimeString();
 		isHidden = data.isHidden();
 		isUnimplemented = data.isUnimplemented();
+		version = data.getVersion();
 		this.action = action;
 		PlayerEntity player = MinecraftClient.getInstance().player;
 		if(player == null)
@@ -89,6 +93,7 @@ public class LevelButton extends ClickableWidget
 		authorLink = parTime = "";
 		this.preview = preview;
 		this.destination = destination;
+		version = -1;
 		this.action = action;
 		PlayerEntity player = MinecraftClient.getInstance().player;
 		if(player == null)
@@ -120,6 +125,9 @@ public class LevelButton extends ClickableWidget
 			renderUnimplemented(context);
 			return;
 		}
+		MinecraftClient client = MinecraftClient.getInstance();
+		animTime += delta / 10f;
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(client.player);
 		RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
 		MatrixStack matrices = context.getMatrices();
 		matrices.push();
@@ -128,9 +136,19 @@ public class LevelButton extends ClickableWidget
 		hoverAnim = MathHelper.lerp(delta / 5f, hoverAnim, isHovered() && isUnlocked && alpha > 0.5 ? 1f : 0f);
 		if(isHovered() && isUnlocked && alpha > 0.5)
 			context.drawBorder(-1, -1, width + 2, height + 2, 0xffffffff);
+		//update marker
+		if(isUnlocked && winged.getLastPlayedLevelVersion(destination) < version)
+		{
+			matrices.push();
+			matrices.translate(width, 0, 0);
+			matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(25f * (float)Math.sin(animTime)));
+			matrices.scale(1.25f, 1.25f, 1f);
+			context.setShaderColor(1f, 1f, 1f, 1f);
+			context.drawTexture(UPDATE_MARKER_TEXTURE, -6, -6, 0, 0, 13, 13, 13, 13);
+			matrices.pop();
+		}
 		if(hoverAnim > 0f)
 		{
-			IWingedPlayerComponent winged = UltraComponents.WINGED.get(MinecraftClient.getInstance().player);
 			RenderSystem.setShaderColor(1f, 1f, 1f, (hoverAnim - 0.5f) * 2f);
 			matrices.push();
 			matrices.translate(0f, 0f, Math.max(hoverAnim * 10f - 7.5f, 0f));

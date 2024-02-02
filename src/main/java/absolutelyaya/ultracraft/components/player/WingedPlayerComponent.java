@@ -32,6 +32,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 {
 	PlayerEntity provider;
 	HashMap<Identifier, Long> bestTimes = new HashMap<>();
+	HashMap<Identifier, Integer> lastPlayedVersion = new HashMap<>();
 	GunCooldownManager gunCDM;
 	boolean primaryFiring, justPlayedBloodhealNoise;
 	byte wingState, lastState;
@@ -226,6 +227,8 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 		if(!provider.getWorld().isClient && lastInstance != null)
 			LevelManager.Instance.leaveInstance((ServerPlayerEntity)provider, lastInstance);
 		currentLevel = levelId;
+		if(levelId != null)
+			lastPlayedVersion.put(levelId, LevelManager.getLevelData(levelId).getVersion());
 		UltraComponents.WINGED.sync(provider);
 	}
 	
@@ -318,6 +321,12 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	}
 	
 	@Override
+	public int getLastPlayedLevelVersion(Identifier id)
+	{
+		return lastPlayedVersion.getOrDefault(id, -1);
+	}
+	
+	@Override
 	public void readFromNbt(NbtCompound tag)
 	{
 		if(tag.contains("level", NbtElement.STRING_TYPE))
@@ -333,6 +342,12 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			NbtCompound records = tag.getCompound("records");
 			for(String key : records.getKeys())
 				bestTimes.put(Identifier.tryParse(key), records.getLong(key));
+		}
+		if(tag.contains("versions", NbtElement.COMPOUND_TYPE))
+		{
+			NbtCompound versions = tag.getCompound("versions");
+			for(String key : versions.getKeys())
+				lastPlayedVersion.put(Identifier.tryParse(key), versions.getInt(key));
 		}
 	}
 	
@@ -352,6 +367,13 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			for (Map.Entry<Identifier, Long> e : bestTimes.entrySet())
 				records.putLong(e.getKey().toString(), e.getValue());
 			tag.put("records", records);
+		}
+		if(lastPlayedVersion.size() > 0)
+		{
+			NbtCompound records = new NbtCompound();
+			for (Map.Entry<Identifier, Integer> e : lastPlayedVersion.entrySet())
+				records.putInt(e.getKey().toString(), e.getValue());
+			tag.put("versions", records);
 		}
 	}
 	
