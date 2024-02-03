@@ -126,7 +126,7 @@ public class LevelButton extends ClickableWidget
 			return;
 		}
 		MinecraftClient client = MinecraftClient.getInstance();
-		animTime += delta / 10f;
+		animTime += delta / 5f;
 		IWingedPlayerComponent winged = UltraComponents.WINGED.get(client.player);
 		RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
 		MatrixStack matrices = context.getMatrices();

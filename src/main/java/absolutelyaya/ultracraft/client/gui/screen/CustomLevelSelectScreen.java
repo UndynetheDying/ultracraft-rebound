@@ -32,9 +32,9 @@ public class CustomLevelSelectScreen extends AbstractTravelScreen
 	protected void init()
 	{
 		super.init();
+		levelButtons = new ArrayList<>();
 		levelButtons.add(ButtonWidget.builder(Text.translatable("screen.ultracraft.travel.close"), b -> client.setScreen(parent))
 							.dimensions(width / 2 - 50, height - 32, 100, 20).build());
-		levelButtons = new ArrayList<>();
 		listHeight = 32;
 		LevelManager.getAllCustomLevels().forEach((id, data) -> {
 			LevelButton b = new LevelButton(width / 2, listHeight, data, this::selectLevel);
@@ -64,7 +64,8 @@ public class CustomLevelSelectScreen extends AbstractTravelScreen
 		for (ClickableWidget button : levelButtons)
 		{
 			int y = (int)(button.getY() + curListoffset);
-			button.setAlpha(Math.min((y - 12) / 20f, 1f) - MathHelper.clamp(Math.max(y - height + 125, 0) / 20f, 0f, 1f));
+			if(button instanceof LevelButton)
+				button.setAlpha(Math.min((y - 12) / 20f, 1f) - MathHelper.clamp(Math.max(y - height + 125, 0) / 20f, 0f, 1f));
 			button.render(context, mouseX, mouseY - (int)curListoffset, delta);
 		}
 		matrices.pop();
