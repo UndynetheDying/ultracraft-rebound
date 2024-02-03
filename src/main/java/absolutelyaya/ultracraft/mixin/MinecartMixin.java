@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.mixin;
 
 import absolutelyaya.ultracraft.accessor.MinecartAccessor;
 import absolutelyaya.ultracraft.damage.DamageSources;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -13,7 +14,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractMinecartEntity.class)
 public abstract class MinecartMixin extends Entity implements MinecartAccessor
@@ -34,7 +34,7 @@ public abstract class MinecartMixin extends Entity implements MinecartAccessor
 		if(parrier != null && cooldown == 0)
 		{
 			Vec3d vel = getVelocity();
-			getWorld().getOtherEntities(this, getBoundingBox().expand(vel.x, vel.y, vel.z), i -> i instanceof LivingEntity).forEach(i -> {
+			getWorld().getOtherEntities(this, getBoundingBox().expand(vel.x, vel.y, vel.z).offset(vel), i -> i instanceof LivingEntity).forEach(i -> {
 				i.setVelocity(getVelocity().multiply(0.75f).add(0f, 0.5f, 0f));
 				i.damage(DamageSources.get(getWorld(), DamageSources.MINECART, this, parrier), (float)(getVelocity().horizontalLength() * 3f));
 				setVelocity(getVelocity().multiply(0.8f));
@@ -45,18 +45,20 @@ public abstract class MinecartMixin extends Entity implements MinecartAccessor
 			cooldown--;
 	}
 	
-	@Inject(method = "isPushable", at = @At("HEAD"), cancellable = true)
-	void onIsPushable(CallbackInfoReturnable<Boolean> cir)
+	@ModifyReturnValue(method = "isPushable", at = @At("RETURN"))
+	boolean onIsPushable(boolean original)
 	{
 		if(parrier != null)
-			cir.setReturnValue(false);
+			return false;
+		return original;
 	}
 	
-	@Inject(method = "getMaxSpeed", at = @At("HEAD"), cancellable = true)
-	void onGetMaxSpeed(CallbackInfoReturnable<Double> cir)
+	@ModifyReturnValue(method = "getMaxSpeed", at = @At("RETURN"))
+	double onGetMaxSpeed(double original)
 	{
 		if(parrier != null)
-			cir.setReturnValue(2.5);
+			return 2.5;
+		return original;
 	}
 	
 	@Override

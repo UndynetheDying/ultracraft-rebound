@@ -12,6 +12,7 @@ import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.entity.other.StainedGlassWindow;
 import absolutelyaya.ultracraft.entity.projectile.ShotgunPelletEntity;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;
@@ -122,11 +123,10 @@ public abstract class ProjectileEntityMixin extends Entity implements Projectile
 			ci.cancel();
 	}
 	
-	@Inject(method = "canHit", at = @At("HEAD"), cancellable = true)
-	void onCanHit(Entity entity, CallbackInfoReturnable<Boolean> cir)
+	@ModifyReturnValue(method = "canHit", at = @At("RETURN"))
+	boolean onCanHit(boolean original, Entity entity)
 	{
-		if(this.equals(entity))
-			cir.setReturnValue(false); //A projectile cannot hit itself after all
+		return original && !this.equals(entity); //A projectile cannot hit itself after all
 	}
 	
 	@Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))

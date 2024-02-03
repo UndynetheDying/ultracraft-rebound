@@ -1,6 +1,8 @@
 package absolutelyaya.ultracraft.mixin.client.render;
 
 import absolutelyaya.ultracraft.item.SwordsmachinePlushieItem;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
@@ -24,13 +26,10 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(HeldItemFeatureRenderer.class)
 public abstract class HeldItemFeatureRendererMixin<T extends LivingEntity, M extends EntityModel<T> & ModelWithArms> extends FeatureRenderer<T, M>
 {
-	@Shadow protected abstract void renderItem(LivingEntity entity, ItemStack stack, ModelTransformationMode transformationMode, Arm arm, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light);
-	
 	@Shadow @Final private HeldItemRenderer heldItemRenderer;
 	
 	public HeldItemFeatureRendererMixin(FeatureRendererContext<T, M> context)
@@ -38,8 +37,8 @@ public abstract class HeldItemFeatureRendererMixin<T extends LivingEntity, M ext
 		super(context);
 	}
 	
-	@Redirect(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/feature/HeldItemFeatureRenderer;renderItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/render/model/json/ModelTransformationMode;Lnet/minecraft/util/Arm;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V"))
-	void onRender(HeldItemFeatureRenderer<T, M> instance, LivingEntity entity, ItemStack stack, ModelTransformationMode transformationMode, Arm arm, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light)
+	@WrapOperation(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/feature/HeldItemFeatureRenderer;renderItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/render/model/json/ModelTransformationMode;Lnet/minecraft/util/Arm;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V"))
+	void applyPlushieHugOffset(HeldItemFeatureRenderer<T, M> instance, LivingEntity entity, ItemStack stack, ModelTransformationMode transformationMode, Arm arm, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, Operation<Void> original)
 	{
 		if((!entity.getMainArm().equals(arm) && stack.getItem() instanceof SwordsmachinePlushieItem &&
 				   !(entity.getMainArm().equals(Arm.LEFT) && !entity.getStackInHand(Hand.MAIN_HAND).isEmpty())) &&
@@ -57,11 +56,13 @@ public abstract class HeldItemFeatureRendererMixin<T extends LivingEntity, M ext
 			matrices.pop();
 		}
 		else
-			renderItem(entity, stack, transformationMode, arm, matrices, vertexConsumers, light);
+			original.call(instance, entity, stack, transformationMode, arm, matrices, vertexConsumers, light);
 	}
 	
-	protected void renderItem(LivingEntity entity, ItemStack stack, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
-		if (!stack.isEmpty()) {
+	protected void renderItem(LivingEntity entity, ItemStack stack, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light)
+	{
+		if (!stack.isEmpty())
+		{
 			matrices.push();
 			matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-90.0F));
 			matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-90.0F));

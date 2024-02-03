@@ -2,11 +2,10 @@ package absolutelyaya.ultracraft.mixin.client.render;
 
 import absolutelyaya.ultracraft.client.RenderLayers;
 import absolutelyaya.ultracraft.client.UltracraftClient;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.client.render.RenderLayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,13 +13,13 @@ import java.util.List;
 @Mixin(RenderLayer.class)
 public abstract class RenderLayerMixin
 {
-	@Inject(method = "getBlockLayers", at = @At("RETURN"), cancellable = true)
-	private static void onGetBlockLayers(CallbackInfoReturnable<List<RenderLayer>> cir)
+	@ModifyReturnValue(method = "getBlockLayers", at = @At("RETURN"))
+	private static List<RenderLayer> onGetBlockLayers(List<RenderLayer> original)
 	{
 		if(UltracraftClient.SODIUM)
-			return;
-		List<RenderLayer> layers = new ArrayList<>(cir.getReturnValue());
+			return original;
+		List<RenderLayer> layers = new ArrayList<>(original);
 		layers.add(RenderLayers.getFlesh());
-		cir.setReturnValue(layers);
+		return layers;
 	}
 }

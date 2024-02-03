@@ -17,6 +17,10 @@ import absolutelyaya.ultracraft.registry.*;
 import com.chocohead.mm.api.ClassTinkerers;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.block.FluidBlock;
 import net.minecraft.entity.*;
 import net.minecraft.entity.attribute.EntityAttribute;
@@ -103,8 +107,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 		dataTracker.startTracking(SLAMMING, false);
 	}
 	
-	@Redirect(method = "updatePose", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;setPose(Lnet/minecraft/entity/EntityPose;)V"))
-	void onUpdatePose(PlayerEntity instance, EntityPose entityPose)
+	@WrapOperation(method = "updatePose", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;setPose(Lnet/minecraft/entity/EntityPose;)V"))
+	void onUpdatePose(PlayerEntity instance, EntityPose entityPose, Operation<Void> original)
 	{
 		WingedPlayerEntity winged = ((WingedPlayerEntity)instance);
 		boolean hiVelMode = UltraComponents.WING_DATA.get(winged).isActive();
@@ -116,30 +120,31 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 			else if(isSliding())
 				setPose(ClassTinkerers.getEnum(EntityPose.class, "SLIDE"));
 			else
-				setPose(entityPose);
+				original.call(instance, entityPose);
 		}
 		else
-			setPose(entityPose);
+			original.call(instance, entityPose);
 	}
 	
-	@Inject(method = "getActiveEyeHeight", at = @At("HEAD"), cancellable = true)
-	void onGetActiveEyeHeight(EntityPose pose, EntityDimensions dimensions, CallbackInfoReturnable<Float> cir)
+	@ModifyReturnValue(method = "getActiveEyeHeight", at = @At("RETURN"))
+	float onGetActiveEyeHeight(float original, @Local EntityPose pose)
 	{
 		if(pose.equals(ClassTinkerers.getEnum(EntityPose.class, "SLIDE")))
-			cir.setReturnValue(0.4f);
+			return 0.4f;
 		else if(pose.equals(ClassTinkerers.getEnum(EntityPose.class, "DASH")))
-			cir.setReturnValue(1.27f);
+			return 1.27f;
+		return original;
 	}
 	
-	@Inject(method = "damage", at = @At("HEAD"), cancellable = true)
-	void onDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir)
+	@ModifyReturnValue(method = "damage", at = @At("RETURN"))
+	boolean onDamage(boolean original, @Local DamageSource source, @Local float amount)
 	{
 		if(UltraComponents.HIVEL.get(this).isDashing() && !source.isIn(DamageTypeTags.UNDODGEABLE))
-			cir.setReturnValue(false);
+			return false;
 		if(isWingsActive() && source.isOf(DamageTypes.FALL) && (!HivelConfig.INSTANCE.fallDamage.getValue() ||
 				   getSteppingBlockState().getBlock() instanceof FluidBlock))
-			cir.setReturnValue(false);
-		if((cir.getReturnValue() == null || cir.getReturnValue()) && amount > 0)
+			return false;
+		if(original && amount > 0)
 		{
 			if(getHealth() - amount <= 0)
 				UltraComponents.STYLE.get(this).resetScore();
@@ -148,6 +153,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 		}
 		if(source.isOf(DamageSources.KNUCKLE_BLAST))
 			disableShield(true);
+		return original;
 	}
 	
 	@Inject(method = "damage", at = @At("TAIL"))
@@ -163,8 +169,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 		UltraComponents.WINGED.get(this).setBloodHealCooldown(4);
 	}
 	
-	@Inject(method="findRespawnPosition", at = @At("HEAD"), cancellable = true)
-	private static void onFindRespawnPosition(ServerWorld world, BlockPos pos, float angle, boolean forced, boolean alive, CallbackInfoReturnable<Optional<Vec3d>> cir)
+	@ModifyReturnValue(method="findRespawnPosition", at = @At("RETURN"))
+	private static Optional<Vec3d> onFindRespawnPosition(Optional<Vec3d> original, @Local ServerWorld world, @Local BlockPos pos)
 	{
 		if(world.getBlockEntity(pos) instanceof CheckpointBlockEntity)
 		{
@@ -173,9 +179,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 			world.spawnEntity(entity);
 			BlockHitResult hit = world.raycast(new RaycastContext(pos.toCenterPos(), pos.add(0, -32, 0).toCenterPos(),
 					RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, entity));
-			cir.setReturnValue(Optional.of(hit.getPos().add(0f, 0.1f, 0f)));
 			entity.remove(RemovalReason.DISCARDED);
+			return(Optional.of(hit.getPos().add(0f, 0.1f, 0f)));
 		}
+		return original;
 	}
 	
 	@Inject(method="dropInventory", at = @At("HEAD"), cancellable = true)
@@ -185,18 +192,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 			ci.cancel();
 	}
 	
-	@Inject(method = "isSwimming", at = @At("HEAD"), cancellable = true)
-	void onIsSwimming(CallbackInfoReturnable<Boolean> cir)
+	@ModifyReturnValue(method = "isSwimming", at = @At("RETURN"))
+	boolean onIsSwimming(boolean original)
 	{
-		if(isWingsActive())
-			cir.setReturnValue(false);
+		return original && !isWingsActive();
 	}
 	
-	@Inject(method = "shouldSwimInFluids", at = @At("HEAD"), cancellable = true)
-	void onShouldSwimInFluids(CallbackInfoReturnable<Boolean> cir)
+	@ModifyReturnValue(method = "shouldSwimInFluids", at = @At("RETURN"))
+	boolean onShouldSwimInFluids(boolean original)
 	{
-		if(isWingsActive() || abilities.flying)
-			cir.setReturnValue(false);
+		return original && !(isWingsActive() || abilities.flying);
 	}
 	
 	@Override
@@ -343,11 +348,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 		}
 	}
 	
-	@Inject(method = "adjustMovementForSneaking", at = @At("HEAD"), cancellable = true)
-	void onAdjustMovementForSneaking(Vec3d movement, MovementType type, CallbackInfoReturnable<Vec3d> cir)
+	@ModifyReturnValue(method = "adjustMovementForSneaking", at = @At("RETURN"))
+	Vec3d onAdjustMovementForSneaking(Vec3d original, @Local Vec3d movement)
 	{
 		if(isWingsActive())
-			cir.setReturnValue(movement);
+			return movement;
+		return original;
 	}
 	
 	@ModifyArg(method = "increaseTravelMotionStats", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;addExhaustion(F)V", ordinal = 3))
@@ -414,19 +420,18 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 		}
 	}
 	
-	@Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/damage/DamageSources;playerAttack(Lnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/entity/damage/DamageSource;"))
-	DamageSource onGetDamageSource(net.minecraft.entity.damage.DamageSources instance, PlayerEntity attacker)
+	@WrapOperation(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/damage/DamageSources;playerAttack(Lnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/entity/damage/DamageSource;"))
+	DamageSource onGetDamageSource(net.minecraft.entity.damage.DamageSources instance, PlayerEntity attacker, Operation<DamageSource> original)
 	{
 		if(attacker.getMainHandStack().getItem() instanceof IOverrideMeleeDamageType weapon)
 			return weapon.getDamageSource(attacker.getWorld(), attacker);
-		return instance.playerAttack(attacker);
+		return original.call(instance, attacker);
 	}
 	
-	@Inject(method = "canBeHitByProjectile", at = @At("HEAD"), cancellable = true)
-	void canBeHitByProjectiles(CallbackInfoReturnable<Boolean> cir)
+	@ModifyReturnValue(method = "canBeHitByProjectile", at = @At("RETURN"))
+	boolean canBeHitByProjectiles(boolean original)
 	{
-		if(parryIFrames > 0)
-			cir.setReturnValue(false);
+		return original && parryIFrames <= 0;
 	}
 	
 	@Override

@@ -17,6 +17,9 @@ import absolutelyaya.ultracraft.registry.KeybindRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.StatusEffectRegistry;
 import absolutelyaya.ultracraft.registry.TagRegistry;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -46,7 +49,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -562,39 +564,39 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		return hit != null && hit.getType().equals(HitResult.Type.BLOCK);
 	}
 	
-	@Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/input/Input;hasForwardMovement()Z"))
-	boolean onTickMovement(Input instance)
+	@WrapOperation(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/input/Input;hasForwardMovement()Z"))
+	boolean onTickMovement(Input instance, Operation<Boolean> original)
 	{
 		IWingDataComponent wings = UltraComponents.WING_DATA.get(this);
 		if(wings.isActive())
 			return true;
-		else
-			return input.hasForwardMovement();
+		return original.call(instance);
 	}
 	
-	@Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;setSprinting(Z)V"))
-	void onTickMovement(ClientPlayerEntity instance, boolean sprinting)
+	@WrapOperation(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;setSprinting(Z)V"))
+	void onTickMovement(ClientPlayerEntity instance, boolean sprinting, Operation<Void> original)
 	{
 		IWingDataComponent wings = UltraComponents.WING_DATA.get(this);
 		//cancel normal sprint triggers when in HiVelMode
 		if(!wings.isActive() || isSpectator() || getAbilities().flying)
-			setSprinting(sprinting);
+			original.call(instance, sprinting);
 	}
 	
-	@Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isUsingItem()Z"))
-	boolean redirectIsUsingItem(ClientPlayerEntity instance)
+	@WrapOperation(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isUsingItem()Z"))
+	boolean redirectIsUsingItem(ClientPlayerEntity instance, Operation<Boolean> original)
 	{
 		if(activeHand != null && getStackInHand(activeHand).getItem() instanceof AbstractWeaponItem)
 			return false;
-		return isUsingItem();
+		return original.call(instance);
 	}
 	
-	@Inject(method = "isSneaking", at = @At("HEAD"), cancellable = true)
-	void onIsSneaking(CallbackInfoReturnable<Boolean> cir)
+	@ModifyReturnValue(method = "isSneaking", at = @At("RETURN"))
+	boolean onIsSneaking(boolean original)
 	{
 		IWingDataComponent wings = UltraComponents.WING_DATA.get(this);
 		if(wings.isActive() && !(isSpectator() || getAbilities().flying))
-			cir.setReturnValue(false);
+			return false;
+		return original;
 	}
 	
 	@Override

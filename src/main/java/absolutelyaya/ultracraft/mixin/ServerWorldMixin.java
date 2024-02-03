@@ -3,6 +3,7 @@ package absolutelyaya.ultracraft.mixin;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.ServerWorldAccessor;
 import absolutelyaya.ultracraft.entity.demon.HideousPart;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.entity.Entity;
@@ -11,7 +12,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerWorld.class)
 public class ServerWorldMixin implements ServerWorldAccessor
@@ -31,10 +31,11 @@ public class ServerWorldMixin implements ServerWorldAccessor
 		return hideousParts;
 	}
 	
-	@Inject(method = "getDragonPart", at = @At("TAIL"), cancellable = true)
-	void onGetDragonPart(int id, CallbackInfoReturnable<Entity> cir)
+	@ModifyReturnValue(method = "getDragonPart", at = @At("RETURN"))
+	Entity onGetDragonPart(Entity original, int id)
 	{
-		if(cir.getReturnValue() == null)
-			cir.setReturnValue(hideousParts.get(id));
+		if(original == null)
+			return hideousParts.get(id);
+		return original;
 	}
 }

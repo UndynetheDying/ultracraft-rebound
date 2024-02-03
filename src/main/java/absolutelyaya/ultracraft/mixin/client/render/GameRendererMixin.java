@@ -5,6 +5,8 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.components.player.IHivelComponent;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.Camera;
@@ -20,7 +22,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin
@@ -64,18 +65,19 @@ public class GameRendererMixin
 		return tickDelta;
 	}
 	
-	@Inject(method = "getFov", at = @At("RETURN"), cancellable = true)
-	void onGetFov(Camera camera, float tickDelta, boolean changingFov, CallbackInfoReturnable<Double> cir)
+	@ModifyReturnValue(method = "getFov", at = @At("RETURN"))
+	double onGetFov(double original, @Local float tickDelta)
 	{
 		if(UltracraftClient.isParryVisualsActive())
 		{
 			lastFovBonus = 5;
-			cir.setReturnValue(cir.getReturnValueD() + 5);
+			return original + 5;
 		}
 		else if(lastFovBonus > 0f)
 		{
 			lastFovBonus = MathHelper.lerp(tickDelta / 4f, lastFovBonus, 0f);
-			cir.setReturnValue(cir.getReturnValueD() + lastFovBonus);
+			return original + lastFovBonus;
 		}
+		return original;
 	}
 }

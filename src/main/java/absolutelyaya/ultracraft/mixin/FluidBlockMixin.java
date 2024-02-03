@@ -3,6 +3,8 @@ package absolutelyaya.ultracraft.mixin;
 import absolutelyaya.ultracraft.registry.BlockRegistry;
 import absolutelyaya.ultracraft.registry.TagRegistry;
 import com.google.common.collect.ImmutableList;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.block.*;
 import net.minecraft.fluid.FlowableFluid;
 import net.minecraft.fluid.FluidState;
@@ -15,12 +17,11 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
+import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(FluidBlock.class)
 public abstract class FluidBlockMixin
@@ -33,26 +34,27 @@ public abstract class FluidBlockMixin
 	
 	@Shadow protected abstract void playExtinguishSound(WorldAccess world, BlockPos pos);
 	
-	@Inject(method = "getCollisionShape", at = @At("HEAD"), cancellable = true)
-	void onCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context, CallbackInfoReturnable<VoxelShape> cir)
+	@ModifyReturnValue(method = "getCollisionShape", at = @At("RETURN"))
+	VoxelShape onCollisionShape(VoxelShape original, @Local BlockState state, @Local BlockView world, @Local BlockPos pos, @Local ShapeContext context)
 	{
 		if(state.getFluidState().isIn(TagRegistry.UNSKIMMABLE_FLUIDS))
-			return;
+			return original;
 		VoxelShape collisionShape = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 14.5, 16.0);
-		cir.setReturnValue(context.isAbove(collisionShape, pos, true) && state.get(LEVEL) == 0 &&
-								   context.canWalkOnFluid(world.getFluidState(pos.up()), state.getFluidState()) ? collisionShape : VoxelShapes.empty());
+		return context.isAbove(collisionShape, pos, true) && state.get(LEVEL) == 0 &&
+					   context.canWalkOnFluid(world.getFluidState(pos.up()), state.getFluidState()) ? collisionShape : VoxelShapes.empty();
 	}
 	
-	@Inject(method = "receiveNeighborFluids", at = @At("HEAD"), cancellable = true)
-	void onReceiveNeighborFluids(World world, BlockPos pos, BlockState state, CallbackInfoReturnable<Boolean> cir)
+	@ModifyReturnValue(method = "receiveNeighborFluids", at = @At("RETURN"))
+	boolean triggerFluidReactions(boolean original, @Local World world, @Local BlockPos pos)
 	{
+		MutableBoolean reaction = new MutableBoolean();
 		FluidState self = world.getFluidState(pos);
 		if(self.isIn(FluidTags.LAVA))
 		{
 			FLOW_DIRECTIONS.forEach(dir -> {
 				BlockPos pos1 = pos.offset(dir);
 				if(world.getFluidState(pos1).isIn(TagRegistry.BLOOD_FLUID))
-					bloodReaction(world, pos1, BlockRegistry.FLESH, cir);
+					bloodReaction(world, pos1, BlockRegistry.FLESH, reaction);
 			});
 		}
 		else if(self.isIn(FluidTags.WATER) && !self.isIn(TagRegistry.BLOOD_FLUID))
@@ -60,7 +62,7 @@ public abstract class FluidBlockMixin
 			FLOW_DIRECTIONS.forEach(dir -> {
 				BlockPos pos1 = pos.offset(dir);
 				if(world.getFluidState(pos1).isIn(TagRegistry.BLOOD_FLUID))
-					bloodReaction(world, pos1, Blocks.NETHERRACK, cir);
+					bloodReaction(world, pos1, Blocks.NETHERRACK, reaction);
 			});
 		}
 		else if (self.isIn(TagRegistry.BLOOD_FLUID))
@@ -68,16 +70,17 @@ public abstract class FluidBlockMixin
 			BlockPos pos1 = pos.down();
 			FluidState fluid = world.getFluidState(pos1);
 			if(fluid.isIn(FluidTags.LAVA))
-				bloodReaction(world, pos1, BlockRegistry.FLESH, cir);
+				bloodReaction(world, pos1, BlockRegistry.FLESH, reaction);
 			else if(fluid.isIn(FluidTags.WATER) && !fluid.isIn(TagRegistry.BLOOD_FLUID))
-				bloodReaction(world, pos1, Blocks.NETHERRACK, cir);
+				bloodReaction(world, pos1, Blocks.NETHERRACK, reaction);
 		}
+		return original && !reaction.booleanValue();
 	}
 	
-	void bloodReaction(World world, BlockPos pos1, Block block, CallbackInfoReturnable<Boolean> cir)
+	void bloodReaction(World world, BlockPos pos1, Block block, MutableBoolean val)
 	{
 		world.setBlockState(pos1, block.getDefaultState());
 		playExtinguishSound(world, pos1);
-		cir.setReturnValue(false);
+		val.setTrue();
 	}
 }

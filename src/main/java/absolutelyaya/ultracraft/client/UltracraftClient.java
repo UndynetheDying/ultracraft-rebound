@@ -439,11 +439,6 @@ public class UltracraftClient implements ClientModInitializer
 		screenblood = 0f;
 	}
 	
-	public static boolean isHandSwapEnabled()
-	{
-		return !ServerConfig.INSTANCE.disableHandswap.getValue();
-	}
-	
 	public static void toggleHiVelEnabled()
 	{
 		PlayerEntity player = MinecraftClient.getInstance().player;

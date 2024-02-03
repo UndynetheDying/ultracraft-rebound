@@ -1,20 +1,19 @@
 package absolutelyaya.ultracraft.mixin;
 
 import absolutelyaya.ultracraft.registry.TagRegistry;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Block.class)
 public class BlockMixin
 {
-	@Inject(method = "cannotConnect", at = @At("HEAD"), cancellable = true)
-	private static void onCannotConnect(BlockState state, CallbackInfoReturnable<Boolean> cir)
+	@ModifyReturnValue(method = "cannotConnect", at = @At("RETURN"))
+	private static boolean onCannotConnect(boolean original, @Local BlockState state)
 	{
-		if(state.isIn(TagRegistry.CANNOT_CONNECT))
-			cir.setReturnValue(true);
+		return original || state.isIn(TagRegistry.CANNOT_CONNECT);
 	}
 }

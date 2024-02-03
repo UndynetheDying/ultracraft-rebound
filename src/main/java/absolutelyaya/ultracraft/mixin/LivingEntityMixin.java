@@ -20,6 +20,8 @@ import absolutelyaya.ultracraft.entity.machine.V2Entity;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import absolutelyaya.ultracraft.registry.StatusEffectRegistry;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -46,7 +48,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import java.util.List;
@@ -208,14 +209,12 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 		}
 	}
 	
-	@Inject(method = "getJumpVelocity", at = @At("RETURN"), cancellable = true)
-	void onGetJumpVel(CallbackInfoReturnable<Float> cir)
+	@ModifyReturnValue(method = "getJumpVelocity", at = @At("RETURN"))
+	float onGetJumpVel(float original)
 	{
-		if(isAffectedByMovementRules())
-		{
-			if(!getWorld().isClient)
-				cir.setReturnValue(cir.getReturnValue() + 0.1f * Math.max(HivelConfig.INSTANCE.jumpBoost.getValue() + (isTouchingWater() ? 0.5f : 0f), 0));
-		}
+		if(isAffectedByMovementConfig() && !getWorld().isClient)
+			return original + 0.1f * Math.max(HivelConfig.INSTANCE.jumpBoost.getValue() + (isTouchingWater() ? 0.5f : 0f), 0);
+		return original;
 	}
 	
 	Vec3d fluidMovement(double gravity, boolean falling, Vec3d motion)
@@ -229,8 +228,8 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 		return new Vec3d(motion.x, vel, motion.z);
 	}
 	
-	@Inject(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;shouldSwimInFluids()Z", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	void onTravel(Vec3d movementInput, CallbackInfo ci, double d, boolean bl, FluidState fluidState)
+	@Inject(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;shouldSwimInFluids()Z", ordinal = 0), cancellable = true)
+	void onTravel(Vec3d movementInput, CallbackInfo ci, @Local double d, @Local boolean bl, @Local FluidState fluidState)
 	{
 		//custom water physics
 		if(!(this instanceof WingedPlayerEntity winged && UltraComponents.WING_DATA.get(winged).isActive()) || ((PlayerEntity)winged).getAbilities().flying)
@@ -281,7 +280,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	@ModifyVariable(method = "travel", ordinal = 0, at = @At("STORE"))
 	private double modifyGravity(double value)
 	{
-		if(!(isAffectedByMovementRules()) || (((Object)this instanceof PlayerEntity player) && player.getAbilities().flying) || touchingWater)
+		if(!(isAffectedByMovementConfig()) || (((Object)this instanceof PlayerEntity player) && player.getAbilities().flying) || touchingWater)
 			return value;
 		float val = (getWorld().isClient ? getGravityModifier() : HivelConfig.INSTANCE.gravity.getValue());
 		return Math.max(value - (value * (1f - val)), 0.01f);
@@ -303,11 +302,12 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 		return 0.5f;
 	}
 	
-	@Inject(method = "computeFallDamage", at = @At("RETURN"), cancellable = true)
-	private void onComputeFallDamage(float fallDistance, float damageMultiplier, CallbackInfoReturnable<Integer> cir)
+	@ModifyReturnValue(method = "computeFallDamage", at = @At("RETURN"))
+	private int onComputeFallDamage(int original)
 	{
 		if(isPlayer() && !(this instanceof WingedPlayerEntity winged && winged.isSliding()))
-			cir.setReturnValue(0);
+			return 0;
+		return original;
 	}
 	
 	@Inject(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;shouldSwimInFluids()Z"))
@@ -320,19 +320,19 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 		}
 	}
 	
-	@Inject(method = "shouldSwimInFluids", at = @At("HEAD"), cancellable = true)
-	void onShouldSwimInFluids(CallbackInfoReturnable<Boolean> cir)
+	@ModifyReturnValue(method = "shouldSwimInFluids", at = @At("RETURN"))
+	boolean onShouldSwimInFluids(boolean original)
 	{
 		if(this instanceof WingedPlayerEntity winged && UltraComponents.WING_DATA.get(winged).isActive() &&
 				   getWorld().getFluidState(((PlayerEntity)winged).getBlockPos()).isIn(FluidTags.WATER))
-			cir.setReturnValue(false);
+			return false;
+		return original;
 	}
 	
-	@Inject(method = "canWalkOnFluid", at = @At("HEAD"), cancellable = true)
-	void onCanWalkOnFluid(FluidState state, CallbackInfoReturnable<Boolean> cir)
+	@ModifyReturnValue(method = "canWalkOnFluid", at = @At("RETURN"))
+	boolean onCanWalkOnFluid(boolean original)
 	{
-		if(this instanceof WingedPlayerEntity winged && winged.isSliding())
-			cir.setReturnValue(true);
+		return original || (this instanceof WingedPlayerEntity winged && winged.isSliding());
 	}
 	
 	@Inject(method = "onDamaged", at = @At("HEAD"))
@@ -563,7 +563,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 		return isAlive() && ricochetCooldown <= 0;
 	}
 	
-	boolean isAffectedByMovementRules()
+	boolean isAffectedByMovementConfig()
 	{
 		return (this instanceof WingedPlayerEntity winged && UltraComponents.WING_DATA.get(winged).isActive()) || (Object)this instanceof V2Entity;
 	}

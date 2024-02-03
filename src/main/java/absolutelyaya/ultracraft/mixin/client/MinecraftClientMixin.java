@@ -8,11 +8,14 @@ import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.screen.IntroScreen;
 import absolutelyaya.ultracraft.client.gui.screen.TravelScreen;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
-import absolutelyaya.ultracraft.dimension.LevelManager;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.BlockRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.block.BlockState;
@@ -29,7 +32,6 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.item.Items;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.resource.ResourceReload;
 import net.minecraft.sound.MusicSound;
@@ -48,7 +50,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
@@ -70,13 +71,15 @@ public abstract class MinecraftClientMixin
 	
 	@Shadow public abstract void setScreen(@Nullable Screen screen);
 	
+	@Shadow public abstract void onResolutionChanged();
+	
 	boolean isShooting, wasBreaking;
 	
-	@Redirect(method = "handleInputEvents()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V"))
-	void OnHandSwap(ClientPlayNetworkHandler networkHandler, Packet<?> packet)
+	@WrapOperation(method = "handleInputEvents()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V"))
+	void OnHandSwap(ClientPlayNetworkHandler instance, Packet<?> packet, Operation<Void> original)
 	{
-		if(world != null && !UltracraftClient.isHandSwapEnabled())
-			networkHandler.sendPacket(packet);
+		if(world != null && !ServerConfig.INSTANCE.disableHandswap.getValue())
+			original.call(instance, packet);
 		else if(player != null)
 			player.sendMessage(Text.translatable("message.ultracraft.handswap-disabled"), true);
 	}
@@ -88,8 +91,8 @@ public abstract class MinecraftClientMixin
 			AbstractWeaponItem.cycleVariant(player);
 	}
 	
-	@Inject(method = "getMusicType", at = @At("RETURN"), cancellable = true)
-	void onGetMusicType(CallbackInfoReturnable<MusicSound> cir)
+	@ModifyReturnValue(method = "getMusicType", at = @At("RETURN"))
+	MusicSound onGetMusicType(MusicSound original)
 	{
 		if(player != null)
 		{
@@ -97,12 +100,12 @@ public abstract class MinecraftClientMixin
 			Identifier level = winged.getCurrentLevel();
 			if(level != null)
 			{
+				//TODO: get music for level
 				//Registries.SOUND_EVENT.get();
-				cir.setReturnValue(null);
-				return;
+				return null;
 			}
 		}
-		if (cir.getReturnValue().equals(MusicType.MENU) && UltracraftClient.REPLACE_MENU_MUSIC)
+		if (original.equals(MusicType.MENU) && UltracraftClient.REPLACE_MENU_MUSIC)
 		{
 			RegistryEntry.Reference<SoundEvent> music = switch(UltracraftClient.getConfig().BGID)
 			{
@@ -111,9 +114,10 @@ public abstract class MinecraftClientMixin
 				default -> null;
 			};
 			if(music == null)
-				return;
-			cir.setReturnValue(new MusicSound(music, 20, 600, true));
+				return original;
+			return new MusicSound(music, 20, 600, true);
 		}
+		return original;
 	}
 	
 	@Inject(method = "handleInputEvents", at = @At("TAIL"))
@@ -145,11 +149,11 @@ public abstract class MinecraftClientMixin
 			stopShooting();
 	}
 	
-	@Redirect(method = "handleInputEvents", at = @At(value="INVOKE", target = "Lnet/minecraft/client/MinecraftClient;doItemUse()V", ordinal = 1))
-	void onItemUseHeld(MinecraftClient instance)
+	@WrapOperation(method = "handleInputEvents", at = @At(value="INVOKE", target = "Lnet/minecraft/client/MinecraftClient;doItemUse()V", ordinal = 1))
+	void onItemUseHeld(MinecraftClient instance, Operation<Void> original)
 	{
 		if(!(instance.player.getMainHandStack().getItem() instanceof AbstractWeaponItem weapon && !weapon.canHoldUse()))
-			instance.doItemUse();
+			original.call(instance);
 	}
 	
 	void stopShooting()

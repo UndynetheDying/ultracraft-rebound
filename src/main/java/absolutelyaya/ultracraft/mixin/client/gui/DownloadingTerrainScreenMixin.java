@@ -2,6 +2,8 @@ package absolutelyaya.ultracraft.mixin.client.gui;
 
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.screen.TravelScreen;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.DownloadingTerrainScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -18,12 +20,12 @@ public abstract class DownloadingTerrainScreenMixin extends Screen
 		super(title);
 	}
 	
-	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/DownloadingTerrainScreen;renderBackgroundTexture(Lnet/minecraft/client/gui/DrawContext;)V"))
-	void redirectRenderBackground(DownloadingTerrainScreen instance, DrawContext context)
+	@WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/DownloadingTerrainScreen;renderBackgroundTexture(Lnet/minecraft/client/gui/DrawContext;)V"))
+	void redirectRenderBackground(DownloadingTerrainScreen instance, DrawContext context, Operation<Void> original)
 	{
 		if(UltracraftClient.isTravelling())
 			TravelScreen.BG.render(client.getLastFrameDuration(), 1f);
 		else
-			renderBackgroundTexture(context);
+			original.call(instance, context);
 	}
 }
