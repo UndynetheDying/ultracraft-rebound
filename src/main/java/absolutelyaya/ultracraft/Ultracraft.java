@@ -101,7 +101,7 @@ public class Ultracraft implements ModInitializer
             //UseItemCallback.EVENT.register(((player, world, hand) -> UltraDimensions.Instance.onUseItem(player, world, hand)));
         });
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
-            LevelManager.Instance.destroyAllInstances();
+            LevelManager.Instance.onServerStop();
         });
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             Commands.register(dispatcher);
@@ -150,8 +150,6 @@ public class Ultracraft implements ModInitializer
             if(player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)) == 0)
                 if(player.getWorld().getGameRules().getBoolean(GameruleRegistry.START_WITH_PIERCER))
                     player.giveItemStack(ItemRegistry.PIERCE_REVOLVER.getDefaultStack());
-            if(player.getWorld().getRegistryKey().equals(LevelManager.WORLD_KEY))
-                LevelManager.Instance.rescueIfNecessary(player);
         }));
         ServerLifecycleEvents.SERVER_STARTING.register(this::loadConfig);
         ServerLifecycleEvents.START_DATA_PACK_RELOAD.register((server, handler) -> {

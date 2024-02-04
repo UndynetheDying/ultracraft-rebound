@@ -91,10 +91,17 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 			this.world = world;
 	}
 	
+	public void onServerStop()
+	{
+		destroyAllInstances();
+		this.world = null;
+	}
+	
 	@Override
 	protected void apply(Map<Identifier, JsonElement> prepared, ResourceManager manager, Profiler profiler)
 	{
-		destroyAllInstances();
+		if(world != null)
+			destroyAllInstances();
 		nextLevelBaseX = 0;
 		ImmutableMap.Builder<Identifier, LevelData> builtinBuilder = ImmutableMap.builder();
 		ImmutableMap.Builder<Identifier, LevelData> customBuilder = ImmutableMap.builder();
@@ -345,13 +352,6 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 		});
 		instances.get(levelId).remove(instanceId);
 		Ultracraft.LOGGER.info("Finished Destroying Level Instance " + instanceId);
-	}
-	
-	public void rescueIfNecessary(ServerPlayerEntity player)
-	{
-		IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
-		if(!player.isCreative() && (winged.getCurrentLevel() == null || !instances.containsKey(winged.getCurrentLevel())))
-			rescue(player, RescueReason.INSTANCE_NULL);
 	}
 	
 	void rescue(ServerPlayerEntity player, RescueReason reason)

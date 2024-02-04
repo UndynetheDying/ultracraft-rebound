@@ -67,7 +67,7 @@ public abstract class ServerPlayerMixin extends PlayerEntity
 	@Inject(method = "worldChanged", at = @At("HEAD"))
 	void onWorldChanged(ServerWorld origin, CallbackInfo ci)
 	{
-		if(!origin.getRegistryKey().equals(LevelManager.WORLD_KEY))
+		if(origin.getRegistryKey() != null && !origin.getRegistryKey().equals(LevelManager.WORLD_KEY))
 			return;
 		UltraComponents.WINGED.get(this).enterLevel(null, null);
 	}
