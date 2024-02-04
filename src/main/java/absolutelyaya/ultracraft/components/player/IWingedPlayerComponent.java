@@ -47,6 +47,8 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	
 	RegistryKey<World> getCheckpointDimension();
 	
+	float getCheckpointRotation();
+	
 	void sendBigTitle(Text text, float delay);
 	
 	void sendBigTitle(Text text);

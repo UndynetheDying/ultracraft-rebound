@@ -64,6 +64,15 @@ public abstract class ServerPlayerMixin extends PlayerEntity
 		return original;
 	}
 	
+	@ModifyReturnValue(method = "getSpawnAngle", at = @At("RETURN"))
+	float onGetSpawnAngle(float original)
+	{
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(this);
+		if(winged.getLastCheckpoint() != null && winged.getCheckpointDimension() != null)
+			return winged.getCheckpointRotation();
+		return original;
+	}
+	
 	@Inject(method = "worldChanged", at = @At("HEAD"))
 	void onWorldChanged(ServerWorld origin, CallbackInfo ci)
 	{

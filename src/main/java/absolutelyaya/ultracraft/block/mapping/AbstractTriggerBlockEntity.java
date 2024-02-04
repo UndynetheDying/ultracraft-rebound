@@ -126,6 +126,8 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 			justReset = nbt.getBoolean("justReset");
 		else
 			justReset = inverted;
+		if(nbt.contains("active", NbtElement.INT_TYPE))
+			active = nbt.getInt("active");
 	}
 	
 	@Override
@@ -139,5 +141,6 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 		nbt.putInt("targetThreshold", targetThreshold);
 		nbt.putBoolean("invert", inverted);
 		nbt.putBoolean("justReset", justReset);
+		nbt.putInt("active", active);
 	}
 }

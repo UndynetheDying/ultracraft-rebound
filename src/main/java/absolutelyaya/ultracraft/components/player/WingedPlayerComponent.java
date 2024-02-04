@@ -18,6 +18,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -40,6 +41,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	AbstractWeaponItem lastPrimaryWeapon;
 	BlockPos lastCheckpoint;
 	RegistryKey<World> checkpointDimension;
+	float checkpointRot;
 	Identifier currentLevel;
 	String currentLevelInstance;
 	boolean fighting, perfect;
@@ -173,14 +175,23 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	@Override
 	public void setLastCheckpoint(BlockPos pos, World dimension)
 	{
+		System.out.println("set " + pos);
 		lastCheckpoint = pos;
-		checkpointDimension = dimension.getRegistryKey();
+		checkpointRot = provider.getYaw();
+		if(dimension != null)
+			checkpointDimension = dimension.getRegistryKey();
 	}
 	
 	@Override
 	public RegistryKey<World> getCheckpointDimension()
 	{
 		return checkpointDimension;
+	}
+	
+	@Override
+	public float getCheckpointRotation()
+	{
+		return checkpointRot;
 	}
 	
 	public void sendBigTitle(Text text, float delay)
@@ -349,6 +360,14 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			for(String key : versions.getKeys())
 				lastPlayedVersion.put(Identifier.tryParse(key), versions.getInt(key));
 		}
+		if(tag.contains("checkpoint", NbtElement.COMPOUND_TYPE))
+		{
+			NbtCompound checkpoint = tag.getCompound("checkpoint");
+			NbtCompound pos = checkpoint.getCompound("pos");
+			lastCheckpoint = new BlockPos(pos.getInt("x"), pos.getInt("y"), pos.getInt("z"));
+			checkpointRot = checkpoint.getFloat("rot");
+			checkpointDimension = RegistryKey.of(RegistryKeys.WORLD, Identifier.tryParse(checkpoint.getString("dimension")));
+		}
 	}
 	
 	@Override
@@ -374,6 +393,18 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			for (Map.Entry<Identifier, Integer> e : lastPlayedVersion.entrySet())
 				records.putInt(e.getKey().toString(), e.getValue());
 			tag.put("versions", records);
+		}
+		if(lastCheckpoint != null)
+		{
+			NbtCompound checkpoint = new NbtCompound();
+			NbtCompound pos = new NbtCompound();
+			pos.putInt("x", lastCheckpoint.getX());
+			pos.putInt("y", lastCheckpoint.getY());
+			pos.putInt("z", lastCheckpoint.getZ());
+			checkpoint.put("pos", pos);
+			checkpoint.putFloat("rot", checkpointRot);
+			checkpoint.putString("dimension", getCheckpointDimension().getValue().toString());
+			tag.put("checkpoint", checkpoint);
 		}
 	}
 	
