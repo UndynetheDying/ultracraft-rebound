@@ -205,7 +205,7 @@ public class HarpoonGunItem extends AbstractWeaponItem implements GeoItem
 	protected boolean shouldShowCooldown(ItemStack stack)
 	{
 		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
-		return super.isItemBarVisible(stack) || !cdm.isUsable(this, GunCooldownManager.SECONDARY);
+		return super.shouldShowCooldown(stack) || !cdm.isUsable(this, GunCooldownManager.SECONDARY);
 	}
 	
 	@Override
