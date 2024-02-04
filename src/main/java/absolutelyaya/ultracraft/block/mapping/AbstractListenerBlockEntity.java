@@ -63,6 +63,8 @@ public abstract class AbstractListenerBlockEntity extends AbstractMappingBlockEn
 	protected void onStateChanged(boolean newState)
 	{
 		updateNeighbors();
+		markDirty();
+		world.updateListeners(pos, getCachedState(), getCachedState(), 0);
 	}
 	
 	public boolean isActive()
