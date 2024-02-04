@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.item;
 
 import absolutelyaya.ultracraft.ServerHitscanHandler;
+import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.rendering.item.SharpshooterRevolverRenderer;
@@ -222,14 +223,14 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 	}
 	
 	@Override
-	public boolean isItemBarVisible(ItemStack stack)
+	protected boolean shouldShowCooldown(ItemStack stack)
 	{
 		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		return !cdm.isUsable(getCooldownClass(stack), GunCooldownManager.PRIMARY) || getNbt(stack, "charges") < (isAlternate() ? 1 : 3);
 	}
 	
 	@Override
-	public int getItemBarStep(ItemStack stack)
+	protected int getWeaponCooldownStep(ItemStack stack)
 	{
 		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		if(!cdm.isUsable(this, GunCooldownManager.PRIMARY))
@@ -241,6 +242,8 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 	@Override
 	public int getItemBarColor(ItemStack stack)
 	{
+		if(Ultracraft.SERVER_SIDE)
+			return 0xdf2828;
 		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		if(cdm.isUsable(this, GunCooldownManager.PRIMARY))
 			return 0xdfb728;

@@ -164,14 +164,14 @@ public class AttractorNailgunItem extends AbstractNailgunItem
 	}
 	
 	@Override
-	public boolean isItemBarVisible(ItemStack stack)
+	protected boolean shouldShowCooldown(ItemStack stack)
 	{
 		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		return !cdm.isUsable(getCooldownClass(stack), GunCooldownManager.SECONDARY);
 	}
 	
 	@Override
-	public int getItemBarStep(ItemStack stack)
+	protected int getWeaponCooldownStep(ItemStack stack)
 	{
 		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		if(!cdm.isUsable(this, GunCooldownManager.SECONDARY))

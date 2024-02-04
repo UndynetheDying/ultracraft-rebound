@@ -23,6 +23,7 @@ import absolutelyaya.ultracraft.registry.*;
 import com.google.gson.JsonObject;
 import com.mojang.logging.LogUtils;
 import io.netty.buffer.Unpooled;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
@@ -161,10 +162,9 @@ public class Ultracraft implements ModInitializer
             });
         });
         
+        SERVER_SIDE = FabricLoader.getInstance().getEnvironmentType().equals(EnvType.SERVER);
         FabricLoader.getInstance().getModContainer(MOD_ID).ifPresent(modContainer -> VERSION = modContainer.getMetadata().getVersion().getFriendlyString());
         FabricLoader.getInstance().getModContainer("lambdynlights").ifPresent(container -> DYN_LIGHTS = true);
-        try { Class.forName("net.minecraft.client.class_310"); } catch (ClassNotFoundException e) { SERVER_SIDE = true; }
-        System.out.println("Server " + SERVER_SIDE);
         LOGGER.info("Ultracraft initialized.");
     }
     
