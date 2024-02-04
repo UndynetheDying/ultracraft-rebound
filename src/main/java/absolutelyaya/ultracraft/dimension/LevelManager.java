@@ -16,6 +16,7 @@ import net.fabricmc.fabric.api.dimension.v1.FabricDimensions;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -36,6 +37,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.*;
 import net.minecraft.util.profiler.Profiler;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
@@ -244,7 +246,7 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 			return null;
 		}
 		StructureTemplateManager templateManager = world.getStructureTemplateManager();
-		Ultracraft.LOGGER.info("Placing Level Structure " + structure + " at " + pos);
+		Ultracraft.LOGGER.info("Placing Level Structure " + structure + " at " + pos.toString());
 		AtomicReference<Pair<String, LevelInstance>> inst = new AtomicReference<>();
 		templateManager.getTemplate(structure)
 				.ifPresent(i -> {
@@ -270,6 +272,7 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 						newInstance.setPrivate();
 					String newId = levelId.toString() + "_" + idx;
 					levelIdForInstanceId.put(newId, levelId);
+					Ultracraft.LOGGER.info("New Level Instance ID: " + newId);
 					inst.set(new Pair<>(newId, newInstance));
 					pool.put(newId, newInstance);
 				});
@@ -324,11 +327,17 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 		Ultracraft.LOGGER.info("Destroying Level Instance " + instanceId);
 		BlockPos pos = instance.pos;
 		BlockBox box = pool.bounds;
-		Iterable<BlockPos> blocks = BlockPos.iterate(pos, pos.add(box.getBlockCountX(), box.getBlockCountY(), box.getBlockCountZ()));
+		Iterable<BlockPos> blocks = BlockPos.iterate(pos, pos.add(box.getBlockCountX(), box.getBlockCountY(), box.getBlockCountZ()));;
+		List<BlockPos> replaced = new ArrayList<>();
+		boolean prevTileDrops = world.getGameRules().getBoolean(GameRules.DO_TILE_DROPS);
+		world.getGameRules().get(GameRules.DO_TILE_DROPS).set(false, world.getServer());
 		blocks.forEach(block -> {
-			world.setBlockState(block, Blocks.AIR.getDefaultState());
-			world.removeBlockEntity(block);
+			Clearable.clear(world.getBlockEntity(block));
+			if(world.setBlockState(block, Blocks.AIR.getDefaultState(), Block.NOTIFY_LISTENERS))
+				replaced.add(block);
 		});
+		world.getGameRules().get(GameRules.DO_TILE_DROPS).set(prevTileDrops, world.getServer());
+		replaced.forEach(p -> world.updateNeighbors(p, world.getBlockState(p).getBlock()));
 		List<Entity> list = world.getOtherEntities(null, new Box(box.getMinX(), box.getMinY(), box.getMinZ(), box.getMaxX(), box.getMaxY(), box.getMaxZ()));
 		list.forEach(e -> {
 			if(!(e instanceof PlayerEntity))
