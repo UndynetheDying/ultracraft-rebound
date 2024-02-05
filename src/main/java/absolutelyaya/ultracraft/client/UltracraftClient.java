@@ -224,8 +224,8 @@ public class UltracraftClient implements ClientModInitializer
 		});
 		
 		ClientPlayConnectionEvents.INIT.register((handler, client) -> {
-			new ServerConfig(null);
-			new HivelConfig(null);
+			new ServerConfig(client.getServer());
+			new HivelConfig(client.getServer());
 			if(config.get().serverJoinInfo)
 				joinInfoPending = true;
 		});
