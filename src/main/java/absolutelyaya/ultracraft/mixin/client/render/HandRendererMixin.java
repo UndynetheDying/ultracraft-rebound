@@ -6,6 +6,7 @@ import absolutelyaya.ultracraft.client.rendering.entity.feature.ArmFeature;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.item.PlushieItem;
+import absolutelyaya.ultracraft.item.SwordsmachinePlushieItem;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
@@ -107,6 +108,10 @@ public abstract class HandRendererMixin
 			{
 				matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-85f * flip));
 				matrices.translate(0.15 * flip, 0.05, -0.1);
+			}
+			else if (item.getItem() instanceof SwordsmachinePlushieItem)
+			{
+				matrices.translate(-0.2 * flip, 0, 0.1);
 			}
 			else if (item.getItem() instanceof PlushieItem)
 			{
