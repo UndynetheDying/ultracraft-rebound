@@ -124,9 +124,13 @@ public class PierceRevolverItem extends AbstractRevolverItem
 				if(isAlternate())
 					ServerHitscanHandler.makeBasicHitscan(user, ServerHitscanHandler.REVOLVER_PIERCE, 6 * 2.5f, DamageSources.PIERCER)
 							.semiPierce(4, 2.5f)
-							.explosion(new ServerHitscanHandler.HitscanExplosionData(2f, 0f, 0f, true)).perform();
+							.explosion(new ServerHitscanHandler.HitscanExplosionData(2f, 0f, 0f, true))
+							.charged().perform();
 				else
-					ServerHitscanHandler.performHitscan(user, ServerHitscanHandler.REVOLVER_PIERCE, 2, 3, true, DamageSources.PIERCER);
+					ServerHitscanHandler.makeBasicHitscan(user, ServerHitscanHandler.REVOLVER_PIERCE, 2, DamageSources.PIERCER)
+							.maxHits(3)
+							.explosion(new ServerHitscanHandler.HitscanExplosionData(2f, 0f, 0f, true))
+							.charged().perform();
 			}
 		}
 		else if(!world.isClient && user instanceof PlayerEntity)

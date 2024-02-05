@@ -205,7 +205,7 @@ public class ServerHitscanHandler
 		public HitscanDamageSource damageSource;
 		public int maxHits = 1, maxHitsPerEntity, bounces = 0, maxBounces = 0;
 		public HitscanExplosionData explosion = null;
-		boolean semiPierce;
+		boolean semiPierce, charged;
 		
 		public Hitscan(LivingEntity owner, Vec3d from, Vec3d visualFrom, Vec3d dest, byte type, float damage, RegistryKey<DamageType> damageType)
 		{
@@ -279,6 +279,20 @@ public class ServerHitscanHandler
 		{
 			damageSource.alternate();
 			return this;
+		}
+		
+		/**
+		 * Marks a hitscan as being the charged shot of a revolver; mainly used for making coins not split
+		 */
+		public Hitscan charged()
+		{
+			charged = true;
+			return this;
+		}
+		
+		public boolean isCharged()
+		{
+			return charged;
 		}
 		
 		public HitscanResult perform()

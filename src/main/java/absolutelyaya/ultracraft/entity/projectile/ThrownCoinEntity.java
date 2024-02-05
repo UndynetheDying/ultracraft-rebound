@@ -200,7 +200,7 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 	{
 		boolean isDamageChargeback = source.isOf(DamageSources.CHARGEBACK);
 		boolean isDamageRicochet = source.isOf(DamageSources.RICOCHET) || isDamageChargeback;
-		boolean singleTarget = source.isAlternate();
+		boolean singleTarget = source.isAlternate() || source.hitscan.isCharged();
 		byte hitscanType = source.hitscan.type;
 		if(hitscanType == ServerHitscanHandler.NORMAL)
 			hitscanType = ServerHitscanHandler.COIN_RICOCHET;

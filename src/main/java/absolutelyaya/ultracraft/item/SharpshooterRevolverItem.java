@@ -151,9 +151,10 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 			if(!world.isClient)
 			{
 				int bounces = isAlternate() ? 3 : (int)Math.ceil(Math.min(Math.abs(remainingUseTicks) / 20f, 1f) * 3);
-				ServerHitscanHandler.performBouncingHitscan(user, ServerHitscanHandler.SHARPSHOOTER, isAlternate() ? 5.5f : 3f,
-						DamageSources.SHARPSHOOTER, Integer.MAX_VALUE, bounces,
-						new ServerHitscanHandler.HitscanExplosionData(1.5f, 0f, 0f, true), 45f);
+				ServerHitscanHandler.performBouncingHitscan(
+						ServerHitscanHandler.makeBasicHitscan(user, ServerHitscanHandler.SHARPSHOOTER, isAlternate() ? 5.5f : 3f, DamageSources.SHARPSHOOTER)
+											.explosion(new ServerHitscanHandler.HitscanExplosionData(1.5f, 0f, 0f, true))
+											.maxHits(Integer.MAX_VALUE).bounces(bounces).autoAim(45f).charged());
 			}
 		}
 		else if(!world.isClient && user instanceof PlayerEntity)

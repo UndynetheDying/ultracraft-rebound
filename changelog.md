@@ -95,6 +95,8 @@
 - Punching//Blasting a Player that is using a Shield with a Knuckleblaster, will now disable their Shield and give the `+ GUARD BREAK` style bonus
 - Streetcleaners now actually pathfind to their target
 - Fixed a Bug that made hugging swordsmachine plushies not work properly; you can now hug them again by putting them in your offhand :D
+- Charged shots no longer split from coins
+- Hitscans now actually get reflected off of Hideous Mass' Shielded Parts
 ## Settings & Config
 - Removed almost all gamerules (only remaining is `ultra-startWithPiercer`)
 - Added Option to disable Screenshake
@@ -174,6 +176,8 @@
 - Added Cancerous Status Effect
 - Fixed a bug that caused the scrolling in Wing Pattern-//Preset-Lists to get more abrupt the more options there were.
 - Fixed Hideous Mass still Attacking when in its Hidden State
+- Fixed some firstperson offhand weirdness
+- Added Feedback to hitting a Shielded Part of Hideous Mass (a little *tching* kinda sound)
 ## Resource Changes
 - Continued Adding Sounds
 - Shotgun Animations now have a few sound keyframes
