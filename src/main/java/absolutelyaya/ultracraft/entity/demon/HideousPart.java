@@ -131,4 +131,9 @@ public class HideousPart extends Entity
 	{
 		return owner.getPickBlockStack();
 	}
+	
+	public boolean isDeflective()
+	{
+		return deflect;
+	}
 }

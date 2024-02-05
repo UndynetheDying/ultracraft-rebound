@@ -8,6 +8,7 @@ import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.HitscanDamageSource;
+import absolutelyaya.ultracraft.entity.demon.HideousPart;
 import absolutelyaya.ultracraft.entity.other.AbstractOrbEntity;
 import absolutelyaya.ultracraft.entity.other.BackTank;
 import absolutelyaya.ultracraft.entity.projectile.IIgnoreSharpshooter;
@@ -305,8 +306,11 @@ public class ServerHitscanHandler
 				{
 					maxHits--;
 					from = eHit.getPos();
-					if(maxHits == 0 && !(semiPierce && remainingDamage > 0))
+					if((maxHits == 0 && !(semiPierce && remainingDamage > 0)) || (eHit.getEntity() instanceof HideousPart part && part.isDeflective()))
+					{
+						searchForEntities = false;
 						modifiedTo = eHit.getPos();
+					}
 					Entity e = eHit.getEntity();
 					entities.add(e);
 					if(semiPierce && e instanceof LivingEntity livingHit)
@@ -324,6 +328,12 @@ public class ServerHitscanHandler
 			for (int i = 0; i < entities.size(); i++)
 			{
 				Entity e = entities.get(i);
+				if(e instanceof HideousPart part && part.isDeflective())
+				{
+					sendPacket((ServerWorld)owner.getWorld(), modifiedTo, modifiedTo.add(Vec3d.ZERO.addRandom(e.getWorld().random, 1)
+																								 .normalize().multiply(64)), type);
+					break;
+				}
 				if((e instanceof BackTank && i > 0) || e == null) //Back Tanks shouldn't be hit after an entity is pierced
 					continue;
 				
