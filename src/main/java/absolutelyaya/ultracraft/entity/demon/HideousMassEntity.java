@@ -218,7 +218,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 	public void onTrackedDataSet(TrackedData<?> data)
 	{
 		super.onTrackedDataSet(data);
-		if(data.equals(DEATH) && dataTracker.get(DEATH) >= 100)
+		if(data.equals(DEATH) && dataTracker.get(DEATH) >= 100 && !isDead())
 		{
 			if(getWorld().isClient)
 			{
@@ -255,8 +255,9 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		if(data.equals(ENRAGED))
 		{
 			left_arm.enabled = right_arm.enabled = mask.enabled = body3.enabled = false;
-			getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(32), i -> true)
-					.forEach(p -> UltraComponents.STYLE.get(p).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "enrage"))));
+			if(!getWorld().isClient)
+				getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(32), i -> true)
+						.forEach(p -> UltraComponents.STYLE.get(p).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "enrage"))));
 		}
 		if(data.equals(HIDDEN) && !dataTracker.get(HIDDEN))
 			setAllMainPartsEnabled(true);

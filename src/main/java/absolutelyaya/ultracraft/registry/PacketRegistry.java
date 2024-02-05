@@ -179,7 +179,7 @@ public class PacketRegistry
 					world.playSound(null, player.getBlockPos(), knuckle ? SoundRegistry.KNUCKLEBLASTER_PUNCH : SoundRegistry.FEEDBACKER_PUNCH ,
 							SoundCategory.PLAYERS, 0.75f, 0.5f);
 					ServerConfig config = ServerConfig.INSTANCE;
-					target.damage(DamageSources.get(world, knuckle ? DamageSources.KNUCKLE_PUNCH : DamageSources.PUNCH, player),
+					boolean targetDamaged = target.damage(DamageSources.get(world, knuckle ? DamageSources.KNUCKLE_PUNCH : DamageSources.PUNCH, player),
 							knuckle ? config.knuckleblasterDamage.getValue() : config.feedbackerDamage.getValue());
 					
 					if(knuckle && target instanceof PlayerEntity hitPlayer && hitPlayer.getActiveItem().getItem() instanceof ShieldItem)
@@ -194,7 +194,7 @@ public class PacketRegistry
 						vel = vel.multiply(1.5f);
 					if(target instanceof ProjectileEntity || (target instanceof LivingEntityAccessor && ((LivingEntityAccessor)target).takePunchKnockback()))
 						target.setVelocity(vel);
-					if(HeavyEntities.isHeavy(target.getType()))
+					if(HeavyEntities.isHeavy(target.getType()) && targetDamaged && target.isAlive())
 						UltraComponents.STYLE.get(player).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "disrespect")));
 					return;
 				}
