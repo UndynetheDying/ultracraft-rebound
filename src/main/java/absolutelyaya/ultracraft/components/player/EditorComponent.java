@@ -42,11 +42,14 @@ public class EditorComponent implements IEditorComponent
 	{
 		this.active = active;
 		
-		provider.noClip = provider.getAbilities().flying = active;
 		if(active)
+		{
+			provider.getAbilities().flying = true;
 			provider.getAbilities().allowFlying = true;
+			provider.setOnGround(false);
+		}
 		else
-			provider.getAbilities().allowFlying = provider.isCreative() || provider.isSpectator();
+			provider.getAbilities().allowFlying = provider.getAbilities().flying = provider.isCreative() || provider.isSpectator();
 		provider.getAbilities().setFlySpeed(active ? flySpeed / 20f : 0.05f);
 		UltraComponents.EDITOR.sync(provider);
 	}

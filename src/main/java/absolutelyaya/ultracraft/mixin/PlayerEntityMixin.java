@@ -296,8 +296,14 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;isSpectator()Z", shift = At.Shift.AFTER))
 	void preTick(CallbackInfo ci)
 	{
-		if(UltraComponents.EDITOR.get(this).isNoClip())
+		IEditorComponent edit = UltraComponents.EDITOR.get(this);
+		if(edit.isNoClip())
 			noClip = true;
+		if(edit.isActive())
+		{
+			abilities.flying = abilities.allowFlying = true;
+			setOnGround(false);
+		}
 		if(parryIFrames > 0)
 			parryIFrames--;
 	}
