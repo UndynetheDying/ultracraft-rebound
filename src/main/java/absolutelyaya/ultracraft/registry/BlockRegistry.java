@@ -87,8 +87,12 @@ public class BlockRegistry
 			new PaneBlock(AbstractBlock.Settings.copy(Blocks.IRON_BARS).mapColor(MapColor.IRON_GRAY).nonOpaque()), true);
 	public static final Block COLUMN1 = register("column1",
 			new PillarBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.IRON_GRAY)), true);
+	public static final Block COLUMN1_STAIRS = register("column1_stairs",
+			new StairsBlock(COLUMN1.getDefaultState(), AbstractBlock.Settings.copy(COLUMN1)), true);
 	public static final Block COLUMN2 = register("column2",
 			new PillarBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.IRON_GRAY)), true);
+	public static final Block COLUMN2_STAIRS = register("column2_stairs",
+			new StairsBlock(COLUMN2.getDefaultState(), AbstractBlock.Settings.copy(COLUMN2)), true);
 	public static final Block SHEETMETAL = register("sheetmetal",
 			new Block(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.IRON_GRAY)), true);
 	public static final Block FRAMED = register("framed",

@@ -247,7 +247,9 @@ public class ItemRegistry
 			content.add(BlockRegistry.FLOWERBED.asItem());
 			content.add(BlockRegistry.SHEETMETAL.asItem());
 			content.add(BlockRegistry.COLUMN1.asItem());
+			content.add(BlockRegistry.COLUMN1_STAIRS.asItem());
 			content.add(BlockRegistry.COLUMN2.asItem());
+			content.add(BlockRegistry.COLUMN2_STAIRS.asItem());
 			content.add(BlockRegistry.FRAMED.asItem());
 			content.add(BlockRegistry.CIRCUITY.asItem());
 			content.add(BlockRegistry.ZOOTYCOONCHAINLINKFENCE.asItem());

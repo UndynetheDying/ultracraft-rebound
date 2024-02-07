@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "ultracraft:block/column1_top",
+    "side": "ultracraft:block/column1",
+    "top": "ultracraft:block/column1_stairs_top"
+  }
+}
