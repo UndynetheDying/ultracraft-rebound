@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.client.gui.screen;
 
 import absolutelyaya.ultracraft.client.gui.widget.LevelButton;
 import absolutelyaya.ultracraft.dimension.LevelManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -47,6 +48,7 @@ public class CustomLevelSelectScreen extends AbstractTravelScreen
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta)
 	{
+		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		if(awaitingFeedback)
 		{
 			context.drawCenteredTextWithShadow(textRenderer, Text.translatable("screen.ultracraft.travel.waiting"), width / 2, 16, 0xffffffff);

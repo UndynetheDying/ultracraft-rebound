@@ -12,6 +12,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -21,6 +22,7 @@ import net.minecraft.text.OrderedText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec2f;
@@ -153,7 +155,7 @@ public class LevelButton extends ClickableWidget
 			matrices.push();
 			matrices.translate(0f, 0f, Math.max(hoverAnim * 10f - 7.5f, 0f));
 			//time-panel
-			if(parTime.length() > 0)
+			if(!parTime.isEmpty())
 			{
 				Text par = Text.translatable("screen.ultracraft.level.par-time", parTime);
 				long pbTime = winged.getBestTime(destination);
@@ -170,7 +172,7 @@ public class LevelButton extends ClickableWidget
 				matrices.pop();
 			}
 			//description-panel
-			if(description.getString().length() > 0)
+			if(!description.getString().isEmpty())
 			{
 				matrices.push();
 				int descBoxWidth = 128, descBoxHeight = tRenderer.getWrappedLinesHeight(description, descBoxWidth) + 8;
@@ -198,7 +200,8 @@ public class LevelButton extends ClickableWidget
 		if(t.size() > 0)
 		{
 			context.drawText(tRenderer, t.get(0),
-					(width - tRenderer.getWidth(t.get(0))) / 2, 64, 0xffffffff, true); //TODO: color blue when hovered IF authorLink exists
+					(width - tRenderer.getWidth(t.get(0))) / 2, 64,
+					authorLink.isEmpty() || isHoveringAuthorLink(mouseX, mouseY) ? 0xffffffff : 0x3972bd, true);
 		}
 		matrices.pop();
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
@@ -221,10 +224,33 @@ public class LevelButton extends ClickableWidget
 	public boolean mouseClicked(double mouseX, double mouseY, int button)
 	{
 		boolean b = super.mouseClicked(mouseX, mouseY, button);
-		//TODO: open authorLink
 		if(b && isUnlocked && !isUnimplemented && !isHidden && alpha > 0.5)
+		{
+			if(isHoveringAuthorLink(mouseX, mouseY))
+			{
+				try
+				{
+					URL url = new URL(authorLink);
+					MinecraftClient client = MinecraftClient.getInstance();
+					client.setScreen(new ConfirmLinkScreen((confirmed) -> {
+						if (confirmed)
+							Util.getOperatingSystem().open(url);
+						client.currentScreen.close();
+					}, url.toString(), false));
+				}
+				catch (MalformedURLException e)
+				{
+					throw new RuntimeException(e);
+				}
+			}
 			action.accept(destination);
+		}
 		return b;
+	}
+	
+	boolean isHoveringAuthorLink(double mouseX, double mouseY)
+	{
+		return mouseX > getX() && mouseX < getX() + width && mouseY > getY() + height - tRenderer.fontHeight && mouseY < getY() + height;
 	}
 	
 	@Override
