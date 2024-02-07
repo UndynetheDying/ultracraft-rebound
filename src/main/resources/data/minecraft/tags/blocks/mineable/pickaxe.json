@@ -19,6 +19,13 @@
     "ultracraft:rusty_pipe",
     "ultracraft:rusty_mesh",
     "ultracraft:slab_block",
-    "ultracraft:portal"
+    "ultracraft:portal",
+    "ultracraft:column1",
+    "ultracraft:column2",
+    "ultracraft:sheetmetal",
+    "ultracraft:framed",
+    "ultracraft:circuity",
+    "ultracraft:zootycoonchainlinkfence",
+    "ultracraft:vent"
   ]
 }

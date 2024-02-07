@@ -156,6 +156,13 @@
   "block.ultracraft.map_receiver": "Map Redstone Receiver",
   "block.ultracraft.map_travel": "Map Force Travel Trigger",
   "block.ultracraft.map_level": "Map Level Unlock Trigger",
+  "block.ultracraft.sheetmetal": "Sheet Metal",
+  "block.ultracraft.column1": "Paneled Column",
+  "block.ultracraft.column2": "Rimmed Column",
+  "block.ultracraft.framed": "Reinforced Concrete",
+  "block.ultracraft.circuity": "Circuity",
+  "block.ultracraft.zootycoonchainlinkfence": "Chainlink Fence",
+  "block.ultracraft.vent": "Vent",
 
   "entity.ultracraft.filth": "Filth",
   "entity.ultracraft.stray": "Stray",

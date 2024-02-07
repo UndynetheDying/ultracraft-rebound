@@ -235,6 +235,7 @@ public class ItemRegistry
 			content.add(BlockRegistry.RUSTY_MESH.asItem());
 			content.add(BlockRegistry.CRACKED_STONE.asItem());
 			content.add(BlockRegistry.VENT_COVER.asItem());
+			content.add(BlockRegistry.VENT.asItem());
 			content.add(BlockRegistry.MAUERWERK1.asItem());
 			content.add(BlockRegistry.MAUERWERK2.asItem());
 			content.add(BlockRegistry.ORNATE_WAINSCOT.asItem());
@@ -244,6 +245,12 @@ public class ItemRegistry
 			content.add(BlockRegistry.SLAB_BLOCK.asItem());
 			content.add(BlockRegistry.CARPET.asItem());
 			content.add(BlockRegistry.FLOWERBED.asItem());
+			content.add(BlockRegistry.SHEETMETAL.asItem());
+			content.add(BlockRegistry.COLUMN1.asItem());
+			content.add(BlockRegistry.COLUMN2.asItem());
+			content.add(BlockRegistry.FRAMED.asItem());
+			content.add(BlockRegistry.CIRCUITY.asItem());
+			content.add(BlockRegistry.ZOOTYCOONCHAINLINKFENCE.asItem());
 			content.add(BLOOD_BUCKET);
 			content.add(PIERCE_REVOLVER);
 			content.add(MARKSMAN_REVOLVER);

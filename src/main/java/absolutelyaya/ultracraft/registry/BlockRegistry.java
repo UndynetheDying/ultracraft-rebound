@@ -83,6 +83,20 @@ public class BlockRegistry
 			new FlowerbedBlock(AbstractBlock.Settings.copy(Blocks.OAK_LEAVES).mapColor(MapColor.DARK_GREEN)), true);
 	public static final Block PORTAL = register("portal",
 			new PortalBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.TERRACOTTA_PURPLE)), true);
+	public static final Block ZOOTYCOONCHAINLINKFENCE = register("zootycoonchainlinkfence",
+			new PaneBlock(AbstractBlock.Settings.copy(Blocks.IRON_BARS).mapColor(MapColor.IRON_GRAY).nonOpaque()), true);
+	public static final Block COLUMN1 = register("column1",
+			new PillarBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.IRON_GRAY)), true);
+	public static final Block COLUMN2 = register("column2",
+			new PillarBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.IRON_GRAY)), true);
+	public static final Block SHEETMETAL = register("sheetmetal",
+			new Block(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.IRON_GRAY)), true);
+	public static final Block FRAMED = register("framed",
+			new Block(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.IRON_GRAY)), true);
+	public static final Block CIRCUITY = register("circuity",
+			new GlazedTerracottaBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.IRON_GRAY)), true);
+	public static final Block VENT = register("vent",
+			new VentBlock(AbstractBlock.Settings.copy(Blocks.IRON_BARS).mapColor(MapColor.DEEPSLATE_GRAY).strength(3f, 4f).nonOpaque()), true);
 	
 	public static final Block MAP_ROOM = register("map_room", new RoomBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_TRIGGER = register("map_trigger", new TriggerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
