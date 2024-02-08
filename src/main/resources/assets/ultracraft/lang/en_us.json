@@ -157,6 +157,7 @@
   "block.ultracraft.map_receiver": "Map Redstone Receiver",
   "block.ultracraft.map_travel": "Map Force Travel Trigger",
   "block.ultracraft.map_level": "Map Level Unlock Trigger",
+  "block.ultracraft.map_damage": "Map Damage Trigger",
   "block.ultracraft.sheetmetal": "Sheet Metal",
   "block.ultracraft.column1": "Paneled Column",
   "block.ultracraft.column1_stairs": "Paneled Column Stairs",

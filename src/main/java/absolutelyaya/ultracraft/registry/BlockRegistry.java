@@ -123,6 +123,7 @@ public class BlockRegistry
 	public static final Block MAP_TIMER = register("map_timer", new TimerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_LEVEL = register("map_level", new LevelUnlockBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_TRAVEL = register("map_travel", new ForceTravelBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
+	public static final Block MAP_DAMAGE = register("map_damage", new DamageBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	
 	@SuppressWarnings("SameParameterValue")
 	private static Block register(String name, Block block, boolean item, int burn, int spread)

@@ -33,6 +33,7 @@ public class BlockEntityRegistry
 	public static final BlockEntityType<TimerBlockEntity> MAP_TIMER;
 	public static final BlockEntityType<LevelUnlockBlockEntity> MAP_LEVEL;
 	public static final BlockEntityType<ForceTravelBlockEntity> MAP_TRAVEL;
+	public static final BlockEntityType<DamageBlockEntity> MAP_DAMAGE;
 	
 	public static void register() {
 	}
@@ -103,5 +104,8 @@ public class BlockEntityRegistry
 		MAP_TRAVEL = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				new Identifier(Ultracraft.MOD_ID, "map_travel"),
 				FabricBlockEntityTypeBuilder.create(ForceTravelBlockEntity::new, BlockRegistry.MAP_TRAVEL).build());
+		MAP_DAMAGE = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Ultracraft.MOD_ID, "map_damage"),
+				FabricBlockEntityTypeBuilder.create(DamageBlockEntity::new, BlockRegistry.MAP_DAMAGE).build());
 	}
 }
