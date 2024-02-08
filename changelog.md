@@ -97,6 +97,7 @@
 - Fixed a Bug that made hugging swordsmachine plushies not work properly; you can now hug them again by putting them in your offhand :D
 - Charged shots no longer split from coins
 - Hitscans now actually get reflected off of Hideous Mass' Shielded Parts
+- Added a fuck ton of Prelude Blocks
 ## Settings & Config
 - Removed almost all gamerules (only remaining is `ultra-startWithPiercer`)
 - Added Option to disable Screenshake

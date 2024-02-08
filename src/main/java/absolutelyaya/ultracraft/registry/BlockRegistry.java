@@ -51,6 +51,8 @@ public class BlockRegistry
 			new PipeBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.TERRACOTTA_BROWN)), true);
 	public static final Block RUSTY_MESH = register("rusty_mesh",
 			new Block(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.TERRACOTTA_BROWN)), true);
+	public static final Block MESH = register("mesh",
+			new Block(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.IRON_GRAY)), true);
 	public static final Block CRACKED_STONE = register("cracked_stone",
 			new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.GRAY)), true);
 	public static final Block TERMINAL = register("terminal",
@@ -93,6 +95,10 @@ public class BlockRegistry
 			new PillarBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.IRON_GRAY)), true);
 	public static final Block COLUMN2_STAIRS = register("column2_stairs",
 			new StairsBlock(COLUMN2.getDefaultState(), AbstractBlock.Settings.copy(COLUMN2)), true);
+	public static final Block BRIGHT_PANEL = register("bright_panel",
+			new BrightPanelBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.IRON_GRAY)), true);
+	public static final Block BRIGHT_PANEL_STAIRS = register("bright_panel_stairs",
+			new StairsBlock(BRIGHT_PANEL.getDefaultState(), AbstractBlock.Settings.copy(BRIGHT_PANEL)), true);
 	public static final Block SHEETMETAL = register("sheetmetal",
 			new Block(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.IRON_GRAY)), true);
 	public static final Block FRAMED = register("framed",

@@ -233,6 +233,7 @@ public class ItemRegistry
 			content.add(BlockRegistry.FLESH.asItem());
 			content.add(BlockRegistry.RUSTY_PIPE.asItem());
 			content.add(BlockRegistry.RUSTY_MESH.asItem());
+			content.add(BlockRegistry.MESH.asItem());
 			content.add(BlockRegistry.CRACKED_STONE.asItem());
 			content.add(BlockRegistry.VENT_COVER.asItem());
 			content.add(BlockRegistry.VENT.asItem());
@@ -250,6 +251,8 @@ public class ItemRegistry
 			content.add(BlockRegistry.COLUMN1_STAIRS.asItem());
 			content.add(BlockRegistry.COLUMN2.asItem());
 			content.add(BlockRegistry.COLUMN2_STAIRS.asItem());
+			content.add(BlockRegistry.BRIGHT_PANEL.asItem());
+			content.add(BlockRegistry.BRIGHT_PANEL_STAIRS.asItem());
 			content.add(BlockRegistry.FRAMED.asItem());
 			content.add(BlockRegistry.CIRCUITY.asItem());
 			content.add(BlockRegistry.ZOOTYCOONCHAINLINKFENCE.asItem());
