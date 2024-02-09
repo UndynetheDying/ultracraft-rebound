@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.dimension;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
@@ -11,6 +12,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -65,5 +67,11 @@ public class UltraDimensions
 		if(!managers.containsKey(key))
 			return;
 		managers.get(key).onWorldLoad();
+	}
+	
+	public boolean isUltraDimension(World world)
+	{
+		RegistryKey<DimensionType> key = world.getDimensionKey();
+		return LIMBO_MANAGER.world.getDimensionKey().equals(key);
 	}
 }

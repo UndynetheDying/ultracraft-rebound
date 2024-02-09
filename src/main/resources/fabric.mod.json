@@ -5,7 +5,7 @@
   "name": "Ultracraft",
   "description": "modmenu.descriptionTranslation.ultracraft",
   "authors": [
-    "Absolutelyaya", "Structures: AshenWulf", "SFX Help: 8BitBunnie"
+    "Absolutelyaya", "Structure Help: AshenWulf", "SFX Help: 8BitBunnie"
   ],
   "contact": {
     "issues": "https://github.com/absolutelyaya/ultracraft/issues",
@@ -45,6 +45,9 @@
     ],
     "cardinal-components-world": [
       "absolutelyaya.ultracraft.components.UltraComponents"
+    ],
+    "cybergrind": [
+      "absolutelyaya.ultracraft.api.CoreCybergrindInitializer"
     ]
   },
   "mixins": [

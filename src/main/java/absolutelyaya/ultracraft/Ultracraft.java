@@ -1,12 +1,14 @@
 package absolutelyaya.ultracraft;
 
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
+import absolutelyaya.ultracraft.api.CybergrindInitializer;
 import absolutelyaya.ultracraft.command.Commands;
 import absolutelyaya.ultracraft.command.EditModeCommands;
 import absolutelyaya.ultracraft.command.WhitelistCommand;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IEditorComponent;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
+import absolutelyaya.ultracraft.config.CybergrindConfig;
 import absolutelyaya.ultracraft.config.HivelConfig;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.config.Setting;
@@ -178,6 +180,14 @@ public class Ultracraft implements ModInitializer
         else
             hivelConfig.load(server);
         hivelConfig.syncAll(server);
+        if(CybergrindConfig.INSTANCE == null)
+            new CybergrindConfig(server);
+        else
+            CybergrindConfig.INSTANCE.load(server);
+        CybergrindConfig.clearCosts();
+        for (CybergrindInitializer initializer : FabricLoader.getInstance().getEntrypoints("cybergrind", CybergrindInitializer.class))
+            initializer.registerEnemyCosts(CybergrindConfig.INSTANCE);
+        CybergrindConfig.freeze();
     }
     
     public static boolean isTimeFrozen()
