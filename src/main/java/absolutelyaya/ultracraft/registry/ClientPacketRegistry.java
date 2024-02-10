@@ -4,6 +4,7 @@ import absolutelyaya.goop.api.WaterHandling;
 import absolutelyaya.goop.client.GoopClient;
 import absolutelyaya.goop.particles.GoopDropParticleEffect;
 import absolutelyaya.ultracraft.ExplosionHandler;
+import absolutelyaya.ultracraft.client.gui.CybergrindHUD;
 import absolutelyaya.ultracraft.client.gui.screen.AbstractTravelScreen;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
@@ -438,6 +439,12 @@ public class ClientPacketRegistry
 		ClientPlayNetworking.registerGlobalReceiver(FINISH_TRAVELLING_PACKET_ID, (((client, handler, buf, responseSender) -> {
 			if(client.currentScreen instanceof AbstractTravelScreen travel)
 				travel.setShouldClose();
+		})));
+		ClientPlayNetworking.registerGlobalReceiver(ANNOUNCE_CYBERGRIND, (((client, handler, buf, responseSender) -> {
+			Text result = buf.readText();
+			CybergrindHUD hud = CybergrindHUD.Instance;
+			if(hud != null)
+				hud.startAnnouncementSequence(result);
 		})));
 	}
 }

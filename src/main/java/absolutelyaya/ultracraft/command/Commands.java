@@ -9,6 +9,7 @@ import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.config.Setting;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.dimension.LevelManager;
+import absolutelyaya.ultracraft.entity.CybergrindManager;
 import absolutelyaya.ultracraft.entity.machine.DestinyBondSwordsmachineEntity;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import com.chocohead.mm.api.ClassTinkerers;
@@ -70,7 +71,8 @@ public class Commands
 				.then(literal("screenshake").then(argument("strength", FloatArgumentType.floatArg()).executes(Commands::executeDebugScreenshake)))
 				.then(literal("levels").requires(ServerCommandSource::isExecutedByPlayer)
 					.then(literal("instance-everything-several-times").then(literal("confirm").executes(Commands::executeDebugLevelInstancing)).executes(Commands::executeDebugLevelInstancingWarning))
-					.then(literal("destroy-all-instances").executes(Commands::executeDebugLevelDestruction))))
+					.then(literal("destroy-all-instances").executes(Commands::executeDebugLevelDestruction)))
+				.then(literal("cybergrind").then(literal("start").executes(Commands::executeDebugStartCybergrind))))
 			.then(literal("progression").requires(source -> source.hasPermissionLevel(2))
 				.then(argument("list", string()).suggests(Commands::progressionListTypeProvider)
 					.then(literal("list").then(argument("target", player()).executes(Commands::executeProgressionList)))
@@ -420,6 +422,13 @@ public class Commands
 	{
 		LevelManager.Instance.destroyAllInstances();
 		context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.level-instance.destroy"), true);
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int executeDebugStartCybergrind(CommandContext<ServerCommandSource> context)
+	{
+		CybergrindManager.Instance.startCybergrind();
+		context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.cybergrind.start"), true);
 		return Command.SINGLE_SUCCESS;
 	}
 }

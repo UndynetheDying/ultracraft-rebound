@@ -6,12 +6,18 @@ import absolutelyaya.ultracraft.config.CybergrindConfig;
 import absolutelyaya.ultracraft.config.IntegerEntry;
 import absolutelyaya.ultracraft.dimension.UltraDimensions;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
+import absolutelyaya.ultracraft.registry.PacketRegistry;
 import com.google.common.collect.ImmutableMap;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
@@ -22,7 +28,7 @@ import java.util.Map;
 
 public class CybergrindManager
 {
-	public static CybergrindManager INSTANCE;
+	public static CybergrindManager Instance;
 	final CybergrindConfig config;
 	final MinecraftServer server;
 	final Random rand;
@@ -32,7 +38,7 @@ public class CybergrindManager
 	
 	public CybergrindManager(MinecraftServer server)
 	{
-		INSTANCE = this;
+		Instance = this;
 		this.server = server;
 		this.config = CybergrindConfig.INSTANCE;
 		rand = Random.create();
@@ -77,6 +83,7 @@ public class CybergrindManager
 	
 	public void startCybergrind()
 	{
+		server.sendMessage(Text.translatable("message.ultracraft.cybergrind.announce"));
 		List<PlayerEntity> candidates = getPlayersInUltracraftDimensions();
 		PlayerEntity winner = candidates.get(rand.nextInt(candidates.size()));
 		World world = winner.getWorld();
@@ -97,8 +104,10 @@ public class CybergrindManager
 		final List<HostileEntity> enemies = new ArrayList<>();
 		final List<PlayerEntity> participants = new ArrayList<>();
 		final BlockPos center;
-		int waves, currentWave, budget;
-		boolean over, win;
+		final int arenaRadius;
+		final boolean arenaSolid;
+		int delay, waves, currentWave, budget;
+		boolean targetAnnounced, over, win;
 		
 		public CybergrindGame(World world, CybergrindConfig config, Random rand, PlayerEntity owner)
 		{
@@ -111,20 +120,37 @@ public class CybergrindManager
 			for(Map.Entry<EntityType<? extends HostileEntity>, IntegerEntry> entry : config.getCosts(curLayer).entrySet())
 				costBuilder.put(entry.getKey(), entry.getValue().getValue());
 			spawnCosts = costBuilder.build();
+			arenaRadius = config.arenaRadius.getValue();
+			arenaSolid = config.arenaBorderSolid.getValue();
+			delay = /*Math.max(config.startDelay.getValue(), 1)*/ 1;
 			
 			int difficulty = world.getDifficulty().getId();
 			waves = config.wavesPerDifficultyBonus.getValue() * difficulty;
 			for (int i = 0; i < difficulty; i++)
 				waves += rand.nextBetween(config.wavesPerDifficultyLow.getValue(), config.wavesPerDifficultyHigh.getValue());
+			System.out.println("waves: " + waves);
 			participants.add(owner);
+			world.getServer().sendMessage(Text.translatable("message.ultracraft.cybergrind.chosen", owner.getDisplayName()));
 			//TODO: on death remove participant
 			//TODO: add participants that enter the area for the first time
 			//TODO: add border around arena that participants can't cross
+			//TODO: render the border as well
 		}
 		
 		public void tick()
 		{
-			if(currentWave < waves && enemies.size() == 0 && budget == 0)
+			if(delay > 0)
+			{
+				delay--;
+				if(delay == 0 && !targetAnnounced)
+				{
+					delay += 600;
+					announceTarget();
+				}
+				return;
+			}
+			//System.out.println(currentWave + " / " + waves + " w | " + enemies.size() + " " + budget);
+			if(currentWave < waves && enemies.size() == 0 && budget <= 0)
 				startWave();
 			if(budget > 0)
 			{
@@ -137,9 +163,18 @@ public class CybergrindManager
 			}
 		}
 		
+		void announceTarget()
+		{
+			targetAnnounced = true;
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			buf.writeText(participants.get(0).getDisplayName());
+			world.getServer().getPlayerManager().getPlayerList().forEach(p -> ServerPlayNetworking.send(p, PacketRegistry.ANNOUNCE_CYBERGRIND, buf));
+		}
+		
 		void startWave()
 		{
 			currentWave++;
+			System.out.println("starting wave " + currentWave + " / " + waves);
 			calculateBudget();
 		}
 		
@@ -147,7 +182,7 @@ public class CybergrindManager
 		{
 			List<EntityType<? extends HostileEntity>> candidates = new ArrayList<>();
 			for (Map.Entry<EntityType<? extends HostileEntity>, Integer> entry : spawnCosts.entrySet())
-				if(entry.getValue() < budget)
+				if(entry.getValue() <= budget)
 					candidates.add(entry.getKey());
 			if(candidates.size() == 0)
 				return false;
@@ -171,12 +206,22 @@ public class CybergrindManager
 			for (int i = 0; i < currentWave; i++)
 				budget += rand.nextBetween(config.minBudgetPerWave.getValue(), config.maxBudgetPerWave.getValue());
 			budget += config.difficultyBudgetBonus.getValue() * difficulty;
-			System.out.println("Budget: " + budget);
+			System.out.println("Wave Budget: " + budget);
 		}
 		
 		public boolean isOver()
 		{
 			return over;
+		}
+		
+		public boolean isBorderSolid()
+		{
+			return arenaSolid;
+		}
+		
+		public int getArenaRadius()
+		{
+			return arenaRadius;
 		}
 	}
 }

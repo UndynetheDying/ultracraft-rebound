@@ -17,6 +17,7 @@ import absolutelyaya.ultracraft.data.TerminalScreensaverManager;
 import absolutelyaya.ultracraft.data.UltraRecipeManager;
 import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.dimension.UltraDimensions;
+import absolutelyaya.ultracraft.entity.CybergrindManager;
 import absolutelyaya.ultracraft.item.AbstractNailgunItem;
 import absolutelyaya.ultracraft.item.MarksmanRevolverItem;
 import absolutelyaya.ultracraft.item.SharpshooterRevolverItem;
@@ -120,6 +121,7 @@ public class Ultracraft implements ModInitializer
                     supporterCache.put(uuid, i - 1);
             });
             UltraDimensions.Instance.tickManagers();
+            CybergrindManager.Instance.tick();
         });
         ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
             newPlayer.getInventory().main.forEach(stack -> {
@@ -153,7 +155,10 @@ public class Ultracraft implements ModInitializer
                 if(player.getWorld().getGameRules().getBoolean(GameruleRegistry.START_WITH_PIERCER))
                     player.giveItemStack(ItemRegistry.PIERCE_REVOLVER.getDefaultStack());
         }));
-        ServerLifecycleEvents.SERVER_STARTING.register(this::loadConfig);
+        ServerLifecycleEvents.SERVER_STARTING.register((server) -> {
+            loadConfig(server);
+            new CybergrindManager(server);
+        });
         ServerLifecycleEvents.START_DATA_PACK_RELOAD.register((server, handler) -> {
             loadConfig(server);
             server.getPlayerManager().getPlayerList().forEach(player -> {

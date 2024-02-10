@@ -25,6 +25,9 @@ public class CybergrindConfig extends Config
 	public final BooleanEntry stopUponDeath = new BooleanEntry("StopOnDeath", true);
 	public final FloatEntry startChance = new FloatEntry("StartChance", 0.2f);
 	public final IntegerEntry cooldown = new IntegerEntry("Cooldown", 5);
+	public final IntegerEntry arenaRadius = new IntegerEntry("ArenaRadius", 33);
+	public final BooleanEntry arenaBorderSolid = new BooleanEntry("ArenaBorderSolid", true);
+	public final IntegerEntry startDelay = new IntegerEntry("StartDelay", 1200);
 	static final Map<Layer, Map<EntityType<? extends HostileEntity>, IntegerEntry>> costs = new HashMap<>();
 	
 	public CybergrindConfig(MinecraftServer server)
@@ -74,6 +77,10 @@ public class CybergrindConfig extends Config
 		entries.add(new Comment(" Chance to start a Cybergrind each Night; after a Cybergrind has ended, for [cooldown] nights, the chance will be 0."));
 		entries.add(startChance);
 		entries.add(cooldown);
+		entries.add(startDelay);
+		entries.add(new Comment(" Radius is the Size of the Arena in all four directions; meaning 32 Radius + 1 center block = 65 total width//length"));
+		entries.add(arenaRadius);
+		entries.add(arenaBorderSolid);
 		entries.add(new Comment(" ## ################################# ##  #"));
 		entries.add(new Comment("              Spawn Costs"));
 		entries.add(new Comment(" ## ################################# ##  #"));
@@ -116,7 +123,7 @@ public class CybergrindConfig extends Config
 	{
 		Map<EntityType<? extends HostileEntity>, IntegerEntry> map = new HashMap<>();
 		int min = minLayer.ordinal();
-		for (int i = 0; i < min; i++)
+		for (int i = 0; i <= min; i++)
 		{
 			Layer layer = Layer.values()[i];
 			if(costs.containsKey(layer))

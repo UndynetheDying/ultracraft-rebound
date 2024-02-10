@@ -334,6 +334,8 @@
   "command.ultracraft.debug.level-instance.progress": "[Ultracraft] Instance %1$s/8 of %2$s created. %3$s/%4$s Instances done!",
   "command.ultracraft.debug.level-instance.finish": "[Ultracraft] Finished instancing every Level a Lot. Congrats! Your Server survived :D",
   "command.ultracraft.debug.level-instance.destroy": "[Ultracraft] Destroyed all Level Instances",
+  "command.ultracraft.debug.cybergrind.start": "[Ultracraft] Starting Cybergrind...",
+  "command.ultracraft.debug.cybergrind.stop": "[Ultracraft] Stopping Cybergrind...",
 
   "gamerule.ultracraft.category.general": "ULTRACRAFT",
   "gamerule.ultracraft.category.world": "ULTRACRAFT (world)",
@@ -457,6 +459,8 @@
   "message.ultracraft.rescue.level-destroyed": "The Level you were in was Destroyed; You were brought back to the Overworlds Spawn Position.",
   "message.ultracraft.rescue.void": "Whoops, sorry about that; You were brought back to the Overworlds Spawn Position.",
   "message.ultracraft.rescue.null": "The Level you were supposedly in doesn't exist; You were brought back to the Overworlds Spawn Position.",
+  "message.ultracraft.cybergrind.announce": "§4The Terminals grow Restless...",
+  "message.ultracraft.cybergrind.chosen": "§6%s§r was chosen as todays Entertainment!",
 
   "intro.ultracraft.calibration": "BOOT UP SEQUENCE READY\n\nFIRMWARE\n  §aVERSION %s§r\n\nCALIBRATION\n  §4EXPIRED§r\n  §4NEW CALIBRATION REQUIRED§r\n\n",
   "intro.ultracraft.input": "Press any Key",

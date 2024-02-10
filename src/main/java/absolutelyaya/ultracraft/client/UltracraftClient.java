@@ -1,14 +1,11 @@
 package absolutelyaya.ultracraft.client;
 
 import absolutelyaya.goop.client.GoopClient;
-import absolutelyaya.ultracraft.client.gui.LevelHUD;
+import absolutelyaya.ultracraft.client.gui.*;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.api.terminal.TerminalCodeRegistry;
-import absolutelyaya.ultracraft.client.gui.EditModeHUD;
-import absolutelyaya.ultracraft.client.gui.TitleHUD;
-import absolutelyaya.ultracraft.client.gui.WeaponInfoHUD;
 import absolutelyaya.ultracraft.client.gui.screen.EpilepsyPopupScreen;
 import absolutelyaya.ultracraft.client.gui.screen.ServerConfigScreen;
 import absolutelyaya.ultracraft.client.gui.terminal.PetTab;
@@ -108,6 +105,7 @@ public class UltracraftClient implements ClientModInitializer
 	static EditModeHUD editModeHUD;
 	static TitleHUD titleHUD;
 	static LevelHUD levelHUD;
+	static CybergrindHUD cybergrindHUD;
 	static ConfigHolder<ClientConfig> config;
 	
 	@Override
@@ -216,11 +214,13 @@ public class UltracraftClient implements ClientModInitializer
 		editModeHUD = new EditModeHUD();
 		titleHUD = new TitleHUD();
 		levelHUD = new LevelHUD();
+		cybergrindHUD = new CybergrindHUD();
 		HudRenderCallback.EVENT.register((context, delta) -> {
 			weaponInfoHUD.render(context, delta);
 			editModeHUD.render(context, delta);
 			titleHUD.render(context, delta);
 			levelHUD.render(context, delta);
+			cybergrindHUD.render(context);
 		});
 		
 		ClientPlayConnectionEvents.INIT.register((handler, client) -> {
