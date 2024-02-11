@@ -342,7 +342,8 @@ public class DestinyBondSwordsmachineEntity extends SwordsmachineEntity implemen
 	public void setCustomName(@Nullable Text name)
 	{
 		super.setCustomName(name);
-		bossBar.setName(name);
+		if(bossBar != null)
+			bossBar.setName(name);
 	}
 	
 	public int getVariant()

@@ -217,7 +217,7 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 	
 	public boolean isBossBarVisible()
 	{
-		return true;
+		return bossBar != null;
 	}
 	
 	protected EnemySoundType getSoundType()

@@ -5,7 +5,7 @@ import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.Enrageable;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
-import absolutelyaya.ultracraft.damage.DamageSources;
+import absolutelyaya.ultracraft.damage.DamageTypeTags;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.entity.IAntiCheeseBoss;
@@ -546,7 +546,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 	@Override
 	public boolean damage(DamageSource source, float amount)
 	{
-		if(isPlayingIntro() && !source.isOf(DamageSources.COIN_PUNCH))
+		if(isPlayingIntro() && !source.isIn(DamageTypeTags.V2_BYPASS_INTRO))
 			return false;
 		if(source.isOf(DamageTypes.FALL))
 			return false;
@@ -559,7 +559,8 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 				dataTracker.set(ENRAGED, false);
 				dataTracker.set(WEAPON, ItemStack.EMPTY);
 				setHealth(1f);
-				bossBar.setPercent(0f);
+				if(bossBar != null)
+					bossBar.setPercent(0f);
 				if(source.getAttacker() instanceof LivingEntity living)
 					setAttacker(living);
 				LivingEntity adversary = getPrimeAdversary();

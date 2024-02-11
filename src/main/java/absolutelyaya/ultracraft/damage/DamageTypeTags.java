@@ -19,4 +19,5 @@ public class DamageTypeTags
 	public static final TagKey<DamageType> BREAK_MAGNET = TagKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Ultracraft.MOD_ID, "break_magnet"));
 	public static final TagKey<DamageType> PUNCH = TagKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Ultracraft.MOD_ID, "punch"));
 	public static final TagKey<DamageType> REDUCED_KNOCKBACK = TagKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Ultracraft.MOD_ID, "reduced_knockback"));
+	public static final TagKey<DamageType> V2_BYPASS_INTRO = TagKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Ultracraft.MOD_ID, "v2_bypass_intro"));
 }
