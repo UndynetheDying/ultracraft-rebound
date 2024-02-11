@@ -17,7 +17,7 @@ import absolutelyaya.ultracraft.data.TerminalScreensaverManager;
 import absolutelyaya.ultracraft.data.UltraRecipeManager;
 import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.dimension.UltraDimensions;
-import absolutelyaya.ultracraft.entity.CybergrindManager;
+import absolutelyaya.ultracraft.cybergrind.CybergrindManager;
 import absolutelyaya.ultracraft.item.AbstractNailgunItem;
 import absolutelyaya.ultracraft.item.MarksmanRevolverItem;
 import absolutelyaya.ultracraft.item.SharpshooterRevolverItem;

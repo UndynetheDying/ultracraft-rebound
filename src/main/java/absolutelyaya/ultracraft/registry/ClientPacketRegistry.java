@@ -20,6 +20,7 @@ import absolutelyaya.ultracraft.client.rendering.UltraHudRenderer;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.cybergrind.CybergrindData;
 import absolutelyaya.ultracraft.data.UltraRecipeManager;
 import absolutelyaya.ultracraft.dimension.LevelData;
 import absolutelyaya.ultracraft.dimension.LevelManager;
@@ -27,6 +28,7 @@ import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.particle.ParryIndicatorParticleEffect;
 import absolutelyaya.ultracraft.recipe.UltraRecipe;
 import com.google.common.collect.ImmutableMap;
+import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -38,6 +40,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.particle.ParticleTypes;
@@ -445,6 +448,33 @@ public class ClientPacketRegistry
 			CybergrindHUD hud = CybergrindHUD.Instance;
 			if(hud != null)
 				hud.startAnnouncementSequence(result);
+		})));
+		ClientPlayNetworking.registerGlobalReceiver(SYNC_CYBERGRIND, (((client, handler, buf, responseSender) -> {
+			byte mode = buf.readByte();
+			NbtCompound data = mode != CybergrindData.DESTROY_SYNC ? buf.readNbt() : new NbtCompound();
+			client.execute(() -> {
+				if(client.player == null)
+					return;
+				IWingedPlayerComponent winged = UltraComponents.WINGED.get(client.player);
+				if(mode == CybergrindData.DESTROY_SYNC)
+				{
+					winged.setCybergrindData(null);
+					return;
+				}
+				CybergrindData last = winged.getCybergrindData();
+				if(last == null)
+				{
+					if(mode != CybergrindData.FULL_SYNC)
+						ClientPlayNetworking.send(REQUEST_FULL_CYBERGRIND_PACKET_ID, new PacketByteBuf(Unpooled.buffer()));
+					else
+						winged.setCybergrindData(CybergrindData.fromNbt(data));
+					return;
+				}
+				if(data.contains("currentWave", NbtElement.INT_TYPE))
+					last.setCurrentWave(data.getInt("currentWave"));
+				if(data.contains("enemies", NbtElement.INT_TYPE))
+					last.setEnemies(data.getInt("enemies"));
+			});
 		})));
 	}
 }

@@ -1,6 +1,9 @@
 package absolutelyaya.ultracraft.client.gui;
 
 import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.cybergrind.CybergrindData;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -19,8 +22,10 @@ public class CybergrindHUD
 	public static CybergrindHUD Instance;
 	static final Identifier ROULETTE_TEX = new Identifier(Ultracraft.MOD_ID, "textures/gui/sacrificial_roulette.png");
 	final Random rand = Random.create();
+	final MinecraftClient client;
+	final String[] fakeNames = new String[] { "AbsoluteZaza", "SomethingWicked", "Flowerman", "Interloper", "Maurice", "xX_TheSize2_Xx", "Querbert" };
 	
-	int announcementSequenceStep;
+	int announcementSequenceStep, lastEnemies;
 	float announcementSequenceTime, spinTime;
 	List<Text> playerNames;
 	Text resultName;
@@ -28,12 +33,16 @@ public class CybergrindHUD
 	public CybergrindHUD()
 	{
 		Instance = this;
+		client = MinecraftClient.getInstance();
 	}
 	
 	public void startAnnouncementSequence(Text resultName)
 	{
 		playerNames = new ArrayList<>();
-		MinecraftClient.getInstance().getServer().getPlayerManager().getPlayerList().forEach(p -> playerNames.add(p.getDisplayName()));
+		client.getServer().getPlayerManager().getPlayerList().forEach(p -> playerNames.add(p.getDisplayName()));
+		while(rand.nextFloat() < 0.05f)
+			playerNames.add(rand.nextInt(playerNames.size() - 1), Text.of(fakeNames[rand.nextInt(playerNames.size())]));
+		
 		announcementSequenceStep = 1;
 		announcementSequenceTime = 0f;
 		spinTime = 0f;
@@ -42,16 +51,34 @@ public class CybergrindHUD
 	
 	public void render(DrawContext context)
 	{
-		float deltaTime = MinecraftClient.getInstance().getLastFrameDuration() / 30f;
+		TextRenderer tRenderer = client.textRenderer;
+		float deltaTime = client.getLastFrameDuration() / 30f;
 		int width = context.getScaledWindowWidth();
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(client.player);
 		
 		if(announcementSequenceStep > 0)
-			renderAnnouncementSequence(context, deltaTime, width);
+			renderAnnouncementSequence(tRenderer, context, deltaTime, width);
+		if(winged != null && winged.getCybergrindData() != null)
+			renderStats(tRenderer, context, winged.getCybergrindData());
 	}
 	
-	void renderAnnouncementSequence(DrawContext context, float deltaTime, int width)
+	void renderStats(TextRenderer tRenderer, DrawContext context, CybergrindData data)
 	{
-		TextRenderer tRenderer = MinecraftClient.getInstance().textRenderer;
+		MatrixStack matrices = context.getMatrices();
+		matrices.push();
+		matrices.translate(2, 2, 0);
+		context.drawText(tRenderer, Text.of("wave: " + data.getCurrentWave() + "/" + data.getWaves()), 0, 0, 0xffffffff, true);
+		matrices.translate(0, tRenderer.fontHeight, 0);
+		int enemies = lastEnemies;
+		if(enemies != data.getEnemies())
+			enemies += lastEnemies < data.getEnemies() ? 1 : -1;
+		context.drawText(tRenderer, Text.of("enemies: " + enemies), 0, 0, 0xffffffff, true);
+		lastEnemies = enemies;
+		matrices.pop();
+	}
+	
+	void renderAnnouncementSequence(TextRenderer tRenderer, DrawContext context, float deltaTime, int width)
+	{
 		MatrixStack matrices = context.getMatrices();
 		announcementSequenceTime += deltaTime;
 		matrices.push();
@@ -147,7 +174,7 @@ public class CybergrindHUD
 		float y = -(spinTime % 1f);
 		if(spinSpeed <= 1)
 		{
-			lastName++;
+			lastName = (lastName + 1) % playerNames.size();
 			y -= 1f - spinSpeed - 1f;
 		}
 		matrices.translate(0, y * height, 0);

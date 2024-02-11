@@ -21,6 +21,7 @@ import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.data.UltraRecipeManager;
 import absolutelyaya.ultracraft.dimension.LevelManager;
+import absolutelyaya.ultracraft.cybergrind.CybergrindManager;
 import absolutelyaya.ultracraft.entity.projectile.AbstractSkewerEntity;
 import absolutelyaya.ultracraft.entity.projectile.ThrownCoinEntity;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
@@ -95,6 +96,7 @@ public class PacketRegistry
 	public static final Identifier ENTER_LEVEL_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "enter_level");
 	public static final Identifier REQUEST_DESTINATIONS_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "destinations_c2s");
 	public static final Identifier REQUEST_INSTANCES_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "instances_c2s");
+	public static final Identifier REQUEST_FULL_CYBERGRIND_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "request_cybergrind");
 	
 	public static final Identifier FREEZE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "freeze");
 	public static final Identifier HITSCAN_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "scan");
@@ -133,6 +135,7 @@ public class PacketRegistry
 	public static final Identifier SEND_LEVEL_INSTANCES_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "instances_s2c");
 	public static final Identifier FINISH_TRAVELLING_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "travel_end");
 	public static final Identifier ANNOUNCE_CYBERGRIND = new Identifier(Ultracraft.MOD_ID, "announce_cybergrind");
+	public static final Identifier SYNC_CYBERGRIND = new Identifier(Ultracraft.MOD_ID, "sync_cybergrind");
 	
 	public static void registerC2S()
 	{
@@ -712,6 +715,9 @@ public class PacketRegistry
 				cbuf.writeNbt(nbt);
 				ServerPlayNetworking.send(player, SEND_LEVEL_INSTANCES_PACKET_ID, cbuf);
 			});
+		});
+		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.REQUEST_FULL_CYBERGRIND_PACKET_ID, (server, player, handler, buf, sender) -> {
+			server.execute(() -> CybergrindManager.Instance.syncFullActiveGame(player));
 		});
 	}
 	

@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
+import absolutelyaya.ultracraft.cybergrind.CybergrindData;
 import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
@@ -47,6 +48,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	boolean fighting, perfect;
 	int fightCheckCooldown;
 	long timerStart = -1;
+	CybergrindData cybergrindData;
 	
 	public WingedPlayerComponent(PlayerEntity provider)
 	{
@@ -335,6 +337,30 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	public int getLastPlayedLevelVersion(Identifier id)
 	{
 		return lastPlayedVersion.getOrDefault(id, -1);
+	}
+	
+	@Override
+	public void setCybergrindData(CybergrindData v)
+	{
+		cybergrindData = v;
+		if(!provider.getWorld().isClient && provider instanceof ServerPlayerEntity serverPlayer)
+		{
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			if(v == null)
+				buf.writeByte(CybergrindData.DESTROY_SYNC);
+			else
+			{
+				buf.writeByte(CybergrindData.FULL_SYNC);
+				buf.writeNbt(v.serialize());
+			}
+			ServerPlayNetworking.send(serverPlayer, PacketRegistry.SYNC_CYBERGRIND, buf);
+		}
+	}
+	
+	@Override
+	public CybergrindData getCybergrindData()
+	{
+		return cybergrindData;
 	}
 	
 	@Override

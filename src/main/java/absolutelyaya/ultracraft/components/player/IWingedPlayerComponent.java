@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.components.player;
 
 import absolutelyaya.ultracraft.client.GunCooldownManager;
+import absolutelyaya.ultracraft.cybergrind.CybergrindData;
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
 import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
 import net.minecraft.registry.RegistryKey;
@@ -80,4 +81,8 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	long getBestTime(Identifier id);
 	
 	int getLastPlayedLevelVersion(Identifier levelId);
+	
+	void setCybergrindData(CybergrindData v);
+	
+	CybergrindData getCybergrindData();
 }

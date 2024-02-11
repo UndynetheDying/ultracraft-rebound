@@ -27,7 +27,7 @@ public class CybergrindConfig extends Config
 	public final IntegerEntry cooldown = new IntegerEntry("Cooldown", 5);
 	public final IntegerEntry arenaRadius = new IntegerEntry("ArenaRadius", 33);
 	public final BooleanEntry arenaBorderSolid = new BooleanEntry("ArenaBorderSolid", true);
-	public final IntegerEntry startDelay = new IntegerEntry("StartDelay", 1200);
+	public final IntegerEntry startDelay = new IntegerEntry("StartDelay", 1200); //1 minute
 	static final Map<Layer, Map<EntityType<? extends HostileEntity>, IntegerEntry>> costs = new HashMap<>();
 	
 	public CybergrindConfig(MinecraftServer server)
