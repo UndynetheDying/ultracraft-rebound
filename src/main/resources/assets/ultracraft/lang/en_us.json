@@ -335,7 +335,7 @@
   "command.ultracraft.debug.level-instance.finish": "[Ultracraft] Finished instancing every Level a Lot. Congrats! Your Server survived :D",
   "command.ultracraft.debug.level-instance.destroy": "[Ultracraft] Destroyed all Level Instances",
   "command.ultracraft.debug.cybergrind.start": "[Ultracraft] Starting Cybergrind...",
-  "command.ultracraft.debug.cybergrind.stop": "[Ultracraft] Stopping Cybergrind...",
+  "command.ultracraft.debug.cybergrind.end": "[Ultracraft] Stopping Cybergrind...",
 
   "gamerule.ultracraft.category.general": "ULTRACRAFT",
   "gamerule.ultracraft.category.world": "ULTRACRAFT (world)",
@@ -462,6 +462,9 @@
   "message.ultracraft.cybergrind.announce": "§4The Terminals grow Restless...",
   "message.ultracraft.cybergrind.announce-cancel": "§7Disappointed at the sudden lack of Participants, the Terminals accept that the Festivities are cancelled.",
   "message.ultracraft.cybergrind.chosen": "§6%s§r was chosen as todays Entertainment!",
+  "message.ultracraft.cybergrind.wave-complete": "Wave %s completed!",
+  "message.ultracraft.cybergrind.end": "The Cybergrind has ended.",
+  "message.ultracraft.cybergrind.end-win": "The Cybergrind was won and the Terminals are Satisfied.",
 
   "intro.ultracraft.calibration": "BOOT UP SEQUENCE READY\n\nFIRMWARE\n  §aVERSION %s§r\n\nCALIBRATION\n  §4EXPIRED§r\n  §4NEW CALIBRATION REQUIRED§r\n\n",
   "intro.ultracraft.input": "Press any Key",

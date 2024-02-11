@@ -1,6 +1,8 @@
 package absolutelyaya.ultracraft.entity;
 
 import absolutelyaya.ultracraft.api.HeavyEntities;
+import absolutelyaya.ultracraft.cybergrind.CybergrindGame;
+import absolutelyaya.ultracraft.cybergrind.CybergrindManager;
 import absolutelyaya.ultracraft.particle.ParryIndicatorParticleEffect;
 import absolutelyaya.ultracraft.particle.TeleportParticleEffect;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
@@ -28,14 +30,17 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.*;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector4i;
 
 public abstract class AbstractUltraHostileEntity extends HostileEntity
 {
 	protected static final TrackedData<Byte> ANIMATION = DataTracker.registerData(AbstractUltraHostileEntity.class, TrackedDataHandlerRegistry.BYTE);
 	protected static final TrackedData<Boolean> BOSS = DataTracker.registerData(AbstractUltraHostileEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+	protected static final TrackedData<Boolean> CYBERGRIND = DataTracker.registerData(AbstractUltraHostileEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	
 	protected ServerBossBar bossBar;
 	boolean wasBossbarVisible;
@@ -56,6 +61,7 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 		super.initDataTracker();
 		dataTracker.startTracking(ANIMATION, (byte)0);
 		dataTracker.startTracking(BOSS, getBossDefault());
+		dataTracker.startTracking(CYBERGRIND, false);
 	}
 	
 	@Nullable
@@ -71,6 +77,8 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 		super.readCustomDataFromNbt(nbt);
 		if(nbt.contains("boss", NbtElement.BYTE_TYPE))
 			dataTracker.set(BOSS, nbt.getBoolean("boss"));
+		if(nbt.contains("cybergrind", NbtElement.BYTE_TYPE))
+			dataTracker.set(CYBERGRIND, nbt.getBoolean("cybergrind"));
 	}
 	
 	@Override
@@ -78,6 +86,7 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 	{
 		super.writeCustomDataToNbt(nbt);
 		nbt.putBoolean("boss", dataTracker.get(BOSS));
+		nbt.putBoolean("cybergrind", dataTracker.get(CYBERGRIND));
 	}
 	
 	@Override
@@ -185,8 +194,21 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 	public void tickMovement()
 	{
 		super.tickMovement();
+		
 		if(!getWorld().isClient)
+		{
+			CybergrindGame cybergrind = CybergrindManager.Instance.getActiveGame();
+			if(cybergrind != null && cybergrind.getCenter() != null)
+			{
+				Vector4i bounds = cybergrind.getArenaBounds();
+				if(getX() < bounds.x || getX() > bounds.z || getZ() < bounds.y || getZ() > bounds.w)
+				{
+					BlockPos pos = cybergrind.getCenter();
+					navigation.startMovingTo(pos.getX(), pos.getY(), pos.getZ(), 1f);
+				}
+			}
 			return;
+		}
 		if(!isOnGround() && getVelocity().y < 0f)
 			fallDistance -= getVelocity().y;
 		else
@@ -248,5 +270,18 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 	protected void playFireSound()
 	{
 		playSound(SoundRegistry.GENERIC_FIRE, 1, 1);
+	}
+	
+	public void markCybergrind()
+	{
+		dataTracker.set(BOSS, false);
+		dataTracker.set(CYBERGRIND, true);
+		if(bossBar != null)
+			bossBar.clearPlayers();
+	}
+	
+	public boolean isCybergrind()
+	{
+		return dataTracker.get(CYBERGRIND);
 	}
 }

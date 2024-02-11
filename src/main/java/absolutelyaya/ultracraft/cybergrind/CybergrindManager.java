@@ -4,13 +4,10 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.config.CybergrindConfig;
 import absolutelyaya.ultracraft.dimension.UltraDimensions;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,11 +62,15 @@ public class CybergrindManager
 	{
 		List<ServerPlayerEntity> list = new ArrayList<>();
 		for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList())
-		{
 			if(UltraDimensions.Instance.isUltraDimension(player.getWorld()))
 				list.add(player);
-		}
 		return list;
+	}
+	
+	public void startCybergrind(ServerPlayerEntity player, int waves)
+	{
+		server.getPlayerManager().broadcast(Text.translatable("message.ultracraft.cybergrind.announce"), false);
+		activeGame = new CybergrindGame(server, config, rand, player, waves);
 	}
 	
 	public void startCybergrind()
@@ -100,5 +101,10 @@ public class CybergrindManager
 			UltraComponents.WINGED.get(player).setCybergrindData(activeGame.asData());
 		else
 			UltraComponents.WINGED.get(player).setCybergrindData(null);
+	}
+	
+	public CybergrindGame getActiveGame()
+	{
+		return activeGame;
 	}
 }

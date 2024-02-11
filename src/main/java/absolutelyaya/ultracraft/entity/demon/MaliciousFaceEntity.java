@@ -373,6 +373,8 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 				e.damage(DamageSources.get(getWorld(), DamageSources.MAURICE), 999f);
 			dataTracker.set(LANDED, true);
 			setPosition(getPos().subtract(0f, 0.5f, 0f));
+			if(dataTracker.get(CYBERGRIND))
+				kill();
 		}
 	}
 	

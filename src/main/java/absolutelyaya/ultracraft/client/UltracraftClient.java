@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.client;
 
 import absolutelyaya.goop.client.GoopClient;
 import absolutelyaya.ultracraft.client.gui.*;
+import absolutelyaya.ultracraft.client.rendering.CybergrindArenaRenderer;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
@@ -293,6 +294,7 @@ public class UltracraftClient implements ClientModInitializer
 			UltracraftClient.HITSCAN_HANDLER.render(ctx.matrixStack(), ctx.camera(), ctx.tickDelta());
 			UltracraftClient.TRAIL_RENDERER.render(ctx.matrixStack(), ctx.camera());
 			UltracraftClient.EDITMODE_RENDERER.render(ctx.matrixStack(), ctx.camera(), delta);
+			CybergrindArenaRenderer.render(ctx.matrixStack(), ctx.camera(), delta);
 			APPLY_ENTITY_POSES = false;
 		});
 		

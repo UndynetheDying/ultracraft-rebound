@@ -5,33 +5,41 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.config.CybergrindConfig;
 import absolutelyaya.ultracraft.config.IntegerEntry;
+import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
-import com.google.common.collect.ImmutableMap;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.world.RaycastContext;
 import org.joml.Vector4i;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class CybergrindGame
+public class CybergrindGame
 {
-	final Map<EntityType<? extends HostileEntity>, Integer> spawnCosts;
+	final Map<EntityType<? extends HostileEntity>, Integer> spawnCosts = new HashMap<>();
 	final MinecraftServer server;
 	final CybergrindConfig config;
 	final Random rand;
@@ -43,26 +51,26 @@ class CybergrindGame
 	final boolean arenaSolid;
 	int delay, waves, currentWave, budget, duration;
 	boolean initialized, over, win, curWaveDirty, enemiesDirty;
-	PlayerEntity owner;
+	ServerPlayerEntity owner;
 	
-	public CybergrindGame(MinecraftServer server, CybergrindConfig config, Random rand)
+	public CybergrindGame(MinecraftServer server, CybergrindConfig config, Random rand, ServerPlayerEntity owner, int waves)
 	{
 		this.server = server;
 		this.config = config;
 		this.rand = rand;
-		ImmutableMap.Builder<EntityType<? extends HostileEntity>, Integer> costBuilder = ImmutableMap.builder();
-		Layer curLayer = Layer.fromRegistryKey(MinecraftClient.getInstance().world.getRegistryKey());
-		for (Map.Entry<EntityType<? extends HostileEntity>, IntegerEntry> entry : config.getCosts(curLayer).entrySet())
-			costBuilder.put(entry.getKey(), entry.getValue().getValue());
-		spawnCosts = costBuilder.build();
 		arenaRadius = config.arenaRadius.getValue();
 		arenaSolid = config.arenaBorderSolid.getValue();
-		delay = /*Math.max(config.startDelay.getValue(), 1)*/ 1; //TODO: uncomment
-		
-		//TODO: on death or dimension change remove participant
-		//TODO: add participants that enter the area for the first time
-		//TODO: add border around arena that participants can't cross
-		//TODO: render the border as well
+		delay = Math.max(config.startDelay.getValue(), 1);
+		if(owner != null)
+			delay = 1;
+		this.owner = owner;
+		if(waves != -1)
+			this.waves = waves;
+	}
+	
+	public CybergrindGame(MinecraftServer server, CybergrindConfig config, Random rand)
+	{
+		this(server, config, rand, null, -1);
 	}
 	
 	void addParticipant(PlayerEntity player)
@@ -73,12 +81,14 @@ class CybergrindGame
 		participants.add(player);
 	}
 	
-	void removeParticipant(PlayerEntity player)
+	public void removeParticipant(PlayerEntity player)
 	{
 		if(!participants.contains(player))
 			return;
 		UltraComponents.WINGED.get(player).setCybergrindData(null);
 		participants.remove(player);
+		if(participants.size() == 0)
+			end();
 	}
 	
 	public void tick()
@@ -89,10 +99,18 @@ class CybergrindGame
 		if (delay > 0)
 		{
 			delay--;
-			if (delay == 0 && !initialized)
+			if (delay == 0)
 			{
-				delay += 600;
-				init();
+				if(!initialized)
+				{
+					delay += 600;
+					init();
+				}
+				else if(center == null && owner != null)
+				{
+					center = owner.getBlockPos();
+					addParticipant(owner);
+				}
 			}
 			return;
 		}
@@ -111,14 +129,35 @@ class CybergrindGame
 			if (currentWave < waves && budget <= 0)
 				startWave();
 			else if (currentWave >= waves)
+			{
+				win = true;
 				end();
+			}
 		}
 		else if(duration % 5 == 0)
 		{
 			int count = enemies.size();
 			enemies.removeIf(e -> e.isDead() || e.isRemoved());
 			if(count != enemies.size())
+			{
+				if(enemies.size() == 0)
+				{
+					delay = 60;
+					participants.forEach(p -> {
+						p.setHealth(p.getMaxHealth());
+						p.sendMessage(Text.translatable("message.ultracraft.cybergrind.wave-complete", currentWave)
+											  .setStyle(Style.EMPTY.withColor(Formatting.GOLD)));
+					});
+				}
 				enemiesDirty = true;
+			}
+		}
+		if(duration % 20 == 0) //add players within arena bounds to the participant list
+		{
+			Vector4i bounds = getArenaBounds();
+			for (ServerPlayerEntity player : world.getPlayers())
+				if(!participants.contains(player) && player.getX() > bounds.x && player.getX() < bounds.z && player.getZ() > bounds.y && player.getZ() < bounds.w)
+					addParticipant(player);
 		}
 		if(shouldSync())
 			syncCybergrind();
@@ -126,32 +165,42 @@ class CybergrindGame
 	
 	void init()
 	{
+		ServerPlayerEntity winner = initStartingPlayer();
+		this.world = winner.getServerWorld();
+		this.owner = winner;
+		Layer curLayer = Layer.fromRegistryKey(world.getRegistryKey());
+		for (Map.Entry<EntityType<? extends HostileEntity>, IntegerEntry> entry : config.getCosts(curLayer).entrySet())
+			spawnCosts.put(entry.getKey(), entry.getValue().getValue());
+		int difficulty = world.getDifficulty().getId();
+		if(waves == 0)
+		{
+			waves = config.wavesPerDifficultyBonus.getValue() * difficulty;
+			for (int i = 0; i < difficulty; i++)
+				waves += rand.nextBetween(config.wavesPerDifficultyLow.getValue(), config.wavesPerDifficultyHigh.getValue());
+		}
+		initialized = true;
+		announceTarget();
+	}
+	
+	ServerPlayerEntity initStartingPlayer()
+	{
+		if(owner != null && !owner.isRemoved())
+			return owner;
 		List<ServerPlayerEntity> candidates = CybergrindManager.getPlayersInUltracraftDimensions(server);
 		if(candidates.size() == 0)
 		{
 			server.getPlayerManager().broadcast(Text.translatable("message.ultracraft.cybergrind.announce-cancel"), false);
 			initialized = true;
 			end();
-			return;
+			return null;
 		}
-		ServerPlayerEntity winner = candidates.get(rand.nextInt(candidates.size()));
-		this.world = winner.getServerWorld();
-		this.center = winner.getBlockPos();
-		this.owner = winner;
-		int difficulty = world.getDifficulty().getId();
-		waves = config.wavesPerDifficultyBonus.getValue() * difficulty;
-		for (int i = 0; i < difficulty; i++)
-			waves += rand.nextBetween(config.wavesPerDifficultyLow.getValue(), config.wavesPerDifficultyHigh.getValue());
-		initialized = true;
-		addParticipant(owner);
-		announceTarget();
-		System.out.println("waves: " + waves);
+		return candidates.get(rand.nextInt(candidates.size()));
 	}
 	
 	void announceTarget()
 	{
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-		buf.writeText(participants.get(0).getDisplayName());
+		buf.writeText(owner.getDisplayName());
 		server.getPlayerManager().getPlayerList().forEach(p -> ServerPlayNetworking.send(p, PacketRegistry.ANNOUNCE_CYBERGRIND, buf));
 	}
 	
@@ -176,7 +225,10 @@ class CybergrindGame
 		buf.writeByte(over ? CybergrindData.DESTROY_SYNC : CybergrindData.PARTIAL_SYNC);
 		if (!over)
 			buf.writeNbt(nbt);
-		server.getPlayerManager().getPlayerList().forEach(p -> ServerPlayNetworking.send(p, PacketRegistry.SYNC_CYBERGRIND, buf));
+		participants.forEach(p -> {
+			if(p instanceof ServerPlayerEntity serverPlayer)
+				ServerPlayNetworking.send(serverPlayer, PacketRegistry.SYNC_CYBERGRIND, buf);
+		});
 	}
 	
 	void startWave()
@@ -188,7 +240,6 @@ class CybergrindGame
 			end();
 			return;
 		}
-		System.out.println("starting wave " + currentWave + " / " + waves);
 		calculateBudget();
 	}
 	
@@ -202,16 +253,34 @@ class CybergrindGame
 			return false;
 		EntityType<? extends HostileEntity> winner = candidates.get(rand.nextInt(candidates.size()));
 		budget -= spawnCosts.get(winner);
-		System.out.println(winner.toString() + " -> remaining budget: " + budget);
 		spawn(winner);
 		return true;
 	}
 	
 	void spawn(EntityType<? extends HostileEntity> type)
 	{
-		//TODO: spawn at a random position within the arena
-		//TODO: always spawn with {boss:0b}
-		enemies.add(type.spawn(world, center, SpawnReason.SPAWNER));
+		SnowballEntity temp = new SnowballEntity(EntityType.SNOWBALL, world);
+		Vector4i bounds = getArenaBounds();
+		for (int i = 0; i < 4; i++)
+		{
+			int margin = arenaRadius / 2;
+			Vec3d pos = new Vec3d(rand.nextBetween(bounds.x + margin, bounds.z - margin) + 0.5, center.getY(),
+					rand.nextBetween(bounds.y + margin, bounds.w - margin) + 0.5);
+			BlockHitResult hit = world.raycast(new RaycastContext(pos, pos.add(0, -32, 0),
+					RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, temp));
+			if(!hit.getType().equals(HitResult.Type.MISS))
+			{
+				pos = hit.getPos();
+				if(!world.isSpaceEmpty(type.getDimensions().getBoxAt(pos)) || i == 3)
+					continue;
+				HostileEntity enemy = type.spawn(world, BlockPos.ofFloored(pos), SpawnReason.SPAWNER);
+				if(enemy instanceof AbstractUltraHostileEntity ultraEnemy)
+					ultraEnemy.markCybergrind();
+				enemies.add(enemy);
+				break;
+			}
+		}
+		temp.remove(Entity.RemovalReason.DISCARDED);
 		enemiesDirty = true;
 	}
 	
@@ -222,30 +291,20 @@ class CybergrindGame
 		for (int i = 0; i < currentWave; i++)
 			budget += rand.nextBetween(config.minBudgetPerWave.getValue(), config.maxBudgetPerWave.getValue());
 		budget += config.difficultyBudgetBonus.getValue() * difficulty;
-		System.out.println("Wave Budget: " + budget);
 	}
 	
 	void end()
 	{
 		participants.forEach(p -> UltraComponents.WINGED.get(p).setCybergrindData(null));
+		enemies.forEach(e -> e.remove(Entity.RemovalReason.DISCARDED));
 		over = true;
 		CybergrindManager.Instance.startCooldown();
-		System.out.println("Cybergrind ended.");
+		server.getPlayerManager().broadcast(Text.translatable("message.ultracraft.cybergrind.end" + (win ? "-win" : "")), false);
 	}
 	
 	public boolean isOver()
 	{
 		return over;
-	}
-	
-	public boolean isBorderSolid()
-	{
-		return arenaSolid;
-	}
-	
-	public int getArenaRadius()
-	{
-		return arenaRadius;
 	}
 	
 	/**
@@ -261,10 +320,17 @@ class CybergrindGame
 	
 	public CybergrindData asData()
 	{
+		if(getArenaBounds() == null)
+			return null;
 		CybergrindData data = new CybergrindData(waves, getArenaBounds());
 		data.setEnemies(enemies.size());
 		data.setCurrentWave(currentWave);
 		data.setSolidBounds(arenaSolid);
 		return data;
+	}
+	
+	public BlockPos getCenter()
+	{
+		return center;
 	}
 }

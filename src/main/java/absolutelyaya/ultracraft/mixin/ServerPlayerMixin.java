@@ -2,11 +2,14 @@ package absolutelyaya.ultracraft.mixin;
 
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.cybergrind.CybergrindGame;
+import absolutelyaya.ultracraft.cybergrind.CybergrindManager;
 import absolutelyaya.ultracraft.dimension.LevelManager;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.authlib.GameProfile;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
@@ -21,7 +24,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
@@ -79,6 +81,17 @@ public abstract class ServerPlayerMixin extends PlayerEntity
 		if(origin.getRegistryKey() != null && !origin.getRegistryKey().equals(LevelManager.WORLD_KEY))
 			return;
 		UltraComponents.WINGED.get(this).enterLevel(null, null);
+		CybergrindGame cybergrind = CybergrindManager.Instance.getActiveGame();
+		if(cybergrind != null)
+			cybergrind.removeParticipant(this);
+	}
+	
+	@Inject(method = "onDeath", at = @At("HEAD"))
+	void onDeath(DamageSource damageSource, CallbackInfo ci)
+	{
+		CybergrindGame cybergrind = CybergrindManager.Instance.getActiveGame();
+		if(cybergrind != null)
+			cybergrind.removeParticipant(this);
 	}
 	
 	@WrapOperation(method = "copyFrom", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;isSpectator()Z"))

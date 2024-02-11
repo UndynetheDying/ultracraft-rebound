@@ -23,7 +23,7 @@ public class CybergrindHUD
 	static final Identifier ROULETTE_TEX = new Identifier(Ultracraft.MOD_ID, "textures/gui/sacrificial_roulette.png");
 	final Random rand = Random.create();
 	final MinecraftClient client;
-	final String[] fakeNames = new String[] { "AbsoluteZaza", "SomethingWicked", "Flowerman", "Interloper", "Maurice", "xX_TheSize2_Xx", "Querbert" };
+	final String[] fakeNames = new String[] { "AbsoluteZaza", "SomethingWicked", "Flowerman", "Interloper", "Maurice", "xX_TheSize2_Xx", "Querbert", "MagnumOpos" };
 	
 	int announcementSequenceStep, lastEnemies;
 	float announcementSequenceTime, spinTime;
@@ -39,7 +39,8 @@ public class CybergrindHUD
 	public void startAnnouncementSequence(Text resultName)
 	{
 		playerNames = new ArrayList<>();
-		client.getServer().getPlayerManager().getPlayerList().forEach(p -> playerNames.add(p.getDisplayName()));
+		client.player.networkHandler.getListedPlayerListEntries()
+				.forEach(p -> playerNames.add(p.getDisplayName() == null ? Text.of(p.getProfile().getName()) : p.getDisplayName()));
 		while(rand.nextFloat() < 0.05f)
 			playerNames.add(rand.nextInt(playerNames.size() - 1), Text.of(fakeNames[rand.nextInt(playerNames.size())]));
 		

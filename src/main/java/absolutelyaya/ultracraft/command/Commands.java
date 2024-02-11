@@ -73,7 +73,8 @@ public class Commands
 					.then(literal("instance-everything-several-times").then(literal("confirm").executes(Commands::executeDebugLevelInstancing)).executes(Commands::executeDebugLevelInstancingWarning))
 					.then(literal("destroy-all-instances").executes(Commands::executeDebugLevelDestruction)))
 				.then(literal("cybergrind")
-					.then(literal("start").executes(Commands::executeDebugStartCybergrind))
+					.then(literal("start").executes(Commands::executeDebugStartCybergrind)
+						.then(argument("target", player()).then(argument("waves", integer(0)).executes(Commands::executeDebugCybergrindSpecific))))
 					.then(literal("end").executes(Commands::executeDebugEndCybergrind))))
 			.then(literal("progression").requires(source -> source.hasPermissionLevel(2))
 				.then(argument("list", string()).suggests(Commands::progressionListTypeProvider)
@@ -429,15 +430,24 @@ public class Commands
 	
 	private static int executeDebugStartCybergrind(CommandContext<ServerCommandSource> context)
 	{
-		CybergrindManager.Instance.startCybergrind();
 		context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.cybergrind.start"), true);
+		CybergrindManager.Instance.startCybergrind();
 		return Command.SINGLE_SUCCESS;
 	}
 	
 	private static int executeDebugEndCybergrind(CommandContext<ServerCommandSource> context)
 	{
-		CybergrindManager.Instance.endCybergrind();
 		context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.cybergrind.end"), true);
+		CybergrindManager.Instance.endCybergrind();
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int executeDebugCybergrindSpecific(CommandContext<ServerCommandSource> context) throws CommandSyntaxException
+	{
+		ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "target");
+		int waves = context.getArgument("waves", Integer.class);
+		context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.cybergrind.start"), true);
+		CybergrindManager.Instance.startCybergrind(target, waves);
 		return Command.SINGLE_SUCCESS;
 	}
 }
