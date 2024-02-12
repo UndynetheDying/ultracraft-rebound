@@ -54,7 +54,7 @@ public class HivelConfig extends Config
 	public final FloatEntry wallJumpVerticalVelocityMultiplier = new FloatEntry("wallJumpVerticalVelocityMultiplier", 0.8f);
 	public final FloatEntry groundCheckDistance = new FloatEntry("groundCheckDistance", 0.1f);
 	public final FloatEntry dashGroundStopVelocityMultiplier = new FloatEntry("dashGroundStopVelocityMultiplier", 0.05f);
-	public final FloatEntry slideStartGroundTolerance = new FloatEntry("slideStartGroundTolerance", 0.5f);
+	public final FloatEntry slideStartGroundTolerance = new FloatEntry("slideStartGroundTolerance", 0.4f);
 	public final FloatEntry slamDiveVerticalVelocityMultiplier = new FloatEntry("slamDiveVerticalVelocityMultiplier", 0.6f);
 	public final FloatEntry dashJumpVerticalVelocityMultiplier = new FloatEntry("dashJumpVerticalVelocityMultiplier", 0.5f);
 	public final FloatEntry slideJumpVerticalVelocityMultiplier = new FloatEntry("slideJumpVerticalVelocityMultiplier", 0.55f);

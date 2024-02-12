@@ -246,7 +246,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			//slide
 			if(slidePressed && !wasSlidePressed && !slamming)
 			{
-				if(!isGrounded(0.99f) && !verticalCollision && curSlamCooldown == 0) //start slam
+				if(!isGrounded(slideStartGroundTolerance) && !verticalCollision && curSlamCooldown == 0) //start slam
 				{
 					hivel.cancelDash();
 					slamTicks = 0;
@@ -341,7 +341,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			BlockPos belowPos = posToBlock(getPos().subtract(0f, 0.1f, 0f));
 			FluidState fluidBelow = getWorld().getBlockState(belowPos).getFluidState();
 			if(isSliding() && !fluidBelow.getFluid().equals(Fluids.EMPTY) && !fluidBelow.isIn(TagRegistry.UNSKIMMABLE_FLUIDS) &&
-					   getWorld().getFluidState(belowPos.up()).getFluid().equals(Fluids.EMPTY))
+					   getWorld().getFluidState(posToBlock(getPos().add(0f, 0.1f, 0f))).getFluid().equals(Fluids.EMPTY))
 			{
 				Vec3d vel = getVelocity();
 				setVelocity(new Vec3d(vel.x, Math.max(baseJumpVelocity / 2f, vel.y * -skimUpwardsVelocityMultiplier), vel.z));
