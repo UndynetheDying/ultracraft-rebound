@@ -44,10 +44,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.*;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -136,15 +133,21 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 		return original;
 	}
 	
-	@ModifyReturnValue(method = "damage", at = @At("RETURN"))
-	boolean onDamage(boolean original, @Local DamageSource source, @Local float amount)
+	@ModifyReturnValue(method = "isInvulnerableTo", at = @At("RETURN"))
+	boolean onIsInvulnerableTo(boolean original, @Local DamageSource source)
 	{
 		if(UltraComponents.HIVEL.get(this).isDashing() && !source.isIn(DamageTypeTags.UNDODGEABLE))
-			return false;
-		if(isWingsActive() && source.isOf(DamageTypes.FALL) && (!HivelConfig.INSTANCE.fallDamage.getValue() ||
-				   getSteppingBlockState().getBlock() instanceof FluidBlock))
-			return false;
-		if(original && amount > 0)
+			return true;
+		if(isWingsActive() && source.isOf(DamageTypes.FALL) &&
+				   (!HivelConfig.INSTANCE.fallDamage.getValue() || getSteppingBlockState().getBlock() instanceof FluidBlock))
+			return true;
+		return original;
+	}
+	
+	@Inject(method = "damage", at = @At("RETURN"))
+	void onDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir)
+	{
+		if(cir.getReturnValue() && amount > 0)
 		{
 			if(getHealth() - amount <= 0)
 				UltraComponents.STYLE.get(this).resetScore();
@@ -153,7 +156,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 		}
 		if(source.isOf(DamageSources.KNUCKLE_BLAST))
 			disableShield(true);
-		return original;
 	}
 	
 	@Inject(method = "damage", at = @At("TAIL"))
