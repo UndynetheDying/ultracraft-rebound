@@ -8,7 +8,6 @@ import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
 import absolutelyaya.ultracraft.components.player.*;
 import absolutelyaya.ultracraft.config.HivelConfig;
-import absolutelyaya.ultracraft.cybergrind.CybergrindData;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.DamageTypeTags;
 import absolutelyaya.ultracraft.dimension.LevelManager;
@@ -45,8 +44,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.*;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
-import org.joml.Vector3f;
-import org.joml.Vector4i;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -354,22 +351,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 				backtank = null;
 			else
 				backtank.positionSelf(this);
-		}
-		IWingedPlayerComponent winged = UltraComponents.WINGED.get(this);
-		CybergrindData cybergrind = winged.getCybergrindData();
-		if(cybergrind != null && cybergrind.isSolidBounds())
-		{
-			Vector4i bounds = cybergrind.getArenaBounds();
-			Vector3f pos = getPos().toVector3f();
-			if(getX() < bounds.x)
-				pos.x = bounds.x;
-			if(getX() > bounds.z)
-				pos.x = bounds.z;
-			if(getZ() < bounds.y)
-				pos.z = bounds.y;
-			if(getZ() > bounds.w)
-				pos.z = bounds.w;
-			setPos(pos.x, pos.y, pos.z);
 		}
 	}
 	

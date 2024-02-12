@@ -42,7 +42,7 @@ public class CybergrindHUD
 		client.player.networkHandler.getListedPlayerListEntries()
 				.forEach(p -> playerNames.add(p.getDisplayName() == null ? Text.of(p.getProfile().getName()) : p.getDisplayName()));
 		while(rand.nextFloat() < 0.05f)
-			playerNames.add(rand.nextInt(playerNames.size() - 1), Text.of(fakeNames[rand.nextInt(playerNames.size())]));
+			playerNames.add(rand.nextInt(playerNames.size() + 1), Text.of(fakeNames[rand.nextInt(fakeNames.length)]));
 		
 		announcementSequenceStep = 1;
 		announcementSequenceTime = 0f;
@@ -89,20 +89,20 @@ public class CybergrindHUD
 			case 1 -> { //Move in frame while shaking - 4 seconds total
 				matrices.translate(x, MathHelper.lerp(1f - announcementSequenceTime / 4f, 0, -48), 0);
 				matrices.translate((rand.nextFloat() - 0.5f) * 2f, 0, 0);
-				drawRoulette(tRenderer, context, 0f, 0f, 0f);
+				drawRoulette(tRenderer, context, 0f, 0f, 0f, deltaTime);
 				if (announcementSequenceTime > 4f)
 					advanceSequenceStep();
 			}
 			case 2 -> { //Flicker light on 1 second - 5.5 seconds total
 				matrices.translate(x, 0, 0);
-				drawRoulette(tRenderer, context, -0.25f + announcementSequenceTime + (announcementSequenceTime % 0.2f), 0f, 0f);
+				drawRoulette(tRenderer, context, -0.25f + announcementSequenceTime + (announcementSequenceTime % 0.2f), 0f, 0f, deltaTime);
 				if (announcementSequenceTime > 1.5f)
 					advanceSequenceStep();
 			}
 			case 3 -> { //Spin Roulette 5.5 seconds - 11 seconds total
 				matrices.translate(x, 0, 0);
 				float spin = 5.5f - announcementSequenceTime;
-				drawRoulette(tRenderer, context, 1f, 0f, spin);
+				drawRoulette(tRenderer, context, 1f, 0f, spin, deltaTime);
 				if (announcementSequenceTime > 5.5f)
 				{
 					advanceSequenceStep();
@@ -112,13 +112,13 @@ public class CybergrindHUD
 			case 4 -> { //Winner text sequence 4 seconds - 15 seconds total
 				float letter = announcementSequenceTime / 1.5f * 7f; // each animation step lasts 1/7 seconds
 				matrices.translate(x, 0, 0);
-				drawRoulette(tRenderer, context, 1f, letter, -1f);
+				drawRoulette(tRenderer, context, 1f, letter, -1f, deltaTime);
 				if (announcementSequenceTime > 4f)
 					advanceSequenceStep();
 			}
 			case 5 -> { //Move out of frame - 18 seconds total
 				matrices.translate(x, MathHelper.lerp(announcementSequenceTime / 3f, 0, -48), 0);
-				drawRoulette(tRenderer, context, 1f, 7.5f, -1f);
+				drawRoulette(tRenderer, context, 1f, 7.5f, -1f, deltaTime);
 				if (announcementSequenceTime > 3f)
 					advanceSequenceStep();
 			}
@@ -127,7 +127,7 @@ public class CybergrindHUD
 		matrices.pop();
 	}
 	
-	void drawRoulette(TextRenderer tRenderer, DrawContext context, float brightness, float letter, float spinSpeed)
+	void drawRoulette(TextRenderer tRenderer, DrawContext context, float brightness, float letter, float spinSpeed, float delta)
 	{
 		if(brightness <= 0.5f)
 			RenderSystem.setShaderColor(0.25f, 0.15f, 0.25f, 1f);
@@ -146,7 +146,7 @@ public class CybergrindHUD
 		matrices.push();
 		matrices.translate(12, 10, 0);
 		if(spinSpeed != -1)
-			drawNames(tRenderer, context, spinSpeed);
+			drawNames(tRenderer, context, spinSpeed, delta);
 		else
 			context.drawText(tRenderer, resultName, 0, 0, 0xffffffff, false);
 		matrices.pop();
@@ -164,12 +164,12 @@ public class CybergrindHUD
 		}
 	}
 	
-	void drawNames(TextRenderer tRenderer, DrawContext context, float spinSpeed)
+	void drawNames(TextRenderer tRenderer, DrawContext context, float spinSpeed, float delta)
 	{
 		MatrixStack matrices = context.getMatrices();
 		matrices.push();
 		if(spinSpeed > 1)
-			spinTime += spinSpeed / 30f;
+			spinTime += spinSpeed * delta * 2.5f;
 		float height = tRenderer.fontHeight + 2;
 		int lastName = ((int)Math.floor(spinTime)) % playerNames.size();
 		float y = -(spinTime % 1f);

@@ -149,13 +149,13 @@ public class StyleComponent implements IStyleComponent
 		return switch(rank)
 		{
 			default -> 0;
-			case 1 -> 200;
-			case 2 -> 400;
-			case 3 -> 500;
-			case 4 -> 700;
-			case 5 -> 850;
-			case 6 -> 1000;
-			case 7 -> 1500;
+			case 1 -> 150;
+			case 2 -> 300;
+			case 3 -> 400;
+			case 4 -> 500;
+			case 5 -> 700;
+			case 6 -> 900;
+			case 7 -> 1200;
 		};
 	}
 	
@@ -167,10 +167,10 @@ public class StyleComponent implements IStyleComponent
 			case 1 -> 1.25f;
 			case 2 -> 1.5f;
 			case 3 -> 2f;
-			case 4 -> 3f;
-			case 5 -> 4f;
-			case 6 -> 6f;
-			case 7 -> 8f;
+			case 4 -> 2.5f;
+			case 5 -> 3f;
+			case 6 -> 4f;
+			case 7 -> 5f;
 		};
 	}
 	

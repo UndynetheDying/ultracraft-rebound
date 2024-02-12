@@ -39,7 +39,7 @@ public class CybergrindConfig extends Config
 	
 	public void registerCost(EntityType<? extends HostileEntity> type, int cost, Layer minLayer)
 	{
-		String id = Registries.ENTITY_TYPE.getId(type).toString();
+		String id = Registries.ENTITY_TYPE.getId(type).toString().replace(':', '$');
 		if(frozen)
 		{
 			Ultracraft.LOGGER.error("Tried registering spawn cost for entity " + id + " too late. Please use the entrypoint 'cybergrind'");
