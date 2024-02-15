@@ -1,9 +1,12 @@
 package absolutelyaya.ultracraft.block.mapping;
 
 import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.entity.demon.CerberusEntity;
 import absolutelyaya.ultracraft.entity.demon.HideousMassEntity;
+import absolutelyaya.ultracraft.entity.demon.MaliciousFaceEntity;
 import absolutelyaya.ultracraft.entity.demon.RodentEntity;
 import absolutelyaya.ultracraft.entity.machine.DestinyBondSwordsmachineEntity;
+import absolutelyaya.ultracraft.entity.machine.SwordsmachineEntity;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -52,9 +55,14 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 		{
 			switch(entityType.toString())
 			{
+				case "ultracraft:regular_swordsmachine" -> entities.add(SwordsmachineEntity.spawnAsNonBoss(world, pos.toCenterPos()));
 				case "ultracraft:destiny_swordsmachine" -> entities.addAll(DestinyBondSwordsmachineEntity.spawn(world, pos.toCenterPos(), yaw));
 				case "ultracraft:big_rodent" -> entities.add(RodentEntity.spawn(world, pos.toCenterPos(), 1));
 				case "ultracraft:hidden_mass" -> entities.add(HideousMassEntity.spawn(world, pos.toCenterPos(), true));
+				case "ultracraft:regular_mass" -> entities.add(HideousMassEntity.spawnAsNonBoss(world, pos.toCenterPos()));
+				case "ultracraft:malicious_boss" -> entities.add(MaliciousFaceEntity.spawnAsBoss(world, pos.toCenterPos()));
+				case "ultracraft:cerberus_boss" -> entities.add(CerberusEntity.spawnAsBoss(world, pos.toCenterPos(), false));
+				case "ultracraft:half_cerberus_boss" -> entities.add(CerberusEntity.spawnAsBoss(world, pos.toCenterPos(), true));
 				default -> entities.add(Registries.ENTITY_TYPE.get(entityType).spawn((ServerWorld)world, pos, SpawnReason.SPAWNER));
 			}
 			entities.forEach(e -> {

@@ -11,6 +11,7 @@ import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.entity.goal.TimedAttackGoal;
+import absolutelyaya.ultracraft.entity.machine.SwordsmachineEntity;
 import absolutelyaya.ultracraft.entity.other.ShockwaveEntity;
 import absolutelyaya.ultracraft.entity.other.VerticalShockwaveEntity;
 import absolutelyaya.ultracraft.entity.projectile.HarpoonEntity;
@@ -181,6 +182,15 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		HideousMassEntity mass = new HideousMassEntity(EntityRegistry.HIDEOUS_MASS, world);
 		mass.setPosition(pos);
 		mass.dataTracker.set(HIDDEN, hidden);
+		world.spawnEntity(mass);
+		return mass;
+	}
+	
+	public static HideousMassEntity spawnAsNonBoss(World world, Vec3d pos)
+	{
+		HideousMassEntity mass = new HideousMassEntity(EntityRegistry.HIDEOUS_MASS, world);
+		mass.setPosition(pos);
+		mass.dataTracker.set(BOSS, false);
 		world.spawnEntity(mass);
 		return mass;
 	}

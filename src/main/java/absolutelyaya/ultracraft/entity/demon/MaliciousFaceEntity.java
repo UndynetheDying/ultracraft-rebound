@@ -76,7 +76,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	public static DefaultAttributeContainer.Builder getDefaultAttributes()
 	{
 		return HostileEntity.createMobAttributes()
-					   .add(EntityAttributes.GENERIC_MAX_HEALTH, 30.0d)
+					   .add(EntityAttributes.GENERIC_MAX_HEALTH, 50.0d)
 					   .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.4d)
 					   .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 0.0d)
 					   .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 64)
@@ -148,6 +148,21 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 			deathRotation = new Vec2f(getPitch(), getYaw());
 			((LivingEntityAccessor)this).setCanBleedSupplier(() -> false); //disable bleeding
 		}
+		else if(data.equals(BOSS))
+		{
+			float health = isBoss() ? 50f : 30f;
+			if(getHealth() != health)
+				setHealth(health);
+		}
+	}
+	
+	public static MaliciousFaceEntity spawnAsBoss(World world, Vec3d pos)
+	{
+		MaliciousFaceEntity face = new MaliciousFaceEntity(EntityRegistry.MALICIOUS_FACE, world);
+		face.setPosition(pos);
+		face.dataTracker.set(BOSS, true);
+		world.spawnEntity(face);
+		return face;
 	}
 	
 	@Override

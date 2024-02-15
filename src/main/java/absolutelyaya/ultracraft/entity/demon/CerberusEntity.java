@@ -75,7 +75,7 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 	public static DefaultAttributeContainer.Builder getDefaultAttributes()
 	{
 		return AbstractUltraHostileEntity.createMobAttributes()
-					   .add(EntityAttributes.GENERIC_MAX_HEALTH, 44.0d)
+					   .add(EntityAttributes.GENERIC_MAX_HEALTH, 180.0d)
 					   .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3d)
 					   .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6.0d)
 					   .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 64.0d)
@@ -100,6 +100,28 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 		dataTracker.startTracking(ATTACK_COOLDOWN, 10);
 		dataTracker.startTracking(ENRAGED, false);
 		dataTracker.startTracking(DROP_APPLE, false);
+	}
+	
+	@Override
+	public void onTrackedDataSet(TrackedData<?> data)
+	{
+		if(data.equals(BOSS))
+		{
+			float health = isBoss() ? 180f : 44f;
+			if(getHealth() != health)
+				setHealth(health);
+		}
+	}
+	
+	public static CerberusEntity spawnAsBoss(World world, Vec3d pos, boolean halfHealth)
+	{
+		CerberusEntity cerb = new CerberusEntity(EntityRegistry.CERBERUS, world);
+		cerb.setPosition(pos);
+		cerb.dataTracker.set(BOSS, true);
+		if(halfHealth)
+			cerb.setHealth(cerb.getMaxHealth() / 2f);
+		world.spawnEntity(cerb);
+		return cerb;
 	}
 	
 	private <E extends GeoEntity> PlayState predicate(AnimationState<E> event)

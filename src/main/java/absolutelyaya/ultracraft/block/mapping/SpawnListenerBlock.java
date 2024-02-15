@@ -5,9 +5,9 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
-public class SpawnerListenerBlock extends AbstractMappingBlock
+public class SpawnListenerBlock extends AbstractMappingBlock
 {
-	public SpawnerListenerBlock(Settings settings)
+	public SpawnListenerBlock(Settings settings)
 	{
 		super(settings);
 	}

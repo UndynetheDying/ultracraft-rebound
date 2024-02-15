@@ -17,6 +17,7 @@ import absolutelyaya.ultracraft.entity.other.ProgressionItemEntity;
 import absolutelyaya.ultracraft.entity.projectile.ShotgunPelletEntity;
 import absolutelyaya.ultracraft.entity.projectile.ThrownMachineSwordEntity;
 import absolutelyaya.ultracraft.item.MachineSwordItem;
+import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
@@ -207,6 +208,15 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 		targetSelector.add(0, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
 		targetSelector.add(0, new TargetHuskGoal(this));
 		targetSelector.add(1, new RevengeGoal(this));
+	}
+	
+	public static SwordsmachineEntity spawnAsNonBoss(World world, Vec3d pos)
+	{
+		SwordsmachineEntity sm = new SwordsmachineEntity(EntityRegistry.SWORDSMACHINE, world);
+		sm.setPosition(pos);
+		sm.dataTracker.set(BOSS, false);
+		world.spawnEntity(sm);
+		return sm;
 	}
 	
 	@Override
