@@ -7,7 +7,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public interface IEditorComponent extends ComponentV3, AutoSyncedComponent
 {

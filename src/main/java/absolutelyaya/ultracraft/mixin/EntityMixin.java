@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.EntityAccessor;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
+import absolutelyaya.ultracraft.components.player.IEditorComponent;
 import absolutelyaya.ultracraft.components.player.IHivelComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.config.HivelConfig;
@@ -141,6 +142,17 @@ public abstract class EntityMixin implements EntityAccessor
 		else if(pos.z + original.z > bounds.w)
 			movement.z = bounds.w - pos.z;
 		return new Vec3d(movement.x, original.y, movement.z);
+	}
+	
+	@ModifyReturnValue(method = "wouldPoseNotCollide", at = @At("RETURN"))
+	boolean onWouldPoseNotCollide(boolean original)
+	{
+		if(!((Object)this instanceof PlayerEntity player))
+			return original;
+		IEditorComponent editor = UltraComponents.EDITOR.get(player);
+		if(editor != null)
+			return editor.isNoClip();
+		return original;
 	}
 	
 	boolean isInBlood()

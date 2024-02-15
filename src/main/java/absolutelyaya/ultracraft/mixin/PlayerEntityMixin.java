@@ -54,7 +54,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-@Mixin(value = PlayerEntity.class)
+@Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements WingedPlayerEntity
 {
 	@Shadow public abstract boolean isCreative();
