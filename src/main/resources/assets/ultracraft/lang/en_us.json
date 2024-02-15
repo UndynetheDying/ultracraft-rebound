@@ -711,6 +711,9 @@
   "title.placeholder": "I'm a placeholder :3",
   "title.entrance.layer-0": "Layer 0 // Overworld",
   "title.entrance.layer-1": "Layer 1 // Limbo",
+  "title.tutorial.glass": "Charged Shots and Explosions can break fragile Blocks",
+  "title.tutorial.parry": "You can parry Projectiles by punching them with your Feedbacker Arm",
+  "title.yaya-blocking": "Oh, am I in the way? Sorry about that",
 
   "limbo.slab_press.fail.spawn": "This must be activated from elsewhere",
   "limbo.slab_press.fail.active": "Your Actions cannot be undone",
