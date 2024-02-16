@@ -2,7 +2,6 @@ package absolutelyaya.ultracraft.block.mapping;
 
 import absolutelyaya.ultracraft.block.CerberusBlock;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
-import absolutelyaya.ultracraft.entity.demon.MaliciousFaceEntity;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import absolutelyaya.ultracraft.registry.BlockRegistry;
 import net.minecraft.block.BlockState;

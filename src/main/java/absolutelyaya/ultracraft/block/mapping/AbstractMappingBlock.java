@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.block.mapping;
 
+import absolutelyaya.ultracraft.client.rendering.EditModeRenderer;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IEditorComponent;
 import net.minecraft.block.*;
@@ -120,7 +121,11 @@ public abstract class AbstractMappingBlock extends BlockWithEntity
 		if(editor.isActive())
 		{
 			if(key.equals("room"))
+			{
 				editor.clearEditFocus();
+				if(!EditModeRenderer.Instance.isKnown(pos))
+					EditModeRenderer.Instance.addKnownRoom(pos);
+			}
 			editor.setEditFocus(key, pos.equals(editor.getEditFocus(key)) ? null : pos);
 			return ActionResult.SUCCESS;
 		}

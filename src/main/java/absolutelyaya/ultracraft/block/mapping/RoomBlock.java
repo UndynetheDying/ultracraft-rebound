@@ -12,8 +12,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-
 public class RoomBlock extends AbstractMappingBlock
 {
 	
@@ -41,6 +39,6 @@ public class RoomBlock extends AbstractMappingBlock
 	{
 		super.onPlaced(world, pos, state, placer, itemStack);
 		if(world.isClient && placer instanceof PlayerEntity)
-			EditModeRenderer.Instance.newRoomBlocks = new ArrayList<>(){{add(pos);}};
+			EditModeRenderer.Instance.addKnownRoom(pos);
 	}
 }

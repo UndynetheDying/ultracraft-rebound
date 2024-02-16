@@ -145,11 +145,11 @@ public abstract class AbstractWeaponItem extends Item
 		return null;
 	}
 	
-	@Override
-	public boolean allowNbtUpdateAnimation(PlayerEntity player, Hand hand, ItemStack oldStack, ItemStack newStack)
-	{
-		return false;
-	}
+	//@Override
+	//public boolean allowNbtUpdateAnimation(PlayerEntity player, Hand hand, ItemStack oldStack, ItemStack newStack)
+	//{
+	//	return false;
+	//}
 	
 	public boolean hasVariantBG()
 	{

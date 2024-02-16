@@ -8,6 +8,7 @@ import absolutelyaya.ultracraft.components.player.IEditorComponent;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
@@ -40,19 +41,19 @@ public class EditModeCommands
 									.executes(EditModeCommands::executeToggleEditMode)
 									.then(literal("ping").executes(EditModeCommands::ping)
 												  .then(literal("clear").executes(EditModeCommands::executePingClear)))
-									.then(literal("name").then(argument("key", string()).then(argument("name", string()).executes(EditModeCommands::rename))))
-									.then(literal("area").then(argument("key", string()).executes(EditModeCommands::editArea)))
+									.then(literal("name").then(key().then(argument("name", string()).executes(EditModeCommands::rename))))
+									.then(literal("area").then(key().executes(EditModeCommands::editArea)))
 									.then(literal("flag")
 												  .then(literal("add").then(argument("id", string()).executes(EditModeCommands::addFlag)))
-												  .then(literal("remove").then(argument("id", string()).executes(EditModeCommands::removeFlag)))
-												  .then(literal("set").then(argument("id", string()).then(argument("state", bool()).executes(EditModeCommands::setFlag))))
-												  .then(literal("bind").then(argument("key", string()).then(argument("flag", string()).executes(EditModeCommands::bindFlag)))))
-									.then(literal("reparent").then(argument("key", string()).executes(EditModeCommands::rebindParent)))
+												  .then(literal("remove").then(flag().executes(EditModeCommands::removeFlag)))
+												  .then(literal("set").then(flag().then(argument("state", bool()).executes(EditModeCommands::setFlag))))
+												  .then(literal("bind").then(key().then(flag().executes(EditModeCommands::bindFlag)))))
+									.then(literal("reparent").then(key().executes(EditModeCommands::rebindParent)))
 									.then(literal("config")
 												  .then(literal("flySpeed").then(argument("speed", floatArg()).executes(EditModeCommands::setFlySpeed)))
 												  .then(literal("noClip").executes(EditModeCommands::executeToggleNoClip))
 												  .then(literal("showAreaOwner").executes(EditModeCommands::executeToggleShowAreaOwner)))
-									.then(literal("attribute").then(literal("set").then(argument("key", string()).then(argument("attribute", string()).suggests(EditModeCommands::suggestAttibutes).then(argument("value", string()).executes(EditModeCommands::setAttribute)))))));
+									.then(literal("attribute").then(literal("set").then(key().then(argument("attribute", string()).suggests(EditModeCommands::suggestAttibutes).then(argument("value", string()).executes(EditModeCommands::setAttribute)))))));
 	}
 	
 	private static int executeToggleEditMode(CommandContext<ServerCommandSource> context)
@@ -197,9 +198,9 @@ public class EditModeCommands
 			context.getSource().sendMessage(Text.of("No Room Selected"));
 			return Command.SINGLE_SUCCESS;
 		}
-		String id = context.getArgument("id", String.class);
+		String flag = context.getArgument("flag", String.class);
 		if(player.getWorld().getBlockEntity(roomPos) instanceof RoomBlockEntity room)
-			context.getSource().sendMessage(Text.of("Flag '" + id + "' " + (room.removeFlag(id) ? "removed" : "wasn't there to begin with")));
+			context.getSource().sendMessage(Text.of("Flag '" + flag + "' " + (room.removeFlag(flag) ? "removed" : "wasn't there to begin with")));
 		else
 			context.getSource().sendMessage(Text.of("Error: focused room pos is not a room"));
 		return Command.SINGLE_SUCCESS;
@@ -214,14 +215,14 @@ public class EditModeCommands
 			context.getSource().sendMessage(Text.of("No Room Selected"));
 			return Command.SINGLE_SUCCESS;
 		}
-		String id = context.getArgument("id", String.class);
+		String flag = context.getArgument("flag", String.class);
 		boolean state = context.getArgument("state", Boolean.class);
 		if(player.getWorld().getBlockEntity(roomPos) instanceof RoomBlockEntity room)
 		{
-			if(room.setFlag(id, state))
-				context.getSource().sendMessage(Text.of("Flag '" + id + "' set to " + state));
+			if(room.setFlag(flag, state))
+				context.getSource().sendMessage(Text.of("Flag '" + flag + "' set to " + state));
 			else
-				context.getSource().sendMessage(Text.of("Flag '" + id + "' doesn't exist"));
+				context.getSource().sendMessage(Text.of("Flag '" + flag + "' doesn't exist"));
 		}
 		else
 			context.getSource().sendMessage(Text.of("Error: focused room pos is not a room"));
@@ -333,5 +334,31 @@ public class EditModeCommands
 		else
 			context.getSource().sendMessage(Text.of("Nothing focused with key '" + key + "'"));
 		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static RequiredArgumentBuilder<ServerCommandSource, String> key()
+	{
+		return argument("key", string()).suggests(EditModeCommands::suggestKeys);
+	}
+	
+	private static CompletableFuture<Suggestions> suggestKeys(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder)
+	{
+		ServerPlayerEntity player = context.getSource().getPlayer();
+		UltraComponents.EDITOR.get(player).getEditFocus().keySet().forEach(builder::suggest);
+		return builder.buildFuture();
+	}
+	
+	private static RequiredArgumentBuilder<ServerCommandSource, String> flag()
+	{
+		return argument("flag", string()).suggests(EditModeCommands::suggestFlags);
+	}
+	
+	private static CompletableFuture<Suggestions> suggestFlags(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder)
+	{
+		ServerPlayerEntity player = context.getSource().getPlayer();
+		BlockPos pos = UltraComponents.EDITOR.get(player).getEditFocus("room");
+		if(pos != null && player.getWorld().getBlockEntity(pos) instanceof RoomBlockEntity e)
+			e.getFlags().forEach(builder::suggest);
+		return builder.buildFuture();
 	}
 }

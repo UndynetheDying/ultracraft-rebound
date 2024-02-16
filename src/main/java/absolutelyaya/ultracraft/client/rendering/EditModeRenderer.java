@@ -35,6 +35,16 @@ public class EditModeRenderer
 		Instance = this;
 	}
 	
+	public void addKnownRoom(BlockPos pos)
+	{
+		roomBlocks.add(pos);
+	}
+	
+	public boolean isKnown(BlockPos pos)
+	{
+		return roomBlocks.contains(pos);
+	}
+	
 	public void render(MatrixStack matrices, Camera cam, float delta)
 	{
 		PlayerEntity player = MinecraftClient.getInstance().player;
@@ -113,7 +123,8 @@ public class EditModeRenderer
 				drawLineToCam(lines, matrices, targetPos.toVector3f(), cam, col);
 		}
 		
-		for (BlockPos pos : orphans)
+		blocks = new ArrayList<>(orphans);
+		for (BlockPos pos : blocks)
 		{
 			Vec3d targetPos = pos.toCenterPos();
 			if(!(player.getWorld().getBlockEntity(pos) instanceof AbstractMappingBlockEntity blockEntity))
