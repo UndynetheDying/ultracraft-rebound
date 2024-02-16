@@ -237,7 +237,7 @@ public class UltracraftClient implements ClientModInitializer
 			wings.setColor(wingColors[1], 1);
 			wings.setPattern(wingPattern);
 			if(forcedHivel.isEmpty())
-				wings.setVisible(config.get().hivel);
+				wings.setActive(config.get().hivel);
 			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 			buf.writeVector3f(wings.getColors()[0]);
 			buf.writeVector3f(wings.getColors()[1]);
@@ -482,7 +482,7 @@ public class UltracraftClient implements ClientModInitializer
 		if(player == null)
 			return;
 		IWingDataComponent wings = UltraComponents.WING_DATA.get(player);
-		wings.setVisible(b);
+		wings.setActive(b);
 		if(!fromServer)
 		{
 			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());

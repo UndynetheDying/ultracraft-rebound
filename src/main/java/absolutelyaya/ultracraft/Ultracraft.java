@@ -144,7 +144,7 @@ public class Ultracraft implements ModInitializer
             if(!hivel.equals(Setting.FREE))
             {
                 IWingDataComponent wings = UltraComponents.WING_DATA.get(player);
-                wings.setVisible(hivel.equals(Setting.FORCE_ON));
+                wings.setActive(hivel.equals(Setting.FORCE_ON));
                 wings.sync();
             }
         });

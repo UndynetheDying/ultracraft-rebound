@@ -150,7 +150,7 @@ public abstract class EntityMixin implements EntityAccessor
 		if(!((Object)this instanceof PlayerEntity player))
 			return original;
 		IEditorComponent editor = UltraComponents.EDITOR.get(player);
-		if(editor != null)
+		if(editor != null && editor.isActive())
 			return editor.isNoClip();
 		return original;
 	}

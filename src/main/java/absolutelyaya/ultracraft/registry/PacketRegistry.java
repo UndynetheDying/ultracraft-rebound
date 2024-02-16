@@ -333,7 +333,7 @@ public class PacketRegistry
 			boolean wingsActive = buf.readBoolean() && whitelisted;
 			server.execute(() ->
 			{
-				wings.setVisible(wingsActive);
+				wings.setActive(wingsActive);
 				wings.sync();
 				((WingedPlayerEntity)player).updateSpeedConfig();
 				if(whitelisted)

@@ -55,13 +55,14 @@ public class WingDataComponent implements IWingDataComponent, AutoSyncedComponen
 	}
 	
 	@Override
-	public void setVisible(boolean b)
+	public void setActive(boolean b)
 	{
 		visible = b;
 		if(provider.isMainPlayer())
 			UltraHudRenderer.onUpdateWingsActive();
 		if(provider instanceof WingedPlayerEntity winged)
 			winged.updateSpeedConfig(b);
+		//provider.setSprinting(false);
 	}
 	
 	public void sync()
