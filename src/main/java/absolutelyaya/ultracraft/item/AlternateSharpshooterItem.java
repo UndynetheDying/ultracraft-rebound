@@ -72,9 +72,9 @@ public class AlternateSharpshooterItem extends SharpshooterRevolverItem
 	}
 	
 	@Override
-	protected void onSwitch(PlayerEntity user, World world)
+	public void onSwitch(World world, PlayerEntity user, int newSlot)
 	{
-		super.onSwitch(user, world);
+		super.onSwitch(world, user, newSlot);
 		ItemStack stack = user.getMainHandStack();
 		if(getNbt(stack, "charges") > 1)
 			setNbt(stack, "charges", 1);

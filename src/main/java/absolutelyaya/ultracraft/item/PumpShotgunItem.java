@@ -225,9 +225,9 @@ public class PumpShotgunItem extends AbstractShotgunItem
 	}
 	
 	@Override
-	protected void onSwitch(PlayerEntity user, World world)
+	public void onSwitch(World world, PlayerEntity user, int newSlot)
 	{
 		setNbt(user.getMainHandStack(), "charge", getNbtDefault("charge"));
-		super.onSwitch(user, world);
+		super.onSwitch(world, user, newSlot);
 	}
 }

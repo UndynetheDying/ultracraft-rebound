@@ -126,7 +126,7 @@ public abstract class AbstractShotgunItem extends AbstractWeaponItem implements 
 	}
 	
 	@Override
-	protected void onSwitch(PlayerEntity user, World world)
+	public void onSwitch(World world, PlayerEntity user, int newSlot)
 	{
 		if(!world.isClient)
 		{

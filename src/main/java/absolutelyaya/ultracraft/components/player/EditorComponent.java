@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.components.player;
 
+import absolutelyaya.ultracraft.client.rendering.EditModeRenderer;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.block.mapping.AbstractMappingBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -58,6 +59,8 @@ public class EditorComponent implements IEditorComponent
 	public void setEditFocus(String key, BlockPos pos)
 	{
 		focus.put(key, pos);
+		if(provider.getWorld().isClient && key.equals("room") && !EditModeRenderer.Instance.isKnown(pos))
+			EditModeRenderer.Instance.addKnownRoom(pos);
 	}
 	
 	@Override

@@ -13,6 +13,7 @@ import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.util.TimeUtil;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -123,14 +124,30 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			{
 				lastPrimaryWeapon = w;
 				if(!last)
-					w.onPrimaryFireStart(provider.getWorld(), provider);
+					w.onPrimaryFireStart(provider.getWorld(), provider, provider.getInventory().selectedSlot);
 			}
 		}
 		else
 		{
 			if(lastPrimaryWeapon != null)
-				lastPrimaryWeapon.onPrimaryFireStop(provider.getWorld(), provider);
+				lastPrimaryWeapon.onPrimaryFireStop(provider.getWorld(), provider, provider.getInventory().selectedSlot);
 			lastPrimaryWeapon = null;
+		}
+	}
+	
+	@Override
+	public void onUpdateActiveSlot(int lastSlot, int newValue)
+	{
+		if(lastPrimaryWeapon != null)
+			lastPrimaryWeapon.onBeforeSwitch(provider.getWorld(), provider, provider.getInventory().selectedSlot);
+		if(provider.getInventory().main.get(newValue).getItem() instanceof AbstractWeaponItem w)
+			w.onSwitch(provider.getWorld(), provider, newValue);
+		if(provider.getWorld().isClient)
+		{
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			buf.writeByte(lastSlot);
+			buf.writeByte(newValue);
+			ClientPlayNetworking.send(PacketRegistry.SWITCH_SLOT_PACKET_ID, buf);
 		}
 	}
 	

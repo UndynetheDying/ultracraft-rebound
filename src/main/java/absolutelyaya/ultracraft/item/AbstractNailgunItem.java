@@ -29,19 +29,19 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 	}
 	
 	@Override
-	public void onPrimaryFireStart(World world, PlayerEntity user)
+	public void onPrimaryFireStart(World world, PlayerEntity user, int slot)
 	{
-		super.onPrimaryFireStart(world, user);
+		super.onPrimaryFireStart(world, user, slot);
 		if(!world.isClient)
-			triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(), "fire_loop");
+			triggerAnim(user, GeoItem.getOrAssignId(user.getInventory().getStack(slot), (ServerWorld)world), getControllerName(), "fire_loop");
 	}
 	
 	@Override
-	public void onPrimaryFireStop(World world, PlayerEntity user)
+	public void onPrimaryFireStop(World world, PlayerEntity user, int slot)
 	{
-		super.onPrimaryFireStop(world, user);
+		super.onPrimaryFireStop(world, user, slot);
 		if(!world.isClient)
-			triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(), "fire_stop");
+			triggerAnim(user, GeoItem.getOrAssignId(user.getInventory().getStack(slot), (ServerWorld)world), getControllerName(), "fire_stop");
 	}
 	
 	@Override
@@ -121,21 +121,21 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 	}
 	
 	@Override
-	protected void onBeforeSwitch(PlayerEntity user, World world)
+	public void onBeforeSwitch(World world, PlayerEntity user, int newSlot)
 	{
-		super.onBeforeSwitch(user, world);
+		super.onBeforeSwitch(world, user, newSlot);
 		IWingedPlayerComponent winged = UltraComponents.WINGED.get(user);
 		if(winged.isPrimaryFiring())
-			onPrimaryFireStop(world, user);
+			onPrimaryFireStop(world, user, newSlot);
 	}
 	
 	@Override
-	protected void onSwitch(PlayerEntity user, World world)
+	public void onSwitch(World world, PlayerEntity user, int newSlot)
 	{
-		super.onSwitch(user, world);
+		super.onSwitch(world, user, newSlot);
 		IWingedPlayerComponent winged = UltraComponents.WINGED.get(user);
 		if(winged.isPrimaryFiring())
-			onPrimaryFireStart(world, user);
+			onPrimaryFireStart(world, user, newSlot);
 	}
 	
 	@Override

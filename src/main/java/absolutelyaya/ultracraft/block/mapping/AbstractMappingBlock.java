@@ -121,11 +121,7 @@ public abstract class AbstractMappingBlock extends BlockWithEntity
 		if(editor.isActive())
 		{
 			if(key.equals("room"))
-			{
 				editor.clearEditFocus();
-				if(!EditModeRenderer.Instance.isKnown(pos))
-					EditModeRenderer.Instance.addKnownRoom(pos);
-			}
 			editor.setEditFocus(key, pos.equals(editor.getEditFocus(key)) ? null : pos);
 			return ActionResult.SUCCESS;
 		}

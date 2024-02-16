@@ -198,9 +198,9 @@ public class CoreEjectShotgunItem extends AbstractShotgunItem
 	}
 	
 	@Override
-	protected void onSwitch(PlayerEntity user, World world)
+	public void onSwitch(World world, PlayerEntity user, int newSlot)
 	{
-		super.onSwitch(user, world);
+		super.onSwitch(world, user, newSlot);
 		approxUseTime = -1;
 	}
 }

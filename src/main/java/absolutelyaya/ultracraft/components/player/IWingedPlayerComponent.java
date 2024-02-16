@@ -31,6 +31,8 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	
 	boolean isPrimaryFiring();
 	
+	void onUpdateActiveSlot(int lastSlot, int newValue);
+	
 	@NotNull
 	GunCooldownManager getGunCooldownManager();
 	

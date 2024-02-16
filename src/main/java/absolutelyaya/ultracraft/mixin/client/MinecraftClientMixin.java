@@ -71,8 +71,6 @@ public abstract class MinecraftClientMixin
 	
 	@Shadow public abstract void setScreen(@Nullable Screen screen);
 	
-	@Shadow public abstract void onResolutionChanged();
-	
 	boolean isShooting, wasBreaking;
 	
 	@WrapOperation(method = "handleInputEvents()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V"))
@@ -87,8 +85,14 @@ public abstract class MinecraftClientMixin
 	@Inject(method = "handleInputEvents()V", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerInventory;selectedSlot:I"), locals = LocalCapture.CAPTURE_FAILHARD)
 	void OnHotbarKeyPress(CallbackInfo ci, int i)
 	{
-		if(player.getInventory().selectedSlot == i && player.getInventory().getStack(i).getItem() instanceof AbstractWeaponItem)
+		int last = player.getInventory().selectedSlot;
+		if(last == i && player.getInventory().getStack(i).getItem() instanceof AbstractWeaponItem)
 			AbstractWeaponItem.cycleVariant(player);
+		if(last != i)
+		{
+			IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
+			winged.onUpdateActiveSlot(last, i);
+		}
 	}
 	
 	@ModifyReturnValue(method = "getMusicType", at = @At("RETURN"))
@@ -99,11 +103,7 @@ public abstract class MinecraftClientMixin
 			IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
 			Identifier level = winged.getCurrentLevel();
 			if(level != null)
-			{
-				//TODO: get music for level
-				//Registries.SOUND_EVENT.get();
 				return null;
-			}
 		}
 		if (original.equals(MusicType.MENU) && UltracraftClient.REPLACE_MENU_MUSIC)
 		{

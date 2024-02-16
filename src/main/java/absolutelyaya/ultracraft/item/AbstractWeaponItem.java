@@ -54,12 +54,12 @@ public abstract class AbstractWeaponItem extends Item
 		return true;
 	}
 	
-	public void onPrimaryFireStart(World world, PlayerEntity user)
+	public void onPrimaryFireStart(World world, PlayerEntity user, int slot)
 	{
 	
 	}
 	
-	public void onPrimaryFireStop(World world, PlayerEntity user)
+	public void onPrimaryFireStop(World world, PlayerEntity user, int slot)
 	{
 	
 	}
@@ -145,11 +145,11 @@ public abstract class AbstractWeaponItem extends Item
 		return null;
 	}
 	
-	//@Override
-	//public boolean allowNbtUpdateAnimation(PlayerEntity player, Hand hand, ItemStack oldStack, ItemStack newStack)
-	//{
-	//	return false;
-	//}
+	@Override
+	public boolean allowNbtUpdateAnimation(PlayerEntity player, Hand hand, ItemStack oldStack, ItemStack newStack)
+	{
+		return false;
+	}
 	
 	public boolean hasVariantBG()
 	{
@@ -202,7 +202,7 @@ public abstract class AbstractWeaponItem extends Item
 		ILoadoutComponent loadout = UltraComponents.LOADOUT.get(player);
 		if(!(stack.getItem() instanceof AbstractWeaponItem lastWeapon && loadout.isInLoadout(lastWeapon)))
 			return;
-		lastWeapon.onBeforeSwitch(player, player.getWorld());
+		lastWeapon.onBeforeSwitch(player.getWorld(), player, player.getInventory().selectedSlot);
 		stack.getItem().onStoppedUsing(stack, player.getWorld(), player, 999);
 		IProgressionComponent progression = UltraComponents.PROGRESSION.get(player);
 		Item nextItem = getNextVariant(stack, progression, loadout);
@@ -210,7 +210,7 @@ public abstract class AbstractWeaponItem extends Item
 		if(nextItem instanceof AbstractWeaponItem weapon)
 		{
 			UltraComponents.WINGED.get(player).getGunCooldownManager().setCooldown(weapon, weapon.getSwitchCooldown(nextStack), GunCooldownManager.PRIMARY);
-			weapon.onSwitch(player, player.getWorld());
+			weapon.onSwitch(player.getWorld(), player, player.getInventory().selectedSlot);
 		}
 	}
 	
@@ -257,9 +257,9 @@ public abstract class AbstractWeaponItem extends Item
 		return 0;
 	}
 	
-	protected void onBeforeSwitch(PlayerEntity user, World world) {}
+	public void onBeforeSwitch(World world, PlayerEntity user, int newSlot) {}
 	
-	protected void onSwitch(PlayerEntity user, World world) {}
+	public void onSwitch(World world, PlayerEntity user, int newSlot) {}
 	
 	protected void handleAnimSound(SoundKeyframeEvent<? extends AbstractWeaponItem> keyframe)
 	{

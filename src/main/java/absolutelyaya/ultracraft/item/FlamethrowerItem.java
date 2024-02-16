@@ -118,19 +118,19 @@ public class FlamethrowerItem extends AbstractWeaponItem implements GeoItem
 	}
 	
 	@Override
-	public void onPrimaryFireStart(World world, PlayerEntity user)
+	public void onPrimaryFireStart(World world, PlayerEntity user, int slot)
 	{
-		super.onPrimaryFireStart(world, user);
+		super.onPrimaryFireStart(world, user, slot);
 		world.playSound(null, user.getBlockPos(), SoundRegistry.FLAMETHROWER_START, SoundCategory.PLAYERS, 1f, 1f);
 	}
 	
 	@Override
-	public void onPrimaryFireStop(World world, PlayerEntity user)
+	public void onPrimaryFireStop(World world, PlayerEntity user, int slot)
 	{
 		if(!(user instanceof WingedPlayerEntity))
 			return;
 		if(!world.isClient)
-			triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(), "stop");
+			triggerAnim(user, GeoItem.getOrAssignId(user.getInventory().getStack(slot), (ServerWorld)world), getControllerName(), "stop");
 		world.playSound(null, user.getBlockPos(), SoundRegistry.FLAMETHROWER_STOP, SoundCategory.PLAYERS, 1f, 1f);
 	}
 	

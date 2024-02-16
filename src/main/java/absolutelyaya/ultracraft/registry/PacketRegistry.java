@@ -97,6 +97,7 @@ public class PacketRegistry
 	public static final Identifier REQUEST_DESTINATIONS_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "destinations_c2s");
 	public static final Identifier REQUEST_INSTANCES_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "instances_c2s");
 	public static final Identifier REQUEST_FULL_CYBERGRIND_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "request_cybergrind");
+	public static final Identifier SWITCH_SLOT_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "slot_c2s");
 	
 	public static final Identifier FREEZE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "freeze");
 	public static final Identifier HITSCAN_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "scan");
@@ -718,6 +719,13 @@ public class PacketRegistry
 		});
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.REQUEST_FULL_CYBERGRIND_PACKET_ID, (server, player, handler, buf, sender) -> {
 			server.execute(() -> CybergrindManager.Instance.syncFullActiveGame(player));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.SWITCH_SLOT_PACKET_ID, (server, player, handler, buf, sender) -> {
+			int lastSlot = buf.readByte();
+			int newSlot = buf.readByte();
+			server.execute(() -> {
+				UltraComponents.WINGED.get(player).onUpdateActiveSlot(lastSlot, newSlot);
+			});
 		});
 	}
 	

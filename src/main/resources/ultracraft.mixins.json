@@ -21,7 +21,8 @@
     "ServerPlayerMixin",
     "ServerWorldMixin",
     "ThrownEntityMixin",
-    "WorldMixin"
+    "WorldMixin",
+    "client.PlayerInventoryMixin"
   ],
   "client": [
     "client.CameraMixin",
