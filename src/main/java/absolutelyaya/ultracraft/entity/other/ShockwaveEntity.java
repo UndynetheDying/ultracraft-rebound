@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.entity.other;
 
+import absolutelyaya.ultracraft.api.HeavyEntities;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
@@ -91,6 +92,8 @@ public class ShockwaveEntity extends Entity
 	boolean shouldDamage(Entity entity)
 	{
 		float dist = distanceTo(entity);
+		if(HeavyEntities.isHeavy(entity.getType()))
+			return false;
 		return entity.isAlive() && dist < getRadius() + 1f && dist > getRadius() - 3f && !entity.getClass().equals(ignored) && !hits.contains(entity);
 	}
 	
