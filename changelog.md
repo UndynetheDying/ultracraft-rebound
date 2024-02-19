@@ -6,8 +6,10 @@
   - Pre-placed Structures with Scripted Events and Progression
     - Activate all 4 Slab Blocks to obtain the Slab Revolver
   - Other Random Limbo Themed Structures
-  - Appropriate enemies randomly spawn in dark areas // at night
-    - Anyone who wanted this will probably realize that this isn't exactly fun
+  - Instead of random mob spawning, every night there's a chance for a Cybergrind to start
+    - The Amount of Waves that need to be beaten (and the amount // strength of enemies) depends on your worlds difficulty
+    - Cybergrind can be configured using a config file
+    - "Why no random mob spawning??" trust me, it's *really* not fun.
 - Added Overheat Nailgun
   - Primary fire of all Nailgun variants now builds up "heat"
   - The higher the heat, the slower the fire rate (this one only applies to the Overheat Nailgun)
@@ -179,6 +181,7 @@
 - Fixed Hideous Mass still Attacking when in its Hidden State
 - Fixed some firstperson offhand weirdness
 - Added Feedback to hitting a Shielded Part of Hideous Mass (a little *tching* kinda sound)
+- Drones now immediately explode if damaged for 3x their max health or more
 ## Resource Changes
 - Continued Adding Sounds
 - Shotgun Animations now have a few sound keyframes

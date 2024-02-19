@@ -28,7 +28,6 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.Heightmap;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.joml.Vector3f;
@@ -104,6 +103,8 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 	{
 		if(getWorld().isClient)
 			return true;
+		if(amount >= getMaxHealth() * 3) //obliterated!!
+			explode(source);
 		if(isFalling() && !source.isOf(DamageSources.INTERRUPT))
 		{
 			explode(source);
