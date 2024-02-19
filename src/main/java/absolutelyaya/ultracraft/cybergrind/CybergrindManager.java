@@ -67,10 +67,11 @@ public class CybergrindManager
 		return list;
 	}
 	
-	public void startCybergrind(ServerPlayerEntity player, int waves)
+	public CybergrindGame startCybergrind(ServerPlayerEntity player, int waves)
 	{
 		server.getPlayerManager().broadcast(Text.translatable("message.ultracraft.cybergrind.announce"), false);
 		activeGame = new CybergrindGame(server, config, rand, player, waves);
+		return activeGame;
 	}
 	
 	public void startCybergrind()

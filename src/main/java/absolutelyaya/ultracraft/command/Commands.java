@@ -74,7 +74,7 @@ public class Commands
 					.then(literal("destroy-all-instances").executes(Commands::executeDebugLevelDestruction)))
 				.then(literal("cybergrind")
 					.then(literal("start").executes(Commands::executeDebugStartCybergrind)
-						.then(argument("target", player()).then(argument("waves", integer(0)).executes(Commands::executeDebugCybergrindSpecific))))
+						.then(argument("target", player()).then(argument("waves", integer(0)).executes(Commands::executeDebugCybergrindSpecific).then(literal("verbose").executes(Commands::executeDebugCybergrindSpecificVerbose)))))
 					.then(literal("end").executes(Commands::executeDebugEndCybergrind))))
 			.then(literal("progression").requires(source -> source.hasPermissionLevel(2))
 				.then(argument("list", string()).suggests(Commands::progressionListTypeProvider)
@@ -448,6 +448,15 @@ public class Commands
 		int waves = context.getArgument("waves", Integer.class);
 		context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.cybergrind.start"), true);
 		CybergrindManager.Instance.startCybergrind(target, waves);
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int executeDebugCybergrindSpecificVerbose(CommandContext<ServerCommandSource> context) throws CommandSyntaxException
+	{
+		ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "target");
+		int waves = context.getArgument("waves", Integer.class);
+		context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.cybergrind.start"), true);
+		CybergrindManager.Instance.startCybergrind(target, waves).setVerbose();
 		return Command.SINGLE_SUCCESS;
 	}
 }

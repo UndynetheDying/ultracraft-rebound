@@ -45,12 +45,12 @@ public class CybergrindGame
 	final Random rand;
 	final List<HostileEntity> enemies = new ArrayList<>();
 	final List<PlayerEntity> participants = new ArrayList<>();
-	ServerWorld world;
-	BlockPos center;
 	final int arenaRadius;
 	final boolean arenaSolid;
+	ServerWorld world;
+	BlockPos center;
 	int delay, waves, currentWave, budget, duration;
-	boolean initialized, over, win, curWaveDirty, enemiesDirty;
+	boolean initialized, over, win, curWaveDirty, enemiesDirty, verbose;
 	ServerPlayerEntity owner;
 	
 	public CybergrindGame(MinecraftServer server, CybergrindConfig config, Random rand, ServerPlayerEntity owner, int waves)
@@ -240,6 +240,7 @@ public class CybergrindGame
 			end();
 			return;
 		}
+		verboseLog("starting wave " + currentWave);
 		calculateBudget();
 	}
 	
@@ -252,22 +253,29 @@ public class CybergrindGame
 		if (candidates.size() == 0)
 			return false;
 		EntityType<? extends HostileEntity> winner = candidates.get(rand.nextInt(candidates.size()));
-		budget -= spawnCosts.get(winner);
-		spawn(winner);
+		if(spawn(winner))
+		{
+			int cost = spawnCosts.get(winner);
+			budget -= cost;
+			verboseLog("§7budget: " + (budget + cost) + " -> " + budget);
+		}
 		return true;
 	}
 	
-	void spawn(EntityType<? extends HostileEntity> type)
+	boolean spawn(EntityType<? extends HostileEntity> type)
 	{
+		verboseLog("§8attempting to spawn " + type.toString());
 		SnowballEntity temp = new SnowballEntity(EntityType.SNOWBALL, world);
 		Vector4i bounds = getArenaBounds();
-		for (int i = 0; i < 4; i++)
+		boolean success = false;
+		for (int i = 0; i < 16; i++)
 		{
 			int margin = arenaRadius / 2;
-			Vec3d pos = new Vec3d(rand.nextBetween(bounds.x + margin, bounds.z - margin) + 0.5, center.getY(),
+			Vec3d pos = new Vec3d(rand.nextBetween(bounds.x + margin, bounds.z - margin) + 0.5, center.getY() + 16,
 					rand.nextBetween(bounds.y + margin, bounds.w - margin) + 0.5);
-			BlockHitResult hit = world.raycast(new RaycastContext(pos, pos.add(0, -32, 0),
+			BlockHitResult hit = world.raycast(new RaycastContext(pos, pos.add(0, -64, 0),
 					RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, temp));
+			verboseLog("§8spawn attempt " + (i + 1));
 			if(!hit.getType().equals(HitResult.Type.MISS))
 			{
 				pos = hit.getPos();
@@ -276,12 +284,16 @@ public class CybergrindGame
 				HostileEntity enemy = type.spawn(world, BlockPos.ofFloored(pos), SpawnReason.SPAWNER);
 				if(enemy instanceof AbstractUltraHostileEntity ultraEnemy)
 					ultraEnemy.markCybergrind();
+				enemy.setPersistent();
 				enemies.add(enemy);
+				success = true;
+				verboseLog("§7enemy spawned at " + pos);
 				break;
 			}
 		}
 		temp.remove(Entity.RemovalReason.DISCARDED);
 		enemiesDirty = true;
+		return success;
 	}
 	
 	void calculateBudget()
@@ -291,6 +303,18 @@ public class CybergrindGame
 		for (int i = 0; i < currentWave; i++)
 			budget += rand.nextBetween(config.minBudgetPerWave.getValue(), config.maxBudgetPerWave.getValue());
 		budget += config.difficultyBudgetBonus.getValue() * difficulty;
+		verboseLog("§bround budget -> " + budget);
+	}
+	
+	public void setVerbose()
+	{
+		verbose = true;
+	}
+	
+	void verboseLog(String message)
+	{
+		if(verbose)
+			server.getPlayerManager().broadcast(Text.of(message), false);
 	}
 	
 	void end()
