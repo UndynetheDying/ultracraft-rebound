@@ -22,6 +22,8 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 	final RawAnimation AnimationFireLoop = RawAnimation.begin().thenPlay("fire_loop");
 	final RawAnimation AnimationFireStop = RawAnimation.begin().thenPlay("fire_stop");
 	final RawAnimation AnimationAltFire = RawAnimation.begin().thenPlay("alt_fire");
+	final RawAnimation AnimationAltFire2 = RawAnimation.begin().thenPlay("alt_fire2").thenLoop("fire_loop");
+	final RawAnimation AnimationAltFire2B = RawAnimation.begin().thenPlay("alt_fire2b").thenLoop("fire_loop");
 	
 	public AbstractNailgunItem(Settings settings)
 	{
@@ -99,7 +101,9 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 		controllerRegistrar.add(new AnimationController<>(this, getControllerName(), 1, state -> PlayState.STOP)
 										.triggerableAnim("fire_loop", AnimationFireLoop)
 										.triggerableAnim("fire_stop", AnimationFireStop)
-										.triggerableAnim("alt_fire", AnimationAltFire));
+										.triggerableAnim("alt_fire", AnimationAltFire)
+										.triggerableAnim("alt_fire2", AnimationAltFire2)
+										.triggerableAnim("alt_fire2b", AnimationAltFire2B));
 	}
 	
 	@Override

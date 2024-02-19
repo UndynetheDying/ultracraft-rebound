@@ -34,6 +34,7 @@ public class AttractorNailgunItem extends AbstractNailgunItem
 {
 	final AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
 	final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
+	boolean b;
 	
 	public AttractorNailgunItem(Settings settings)
 	{
@@ -81,7 +82,15 @@ public class AttractorNailgunItem extends AbstractNailgunItem
 		IWingedPlayerComponent winged = UltraComponents.WINGED.get(user);
 		winged.setMagnets(winged.getMagnets() + 1);
 		if(!world.isClient)
-			triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(), "alt_fire");
+		{
+			if(winged.isPrimaryFiring())
+			{
+				triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(), b ? "alt_fire2" : "alt_fire2b");
+				b = !b;
+			}
+			else
+				triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(), "alt_fire");
+		}
 	}
 	
 	@Override
