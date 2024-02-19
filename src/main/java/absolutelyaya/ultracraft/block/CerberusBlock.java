@@ -8,6 +8,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -87,6 +88,7 @@ public class CerberusBlock extends HorizontalFacingBlock implements BlockEntityP
 			cerb.setPos(spawnPos.getX() + 0.5, spawnPos.getY() + 0.1, spawnPos.getZ() + 0.5);
 			cerb.setRotation(dir.asRotation());
 			world.spawnEntity(cerb);
+			cerb.initialize(world, world.getLocalDifficulty(spawnPos), SpawnReason.DISPENSER, null, null);
 		}
 	}
 	

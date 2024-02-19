@@ -16,10 +16,7 @@ import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import mod.azure.azurelib.animatable.GeoEntity;
 import mod.azure.azurelib.util.AzureLibUtil;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MovementType;
-import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -36,7 +33,9 @@ import net.minecraft.util.TypeFilter;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.RaycastContext;
+import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
 import mod.azure.azurelib.core.animation.AnimatableManager;
@@ -44,6 +43,7 @@ import mod.azure.azurelib.core.animation.AnimationController;
 import mod.azure.azurelib.core.animation.AnimationState;
 import mod.azure.azurelib.core.animation.RawAnimation;
 import mod.azure.azurelib.core.object.PlayState;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -111,6 +111,14 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 			if(getHealth() != health)
 				setHealth(health);
 		}
+	}
+	
+	@Override
+	public @Nullable EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt)
+	{
+		System.out.println("cerb spawn as boss -> " + dataTracker.get(BOSS));
+		onTrackedDataSet(BOSS);
+		return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
 	}
 	
 	public static CerberusEntity spawnAsBoss(World world, Vec3d pos, boolean halfHealth)
@@ -311,7 +319,7 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 	
 	public boolean isCracked()
 	{
-		return getHealth() < getMaxHealth() / 2f;
+		return getHealth() < (isBoss() ? 60f : 22f);
 	}
 	
 	@Override

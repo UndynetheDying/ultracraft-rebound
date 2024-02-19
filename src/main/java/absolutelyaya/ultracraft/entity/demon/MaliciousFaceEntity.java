@@ -45,9 +45,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.Heightmap;
-import net.minecraft.world.World;
+import net.minecraft.world.*;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -154,6 +153,13 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 			if(getHealth() != health)
 				setHealth(health);
 		}
+	}
+	
+	@Override
+	public @Nullable EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt)
+	{
+		onTrackedDataSet(BOSS);
+		return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
 	}
 	
 	public static MaliciousFaceEntity spawnAsBoss(World world, Vec3d pos)
@@ -349,9 +355,14 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 			}
 			return false;
 		}
-		if(getHealth() - amount < getMaxHealth() / 2 && !dataTracker.get(CRACKED))
+		if(getHealth() - amount < getCrackThreshold() && !dataTracker.get(CRACKED))
 			dataTracker.set(CRACKED, true);
 		return super.damage(source, amount);
+	}
+	
+	float getCrackThreshold()
+	{
+		return isBoss() ? 25f : 15f;
 	}
 	
 	void drop()
