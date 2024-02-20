@@ -28,6 +28,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -283,5 +284,13 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 	public boolean isCybergrind()
 	{
 		return dataTracker.get(CYBERGRIND);
+	}
+	
+	@Override
+	protected Identifier getLootTableId()
+	{
+		if(isCybergrind())
+			return super.getLootTableId().withPrefixedPath("_cg");
+		return super.getLootTableId();
 	}
 }

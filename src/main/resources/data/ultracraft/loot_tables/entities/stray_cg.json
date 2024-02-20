@@ -7,14 +7,14 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:cobblestone",
+          "name": "minecraft:rotten_flesh",
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 2,
-                "max": 4
+                "min": 0,
+                "max": 2
               },
               "add": false
             },
@@ -27,22 +27,6 @@
               }
             }
           ]
-        }
-      ]
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:golden_apple"
-        }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:random_chance_with_looting",
-          "chance": 0.2,
-          "looting_multiplier": 0.05
         }
       ]
     }
