@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
+import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.TagRegistry;
@@ -110,8 +111,7 @@ public class ExplosionHandler
 		Entity exploder = source.getAttacker();
 		if(source.getSource() instanceof PlayerEntity p)
 			exploder = p;
-		GameRules rules = world.getGameRules();
-		if(breakBlocks && ServerConfig.INSTANCE.explosionBlockBreaking.getValue() && (exploder instanceof PlayerEntity || rules.getBoolean(GameRules.DO_MOB_GRIEFING)))
+		if(breakBlocks && canBreakBlocks(world, exploder))
 		{
 			boolean tntPriming = ServerConfig.INSTANCE.tntPriming.getValue();
 			BlockPos center = new BlockPos((int)Math.floor(pos.x), (int)Math.floor(pos.y), (int)Math.floor(pos.z));
@@ -149,6 +149,14 @@ public class ExplosionHandler
 				}
 			}
 		}
+	}
+	
+	static boolean canBreakBlocks(World world, Entity exploder)
+	{
+		if(world.getRegistryKey().equals(LevelManager.WORLD_KEY))
+			return true;
+		GameRules rules = world.getGameRules();
+		return ServerConfig.INSTANCE.explosionBlockBreaking.getValue() && (exploder instanceof PlayerEntity || rules.getBoolean(GameRules.DO_MOB_GRIEFING));
 	}
 	
 	public static void emitScreenshake(World world, Vec3d pos, float radius, float strength, float falloff)
