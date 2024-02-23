@@ -51,9 +51,6 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 		}
 		unlocked.add(new Identifier(Ultracraft.MOD_ID, "feedbacker"));
 		owned.add(new Identifier(Ultracraft.MOD_ID, "feedbacker"));
-		//TODO: remove once enemies spawn in the world and weapon recipe unlocks get obtainable through them
-		unlocked.add(new Identifier(Ultracraft.MOD_ID, "core_shotgun"));
-		unlocked.add(new Identifier(Ultracraft.MOD_ID, "attractor_nailgun"));
 	}
 	
 	@Override
