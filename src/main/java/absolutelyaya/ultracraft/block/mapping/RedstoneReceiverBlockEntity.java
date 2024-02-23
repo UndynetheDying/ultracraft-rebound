@@ -111,6 +111,7 @@ public class RedstoneReceiverBlockEntity extends AbstractMappingBlockEntity impl
 		super.writeNbt(nbt);
 		if(flag != null)
 			nbt.putString("flag", flag);
+		nbt.putBoolean("active", active);
 	}
 	
 	@Override
@@ -119,5 +120,6 @@ public class RedstoneReceiverBlockEntity extends AbstractMappingBlockEntity impl
 		super.readNbt(nbt);
 		if(nbt.contains("flag", NbtElement.STRING_TYPE))
 			flag = nbt.getString("flag");
+		active = nbt.getBoolean("active");
 	}
 }

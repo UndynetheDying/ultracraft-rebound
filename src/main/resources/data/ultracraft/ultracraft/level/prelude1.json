@@ -3,12 +3,13 @@
   "title": "level.ultracraft.0-1",
   "par-time": "4:20:69",
   "author": "yaya",
-  "structure": "ultracraft:limbo/ruin1",
-  "thumbnail": "ultracraft:textures/level/placeholder.png",
+  "structure": "ultracraft:level/prelude1",
+  "thumbnail": "ultracraft:textures/level/0_1.png",
   "spawn-offset":{
-    "x": 16,
-    "y": 8,
-    "z": 9
+    "x": 3,
+    "y": 45,
+    "z": 16
   },
+  "spawn-rot": -90,
   "version": 1
 }

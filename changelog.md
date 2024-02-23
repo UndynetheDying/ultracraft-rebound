@@ -10,6 +10,10 @@
     - The Amount of Waves that need to be beaten (and the amount // strength of enemies) depends on your worlds difficulty
     - Cybergrind can be configured using a config file
     - "Why no random mob spawning??" trust me, it's *really* not fun.
+- Shotgun and Nailgun Recipes are no longer unlocked per default (see point below)
+- Added Playable Levels
+  - These Levels are only themed around the different Layers; they're by no means recreations of the Original Levels
+  - Throughout the Levels, Players are taught the new mechanics, enemies and will unlock new Weapons 
 - Added Overheat Nailgun
   - Primary fire of all Nailgun variants now builds up "heat"
   - The higher the heat, the slower the fire rate (this one only applies to the Overheat Nailgun)

@@ -29,7 +29,9 @@ public class RedstoneReceiverBlock extends AbstractMappingBlock
 		int strength = world.getReceivedRedstonePower(pos);
 		if(world.getBlockEntity(pos) instanceof RedstoneReceiverBlockEntity receiver)
 			receiver.active = strength > 0;
-		world.setBlockState(pos, state, Block.NOTIFY_LISTENERS);
+		world.setBlockState(pos, state, 0);
 		world.updateNeighbors(pos, this);
+		world.getBlockEntity(pos).markDirty();
+		world.updateListeners(pos, state, state, 0);
 	}
 }
