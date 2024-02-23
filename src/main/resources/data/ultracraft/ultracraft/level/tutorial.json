@@ -1,0 +1,14 @@
+{
+  "builtin": true,
+  "title": "level.ultracraft.tutorial",
+  "author": "yaya",
+  "structure": "ultracraft:level/tutorial",
+  "thumbnail": "ultracraft:textures/level/tutorial.png",
+  "spawn-offset":{
+    "x": 4,
+    "y": 48,
+    "z": 5
+  },
+  "spawn-rot": -90,
+  "version": 1
+}

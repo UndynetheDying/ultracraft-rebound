@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.entity.demon.CerberusEntity;
 import absolutelyaya.ultracraft.entity.demon.HideousMassEntity;
 import absolutelyaya.ultracraft.entity.demon.MaliciousFaceEntity;
 import absolutelyaya.ultracraft.entity.demon.RodentEntity;
+import absolutelyaya.ultracraft.entity.husk.FilthEntity;
 import absolutelyaya.ultracraft.entity.machine.DestinyBondSwordsmachineEntity;
 import absolutelyaya.ultracraft.entity.machine.SwordsmachineEntity;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
@@ -55,6 +56,7 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 		{
 			switch(entityType.toString())
 			{
+				case "ultracraft:dummy" -> entities.add(FilthEntity.spawnWithoutAI(world, pos.toCenterPos().subtract(0f, 0.5f, 0f)));
 				case "ultracraft:regular_swordsmachine" -> entities.add(SwordsmachineEntity.spawnAsNonBoss(world, pos.toCenterPos()));
 				case "ultracraft:destiny_swordsmachine" -> entities.addAll(DestinyBondSwordsmachineEntity.spawn(world, pos.toCenterPos(), yaw));
 				case "ultracraft:big_rodent" -> entities.add(RodentEntity.spawn(world, pos.toCenterPos(), 1));

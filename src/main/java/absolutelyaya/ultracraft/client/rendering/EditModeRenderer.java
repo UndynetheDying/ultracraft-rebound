@@ -139,7 +139,7 @@ public class EditModeRenderer
 			matrices.translate(-camPos.x, -camPos.y, -camPos.z);
 			float alpha = Math.max(Math.min(pingTime, 1f), 0.5f);
 			Vector4f col = new Vector4f(0.2f, 0f, 0f, alpha);
-			col = col.lerp(new Vector4f(1f, 0f, 0f, alpha), (float)Math.sin(pulseTime) * 0.5f + 0.5f);
+			col = col.lerp(new Vector4f(1f, 0f, 0f, alpha), pulse);
 			WorldRenderer.drawBox(matrices, lines, new Box(new BlockPos(0, 0, 0)).expand(-0.01).offset(-0.5, -0.5, -0.5),
 					col.x, col.y, col.z, col.w);
 			matrices.push();

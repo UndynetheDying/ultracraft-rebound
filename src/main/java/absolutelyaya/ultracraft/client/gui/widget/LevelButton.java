@@ -155,7 +155,7 @@ public class LevelButton extends ClickableWidget
 			matrices.push();
 			matrices.translate(0f, 0f, Math.max(hoverAnim * 10f - 7.5f, 0f));
 			//time-panel
-			if(!parTime.isEmpty())
+			if(parTime != null && !parTime.isEmpty())
 			{
 				Text par = Text.translatable("screen.ultracraft.level.par-time", parTime);
 				long pbTime = winged.getBestTime(destination);

@@ -79,32 +79,50 @@ public class TravelScreen extends AbstractTravelScreen
 	{
 		levelButtons.clear();
 		List<ClickableWidget> buttons = new ArrayList<>();
+		int spacing = 8;
+		int x = 0;
 		switch(selectedLayer)
 		{
 			case OVERWORLD ->
 			{
-				buttons.add(new LevelButton(width / 2, height / 2 - 100, Text.translatable("level.ultracraft.0-F"),
+				LevelButton freeroam = new LevelButton(x, height / 2 - 32, Text.translatable("level.ultracraft.0-F"),
 						new Identifier(Ultracraft.MOD_ID, "textures/level/0_freeroam.png"), new Identifier(Ultracraft.MOD_ID, "dimension.overworld"),
-						d -> travel(Layer.OVERWORLD)));
-				buttons.add(new LevelButton(width / 2, height / 2 - 32,
-						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "prelude1")), this::selectLevel));
-				buttons.add(new LevelButton(width / 2, height / 2 + 36,
-						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "prelude2")), this::selectLevel));
+						d -> travel(Layer.OVERWORLD));
+				buttons.add(new LevelButton(x, height / 2 - 100,
+						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "tutorial")), this::selectLevel));
+				x += freeroam.getWidth() + spacing;
+				LevelButton prelude1 = new LevelButton(x, height / 2 - 32,
+						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "prelude1")), this::selectLevel);
+				x += prelude1.getWidth() + spacing;
+				LevelButton prelude2 = new LevelButton(x, height / 2 - 32,
+						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "prelude2")), this::selectLevel);
+				x += prelude2.getWidth() + spacing;
+				LevelButton prelude3 = new LevelButton(x, height / 2 - 32,
+						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "prelude3")), this::selectLevel);
+				buttons.addAll(List.of(freeroam, prelude1, prelude2, prelude3));
 			}
 			case LIMBO ->
 			{
-				buttons.add(new LevelButton(width / 2, height / 2 - 100,
-						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "limbo1")), this::selectLevel));
-				LevelButton freeroam = new LevelButton(width / 2, height / 2 - 32, Text.translatable("level.ultracraft.1-F"),
+				LevelButton limbo1 = new LevelButton(x, height / 2 - 32,
+						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "limbo1")), this::selectLevel);
+				x += limbo1.getWidth() + spacing;
+				LevelButton freeroam = new LevelButton(x, height / 2 - 32, Text.translatable("level.ultracraft.1-F"),
 						new Identifier(Ultracraft.MOD_ID, "textures/level/1_freeroam.png"), new Identifier(Ultracraft.MOD_ID, "dimension.limbo"),
 						d -> travel(Layer.LIMBO));
-				buttons.add(freeroam);
-				buttons.add(new LevelButton(width / 2, height / 2 + 36,
+				x += freeroam.getWidth() + spacing;
+				LevelButton limbo2 = new LevelButton(x, height / 2 - 32,
+						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "limbo2")), this::selectLevel);
+				x += limbo1.getWidth() + spacing;
+				buttons.add(new LevelButton(x, height / 2 - 32,
 						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "luna")), ignored -> {}));
-				
-				buttons.add(new LevelButton(width / 2 + freeroam.getWidth() + 16, height / 2 - 32,
-						LevelManager.getLevelData(new Identifier(Ultracraft.MOD_ID, "limbo-challenge")), this::selectLevel));
+				buttons.addAll(List.of(freeroam, limbo1, limbo2));
 			}
+		}
+		int offset = 0;
+		for (ClickableWidget button : buttons)
+		{
+			offset += Math.max(button.getWidth() - 104, 0) / 2;
+			button.setX(button.getX() + (width - x) / 2 + offset);
 		}
 		buttons.add(ButtonWidget.builder(Text.translatable("screen.ultracraft.travel.back"), b -> {
 			selectedLayer = null;

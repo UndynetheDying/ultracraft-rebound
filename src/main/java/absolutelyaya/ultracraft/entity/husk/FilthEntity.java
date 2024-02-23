@@ -3,6 +3,8 @@ package absolutelyaya.ultracraft.entity.husk;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.MeleeInterruptable;
 import absolutelyaya.ultracraft.damage.DamageSources;
+import absolutelyaya.ultracraft.entity.machine.SwordsmachineEntity;
+import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.Entity;
@@ -78,6 +80,16 @@ public class FilthEntity extends AbstractHuskEntity implements GeoEntity, MeleeI
 		goalSelector.add(4, new WanderAroundFarGoal(this, 1.0));
 		
 		targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+	}
+	
+	public static FilthEntity spawnWithoutAI(World world, Vec3d pos)
+	{
+		FilthEntity filth = new FilthEntity(EntityRegistry.FILTH, world);
+		filth.setPosition(pos);
+		filth.setAiDisabled(true);
+		filth.setOnGround(true);
+		world.spawnEntity(filth);
+		return filth;
 	}
 	
 	public static DefaultAttributeContainer.Builder getDefaultAttributes()
