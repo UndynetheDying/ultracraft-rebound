@@ -194,7 +194,7 @@ public class LevelButton extends ClickableWidget
 			context.drawText(tRenderer, t.get(0),
 					(width - tRenderer.getWidth(t.get(0))) / 2, 2, 0xffffffff, true);
 		RenderSystem.setShaderTexture(0, isUnlocked ? preview : LevelManager.PLACEHOLDER_THUMB);
-		RenderingUtil.drawTexture(matrices.peek().getPositionMatrix(), new Vector4f(width / 2f - 32, 14, 64, 48), 0,
+		RenderingUtil.drawTexture(matrices.peek().getPositionMatrix(), new Vector4f(width / 2f - 36, 14, 72, 48), 0,
 				new Vec2f(480, 320), new Vector4f(0, 0, 480, -320), alpha);
 		t = Text.of(author.getString()).getWithStyle(Style.EMPTY.withUnderline(authorLink.length() > 0));
 		if(t.size() > 0)
