@@ -4,12 +4,12 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.block.*;
 import absolutelyaya.ultracraft.block.CarpetBlock;
 import absolutelyaya.ultracraft.block.FlowerbedBlock;
-import absolutelyaya.ultracraft.block.SlabBlock;
 import absolutelyaya.ultracraft.block.mapping.*;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.minecraft.block.*;
+import net.minecraft.block.SlabBlock;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.item.BlockItem;
 import net.minecraft.registry.Registries;
@@ -78,7 +78,7 @@ public class BlockRegistry
 			new SkyBlock(AbstractBlock.Settings.copy(Blocks.BEDROCK).sounds(BlockSoundGroup.GLASS).mapColor(MapColor.BLACK).pistonBehavior(PistonBehavior.BLOCK)
 								 .allowsSpawning((state, blockView, blockPos, entityType) -> false)), false);
 	public static final Block SLAB_BLOCK = register("slab_block",
-			new SlabBlock(AbstractBlock.Settings.copy(Blocks.SMOOTH_STONE).mapColor(MapColor.LIGHT_GRAY).luminance(b -> b.get(SlabBlock.ACTIVE) ? 5 : 0)), true);
+			new absolutelyaya.ultracraft.block.SlabBlock(AbstractBlock.Settings.copy(Blocks.SMOOTH_STONE).mapColor(MapColor.LIGHT_GRAY).luminance(b -> b.get(absolutelyaya.ultracraft.block.SlabBlock.ACTIVE) ? 5 : 0)), true);
 	public static final Block CARPET = register("carpet",
 			new CarpetBlock(AbstractBlock.Settings.copy(Blocks.BLUE_CARPET).mapColor(MapColor.BLUE)), true);
 	public static final Block FLOWERBED = register("flowerbed",
@@ -100,13 +100,31 @@ public class BlockRegistry
 	public static final Block BRIGHT_PANEL_STAIRS = register("bright_panel_stairs",
 			new StairsBlock(BRIGHT_PANEL.getDefaultState(), AbstractBlock.Settings.copy(BRIGHT_PANEL)), true);
 	public static final Block SHEETMETAL = register("sheetmetal",
-			new Block(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.IRON_GRAY)), true);
+			new Block(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.IRON_GRAY).sounds(BlockSoundGroup.LANTERN)), true);
 	public static final Block FRAMED = register("framed",
 			new Block(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.IRON_GRAY)), true);
 	public static final Block CIRCUITY = register("circuity",
 			new GlazedTerracottaBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.IRON_GRAY)), true);
 	public static final Block VENT = register("vent",
 			new VentBlock(AbstractBlock.Settings.copy(Blocks.IRON_BARS).mapColor(MapColor.DEEPSLATE_GRAY).strength(3f, 4f).nonOpaque()), true);
+	public static final Block CONCRETE_SMOOTH = register("concrete_smooth",
+			new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_GRAY)), true);
+	public static final Block CONCRETE_SMOOTH_SLAB = register("concrete_smooth_slab",
+			new SlabBlock(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_GRAY)), true);
+	public static final Block CONCRETE_SMOOTH_STAIRS = register("concrete_smooth_stairs",
+			new StairsBlock(CONCRETE_SMOOTH.getDefaultState(), AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_GRAY)), true);
+	public static final Block CONCRETE_TILE = register("concrete_tile",
+			new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_GRAY)), true);
+	public static final Block CONCRETE_TILE_SLAB = register("concrete_tile_slab",
+			new SlabBlock(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_GRAY)), true);
+	public static final Block CONCRETE_TILE_STAIRS = register("concrete_tile_stairs",
+			new StairsBlock(CONCRETE_TILE.getDefaultState(), AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_GRAY)), true);
+	public static final Block SHEETMETAL_SHEET = register("sheetmetal_sheet",
+			new Block(AbstractBlock.Settings.copy(SHEETMETAL).mapColor(MapColor.IRON_GRAY).sounds(BlockSoundGroup.LANTERN)), true);
+	public static final Block SHEETMETAL_SHEET_SLAB = register("sheetmetal_sheet_slab",
+			new SlabBlock(AbstractBlock.Settings.copy(SHEETMETAL).mapColor(MapColor.IRON_GRAY).sounds(BlockSoundGroup.LANTERN)), true);
+	public static final Block SHEETMETAL_SHEET_STAIRS = register("sheetmetal_sheet_stairs",
+			new StairsBlock(SHEETMETAL_SHEET.getDefaultState(), AbstractBlock.Settings.copy(SHEETMETAL).mapColor(MapColor.IRON_GRAY).sounds(BlockSoundGroup.LANTERN)), true);
 	
 	public static final Block MAP_ROOM = register("map_room", new RoomBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_TRIGGER = register("map_trigger", new TriggerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);

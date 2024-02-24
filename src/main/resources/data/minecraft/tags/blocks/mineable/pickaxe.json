@@ -28,9 +28,18 @@
     "ultracraft:bright_panel",
     "ultracraft:bright_panel_stairs",
     "ultracraft:sheetmetal",
+    "ultracraft:sheetmetal_sheet",
+    "ultracraft:sheetmetal_sheet_stairs",
+    "ultracraft:sheetmetal_sheet_slab",
     "ultracraft:framed",
     "ultracraft:circuity",
     "ultracraft:zootycoonchainlinkfence",
-    "ultracraft:vent"
+    "ultracraft:vent",
+    "ultracraft:concrete_smooth",
+    "ultracraft:concrete_smooth_stairs",
+    "ultracraft:concrete_smooth_slab",
+    "ultracraft:concrete_tile",
+    "ultracraft:concrete_tile_stairs",
+    "ultracraft:concrete_tile_slab"
   ]
 }

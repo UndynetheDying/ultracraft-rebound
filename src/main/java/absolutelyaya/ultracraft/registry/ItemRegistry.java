@@ -247,6 +247,9 @@ public class ItemRegistry
 			content.add(BlockRegistry.CARPET.asItem());
 			content.add(BlockRegistry.FLOWERBED.asItem());
 			content.add(BlockRegistry.SHEETMETAL.asItem());
+			content.add(BlockRegistry.SHEETMETAL_SHEET.asItem());
+			content.add(BlockRegistry.SHEETMETAL_SHEET_STAIRS.asItem());
+			content.add(BlockRegistry.SHEETMETAL_SHEET_SLAB.asItem());
 			content.add(BlockRegistry.COLUMN1.asItem());
 			content.add(BlockRegistry.COLUMN1_STAIRS.asItem());
 			content.add(BlockRegistry.COLUMN2.asItem());
@@ -256,6 +259,12 @@ public class ItemRegistry
 			content.add(BlockRegistry.FRAMED.asItem());
 			content.add(BlockRegistry.CIRCUITY.asItem());
 			content.add(BlockRegistry.ZOOTYCOONCHAINLINKFENCE.asItem());
+			content.add(BlockRegistry.CONCRETE_SMOOTH.asItem());
+			content.add(BlockRegistry.CONCRETE_SMOOTH_STAIRS.asItem());
+			content.add(BlockRegistry.CONCRETE_SMOOTH_SLAB.asItem());
+			content.add(BlockRegistry.CONCRETE_TILE.asItem());
+			content.add(BlockRegistry.CONCRETE_TILE_STAIRS.asItem());
+			content.add(BlockRegistry.CONCRETE_TILE_SLAB.asItem());
 			content.add(BLOOD_BUCKET);
 			content.add(PIERCE_REVOLVER);
 			content.add(MARKSMAN_REVOLVER);
