@@ -394,7 +394,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 				shockwave.setGrowRate(0.5f);
 				getWorld().spawnEntity(shockwave);
 			}
-			List<Entity> entities = getWorld().getOtherEntities(this, getBoundingBox(), Entity::isLiving);
+			List<Entity> entities = getWorld().getOtherEntities(this, getBoundingBox().expand(0.5, 0.5, 0.5), Entity::isLiving);
 			for (Entity e : entities)
 				e.damage(DamageSources.get(getWorld(), DamageSources.MAURICE), 999f);
 			dataTracker.set(LANDED, true);
