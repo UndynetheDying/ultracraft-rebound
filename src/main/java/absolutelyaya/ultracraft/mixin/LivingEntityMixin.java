@@ -31,6 +31,7 @@ import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.network.PacketByteBuf;
@@ -91,6 +92,8 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	@Shadow public abstract @Nullable LivingEntity getAttacker();
 	
 	@Shadow public abstract boolean addStatusEffect(StatusEffectInstance effect);
+	
+	@Shadow public abstract LivingEntity getLastAttacker();
 	
 	int punchDuration = 60;
 	Supplier<Boolean> canBleedSupplier = () -> true, takePunchKnockpackSupplier = this::isPushable; //TODO: add Sandy Enemies (eventually)
@@ -348,10 +351,17 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	void onDeath(DamageSource source, CallbackInfo ci)
 	{
 		LivingEntity attacker = getAttacker();
-		if(attacker == null && source.getAttacker() instanceof LivingEntity living)
-			attacker = living;
+		if(attacker == null && getLastAttacker() != null)
+			attacker = getLastAttacker();
+		if(attacker == null && source.getAttacker() instanceof PlayerEntity player)
+			attacker = player;
+		if(attacker == null && source.getSource() instanceof PlayerEntity player)
+			attacker = player;
+		if(attacker == null && (Object)this instanceof MobEntity mob)
+			attacker = mob.getTarget();
 		if(!(attacker instanceof PlayerEntity playerAttacker))
 			return;
+		UltraComponents.STYLE.get(playerAttacker).onKill((LivingEntity)(Object)this, source);
 		StyleBonusManager.getBonuses().forEach((id, bonus) -> {
 			if(bonus.check(getWorld(), getType(), source.getType()))
 				UltraComponents.STYLE.get(playerAttacker).styleBonusGet(bonus);

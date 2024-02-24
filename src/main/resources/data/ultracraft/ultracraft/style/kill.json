@@ -1,5 +1,6 @@
 {
   "translation-key": "stylebonus.ultracraft.kill",
-  "score": 2,
-  "use-staleness": true
+  "score": 15,
+  "use-staleness": true,
+  "impossible": true
 }

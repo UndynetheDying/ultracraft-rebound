@@ -1,20 +1,29 @@
 package absolutelyaya.ultracraft.components.player;
 
+import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.api.HeavyEntities;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
+import absolutelyaya.ultracraft.damage.DamageSources;
+import absolutelyaya.ultracraft.data.StyleBonusManager;
+import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.data.StyleBonus;
 import absolutelyaya.ultracraft.registry.ScoreboardCriteria;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
@@ -27,10 +36,21 @@ import java.util.Queue;
 
 public class StyleComponent implements IStyleComponent
 {
+	final Identifier KILL_ID = new Identifier(Ultracraft.MOD_ID, "kill");
+	final Identifier OVERKILL_ID = new Identifier(Ultracraft.MOD_ID, "overkill");
+	final Identifier BIG_KILL_ID = new Identifier(Ultracraft.MOD_ID, "big_kill");
+	final Identifier MULTI_KILL_ID = new Identifier(Ultracraft.MOD_ID, "multikill");
+	final Identifier FINISHED_ID = new Identifier(Ultracraft.MOD_ID, "finished");
+	final Identifier AIR_KILL_ID = new Identifier(Ultracraft.MOD_ID, "air_kill");
+	final Identifier FIREWORKS_ID = new Identifier(Ultracraft.MOD_ID, "fireworks");
+	final Identifier AIR_SLAM_ID = new Identifier(Ultracraft.MOD_ID, "air_slam");
+	final Identifier FRIENDLY_FIRE_ID = new Identifier(Ultracraft.MOD_ID, "friendly_fire");
+	final Identifier BIG_FIST_ID = new Identifier(Ultracraft.MOD_ID, "big_fist");
 	final PlayerEntity provider;
 	Map<Identifier, Integer> stalenessMap = new HashMap<>();
 	Queue<Pair<String, Long>> bonusQueue = new ArrayDeque<>();
-	int style;
+	long killStreakTimer;
+	int style, killStreak;
 	float chain, movementMultiplier = 1f;
 	boolean dirty;
 	
@@ -69,6 +89,41 @@ public class StyleComponent implements IStyleComponent
 				ServerPlayNetworking.send(serverPlayer, PacketRegistry.STYLE_BONUS_PACKET_ID, buf);
 			}
 		}
+	}
+	
+	@Override
+	public void onKill(LivingEntity entity, DamageSource damage)
+	{
+		boolean heavy = HeavyEntities.isHeavy(entity.getType());
+		styleBonusGet(StyleBonusManager.getBonuses().get(heavy ? BIG_KILL_ID : KILL_ID));
+		if(killStreakTimer > 0)
+			killStreak++;
+		killStreakTimer = 15;
+		if(killStreak > 1)
+			styleBonusGet(StyleBonusManager.getBonuses().get(MULTI_KILL_ID.withSuffixedPath(String.valueOf(Math.min(killStreak, 4)))));
+		if(killStreak > 4)
+		{
+			style += 100 * killStreak;
+			chain += 100 * killStreak;
+			markDirty();
+		}
+		if(damage.isOf(DamageSources.SHOTGUN) && !heavy && entity.distanceTo(provider) < 1.5f)
+			styleBonusGet(StyleBonusManager.getBonuses().get(OVERKILL_ID));
+		if((provider.equals(damage.getSource()) || provider.equals(damage.getAttacker())) && entity.isOnFire())
+			styleBonusGet(StyleBonusManager.getBonuses().get(FINISHED_ID));
+		if(!entity.isOnGround())
+		{
+			if(damage.isIn(DamageTypeTags.IS_EXPLOSION))
+				styleBonusGet(StyleBonusManager.getBonuses().get(FIREWORKS_ID));
+			else if(damage.isOf(DamageSources.SLAM))
+				styleBonusGet(StyleBonusManager.getBonuses().get(AIR_SLAM_ID));
+			else if(damage.isOf(DamageSources.GUN))
+				styleBonusGet(StyleBonusManager.getBonuses().get(AIR_KILL_ID));
+		}
+		if(damage.getSource() instanceof ProjectileEntity projectile && projectile.getOwner() instanceof AbstractUltraHostileEntity)
+			styleBonusGet(StyleBonusManager.getBonuses().get(FRIENDLY_FIRE_ID));
+		if(heavy && damage.isIn(absolutelyaya.ultracraft.damage.DamageTypeTags.PUNCH))
+			styleBonusGet(StyleBonusManager.getBonuses().get(BIG_FIST_ID));
 	}
 	
 	@Override
@@ -149,13 +204,13 @@ public class StyleComponent implements IStyleComponent
 		return switch(rank)
 		{
 			default -> 0;
-			case 1 -> 150;
-			case 2 -> 300;
-			case 3 -> 400;
-			case 4 -> 500;
-			case 5 -> 700;
-			case 6 -> 900;
-			case 7 -> 1200;
+			case 1 -> 200;
+			case 2 -> 400;
+			case 3 -> 500;
+			case 4 -> 700;
+			case 5 -> 850;
+			case 6 -> 1000;
+			case 7 -> 1500;
 		};
 	}
 	
@@ -167,10 +222,10 @@ public class StyleComponent implements IStyleComponent
 			case 1 -> 1.25f;
 			case 2 -> 1.5f;
 			case 3 -> 2f;
-			case 4 -> 2.5f;
-			case 5 -> 3f;
-			case 6 -> 4f;
-			case 7 -> 5f;
+			case 4 -> 3f;
+			case 5 -> 4f;
+			case 6 -> 6f;
+			case 7 -> 8f;
 		};
 	}
 	
@@ -253,5 +308,11 @@ public class StyleComponent implements IStyleComponent
 			movementMultiplier = MathHelper.clamp(movementMultiplier + 0.126f, 1f, 3f);
 		else if(movementMultiplier > 0)
 			movementMultiplier = MathHelper.clamp(movementMultiplier - 0.126f, 1f, 3f);
+		if(!Ultracraft.isTimeFrozen() && killStreakTimer > 0)
+		{
+			killStreakTimer--;
+			if(killStreakTimer == 0)
+				killStreak = 0;
+		}
 	}
 }

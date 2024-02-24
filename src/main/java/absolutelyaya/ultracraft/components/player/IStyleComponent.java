@@ -4,6 +4,8 @@ import absolutelyaya.ultracraft.data.StyleBonus;
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 
@@ -12,6 +14,8 @@ import java.util.Queue;
 public interface IStyleComponent extends ComponentV3, AutoSyncedComponent, CommonTickingComponent
 {
 	void styleBonusGet(StyleBonus bonus);
+	
+	void onKill(LivingEntity entity, DamageSource damage);
 	
 	void clientStyleBonusGet(String key);
 	
