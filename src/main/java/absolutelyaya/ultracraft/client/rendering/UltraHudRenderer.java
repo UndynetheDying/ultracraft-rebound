@@ -99,7 +99,7 @@ public class UltraHudRenderer
 		}
 		
 		renderHotbar(matrices, client, cam, player, wingsActive, delta);
-		if(wings.isActive())
+		if(wings.isActive() && config.showStylePanel)
 			renderStyle(matrices, client, player, Math.max(delta, 0f), MathHelper.clamp(styleTimer, 0f, 1f));
 		
 		if(whitelistHintDisplayTimer > 0.001f)

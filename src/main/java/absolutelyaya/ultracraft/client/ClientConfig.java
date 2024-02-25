@@ -48,6 +48,9 @@ public class ClientConfig implements ConfigData
 	@ConfigEntry.Category("ultra-hud")
 	@ConfigEntry.Gui.Tooltip
 	public boolean ultraHudFixed = false;
+	@ConfigEntry.Category("ultra-hud")
+	@ConfigEntry.Gui.Tooltip
+	public boolean showStylePanel = true;
 	@ConfigEntry.Gui.Tooltip
 	@ConfigEntry.BoundedDiscrete(min = 16, max = 128)
 	public int maxTrails = 64;

@@ -823,23 +823,26 @@
   "text.autoconfig.ultracraft.option.safeVFX.@Tooltip": "Disable VFX that might affect photosensitive people negatively. (like flashing)",
 
   "text.autoconfig.ultracraft.option.repeatIntro": "Repeat Intro",
-  "text.autoconfig.ultracraft.option.neverIntro": "Don't show Intro after switching Versions",
+  "text.autoconfig.ultracraft.option.neverIntro": "Don't show Intro after switching Versions.",
 
   "text.autoconfig.ultracraft.option.goopDebug": "Goop Debug",
-  "text.autoconfig.ultracraft.option.goopDebug.@Tooltip": "[WARNING] VERY LAGGY | Adds extra particles to show vertex info of goop puddles",
+  "text.autoconfig.ultracraft.option.goopDebug.@Tooltip": "[WARNING] VERY LAGGY | Adds extra particles to show vertex info of goop puddles.",
 
   "text.autoconfig.ultracraft.option.hideWings": "Hide High Velocity Wings",
-  "text.autoconfig.ultracraft.option.hideWings.@Tooltip": "Lets you hide High Velocity Wings",
+  "text.autoconfig.ultracraft.option.hideWings.@Tooltip": "Lets you hide High Velocity Wings.",
 
   "text.autoconfig.ultracraft.option.ultraHudFixed": "Fixed Rotation",
-  "text.autoconfig.ultracraft.option.ultraHudFixed.@Tooltip": "Prevents the Ultrahud from moving // \"following\" the view",
+  "text.autoconfig.ultracraft.option.ultraHudFixed.@Tooltip": "Prevents the Ultrahud from moving // \"following\" the view.",
 
   "text.autoconfig.ultracraft.option.deathScreen": "Ultrakill Death Screen",
-  "text.autoconfig.ultracraft.option.deathScreen.@Tooltip": "Replaces the Death Screen with the one from Ultrakill",
+  "text.autoconfig.ultracraft.option.deathScreen.@Tooltip": "Replaces the Death Screen with the one from Ultrakill.",
 
   "text.autoconfig.ultracraft.option.screenshake": "Screenshake",
-  "text.autoconfig.ultracraft.option.screenshake.@Tooltip": "Whether Firing Weapons or nearby Explosions cause your screen to shake",
+  "text.autoconfig.ultracraft.option.screenshake.@Tooltip": "Whether Firing Weapons or nearby Explosions cause your screen to shake.",
 
   "text.autoconfig.ultracraft.option.musicTransitionSpeed": "Music Transition Speed",
-  "text.autoconfig.ultracraft.option.musicTransitionSpeed.@Tooltip": "How quickly a levels music should transition between calm and fighting tracks"
+  "text.autoconfig.ultracraft.option.musicTransitionSpeed.@Tooltip": "How quickly a levels music should transition between calm and fighting tracks.",
+
+  "text.autoconfig.ultracraft.option.showStylePanel": "Show Style Panel",
+  "text.autoconfig.ultracraft.option.showStylePanel.@Tooltip": "Whether the Style Panel is shown while performing stylish things in Hivel Mode."
 }

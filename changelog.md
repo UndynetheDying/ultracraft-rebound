@@ -188,6 +188,7 @@
 - Added Feedback to hitting a Shielded Part of Hideous Mass (a little *tching* kinda sound)
 - Drones now immediately explode if damaged for 3x their max health or more
 - Finally fixed the issue with the wrong Hideous Mass shaking while one is dying if multiple are present
+- Updated Goop to v0.3
 ## Resource Changes
 - Continued Adding Sounds
 - Shotgun Animations now have a few sound keyframes
