@@ -119,7 +119,7 @@
 - Added Command to trigger large and box titles `/ultracraft title`
 - Added `/edit` to perform most edit mode interactions
 - Added `level` list to progression command; this list is effective globally//server-wide!
-- Added Debug Commands for level instancing//destruction level instances
+- Added Debug Commands for level instancing//destructing level instances
   - DO NOT USE THESE!!!
   - I mean, you could if you want to, but they are very likely to crash servers.
 ## Tweaks
@@ -132,6 +132,7 @@
 - Successful Parries now make you unhittable for projectiles for a few ticks
 - Increased Blood Heal Radius (2 -> 4 Blocks)
 - Decreased Nail Blood Heal Amount (x0.25)
+- Increased Mauricing Radius (+0.5)
 ## Minor Changes
 - Fixed water skimming not playing sounds
 - Removed the "vents" MOTD from the non-essential resources
@@ -186,6 +187,7 @@
 - Fixed some firstperson offhand weirdness
 - Added Feedback to hitting a Shielded Part of Hideous Mass (a little *tching* kinda sound)
 - Drones now immediately explode if damaged for 3x their max health or more
+- Finally fixed the issue with the wrong Hideous Mass shaking while one is dying if multiple are present
 ## Resource Changes
 - Continued Adding Sounds
 - Shotgun Animations now have a few sound keyframes
