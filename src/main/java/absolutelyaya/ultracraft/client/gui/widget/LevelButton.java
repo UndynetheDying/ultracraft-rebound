@@ -250,6 +250,8 @@ public class LevelButton extends ClickableWidget
 	
 	boolean isHoveringAuthorLink(double mouseX, double mouseY)
 	{
+		if(authorLink == null || authorLink.isEmpty())
+			return false;
 		return mouseX > getX() && mouseX < getX() + width && mouseY > getY() + height - tRenderer.fontHeight && mouseY < getY() + height;
 	}
 	

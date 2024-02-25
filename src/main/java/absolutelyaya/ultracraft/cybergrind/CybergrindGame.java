@@ -6,13 +6,19 @@ import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.config.CybergrindConfig;
 import absolutelyaya.ultracraft.config.IntegerEntry;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
+import absolutelyaya.ultracraft.entity.machine.DroneEntity;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.SnowballEntity;
@@ -39,6 +45,7 @@ import java.util.Map;
 
 public class CybergrindGame
 {
+	static final Multimap<EntityAttribute, EntityAttributeModifier> weitsichtModifier = HashMultimap.create();
 	final Map<EntityType<? extends HostileEntity>, Integer> spawnCosts = new HashMap<>();
 	final MinecraftServer server;
 	final CybergrindConfig config;
@@ -151,6 +158,8 @@ public class CybergrindGame
 				}
 				enemiesDirty = true;
 			}
+			if(count == 1)
+				enemies.forEach(e -> e.setGlowing(true));
 		}
 		if(duration % 20 == 0) //add players within arena bounds to the participant list
 		{
@@ -285,7 +294,9 @@ public class CybergrindGame
 				HostileEntity enemy = type.spawn(world, BlockPos.ofFloored(pos), SpawnReason.SPAWNER);
 				if(enemy instanceof AbstractUltraHostileEntity ultraEnemy)
 					ultraEnemy.markCybergrind();
-				enemy.setPersistent();
+				if(!(enemy instanceof DroneEntity))
+					enemy.setPersistent();
+				enemy.getAttributes().addTemporaryModifiers(weitsichtModifier);
 				enemies.add(enemy);
 				success = true;
 				verboseLog("§7enemy spawned at " + pos);
@@ -357,5 +368,10 @@ public class CybergrindGame
 	public BlockPos getCenter()
 	{
 		return center;
+	}
+	
+	static {
+		weitsichtModifier.put(EntityAttributes.GENERIC_FOLLOW_RANGE,
+				new EntityAttributeModifier("WEITSICHTENERGIE", 16, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
 	}
 }
