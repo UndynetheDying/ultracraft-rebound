@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.components.level;
 
 import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.dimension.LevelManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -76,7 +77,7 @@ public class UltraLevelComponent implements IUltraLevelComponent
 	@Override
 	public boolean isDestinationUnlocked(Identifier id)
 	{
-		return unlockedDestinations.contains(id) || (!LevelManager.getLevelData(id).getBuiltin()); //TODO: config all custom levels unlocked
+		return unlockedDestinations.contains(id) || (!LevelManager.getLevelData(id).getBuiltin() && ServerConfig.INSTANCE.customLevelsUnlocked.getValue());
 	}
 	
 	@Override

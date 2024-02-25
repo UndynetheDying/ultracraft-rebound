@@ -62,6 +62,7 @@ public class ServerConfigScreen extends Screen
 		addRule(config.hellObserverInterval, pos, ConfigWidget.ValueType.INT, 23);
 		addRule(config.bloodSaturation, pos, ConfigWidget.ValueType.BOOL, 24);
 		addRule(config.dodgeableOverpump, pos, ConfigWidget.ValueType.BOOL, 25);
+		addRule(config.customLevelsUnlocked, pos, ConfigWidget.ValueType.BOOL, 28);
 		
 		boolean b = false;
 		if(simplistic != null)

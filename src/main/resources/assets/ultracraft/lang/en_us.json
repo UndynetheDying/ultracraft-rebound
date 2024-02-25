@@ -407,6 +407,8 @@
   "config.ultracraft.FeedbackerDamage.description": "How much damage a Punch with the Feedbacker does.",
   "config.ultracraft.KnuckleblasterDamage": "Knuckleblaster Damage",
   "config.ultracraft.KnuckleblasterDamage.description": "How much damage a Punch with the Knuckleblaster does.",
+  "config.ultracraft.UnlockAllCustomLevels": "Unlock Custom Levels",
+  "config.ultracraft.UnlockAllCustomLevels.description": "Whether all Custom Levels should be unlocked per default.",
 
   "stat.ultracraft.collect_soul_orb": "Collected Soul Orbs",
   "stat.ultracraft.collect_blood_orb": "Collected Blood Orbs",
