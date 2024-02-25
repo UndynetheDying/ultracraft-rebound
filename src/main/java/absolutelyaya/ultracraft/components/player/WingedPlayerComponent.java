@@ -198,6 +198,8 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 		checkpointRot = provider.getYaw();
 		if(dimension != null)
 			checkpointDimension = dimension.getRegistryKey();
+		else
+			checkpointDimension = null;
 	}
 	
 	@Override
@@ -410,6 +412,8 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			checkpointRot = checkpoint.getFloat("rot");
 			checkpointDimension = RegistryKey.of(RegistryKeys.WORLD, Identifier.tryParse(checkpoint.getString("dimension")));
 		}
+		if(tag.contains("currentLevelInstance", NbtElement.STRING_TYPE))
+			currentLevelInstance = tag.getString("currentLevelInstance");
 	}
 	
 	@Override
@@ -448,6 +452,8 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			checkpoint.putString("dimension", getCheckpointDimension().getValue().toString());
 			tag.put("checkpoint", checkpoint);
 		}
+		if(currentLevelInstance != null && !currentLevelInstance.isEmpty())
+			tag.putString("currentLevelInstance", currentLevelInstance);
 	}
 	
 	@Override

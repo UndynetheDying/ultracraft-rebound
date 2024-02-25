@@ -35,8 +35,6 @@ public abstract class ServerPlayerMixin extends PlayerEntity
 		super(world, pos, yaw, gameProfile);
 	}
 	
-	@Shadow public abstract ServerWorld getServerWorld();
-	
 	@Shadow public abstract void increaseStat(Stat<?> stat, int amount);
 	
 	@Shadow public abstract boolean isSpectator();
@@ -47,13 +45,12 @@ public abstract class ServerPlayerMixin extends PlayerEntity
 	BlockPos onGetSpawnPoint(BlockPos original)
 	{
 		IWingedPlayerComponent winged = UltraComponents.WINGED.get(this);
-		if(winged.getLastCheckpoint() != null)
-		{
-			if(getServerWorld().getRegistryKey().equals(winged.getCheckpointDimension()))
-				return winged.getLastCheckpoint();
-			else
-				winged.setLastCheckpoint(null, null);
-		}
+		System.out.println("pos: " + winged.getLastCheckpoint() + " - " + winged.getCheckpointDimension() + " - " + getWorld().getRegistryKey());
+		if(winged.getLastCheckpoint() == null || winged.getCheckpointDimension() == null)
+			return original;
+		if(getWorld().getRegistryKey().equals(winged.getCheckpointDimension()))
+			return winged.getLastCheckpoint();
+		winged.setLastCheckpoint(null, null);
 		return original;
 	}
 	
@@ -61,8 +58,12 @@ public abstract class ServerPlayerMixin extends PlayerEntity
 	RegistryKey<World> onGetSpawnDimension(RegistryKey<World> original)
 	{
 		IWingedPlayerComponent winged = UltraComponents.WINGED.get(this);
-		if(winged.getLastCheckpoint() != null && winged.getCheckpointDimension() != null)
+		System.out.println("dim: " + winged.getLastCheckpoint() + " - " + winged.getCheckpointDimension() + " - " + getWorld().getRegistryKey());
+		if(winged.getLastCheckpoint() == null || winged.getCheckpointDimension() == null)
+			return original;
+		if(getWorld().getRegistryKey().equals(winged.getCheckpointDimension()))
 			return winged.getCheckpointDimension();
+		winged.setLastCheckpoint(null, null);
 		return original;
 	}
 	
