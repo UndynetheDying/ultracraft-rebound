@@ -240,6 +240,7 @@ public class CybergrindGame
 			end();
 			return;
 		}
+		participants.forEach(Ultracraft::rechargeWeapons);
 		verboseLog("starting wave " + currentWave);
 		calculateBudget();
 	}

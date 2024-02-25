@@ -19,8 +19,7 @@ import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.dimension.UltraDimensions;
 import absolutelyaya.ultracraft.cybergrind.CybergrindManager;
 import absolutelyaya.ultracraft.item.AbstractNailgunItem;
-import absolutelyaya.ultracraft.item.MarksmanRevolverItem;
-import absolutelyaya.ultracraft.item.SharpshooterRevolverItem;
+import absolutelyaya.ultracraft.item.AbstractRevolverItem;
 import absolutelyaya.ultracraft.recipe.RecipeSerializers;
 import absolutelyaya.ultracraft.registry.*;
 import com.google.gson.JsonObject;
@@ -123,17 +122,7 @@ public class Ultracraft implements ModInitializer
             UltraDimensions.Instance.tickManagers();
             CybergrindManager.Instance.tick();
         });
-        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
-            newPlayer.getInventory().main.forEach(stack -> {
-                Item item = stack.getItem();
-                if(item instanceof MarksmanRevolverItem marksman && marksman.getNbt(stack, "coins") < 4)
-                    marksman.setNbt(stack, "coins", marksman.getNbtDefault("coins"));
-                else if (item instanceof SharpshooterRevolverItem sharpshooter && sharpshooter.getNbt(stack, "charges") < 3)
-                    sharpshooter.setNbt(stack, "charges", sharpshooter.getNbtDefault("charges"));
-                else if (item instanceof AbstractNailgunItem nailgun && nailgun.getNbt(stack, "nails") < 100)
-                    nailgun.setNbt(stack, "nails", 100);
-            });
-        });
+        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> rechargeWeapons(newPlayer));
         
         ServerPlayConnectionEvents.JOIN.register((networkHandler, sender, server) -> {
             ServerPlayerEntity player = networkHandler.player;
@@ -296,5 +285,19 @@ public class Ultracraft implements ModInitializer
             buf.writeFloat(strength);
             ServerPlayNetworking.send(serverPlayer, PacketRegistry.SCREENSHAKE_PACKET_ID, buf);
         }
+    }
+    
+    public static void rechargeWeapons(PlayerEntity player)
+    {
+        player.getInventory().main.forEach(stack -> {
+            Item item = stack.getItem();
+            if(item instanceof AbstractRevolverItem revolver)
+            {
+                revolver.setNbt(stack, "coins", revolver.getNbtDefault("coins"));
+                revolver.setNbt(stack, "charges", revolver.getNbtDefault("charges"));
+            }
+            else if (item instanceof AbstractNailgunItem nailgun && nailgun.getNbt(stack, "nails") < 100)
+                nailgun.setNbt(stack, "nails", 100);
+        });
     }
 }
