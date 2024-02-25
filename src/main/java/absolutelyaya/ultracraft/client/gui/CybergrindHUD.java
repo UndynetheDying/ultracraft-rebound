@@ -41,12 +41,12 @@ public class CybergrindHUD
 		playerNames = new ArrayList<>();
 		client.player.networkHandler.getListedPlayerListEntries()
 				.forEach(p -> playerNames.add(p.getDisplayName() == null ? Text.of(p.getProfile().getName()) : p.getDisplayName()));
-		while(rand.nextFloat() < 0.05f)
+		while(rand.nextFloat() < 0.01f)
 			playerNames.add(rand.nextInt(playerNames.size() + 1), Text.of(fakeNames[rand.nextInt(fakeNames.length)]));
 		
 		announcementSequenceStep = 1;
 		announcementSequenceTime = 0f;
-		spinTime = 0f;
+		spinTime = 0.3f;
 		this.resultName = resultName;
 	}
 	
