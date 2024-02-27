@@ -176,7 +176,6 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 		LevelInstance instance = getInstance(id);
 		if(instance == null)
 			return;
-		System.out.println("DESTROY");
 		destroyInstance(id);
 		instances.get(levelIdForInstanceId.get(id)).remove(id);
 		levelIdForInstanceId.remove(id);
@@ -411,7 +410,6 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 		}
 		instance.players.remove(player);
 		destroyIfEmpty(player, id);
-		System.out.println(player + " left instance");
 	}
 	
 	boolean isLevelEmpty(@Nullable PlayerEntity except, String id)
@@ -425,7 +423,6 @@ public class LevelManager extends JsonDataLoader implements DimensionManager
 				continue;
 			return false;
 		}
-		System.out.println("instance empty");
 		return true;
 	}
 	
