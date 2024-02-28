@@ -7,6 +7,7 @@ import absolutelyaya.ultracraft.dimension.UltraDimensions;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 
 import java.util.ArrayList;
@@ -84,6 +85,13 @@ public class CybergrindManager
 		}
 		server.getPlayerManager().broadcast(Text.translatable("message.ultracraft.cybergrind.announce"), false);
 		activeGame = new CybergrindGame(server, config, rand);
+	}
+	
+	public CybergrindGame startCybergrindAt(BlockPos center, int waves)
+	{
+		server.getPlayerManager().broadcast(Text.translatable("message.ultracraft.cybergrind.announce-pos",
+				center.getX(), center.getY(), center.getZ()), false);
+		return activeGame = new CybergrindGame(server, config, rand, waves, center);
 	}
 	
 	public void endCybergrind()

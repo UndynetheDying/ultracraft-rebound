@@ -34,6 +34,7 @@ public class BlockEntityRegistry
 	public static final BlockEntityType<LevelUnlockBlockEntity> MAP_LEVEL;
 	public static final BlockEntityType<ForceTravelBlockEntity> MAP_TRAVEL;
 	public static final BlockEntityType<DamageBlockEntity> MAP_DAMAGE;
+	public static final BlockEntityType<CybergrindBlockEntity> MAP_CYBERGRIND;
 	
 	public static void register() {
 	}
@@ -107,5 +108,8 @@ public class BlockEntityRegistry
 		MAP_DAMAGE = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				new Identifier(Ultracraft.MOD_ID, "map_damage"),
 				FabricBlockEntityTypeBuilder.create(DamageBlockEntity::new, BlockRegistry.MAP_DAMAGE).build());
+		MAP_CYBERGRIND = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Ultracraft.MOD_ID, "map_cybergrind"),
+				FabricBlockEntityTypeBuilder.create(CybergrindBlockEntity::new, BlockRegistry.MAP_CYBERGRIND).build());
 	}
 }

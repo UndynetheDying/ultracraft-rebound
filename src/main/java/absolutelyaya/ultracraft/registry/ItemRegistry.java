@@ -409,6 +409,7 @@ public class ItemRegistry
 			content.add(BlockRegistry.MAP_SOUND);
 			content.add(BlockRegistry.MAP_EXPLOSION);
 			content.add(BlockRegistry.MAP_LEVEL);
+			content.add(BlockRegistry.MAP_CYBERGRIND);
 		});
 	}
 }

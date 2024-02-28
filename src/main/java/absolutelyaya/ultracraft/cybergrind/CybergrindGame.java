@@ -57,7 +57,7 @@ public class CybergrindGame
 	ServerWorld world;
 	BlockPos center;
 	int delay, waves, currentWave, budget, duration;
-	boolean initialized, over, win, curWaveDirty, enemiesDirty, verbose;
+	boolean initialized, over, win, curWaveDirty, enemiesDirty, verbose, skipTargetAnnounce;
 	ServerPlayerEntity owner;
 	
 	public CybergrindGame(MinecraftServer server, CybergrindConfig config, Random rand, ServerPlayerEntity owner, int waves)
@@ -68,11 +68,16 @@ public class CybergrindGame
 		arenaRadius = config.arenaRadius.getValue();
 		arenaSolid = config.arenaBorderSolid.getValue();
 		delay = Math.max(config.startDelay.getValue(), 1);
-		if(owner != null)
-			delay = 1;
 		this.owner = owner;
 		if(waves != -1)
 			this.waves = waves;
+	}
+	
+	public CybergrindGame(MinecraftServer server, CybergrindConfig config, Random rand, int waves, BlockPos center)
+	{
+		this(server, config, rand, null, waves);
+		this.center = center;
+		skipTargetAnnounce = true;
 	}
 	
 	public CybergrindGame(MinecraftServer server, CybergrindConfig config, Random rand)
@@ -110,7 +115,8 @@ public class CybergrindGame
 			{
 				if(!initialized)
 				{
-					delay += 600;
+					if(!skipTargetAnnounce)
+						delay += 600;
 					init();
 				}
 				else if(center == null && owner != null)
@@ -188,7 +194,8 @@ public class CybergrindGame
 				waves += rand.nextBetween(config.wavesPerDifficultyLow.getValue(), config.wavesPerDifficultyHigh.getValue());
 		}
 		initialized = true;
-		announceTarget();
+		if(!skipTargetAnnounce)
+			announceTarget();
 	}
 	
 	ServerPlayerEntity initStartingPlayer()
@@ -329,7 +336,7 @@ public class CybergrindGame
 			server.getPlayerManager().broadcast(Text.of(message), false);
 	}
 	
-	void end()
+	public void end()
 	{
 		participants.forEach(p -> UltraComponents.WINGED.get(p).setCybergrindData(null));
 		enemies.forEach(e -> e.remove(Entity.RemovalReason.DISCARDED));
@@ -341,6 +348,11 @@ public class CybergrindGame
 	public boolean isOver()
 	{
 		return over;
+	}
+	
+	public boolean isWin()
+	{
+		return win;
 	}
 	
 	/**
