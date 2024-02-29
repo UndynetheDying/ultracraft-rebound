@@ -1,4 +1,4 @@
-package absolutelyaya.ultracraft.dimension;
+package absolutelyaya.ultracraft.data;
 
 import absolutelyaya.ultracraft.client.sound.ModularLevelMusic;
 import absolutelyaya.ultracraft.util.TimeUtil;

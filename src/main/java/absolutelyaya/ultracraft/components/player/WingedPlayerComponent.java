@@ -31,6 +31,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+import static absolutelyaya.ultracraft.data.LevelDataManager.getLevelData;
+
 public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSyncedComponent
 {
 	PlayerEntity provider;
@@ -259,7 +261,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			LevelManager.Instance.leaveInstance((ServerPlayerEntity)provider, lastInstance);
 		currentLevel = levelId;
 		if(levelId != null)
-			lastPlayedVersion.put(levelId, LevelManager.getLevelData(levelId).getVersion());
+			lastPlayedVersion.put(levelId, getLevelData(levelId).getVersion());
 		UltraComponents.WINGED.sync(provider);
 	}
 	
@@ -299,7 +301,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			return;
 		timerStart = System.currentTimeMillis();
 		if(provider.getWorld().isClient)
-			LevelHUD.Instance.initTimer(bestTimes.getOrDefault(currentLevel, Long.MAX_VALUE), LevelManager.getLevelData(currentLevel).getParTime());
+			LevelHUD.Instance.initTimer(bestTimes.getOrDefault(currentLevel, Long.MAX_VALUE), getLevelData(currentLevel).getParTime());
 	}
 	
 	@Override
@@ -314,7 +316,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 				bestTimes.put(currentLevel, elapsedTime);
 				if(provider.getWorld().isClient)
 				{
-					Text levelName = LevelManager.getLevelData(currentLevel).getTitle();
+					Text levelName = getLevelData(currentLevel).getTitle();
 					provider.sendMessage(Text.translatable("message.ultracraft.level.new-pb-time", levelName, TimeUtil.milliToString(elapsedTime)));
 				}
 			}

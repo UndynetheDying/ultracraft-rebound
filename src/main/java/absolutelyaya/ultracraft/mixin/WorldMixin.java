@@ -1,12 +1,18 @@
 package absolutelyaya.ultracraft.mixin;
 
+import absolutelyaya.ultracraft.block.mapping.RoomBlockEntity;
+import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.components.world.IDimensionDataComponent;
 import absolutelyaya.ultracraft.entity.demon.HideousMassEntity;
 import absolutelyaya.ultracraft.entity.demon.HideousPart;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.function.LazyIterationConsumer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.minecraft.world.entity.EntityLookup;
@@ -54,5 +60,29 @@ public abstract class WorldMixin
 			}
 			return LazyIterationConsumer.NextIteration.CONTINUE;
 		});
+	}
+	
+	@ModifyReturnValue(method = "canPlayerModifyAt", at = @At("RETURN"))
+	boolean onCanPlayerModify(boolean original, @Local PlayerEntity player, @Local BlockPos pos)
+	{
+		World world = (World)(Object)this;
+		IDimensionDataComponent data = UltraComponents.DIMENSION_DATA.get(this);
+		for (BlockPos roomPos : data.getAllMappingRooms())
+		{
+			if(!world.isChunkLoaded(roomPos))
+				continue;
+			if(!(world.getBlockEntity(roomPos) instanceof RoomBlockEntity room))
+			{
+				data.markRoomInvalid(pos);
+				continue;
+			}
+			if(room.isSuppressModifications() && room.getAreaBox().contains(pos.toCenterPos()))
+			{
+				player.sendMessage(Text.translatable("limbo.structure.modify-fail"), true);
+				return false;
+			}
+		}
+		data.clearInvalidRooms();
+		return original;
 	}
 }

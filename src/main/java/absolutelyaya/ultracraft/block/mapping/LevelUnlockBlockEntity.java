@@ -1,8 +1,8 @@
 package absolutelyaya.ultracraft.block.mapping;
 
 import absolutelyaya.ultracraft.components.UltraComponents;
-import absolutelyaya.ultracraft.dimension.LevelData;
-import absolutelyaya.ultracraft.dimension.LevelManager;
+import absolutelyaya.ultracraft.data.LevelData;
+import absolutelyaya.ultracraft.data.LevelDataManager;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.NbtCompound;
@@ -74,7 +74,7 @@ public class LevelUnlockBlockEntity extends AbstractListenerBlockEntity
 		boolean b = UltraComponents.GLOBAL.get(world.getLevelProperties()).unlockDestination(level);
 		if(world.isClient || !b)
 			return;
-		LevelData data = LevelManager.getLevelData(level);
+		LevelData data = LevelDataManager.getLevelData(level);
 		if(data != null)
 			world.getServer().getPlayerManager().getPlayerList()
 					.forEach(p -> p.sendMessage(Text.translatable("message.ultracraft.travel.new-destination", data.getTitle())));

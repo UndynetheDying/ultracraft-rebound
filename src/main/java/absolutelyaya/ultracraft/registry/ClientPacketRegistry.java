@@ -21,9 +21,9 @@ import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.cybergrind.CybergrindData;
+import absolutelyaya.ultracraft.data.LevelDataManager;
 import absolutelyaya.ultracraft.data.UltraRecipeManager;
-import absolutelyaya.ultracraft.dimension.LevelData;
-import absolutelyaya.ultracraft.dimension.LevelManager;
+import absolutelyaya.ultracraft.data.LevelData;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.particle.ParryIndicatorParticleEffect;
 import absolutelyaya.ultracraft.recipe.UltraRecipe;
@@ -422,7 +422,7 @@ public class ClientPacketRegistry
 				ImmutableMap.Builder<Identifier, LevelData> builder = ImmutableMap.builder();
 				for(LevelData level : list)
 					builder.put(level.getID(), level);
-				LevelManager.setLevels(builder.build(), i == 0);
+				LevelDataManager.setLevels(builder.build(), i == 0);
 			}
 		})));
 		ClientPlayNetworking.registerGlobalReceiver(SEND_LEVEL_INSTANCES_PACKET_ID, (((client, handler, buf, responseSender) -> {

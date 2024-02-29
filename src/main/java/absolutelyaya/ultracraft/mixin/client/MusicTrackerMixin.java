@@ -5,7 +5,7 @@ import absolutelyaya.ultracraft.client.sound.ModularLevelMusic;
 import absolutelyaya.ultracraft.client.sound.ModularMusicInstance;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
-import absolutelyaya.ultracraft.dimension.LevelManager;
+import absolutelyaya.ultracraft.data.LevelDataManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.*;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -53,7 +53,7 @@ public abstract class MusicTrackerMixin
 		Identifier level = winged.getCurrentLevel();
 		ModularLevelMusic music = null;
 		if(level != null)
-			music = LevelManager.getLevelData(level).getMusic();
+			music = LevelDataManager.getLevelData(level).getMusic();
 		if(music == null)
 		{
 			if(curLevelMusic != null)

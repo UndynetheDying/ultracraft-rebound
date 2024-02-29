@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.block.mapping;
 
 import absolutelyaya.ultracraft.block.CerberusBlock;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import absolutelyaya.ultracraft.registry.BlockRegistry;
@@ -27,7 +28,7 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	static int i = 0;
 	Map<BlockPos, AbstractMappingBlockEntity> children = new HashMap<>();
 	Map<String, Boolean> flags = new HashMap<>();
-	boolean childCheckPending, active;
+	boolean childCheckPending, active, suppressModifications = true, initialized;
 	int curResetCooldown, maxResetCooldown = 6000;
 	
 	public RoomBlockEntity(BlockPos pos, BlockState state)
@@ -41,6 +42,11 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	{
 		if(instance instanceof RoomBlockEntity room)
 		{
+			if(!room.initialized && world != null)
+			{
+				UltraComponents.DIMENSION_DATA.get(world).registerRoomMappingBlock(room.pos);
+				room.initialized = true;
+			}
 			if(room.childCheckPending && world != null)
 			{
 				for (BlockPos pos : room.getChildren())
@@ -215,6 +221,8 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	{
 		if(s.equals("resetCooldown"))
 			maxResetCooldown = Math.max(Integer.parseInt(value), 1);
+		else if(s.equals("suppressModifications"))
+			suppressModifications = Boolean.parseBoolean(value);
 		super.setAttribute(s, value);
 	}
 	
@@ -223,6 +231,8 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	{
 		if(attribute.equals("resetCooldown"))
 			return String.valueOf(maxResetCooldown);
+		else if(attribute.equals("suppressModifications"))
+			return String.valueOf(suppressModifications);
 		return null;
 	}
 	
@@ -261,6 +271,8 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 		}
 		if(nbt.contains("resetCooldown", NbtElement.INT_TYPE))
 			maxResetCooldown = nbt.getInt("resetCooldown");
+		if(nbt.contains("noMod", NbtElement.BYTE_TYPE))
+			suppressModifications = nbt.getBoolean("noMod");
 	}
 	
 	@Override
@@ -276,9 +288,23 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 			children.add(NbtLong.of(pos.asLong()));
 		nbt.put("children", children);
 		nbt.putInt("resetCooldown", maxResetCooldown);
+		nbt.putBoolean("noMod", suppressModifications);
+	}
+	
+	@Override
+	public void markRemoved()
+	{
+		UltraComponents.DIMENSION_DATA.get(world).removeRoomMappingBlock(pos);
+		super.markRemoved();
+	}
+	
+	public boolean isSuppressModifications()
+	{
+		return suppressModifications;
 	}
 	
 	static {
 		attributes.add("resetCooldown");
+		attributes.add("suppressModifications");
 	}
 }

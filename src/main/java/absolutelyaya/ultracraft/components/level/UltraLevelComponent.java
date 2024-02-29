@@ -2,7 +2,7 @@ package absolutelyaya.ultracraft.components.level;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.config.ServerConfig;
-import absolutelyaya.ultracraft.dimension.LevelManager;
+import absolutelyaya.ultracraft.data.LevelDataManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -77,7 +77,7 @@ public class UltraLevelComponent implements IUltraLevelComponent
 	@Override
 	public boolean isDestinationUnlocked(Identifier id)
 	{
-		return unlockedDestinations.contains(id) || (!LevelManager.getLevelData(id).getBuiltin() && ServerConfig.INSTANCE.customLevelsUnlocked.getValue());
+		return unlockedDestinations.contains(id) || (!LevelDataManager.getLevelData(id).getBuiltin() && ServerConfig.INSTANCE.customLevelsUnlocked.getValue());
 	}
 	
 	@Override
@@ -94,7 +94,6 @@ public class UltraLevelComponent implements IUltraLevelComponent
 		unlockDestination(new Identifier(Ultracraft.MOD_ID, "dimension.overworld"));
 		unlockDestination(new Identifier(Ultracraft.MOD_ID, "tutorial"));
 		unlockDestination(new Identifier(Ultracraft.MOD_ID, "prelude1"));
-		//TODO: remove the next few before release
 		unlockDestination(new Identifier(Ultracraft.MOD_ID, "limbo1"));
 		unlockDestination(new Identifier(Ultracraft.MOD_ID, "dimension.limbo"));
 	}

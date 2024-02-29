@@ -7,7 +7,7 @@ import absolutelyaya.ultracraft.client.gui.TitleHUD;
 import absolutelyaya.ultracraft.client.gui.widget.LevelInstanceButton;
 import absolutelyaya.ultracraft.client.rendering.TitleBGRenderer;
 import absolutelyaya.ultracraft.components.UltraComponents;
-import absolutelyaya.ultracraft.dimension.LevelManager;
+import absolutelyaya.ultracraft.data.LevelDataManager;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.netty.buffer.Unpooled;
@@ -106,7 +106,7 @@ public abstract class AbstractTravelScreen extends Screen
 					width / 2, 32, 0xffffffff);
 		instanceButtons.forEach(b -> b.render(context, mouseX, mouseY, delta));
 		context.drawCenteredTextWithShadow(textRenderer,
-				Text.translatable("screen.ultracraft.travel.instance.title", LevelManager.getLevelData(selectedLevel).getTitle()),
+				Text.translatable("screen.ultracraft.travel.instance.title", LevelDataManager.getLevelData(selectedLevel).getTitle()),
 				width / 2, 16, 0xffffffff);
 	}
 	

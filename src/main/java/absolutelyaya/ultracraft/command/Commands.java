@@ -8,6 +8,7 @@ import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.components.world.IDimensionDataComponent;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.config.Setting;
+import absolutelyaya.ultracraft.data.LevelDataManager;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.cybergrind.CybergrindManager;
@@ -420,7 +421,7 @@ public class Commands
 	
 	private static int executeDebugLevelInstancing(CommandContext<ServerCommandSource> context)
 	{
-		int levels = LevelManager.levels.size() + LevelManager.customLevels.size();
+		int levels = LevelDataManager.levels.size() + LevelDataManager.customLevels.size();
 		context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.level-instance.start", levels, levels * 8), true);
 		LevelManager.Instance.debugInstanceEverythingALot();
 		FabricDimensions.teleport(context.getSource().getPlayer(), LevelManager.Instance.getWorld(),

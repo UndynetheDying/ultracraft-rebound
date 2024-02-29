@@ -126,7 +126,7 @@ public class ExplosionHandler
 						BlockPos pos1 = new BlockPos(center.getX() + x, center.getY() + y, center.getZ() + z);
 						//explosions with 0 damage can only break fragile blocks, as they don't actually count as explosions
 						//and are used for misc block breaking like the piercer revolvers alt fire
-						if(exploder == null || !exploder.canModifyAt(world, pos1))
+						if(exploder == null)
 							continue;
 						BlockState state = world.getBlockState(pos1);
 						if (tntPriming && state.getBlock() instanceof TntBlock)

@@ -1,0 +1,167 @@
+package absolutelyaya.ultracraft.data;
+
+import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.registry.PacketRegistry;
+import com.google.common.collect.ImmutableMap;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.resource.JsonDataLoader;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourceType;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.profiler.Profiler;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class LevelDataManager extends JsonDataLoader
+{
+	public static final LevelData ERR_DATA = new LevelData(new Identifier(Ultracraft.MOD_ID, "placeholder"),
+			"level.ultracraft.error.title", "level.ultracraft.error.description", "", "", null,
+			new Identifier(Ultracraft.MOD_ID, "textures/level/err.png"), BlockPos.ORIGIN, true);
+	public static final Identifier PLACEHOLDER_THUMB = new Identifier(Ultracraft.MOD_ID, "textures/level/placeholder.png");
+	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+	public static LevelDataManager Instance;
+	public static Map<Identifier, LevelData> levels = new HashMap<>();
+	public static Map<Identifier, LevelData> customLevels = new HashMap<>();
+	
+	public LevelDataManager()
+	{
+		super(GSON, "ultracraft/level");
+		Instance = this;
+		
+		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new SimpleSynchronousResourceReloadListener()
+		{
+			@Override
+			public Identifier getFabricId()
+			{
+				return new Identifier(Ultracraft.MOD_ID, "ultracraft/level");
+			}
+			
+			@Override
+			public void reload(ResourceManager manager)
+			{
+				apply(prepare(manager, null), manager, null);
+			}
+		});
+	}
+	
+	public static boolean isLevelExists(Identifier levelId)
+	{
+		return levels.containsKey(levelId) || customLevels.containsKey(levelId);
+	}
+	
+	@Override
+	protected void apply(Map<Identifier, JsonElement> prepared, ResourceManager manager, Profiler profiler)
+	{
+		ImmutableMap.Builder<Identifier, LevelData> builtinBuilder = ImmutableMap.builder();
+		ImmutableMap.Builder<Identifier, LevelData> customBuilder = ImmutableMap.builder();
+		prepared.forEach((id, element) -> {
+			JsonObject json = element.getAsJsonObject();
+			boolean builtin = JsonHelper.getBoolean(json, "builtin", false);
+			if(!json.has("structure"))
+			{
+				Ultracraft.LOGGER.warn((builtin ? "Level '" : "Custom Level '") + id + "' does not have a structure parameter!");
+				return;
+			}
+			String author = JsonHelper.getString(json, "author", "level.author.unknown");
+			String authorlink = JsonHelper.getString(json, "author-link", "");
+			String title = JsonHelper.getString(json, "title", "level.unnamed");
+			String description = JsonHelper.getString(json, "description", "");
+			Identifier structure = Identifier.tryParse(JsonHelper.getString(json, "structure"));
+			Identifier thumbnail = json.has("thumbnail") ? Identifier.tryParse(JsonHelper.getString(json, "thumbnail")) :
+										   LevelDataManager.PLACEHOLDER_THUMB;
+			BlockPos spawnOffset = new BlockPos(0, 0, 0);
+			if(json.has("spawn-offset"))
+			{
+				JsonObject pos = json.getAsJsonObject("spawn-offset");
+				spawnOffset = spawnOffset.add(
+						JsonHelper.getInt(pos, "x", 0),
+						JsonHelper.getInt(pos, "y", 0),
+						JsonHelper.getInt(pos, "z", 0));
+			}
+			LevelData level = new LevelData(id, title, description, author, authorlink, structure, thumbnail, spawnOffset, builtin);
+			if(json.has("par-time"))
+				level.setParTime(JsonHelper.getString(json, "par-time"));
+			if(json.has("music"))
+			{
+				JsonObject music = json.getAsJsonObject("music");
+				Identifier calm = null, fight = null;
+				if(music.has("calm"))
+					calm = Identifier.tryParse(JsonHelper.getString(music, "calm"));
+				if(music.has("fight"))
+					fight = Identifier.tryParse(JsonHelper.getString(music, "fight"));
+				level.setMusic(calm, fight);
+			}
+			if(json.has("unimplemented"))
+				level.setUnimplemented(JsonHelper.getBoolean(json, "unimplemented"));
+			if(json.has("hidden"))
+				level.setHidden(JsonHelper.getBoolean(json, "hidden"));
+			if(json.has("version"))
+				level.setVersion(JsonHelper.getInt(json, "version"));
+			if(json.has("spawn-rot"))
+				level.setSpawnRot(JsonHelper.getFloat(json, "spawn-rot"));
+			if(builtin)
+				builtinBuilder.put(id, level);
+			else
+				customBuilder.put(id, level);
+		});
+		setLevels(builtinBuilder.build(), true);
+		setLevels(customBuilder.build(), false);
+		Ultracraft.LOGGER.info("Loaded " + levels.size() + " Builtin Levels and " + customLevels.size() + " Custom Levels");
+	}
+	
+	public static LevelData getLevelData(Identifier id)
+	{
+		if(levels.containsKey(id))
+			return levels.get(id);
+		else if(customLevels.containsKey(id))
+			return customLevels.get(id);
+		else
+		{
+			Ultracraft.LOGGER.warn("Couldn't find Level '" + id + "' in loaded lists!");
+			return ERR_DATA;
+		}
+	}
+	
+	public static void setLevels(ImmutableMap<Identifier, LevelData> map, boolean builtin)
+	{
+		if(builtin)
+			levels = map;
+		else
+			customLevels = map;
+	}
+	
+	public static Map<Identifier, LevelData> getAllLevels()
+	{
+		return levels;
+	}
+	
+	public static Map<Identifier, LevelData> getAllCustomLevels()
+	{
+		return customLevels;
+	}
+	
+	public static boolean isCustomLevelsPresent()
+	{
+		return customLevels.size() > 0;
+	}
+	
+	public static void sync(ServerPlayerEntity player)
+	{
+		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeCollection(levels.entrySet(), LevelData::serialize);
+		buf.writeCollection(customLevels.entrySet(), LevelData::serialize);
+		ServerPlayNetworking.send(player, PacketRegistry.SEND_LEVELS_PACKET_ID, buf);
+	}
+}

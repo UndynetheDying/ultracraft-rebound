@@ -6,7 +6,6 @@ import absolutelyaya.ultracraft.block.SlabBlock;
 import absolutelyaya.ultracraft.components.world.IDimensionDataComponent;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.world.ServerWorld;
@@ -18,17 +17,14 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 
-public class LimboManager implements DimensionManager
+public class LimboManager extends DimensionManager
 {
 	public static final Identifier ID = new Identifier(Ultracraft.MOD_ID, "limbo");
 	public static final RegistryKey<World> WORLD_KEY = RegistryKey.of(RegistryKeys.WORLD, ID);
 	final ServerWorld world;
-	final Box spawnBounds = new Box(-26, 0, -26, 26, 100, 31);
 	
 	final String FLAG_SPAWN_Y = "spawnStructureHeight";
 	final String FLAG_SLAB1 = "slab1";
@@ -53,7 +49,7 @@ public class LimboManager implements DimensionManager
 	{
 		IDimensionDataComponent data = UltraComponents.DIMENSION_DATA.get(world);
 		if(!data.isFixedStructuresPlaced())
-			return ActionResult.PASS;
+			return super.onBlockInteract(player, world, hand, hit);
 		BlockPos pos = hit.getBlockPos();
 		//Spawn Slab Blocks
 		int spawnY = data.getFlag(FLAG_SPAWN_Y);
@@ -68,26 +64,7 @@ public class LimboManager implements DimensionManager
 			player.sendMessage(Text.translatable("limbo.slab_press.fail.active"), true);
 			return ActionResult.FAIL;
 		}
-		if(spawnBounds.contains(pos.toCenterPos()) && player.getStackInHand(hand).getItem() instanceof BlockItem)
-		{
-			player.sendMessage(Text.translatable("limbo.structure.modify-fail"), true);
-			return ActionResult.FAIL;
-		}
-		return ActionResult.PASS;
-	}
-	
-	@Override
-	public ActionResult onAttackBlock(PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction)
-	{
-		IDimensionDataComponent data = UltraComponents.DIMENSION_DATA.get(world);
-		if(!data.isFixedStructuresPlaced())
-			return ActionResult.PASS;
-		if(spawnBounds.contains(pos.toCenterPos()))
-		{
-			player.sendMessage(Text.translatable("limbo.structure.modify-fail"), true);
-			return ActionResult.FAIL;
-		}
-		return ActionResult.PASS;
+		return super.onBlockInteract(player, world, hand, hit);
 	}
 	
 	@Override
@@ -99,6 +76,12 @@ public class LimboManager implements DimensionManager
 	@Override
 	public void onWorldLoad()
 	{
+	}
+	
+	@Override
+	Text getModifyFailText()
+	{
+		return Text.translatable("limbo.structure.modify-fail");
 	}
 	
 	void prePlaceStructures()

@@ -12,6 +12,7 @@ import absolutelyaya.ultracraft.config.CybergrindConfig;
 import absolutelyaya.ultracraft.config.HivelConfig;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.config.Setting;
+import absolutelyaya.ultracraft.data.LevelDataManager;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.data.TerminalScreensaverManager;
 import absolutelyaya.ultracraft.data.UltraRecipeManager;
@@ -128,7 +129,7 @@ public class Ultracraft implements ModInitializer
             ServerPlayerEntity player = networkHandler.player;
             config.syncAll(player);
             UltraRecipeManager.sync(player);
-            LevelManager.sync(player);
+            LevelDataManager.sync(player);
             Setting hivel = config.hivel.getValue();
             if(!hivel.equals(Setting.FREE))
             {
@@ -152,7 +153,7 @@ public class Ultracraft implements ModInitializer
             loadConfig(server);
             server.getPlayerManager().getPlayerList().forEach(player -> {
                 UltraRecipeManager.sync(player);
-                LevelManager.sync(player);
+                LevelDataManager.sync(player);
             });
         });
         
