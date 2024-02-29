@@ -346,6 +346,8 @@
   "command.ultracraft.debug.level-instance.destroy": "[Ultracraft] Destroyed all Level Instances",
   "command.ultracraft.debug.cybergrind.start": "[Ultracraft] Starting Cybergrind...",
   "command.ultracraft.debug.cybergrind.end": "[Ultracraft] Stopping Cybergrind...",
+  "command.ultracraft.debug.globalflag.set": "[Ultracraft] Set Global Flag %1$s in world %2$s to %3$s.",
+  "command.ultracraft.debug.globalflag.get": "[Ultracraft] Flag %1$s in world %2$s is %3$s.",
 
   "gamerule.ultracraft.category.general": "ULTRACRAFT",
   "gamerule.ultracraft.category.world": "ULTRACRAFT (world)",

@@ -45,8 +45,7 @@ public class LimboManager implements DimensionManager
 	public void tick()
 	{
 		IDimensionDataComponent data = UltraComponents.DIMENSION_DATA.get(world);
-		if(!ServerConfig.INSTANCE.disableFixedStructures.getValue() && !data.isFixedStructuresPlaced() &&
-				   world.isChunkLoaded(world.getRandomAlivePlayer().getBlockPos()))
+		if(!ServerConfig.INSTANCE.disableFixedStructures.getValue() && !data.isFixedStructuresPlaced())
 			prePlaceStructures();
 	}
 	

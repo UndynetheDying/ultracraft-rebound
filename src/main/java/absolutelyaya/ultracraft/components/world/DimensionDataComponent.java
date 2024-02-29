@@ -44,7 +44,7 @@ public class DimensionDataComponent implements IDimensionDataComponent
 	}
 	
 	@Override
-	public void setFlag(String id, int value) //TODO: add command to set and query flags
+	public void setFlag(String id, int value)
 	{
 		flags.put(id, value);
 	}

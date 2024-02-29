@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.components.world.IDimensionDataComponent;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.config.Setting;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
@@ -30,9 +31,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.boss.CommandBossBar;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.BossBarCommand;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
@@ -47,6 +52,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
+import static net.minecraft.command.argument.DimensionArgumentType.dimension;
 import static net.minecraft.command.argument.EntityArgumentType.player;
 import static net.minecraft.command.argument.EntityArgumentType.players;
 import static net.minecraft.command.argument.IdentifierArgumentType.identifier;
@@ -75,7 +81,10 @@ public class Commands
 				.then(literal("cybergrind")
 					.then(literal("start").executes(Commands::executeDebugStartCybergrind)
 						.then(argument("target", player()).then(argument("waves", integer(0)).executes(Commands::executeDebugCybergrindSpecific).then(literal("verbose").executes(Commands::executeDebugCybergrindSpecificVerbose)))))
-					.then(literal("end").executes(Commands::executeDebugEndCybergrind))))
+					.then(literal("end").executes(Commands::executeDebugEndCybergrind)))
+				.then(literal("flag").then(argument("dimension", dimension())
+					.then(literal("set").then(argument("id", string()).suggests(Commands::globalFlagForWorldProvider).then(argument("value", integer()).executes(Commands::executeDebugSetGlobalFlag))))
+					.then(literal("get").then(argument("id", string()).suggests(Commands::globalFlagForWorldProvider).executes(Commands::executeDebugGetGlobalFlag))))))
 			.then(literal("progression").requires(source -> source.hasPermissionLevel(2))
 				.then(argument("list", string()).suggests(Commands::progressionListTypeProvider)
 					.then(literal("list").then(argument("target", player()).executes(Commands::executeProgressionList)))
@@ -457,6 +466,41 @@ public class Commands
 		int waves = context.getArgument("waves", Integer.class);
 		context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.cybergrind.start"), true);
 		CybergrindManager.Instance.startCybergrind(target, waves).setVerbose();
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static IDimensionDataComponent getTargetDimensionData(MinecraftServer server, Identifier id)
+	{
+		ServerWorld target = server.getWorld(RegistryKey.of(RegistryKeys.WORLD, id));
+		return UltraComponents.DIMENSION_DATA.get(target);
+	}
+	
+	private static CompletableFuture<Suggestions> globalFlagForWorldProvider(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder)
+	{
+		Identifier dimension = context.getArgument("dimension", Identifier.class);
+		IDimensionDataComponent dimensionData = getTargetDimensionData(context.getSource().getServer(), dimension);
+		dimensionData.getAllFlags().keySet().forEach(builder::suggest);
+		return builder.buildFuture();
+	}
+	
+	private static int executeDebugSetGlobalFlag(CommandContext<ServerCommandSource> context)
+	{
+		Identifier dimension = context.getArgument("dimension", Identifier.class);
+		IDimensionDataComponent dimensionData = getTargetDimensionData(context.getSource().getServer(), dimension);
+		String flag = context.getArgument("id", String.class);
+		int value = context.getArgument("value", Integer.class);
+		dimensionData.setFlag(flag, value);
+		context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.globalflag.set", flag, dimension, value), true);
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int executeDebugGetGlobalFlag(CommandContext<ServerCommandSource> context)
+	{
+		Identifier dimension = context.getArgument("dimension", Identifier.class);
+		IDimensionDataComponent dimensionData = getTargetDimensionData(context.getSource().getServer(), dimension);
+		String flag = context.getArgument("id", String.class);
+		int value = dimensionData.getFlag(flag);
+		context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.globalflag.get", flag, dimension, value), false);
 		return Command.SINGLE_SUCCESS;
 	}
 }
