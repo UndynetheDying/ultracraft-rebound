@@ -705,6 +705,8 @@
   "category.ultracraft": "Ultracraft",
   "key.ultracraft.hivel_toggle": "Toggle High Velocity Mode",
   "key.ultracraft.punch": "Punch",
+  "key.ultracraft.punch_feedbacker": "Punch (Feedbacker)",
+  "key.ultracraft.punch_knuckle": "Punch (Knuckleblaster)",
   "key.ultracraft.wing_customization": "Open Wing Customization",
   "key.ultracraft.weapon_cycle": "Cycle Weapon Variant",
   "key.ultracraft.arm_cycle": "Cycle Arms",

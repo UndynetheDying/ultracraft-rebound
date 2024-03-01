@@ -33,19 +33,22 @@ public class ArmComponent implements IArmComponent
 	}
 	
 	@Override
-	public void setActiveArm(byte i)
+	public boolean setActiveArm(byte i)
 	{
-		if(armIDs.length <= i)
+		if(armIDs.length <= i || i < 0)
 		{
 			Ultracraft.LOGGER.warn("Tried equipping invalid Arm (index " + i + " out of bounds)");
-			return;
+			return false;
 		}
+		if(activeArm == i)
+			return false;
 		IProgressionComponent progression = UltraComponents.PROGRESSION.get(provider);
 		if(progression.isOwned(armIDs[i]))
 			activeArm = i;
 		else
 			activeArm = -1;
 		sync();
+		return true;
 	}
 	
 	@Override

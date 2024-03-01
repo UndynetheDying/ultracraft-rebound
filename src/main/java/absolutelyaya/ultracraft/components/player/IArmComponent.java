@@ -7,7 +7,7 @@ public interface IArmComponent extends ComponentV3, AutoSyncedComponent
 {
 	byte getActiveArm();
 	
-	void setActiveArm(byte i);
+	boolean setActiveArm(byte i);
 	
 	void cycleArms();
 	

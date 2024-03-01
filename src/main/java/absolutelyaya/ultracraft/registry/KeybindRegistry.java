@@ -16,6 +16,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.block.BellBlock;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
@@ -38,6 +39,12 @@ public class KeybindRegistry
 	public static final KeyBinding PUNCH = KeyBindingHelper.registerKeyBinding(
 			new KeyBinding("key.ultracraft.punch", InputUtil.Type.KEYSYM,
 					GLFW.GLFW_KEY_F, "category.ultracraft"));
+	public static final KeyBinding PUNCH_FEEDBACKER = KeyBindingHelper.registerKeyBinding(
+			new KeyBinding("key.ultracraft.punch_feedbacker", InputUtil.Type.KEYSYM,
+					GLFW.GLFW_KEY_UNKNOWN, "category.ultracraft"));
+	public static final KeyBinding PUNCH_KNUCKLE = KeyBindingHelper.registerKeyBinding(
+			new KeyBinding("key.ultracraft.punch_knuckle", InputUtil.Type.KEYSYM,
+					GLFW.GLFW_KEY_UNKNOWN, "category.ultracraft"));
 	public static final KeyBinding HIGH_VELOCITY_TOGGLE = KeyBindingHelper.registerKeyBinding(
 			new KeyBinding("key.ultracraft.hivel_toggle", InputUtil.Type.KEYSYM,
 			GLFW.GLFW_KEY_V, "category.ultracraft"));
@@ -72,65 +79,33 @@ public class KeybindRegistry
 			hivelPressed = HIGH_VELOCITY_TOGGLE.isPressed();
 		});
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			if(punchPressed != PUNCH.isPressed())
+			boolean isAnyPunchPressed = (PUNCH.isPressed() || PUNCH_FEEDBACKER.isPressed() || PUNCH_KNUCKLE.isPressed());
+			if(punchPressed != isAnyPunchPressed)
 			{
 				PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-				buf.writeBoolean(PUNCH.isPressed());
+				buf.writeBoolean(isAnyPunchPressed);
 				ClientPlayNetworking.send(PacketRegistry.PUNCH_PRESSED_PACKET_ID, buf);
 			}
 			while(PUNCH.wasPressed() && !punchPressed)
 			{
-				ClientPlayerEntity player = client.player;
-				if(player == null || !((LivingEntityAccessor)player).punch() || player.isSpectator())
+				if(!performPunch(client, (byte)-1))
 					continue;
-				if(player.isMainPlayer())
-				{
-					boolean flip = player.getMainArm().equals(Arm.LEFT);
-					int anim;
-					if(player instanceof WingedPlayerEntity winged && winged.isSliding())
-						anim = flip ? PlayerAnimator.SLIDE_PUNCH_FLIPPED : PlayerAnimator.SLIDE_PUNCH;
-					else
-						anim = flip ? PlayerAnimator.PUNCH_FLIPPED : PlayerAnimator.PUNCH;
-					PlayerAnimator.playAnimation(player, anim, 0, false);
-				}
-				
-				HitResult crosshairTarget = client.crosshairTarget;
-				Entity entity = null;
-				if(crosshairTarget != null)
-				{
-					if(crosshairTarget.getType().equals(HitResult.Type.ENTITY))
-						entity = ((EntityHitResult)crosshairTarget).getEntity();
-					else if(crosshairTarget.getType().equals(HitResult.Type.BLOCK))
-					{
-						BlockHitResult hit = ((BlockHitResult)crosshairTarget);
-						BlockState state = player.getWorld().getBlockState(hit.getBlockPos());
-						if(state.getBlock() instanceof IPunchableBlock || state.isIn(TagRegistry.FRAGILE) || state.getBlock() instanceof BellBlock)
-						{
-							PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-							buf.writeBlockPos(hit.getBlockPos());
-							buf.writeBoolean(false);
-							ClientPlayNetworking.send(PacketRegistry.PUNCH_BLOCK_PACKET_ID, buf);
-							if (state.getBlock() instanceof IPunchableBlock punchable && punchable.onPunch(player, hit.getBlockPos(), false))
-								return; //if punch interaction was successful, don't display break particles and stuff
-						}
-						Vec3d pos = hit.getPos();
-						for (int i = 0; i < 6; i++)
-							player.getWorld().addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, state), pos.x, pos.y, pos.z, 0f, 0f, 0f);
-						player.playSound(state.getSoundGroup().getHitSound(), 1f, 1f);
-					}
-				}
-				boolean b = entity != null && !(entity instanceof ProjectileEntity);
-				PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-				buf.writeBoolean(b);
-				if(b)
-					buf.writeVarInt(entity.getId());
-				buf.writeVector3f(player.getVelocity().toVector3f());
-				buf.writeBoolean(UltracraftClient.getConfig().showPunchArea);
-				ClientPlayNetworking.send(PacketRegistry.PUNCH_PACKET_ID, buf);
 				punchPressed = true;
 			}
-			while(PUNCH.wasPressed()); //remove stored punch presses
-			punchPressed = PUNCH.isPressed();
+			while(PUNCH_FEEDBACKER.wasPressed() && !punchPressed)
+			{
+				if(!performPunch(client, (byte)0))
+					continue;
+				punchPressed = true;
+			}
+			while(PUNCH_KNUCKLE.wasPressed() && !punchPressed)
+			{
+				if(!performPunch(client, (byte)1))
+					continue;
+				punchPressed = true;
+			}
+			while(PUNCH.wasPressed() || PUNCH_FEEDBACKER.wasPressed() || PUNCH_KNUCKLE.wasPressed()); //remove stored punch presses
+			punchPressed = isAnyPunchPressed;
 		});
 		ClientTickEvents.END_CLIENT_TICK.register(client ->
 		{
@@ -163,5 +138,58 @@ public class KeybindRegistry
 			while(ARM_CYCLE.wasPressed()); //remove stored presses
 			armCyclePressed = ARM_CYCLE.isPressed();
 		});
+	}
+	
+	static boolean performPunch(MinecraftClient client, byte arm)
+	{
+		ClientPlayerEntity player = client.player;
+		if(player == null || !((LivingEntityAccessor)player).punch() || player.isSpectator())
+			return false;
+		if(player.isMainPlayer())
+		{
+			boolean flip = player.getMainArm().equals(Arm.LEFT);
+			int anim;
+			if(player instanceof WingedPlayerEntity winged && winged.isSliding())
+				anim = flip ? PlayerAnimator.SLIDE_PUNCH_FLIPPED : PlayerAnimator.SLIDE_PUNCH;
+			else
+				anim = flip ? PlayerAnimator.PUNCH_FLIPPED : PlayerAnimator.PUNCH;
+			PlayerAnimator.playAnimation(player, anim, 0, false);
+		}
+		
+		HitResult crosshairTarget = client.crosshairTarget;
+		Entity entity = null;
+		if(crosshairTarget != null)
+		{
+			if(crosshairTarget.getType().equals(HitResult.Type.ENTITY))
+				entity = ((EntityHitResult)crosshairTarget).getEntity();
+			else if(crosshairTarget.getType().equals(HitResult.Type.BLOCK))
+			{
+				BlockHitResult hit = ((BlockHitResult)crosshairTarget);
+				BlockState state = player.getWorld().getBlockState(hit.getBlockPos());
+				if(state.getBlock() instanceof IPunchableBlock || state.isIn(TagRegistry.FRAGILE) || state.getBlock() instanceof BellBlock)
+				{
+					PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+					buf.writeBlockPos(hit.getBlockPos());
+					buf.writeBoolean(false);
+					ClientPlayNetworking.send(PacketRegistry.PUNCH_BLOCK_PACKET_ID, buf);
+					if (state.getBlock() instanceof IPunchableBlock punchable && punchable.onPunch(player, hit.getBlockPos(), false))
+						return true; //if punch interaction was successful, don't display break particles and stuff
+				}
+				Vec3d pos = hit.getPos();
+				for (int i = 0; i < 6; i++)
+					player.getWorld().addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, state), pos.x, pos.y, pos.z, 0f, 0f, 0f);
+				player.playSound(state.getSoundGroup().getHitSound(), 1f, 1f);
+			}
+		}
+		boolean b = entity != null && !(entity instanceof ProjectileEntity);
+		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeBoolean(b);
+		if(b)
+			buf.writeVarInt(entity.getId());
+		buf.writeByte(arm);
+		buf.writeVector3f(player.getVelocity().toVector3f());
+		buf.writeBoolean(UltracraftClient.getConfig().showPunchArea);
+		ClientPlayNetworking.send(PacketRegistry.PUNCH_PACKET_ID, buf);
+		return true;
 	}
 }

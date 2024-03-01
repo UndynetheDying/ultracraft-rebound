@@ -147,14 +147,17 @@ public class PacketRegistry
 				target = serverWorld.getDragonPart(buf.readVarInt());
 			else
 				target = null;
+			byte punchArm = buf.readByte();
 			Vector3f clientVel = buf.readVector3f(); //velocity the player has on the client
 			boolean debug = buf.readBoolean();
 			server.execute(() -> {
+				IArmComponent arm = UltraComponents.ARMS.get(player);
+				if(punchArm != -1)
+					arm.setActiveArm(punchArm);
 				if(player instanceof LivingEntityAccessor accessor)
 					accessor.punch();
 				Vec3d forward = player.getRotationVector().normalize();
 				player.swingHand(Hand.OFF_HAND, true);
-				IArmComponent arm = UltraComponents.ARMS.get(player);
 				
 				if(player.getOffHandStack().getItem() instanceof SoapItem soap)
 				{
