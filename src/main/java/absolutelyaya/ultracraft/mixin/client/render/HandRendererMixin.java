@@ -48,7 +48,7 @@ public abstract class HandRendererMixin
 	void onRenderFirstPersonItem(AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci)
 	{
 		LivingEntityAccessor playerAccessor = ((LivingEntityAccessor)player);
-		if(hand == Hand.OFF_HAND && (playerAccessor.IsPunching() || !item.isEmpty())) //TODO: fix animation for specialized punch keys
+		if(hand == Hand.OFF_HAND && (playerAccessor.IsPunching() || !item.isEmpty()))
 		{
 			RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 			if(item.getItem() instanceof AbstractWeaponItem)

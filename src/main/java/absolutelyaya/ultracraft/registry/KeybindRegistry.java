@@ -7,6 +7,7 @@ import absolutelyaya.ultracraft.block.IPunchableBlock;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.screen.WingCustomizationScreen;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
+import absolutelyaya.ultracraft.components.player.IArmComponent;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
@@ -143,7 +144,14 @@ public class KeybindRegistry
 	static boolean performPunch(MinecraftClient client, byte arm)
 	{
 		ClientPlayerEntity player = client.player;
-		if(player == null || !((LivingEntityAccessor)player).punch() || player.isSpectator())
+		if(player == null || player.isSpectator())
+			return false;
+		if(arm != -1)
+		{
+			IArmComponent armComponent = UltraComponents.ARMS.get(player);
+			armComponent.setActiveArm(arm);
+		}
+		if(!((LivingEntityAccessor)player).punch())
 			return false;
 		if(player.isMainPlayer())
 		{
