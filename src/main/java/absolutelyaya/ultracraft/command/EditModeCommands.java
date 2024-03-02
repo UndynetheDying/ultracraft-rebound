@@ -356,9 +356,18 @@ public class EditModeCommands
 	private static CompletableFuture<Suggestions> suggestFlags(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder)
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
-		BlockPos pos = UltraComponents.EDITOR.get(player).getEditFocus("room");
-		if(pos != null && player.getWorld().getBlockEntity(pos) instanceof RoomBlockEntity e)
-			e.getFlags().forEach(builder::suggest);
+		IEditorComponent editor = UltraComponents.EDITOR.get(player);
+		World world = player.getWorld();
+		BlockPos targetPos = editor.getEditFocus(context.getArgument("key", String.class));
+		boolean global = targetPos != null && world.getBlockEntity(targetPos) instanceof FlagBindable flagged && flagged.isGlobal();
+		if(!global)
+		{
+			BlockPos pos = editor.getEditFocus("room");
+			if(pos != null && world.getBlockEntity(pos) instanceof RoomBlockEntity e)
+				e.getFlags().forEach(builder::suggest);
+		}
+		else
+			UltraComponents.DIMENSION_DATA.get(world).getAllFlags().keySet().forEach(builder::suggest);
 		return builder.buildFuture();
 	}
 }

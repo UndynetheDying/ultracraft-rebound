@@ -22,6 +22,8 @@ public class BlockEntityRegistry
 	public static final BlockEntityType<TriggerBlockEntity> MAP_TRIGGER;
 	public static final BlockEntityType<RedstoneListenerBlockEntity> MAP_REDSTONE;
 	public static final BlockEntityType<RedstoneReceiverBlockEntity> MAP_RECEIVER;
+	public static final BlockEntityType<GlobalRedstoneListenerBlockEntity> MAP_GLOBAL_REDSTONE;
+	public static final BlockEntityType<GlobalRedstoneReceiverBlockEntity> MAP_GLOBAL_RECEIVER;
 	public static final BlockEntityType<DoorListenerBlockEntity> MAP_DOOR;
 	public static final BlockEntityType<SpawnListenerBlockEntity> MAP_SPAWNER;
 	public static final BlockEntityType<EnemyTriggerBlockEntity> MAP_ENEMY_TRIGGER;
@@ -72,6 +74,12 @@ public class BlockEntityRegistry
 		MAP_RECEIVER = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				new Identifier(Ultracraft.MOD_ID, "map_receiver"),
 				FabricBlockEntityTypeBuilder.create(RedstoneReceiverBlockEntity::new, BlockRegistry.MAP_RECEIVER).build());
+		MAP_GLOBAL_REDSTONE = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Ultracraft.MOD_ID, "map_global_redstone"),
+				FabricBlockEntityTypeBuilder.create(GlobalRedstoneListenerBlockEntity::new, BlockRegistry.MAP_GLOBAL_REDSTONE).build());
+		MAP_GLOBAL_RECEIVER = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Ultracraft.MOD_ID, "map_global_receiver"),
+				FabricBlockEntityTypeBuilder.create(GlobalRedstoneReceiverBlockEntity::new, BlockRegistry.MAP_GLOBAL_RECEIVER).build());
 		MAP_DOOR = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				new Identifier(Ultracraft.MOD_ID, "map_door"),
 				FabricBlockEntityTypeBuilder.create(DoorListenerBlockEntity::new, BlockRegistry.MAP_DOOR).build());

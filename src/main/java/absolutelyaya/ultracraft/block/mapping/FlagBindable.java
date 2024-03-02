@@ -5,4 +5,9 @@ public interface FlagBindable
 	void bindFlag(String flag);
 	
 	String getFlag();
+	
+	default boolean isGlobal()
+	{
+		return false;
+	}
 }

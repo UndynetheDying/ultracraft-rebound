@@ -191,7 +191,7 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 		flags.put(id, state);
 		for (BlockPos pos : children.keySet())
 		{
-			if(children.get(pos) instanceof FlagListener listener && listener.getFlag() != null && listener.getFlag().equals(id))
+			if(children.get(pos) instanceof FlagListener listener && !listener.isGlobal() && listener.getFlag() != null && listener.getFlag().equals(id))
 			{
 				if(state)
 					listener.onActivateFlag();

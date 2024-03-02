@@ -159,6 +159,8 @@
   "block.ultracraft.map_travel": "Map Force Travel Trigger",
   "block.ultracraft.map_level": "Map Level Unlock Trigger",
   "block.ultracraft.map_damage": "Map Damage Trigger",
+  "block.ultracraft.map_global_redstone": "Map Global Redstone Listener",
+  "block.ultracraft.map_global_receiver": "Map Global Redstone Receiver",
   "block.ultracraft.sheetmetal": "Sheet Metal Block",
   "block.ultracraft.sheetmetal_sheet": "Sheet Metal Sheet Block",
   "block.ultracraft.sheetmetal_sheet_slab": "Sheet Metal Sheet Slab",

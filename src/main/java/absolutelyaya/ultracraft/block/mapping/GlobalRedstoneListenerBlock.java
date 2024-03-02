@@ -7,9 +7,9 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import org.jetbrains.annotations.Nullable;
 
-public class RedstoneListenerBlock extends AbstractMappingBlock
+public class GlobalRedstoneListenerBlock extends AbstractMappingBlock
 {
-	public RedstoneListenerBlock(Settings settings)
+	public GlobalRedstoneListenerBlock(Settings settings)
 	{
 		super(settings);
 	}
@@ -18,7 +18,7 @@ public class RedstoneListenerBlock extends AbstractMappingBlock
 	@Override
 	public BlockEntity createBlockEntity(BlockPos pos, BlockState state)
 	{
-		return new RedstoneListenerBlockEntity(pos, state);
+		return new GlobalRedstoneListenerBlockEntity(pos, state);
 	}
 	
 	@Override
@@ -36,7 +36,7 @@ public class RedstoneListenerBlock extends AbstractMappingBlock
 	@Override
 	public int getStrongRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction)
 	{
-		if(world.getBlockEntity(pos) instanceof RedstoneListenerBlockEntity redstone && redstone.isActive())
+		if(world.getBlockEntity(pos) instanceof GlobalRedstoneListenerBlockEntity redstone && redstone.isActive())
 			return 15;
 		return super.getStrongRedstonePower(state, world, pos, direction);
 	}

@@ -410,6 +410,8 @@ public class ItemRegistry
 			content.add(BlockRegistry.MAP_EXPLOSION);
 			content.add(BlockRegistry.MAP_LEVEL);
 			content.add(BlockRegistry.MAP_CYBERGRIND);
+			content.add(BlockRegistry.MAP_GLOBAL_REDSTONE);
+			content.add(BlockRegistry.MAP_GLOBAL_RECEIVER);
 		});
 	}
 }
