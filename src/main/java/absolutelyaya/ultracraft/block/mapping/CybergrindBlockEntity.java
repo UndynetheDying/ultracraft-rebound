@@ -19,7 +19,7 @@ public class CybergrindBlockEntity extends AbstractListenerBlockEntity implement
 	String flag, winFlag;
 	int rounds = 5;
 	CybergrindGame cybergrindGame;
-	boolean completed;
+	boolean completed, wasCompleted;
 	
 	public CybergrindBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -60,17 +60,27 @@ public class CybergrindBlockEntity extends AbstractListenerBlockEntity implement
 	@Override
 	void tick()
 	{
+		if(winFlag != null && !winFlag.isEmpty() && completed && !wasCompleted)
+			onCompletedCybergrind();
+		wasCompleted = completed;
 		if(completed || world.isClient)
 			return;
 		if(cybergrindGame != null && cybergrindGame.isOver())
 		{
-			completed = true;
-			if(winFlag != null && !winFlag.isEmpty() && cybergrindGame.isWin() && world.getBlockEntity(getParent()) instanceof RoomBlockEntity room)
-				room.setFlag(winFlag, true);
-			if(world.isClient)
-				return;
+			if(cybergrindGame.isWin())
+			{
+				completed = true;
+				markDirty();
+				world.updateListeners(pos, getCachedState(), getCachedState(), 0);
+			}
 			cybergrindGame = null;
 		}
+	}
+	
+	public void onCompletedCybergrind()
+	{
+		if(world.getBlockEntity(getParent()) instanceof RoomBlockEntity room)
+			room.setFlag(winFlag, true);
 	}
 	
 	@Override
@@ -130,6 +140,8 @@ public class CybergrindBlockEntity extends AbstractListenerBlockEntity implement
 			winFlag = nbt.getString("winFlag");
 		if(nbt.contains("rounds", NbtElement.INT_TYPE))
 			rounds = Math.max(nbt.getInt("rounds"), 1);
+		if(nbt.contains("completed", NbtElement.BYTE_TYPE))
+			completed = nbt.getBoolean("completed");
 	}
 	
 	@Override
@@ -141,6 +153,7 @@ public class CybergrindBlockEntity extends AbstractListenerBlockEntity implement
 		if(winFlag != null)
 			nbt.putString("winFlag", winFlag);
 		nbt.putInt("rounds", rounds);
+		nbt.putBoolean("completed", completed);
 	}
 	
 	static {

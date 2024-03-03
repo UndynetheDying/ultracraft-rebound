@@ -103,6 +103,11 @@ public class CybergrindGame
 			end();
 	}
 	
+	public List<PlayerEntity> getParticipants()
+	{
+		return participants;
+	}
+	
 	public void tick()
 	{
 		if (isOver())
@@ -342,7 +347,10 @@ public class CybergrindGame
 		enemies.forEach(e -> e.remove(Entity.RemovalReason.DISCARDED));
 		over = true;
 		CybergrindManager.Instance.startCooldown();
-		server.getPlayerManager().broadcast(Text.translatable("message.ultracraft.cybergrind.end" + (win ? "-win" : "")), false);
+		if(initialized)
+			server.getPlayerManager().broadcast(Text.translatable("message.ultracraft.cybergrind.end" + (win ? "-win" : "")), false);
+		else
+			server.getPlayerManager().broadcast(Text.translatable("message.ultracraft.cybergrind.cancel"), false);
 	}
 	
 	public boolean isOver()

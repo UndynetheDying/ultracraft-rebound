@@ -2,20 +2,15 @@ package absolutelyaya.ultracraft.dimension;
 
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
-import absolutelyaya.ultracraft.block.SlabBlock;
 import absolutelyaya.ultracraft.components.world.IDimensionDataComponent;
 import absolutelyaya.ultracraft.config.ServerConfig;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.structure.StructureTemplateManager;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
@@ -26,12 +21,11 @@ public class LimboManager extends DimensionManager
 	public static final RegistryKey<World> WORLD_KEY = RegistryKey.of(RegistryKeys.WORLD, ID);
 	final ServerWorld world;
 	
-	final String FLAG_SPAWN_Y = "spawnStructureHeight";
 	final String FLAG_SLAB1 = "slab1";
 	final String FLAG_SLAB2 = "slab2";
 	final String FLAG_SLAB3 = "slab3";
 	final String FLAG_SLAB4 = "slab4";
-	final String FLAG_SLAB_CHAMBER_OPEN = "slabChamberOpened";
+	final String FLAG_SLAB_CHAMBER_OPEN = "slab_open";
 	
 	public LimboManager(ServerWorld world)
 	{
@@ -43,28 +37,6 @@ public class LimboManager extends DimensionManager
 		IDimensionDataComponent data = UltraComponents.DIMENSION_DATA.get(world);
 		if(!ServerConfig.INSTANCE.disableFixedStructures.getValue() && !data.isFixedStructuresPlaced())
 			prePlaceStructures();
-	}
-	
-	public ActionResult onBlockInteract(PlayerEntity player, World world, Hand hand, BlockHitResult hit)
-	{
-		IDimensionDataComponent data = UltraComponents.DIMENSION_DATA.get(world);
-		if(!data.isFixedStructuresPlaced())
-			return super.onBlockInteract(player, world, hand, hit);
-		BlockPos pos = hit.getBlockPos();
-		//Spawn Slab Blocks
-		int spawnY = data.getFlag(FLAG_SPAWN_Y);
-		if(pos.equals(new BlockPos(-6, spawnY + 2,0)) || pos.equals(new BlockPos(6, spawnY + 2,0)) ||
-				   pos.equals(new BlockPos(0, spawnY + 2,-6)))
-		{
-			player.sendMessage(Text.translatable("limbo.slab_press.fail.spawn"), true);
-			return ActionResult.FAIL;
-		}
-		if(pos.equals(new BlockPos(0, spawnY + 1,6)) && world.getBlockState(pos).get(SlabBlock.ACTIVE))
-		{
-			player.sendMessage(Text.translatable("limbo.slab_press.fail.active"), true);
-			return ActionResult.FAIL;
-		}
-		return super.onBlockInteract(player, world, hand, hit);
 	}
 	
 	@Override
@@ -92,9 +64,28 @@ public class LimboManager extends DimensionManager
 		templateManager.getTemplate(new Identifier(Ultracraft.MOD_ID, "limbo/spawn"))
 				.ifPresent(i -> {
 					BlockPos pos = new BlockPos(0, 0, 0);
-					int y = world.getTopY(Heightmap.Type.WORLD_SURFACE_WG, pos.getX(), pos.getZ());
-					i.place(world, pos.add(-26, y - 10, -26), new BlockPos(0, 0, 0), new StructurePlacementData(), world.getRandom(), 2);
-					UltraComponents.DIMENSION_DATA.get(world).setFlag(FLAG_SPAWN_Y, y);
+					int y = world.getWorldChunk(pos).sampleHeightmap(Heightmap.Type.WORLD_SURFACE_WG, pos.getX(), pos.getZ());
+					i.place(world, pos.add(-26, y - 9, -26), new BlockPos(0, 0, 0), new StructurePlacementData(), world.getRandom(), 2);
+				});
+		Ultracraft.LOGGER.info("Placing limbo/destiny-chapel");
+		templateManager.getTemplate(new Identifier(Ultracraft.MOD_ID, "limbo/destiny-chapel"))
+				.ifPresent(i -> {
+					BlockPos pos = new BlockPos(-200, 0, 0);
+					int y = world.getWorldChunk(pos).sampleHeightmap(Heightmap.Type.WORLD_SURFACE_WG, pos.getX(), pos.getZ());
+					i.place(world, pos.add(0, y - 2, -13), new BlockPos(0, 0, 0), new StructurePlacementData(), world.getRandom(), 2);
+				});
+		Ultracraft.LOGGER.info("Placing limbo/rodent");
+		templateManager.getTemplate(new Identifier(Ultracraft.MOD_ID, "limbo/rodent"))
+				.ifPresent(i -> {
+					BlockPos pos = new BlockPos(0, 0, -200);
+					int y = world.getWorldChunk(pos).sampleHeightmap(Heightmap.Type.WORLD_SURFACE_WG, pos.getX(), pos.getZ());
+					i.place(world, pos.add(-18, y - 15, 0), new BlockPos(0, 0, 0), new StructurePlacementData(), world.getRandom(), 2);
+				});
+		Ultracraft.LOGGER.info("Placing limbo/cybergrind");
+		templateManager.getTemplate(new Identifier(Ultracraft.MOD_ID, "limbo/cybergrind"))
+				.ifPresent(i -> {
+					BlockPos pos = new BlockPos(200, 0, 0);
+					i.place(world, pos.add(0, 0, -45), new BlockPos(0, 0, 0), new StructurePlacementData(), world.getRandom(), 2);
 				});
 		Ultracraft.LOGGER.info("Limbo fixed Structure Placement complete!");
 		UltraComponents.DIMENSION_DATA.get(world).setFixedStructuresPlaced(true);

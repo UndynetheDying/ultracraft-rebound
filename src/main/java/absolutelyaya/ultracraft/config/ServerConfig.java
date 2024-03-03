@@ -31,7 +31,7 @@ public class ServerConfig extends Config
 	public final FloatEntry shotgunDamage = (FloatEntry)new FloatEntry("ShotgunDamage", 1f).setRange(0f, Float.MAX_VALUE);
 	public final FloatEntry nailgunDamage = (FloatEntry)new FloatEntry("NailgunDamage", 1f).setRange(0f, Float.MAX_VALUE);
 	//Debug
-	public final BooleanEntry disableFixedStructures = new BooleanEntry("DisableFixedStructures", true); //TODO: set default to false before release obvs
+	public final BooleanEntry disableFixedStructures = new BooleanEntry("DisableFixedStructures", false); //TODO: set default to false before release obvs
 	
 	public ServerConfig(MinecraftServer server)
 	{

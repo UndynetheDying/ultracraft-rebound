@@ -68,7 +68,7 @@ public class SlabBlock extends Block implements IPunchableBlock
 	{
 		if(state.get(LOCKED))
 		{
-			player.sendMessage(Text.translatable("message.slab_press.decorative"), true);
+			player.sendMessage(Text.translatable("message.ultracraft.slab_press.decorative"), true);
 			return ActionResult.FAIL;
 		}
 		if (hit == null || !(player.getStackInHand(hand).isOf(Items.DEBUG_STICK) || player.isSneaking()))

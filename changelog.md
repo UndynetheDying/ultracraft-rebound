@@ -64,36 +64,46 @@
   - Mapping Blocks themselves have no rendering (with the only exception being checkpoints) and aren't interactable outside of edit mode.
   - Each Component is its own Block and has an Area (with some exceptions)
   - This System is not exactly designed for accessibility; I might write a Guide on it in the future, but I won't teach it ot people individually.
+  - Flags
+    - There's "Local" and "Global" Flags
+    - **Local** Flags are stored in a room and can only be true or false
+    - **Global** Flags are stored in a world and can be any 16-bit integer
   - Room Blocks
     - Levels are divided into rooms
     - these blocks can be seen as the root, with all other components being children of a Room
     - Only when a Player is in the Rooms Area, the child blocks will tick
-    - Holds Flags that can either be True or False
-    - Resets all Flags and Child Blocks when empty of Players for a certain duration or the last player in the room dies and respawns at a Child Checkpoint Block
+    - Resets all **local** Flags and Child Blocks when empty of Players for a certain duration or the last player in the room dies and respawns at a Child Checkpoint Block
+    - Can be set to suppress Block breaking//placing within its area (actually, that's enabled by default)
   - Trigger Blocks
-    - Their Area detects Entities and sets a bound flag to true or false depending on if something of the right type is in them
+    - Their Area detects Entities and sets a bound **local** Flag to true or false depending on if something of the right type is in them
     - There are Normal//Player Triggers and Enemy Triggers
     - Triggers can be set to not deactivate automatically, making them activate only once until the room resets
-    - Triggers can be set to have an activation period, requiring something to stay in the trigger for a certain amount of time to actually set the bound flag; same for deactivating
+    - Triggers can be set to have an activation period, requiring something to stay in the trigger for a certain amount of time to actually set the bound **local** Flag; same for deactivating
     - Progression Triggers grant a progression entry and optionally give an item as well once entered by a player; if the progression entry is already unlocked//obtained, it won't give an item
-    - Redstone Receivers set a flag when their redstone power state changes
+    - Redstone Receivers set a **local** Flag when their redstone power state changes
     - Timer Triggers start or stop a Players Timer; only works inside Levels
     - Force Travel Triggers open the Travel Screen for a Player that enters it; the close button is removed though, forcing them to travel
+    - Title Triggers display a title for Players that move into it
+    - Damage Triggers damage entities that enter them for a given amount using a given damage type
+    - Cybergrind Triggers trigger a Cybergrind once the bound **local** flag is enabled; It sets a separate **local** Flag upon finishing the Cybergrind (if it is won)
+    - Global Redstone Receivers set a **global** Flag (stored in world) to one of two values, depending on whether it is powered by redstone or not
   - Listener Blocks
-    - Listen for the state of the bound Flag being changed and performs an action based on its type
-    - All Listeners can have a set delay for their action; if the bound flag is deactivated again before the activation cooldown is run out, it'll be cancelled
+    - Listen for the state of the bound **local** Flag being changed and performs an action based on its type
+    - All Listeners can have a set delay for their action; if the bound **local** flag is deactivated again before the activation cooldown is run out, it'll be cancelled
     - Door Listeners fill their area with a chosen Block Type when activated; Same for deactivating. When the door closes, it will only fill blocks of the "open" block-type in it's area, opening works the opposite way; this means doorframes and stuff stay unaffected as long as they're not of either of the door block's block types
     - Spawn Listeners spawn a chosen mob when activated and if it's still alive when deactivated, despawns it again
     - Redstone Listeners give off a redstone Signal of a chosen duration when activated
     - Explosion Listeners perform an explosion of chosen radius and damage when activated. These do not Break blocks, but could be used in conjunction with a Door Block to get the same effect
     - Sound Listeners play a sound when activated
-    - Level Unlock Listeners unlock a Level globally
+    - Level Unlock Listeners unlock a Level globally (for the entire Server)
+    - Global Redstone Listeners listen for a **global** Flag (stored in world); otherwise the same as normal Redstone Listeners
+    - Global Title Listeners display a title for every Player in that world when a **global** Flag is set to a specific value
   - Checkpoints
     - Checkpoints tick regardless of if the room is ative; placing their Block and Area outside the Rooms is recommended to make room resets work properly
     - Checkpoints set the Spawnpoint of a player that enters its area to the position of the Block itself.
     - If a player dies and respawns at a Checkpoint, the parent Room will check if it's empty of Players; if it is, it'll force reset
     - The Spawnpoint Text will be oriented depending on which side of the area is longer
-  - More Additions//Improvements to edit mode are already planned for the future; those will take longer to make than I'm willing to further delay this update though.
+  - More Additions//Improvements to edit mode are already planned for the future; those will take longer to make than I'm willing to further delay this update though
 - Made Flesh Blocks break faster using Hoes
 - Shotgun Pellets are now Parriable
 - Added Large Animated Titles
