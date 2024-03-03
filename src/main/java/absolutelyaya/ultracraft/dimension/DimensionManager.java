@@ -18,6 +18,8 @@ public abstract class DimensionManager
 	
 	protected ActionResult onBlockInteract(PlayerEntity player, World world, Hand hand, BlockHitResult hit)
 	{
+		if(!player.isSneaking() && world.getBlockState(hit.getBlockPos()).onUse(world, player, hand, hit).isAccepted())
+			return ActionResult.SUCCESS;
 		if(isPosNotModifiable(player, hit.getBlockPos().add(hit.getSide().getVector())))
 		{
 			player.sendMessage(getModifyFailText(), true);

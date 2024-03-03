@@ -27,17 +27,18 @@ public class SlabBlock extends Block implements IPunchableBlock
 	public static final BooleanProperty ACTIVE = BooleanProperty.of("active");
 	public static final IntProperty POWERED = IntProperty.of("powered", 0, 15);
 	public static final IntProperty NUMBER = IntProperty.of("number", 1, 10);
+	public static final BooleanProperty LOCKED = BooleanProperty.of("locked");
 	
 	public SlabBlock(Settings settings)
 	{
 		super(settings);
-		setDefaultState(getDefaultState().with(ACTIVE, false).with(POWERED, 0).with(NUMBER, 1));
+		setDefaultState(getDefaultState().with(ACTIVE, false).with(POWERED, 0).with(NUMBER, 1).with(LOCKED, false));
 	}
 	
 	@Override
 	protected void appendProperties(StateManager.Builder<Block, BlockState> builder)
 	{
-		builder.add(ACTIVE).add(POWERED).add(NUMBER);
+		builder.add(ACTIVE).add(POWERED).add(NUMBER).add(LOCKED);
 	}
 	
 	@Override
@@ -65,6 +66,8 @@ public class SlabBlock extends Block implements IPunchableBlock
 	@Override
 	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit)
 	{
+		if(state.get(LOCKED))
+			return ActionResult.FAIL;
 		if (hit == null || !(player.getStackInHand(hand).isOf(Items.DEBUG_STICK) || player.isSneaking()))
 		{
 			world.setBlockState(pos, state.cycle(ACTIVE));
