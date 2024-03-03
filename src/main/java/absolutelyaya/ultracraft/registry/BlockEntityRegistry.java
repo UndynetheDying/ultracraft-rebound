@@ -32,6 +32,7 @@ public class BlockEntityRegistry
 	public static final BlockEntityType<CheckpointBlockEntity> MAP_CHECKPOINT;
 	public static final BlockEntityType<ProgressionTriggerBlockEntity> MAP_PROGRESSION;
 	public static final BlockEntityType<TitleTriggerBlockEntity> MAP_TITLE;
+	public static final BlockEntityType<GlobalTitleListenerBlockEntity> MAP_GLOBAL_TITLE;
 	public static final BlockEntityType<TimerBlockEntity> MAP_TIMER;
 	public static final BlockEntityType<LevelUnlockBlockEntity> MAP_LEVEL;
 	public static final BlockEntityType<ForceTravelBlockEntity> MAP_TRAVEL;
@@ -104,6 +105,9 @@ public class BlockEntityRegistry
 		MAP_TITLE = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				new Identifier(Ultracraft.MOD_ID, "map_title"),
 				FabricBlockEntityTypeBuilder.create(TitleTriggerBlockEntity::new, BlockRegistry.MAP_TITLE).build());
+		MAP_GLOBAL_TITLE = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Ultracraft.MOD_ID, "map_global_title"),
+				FabricBlockEntityTypeBuilder.create(GlobalTitleListenerBlockEntity::new, BlockRegistry.MAP_GLOBAL_TITLE).build());
 		MAP_TIMER = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				new Identifier(Ultracraft.MOD_ID, "map_timer"),
 				FabricBlockEntityTypeBuilder.create(TimerBlockEntity::new, BlockRegistry.MAP_TIMER).build());

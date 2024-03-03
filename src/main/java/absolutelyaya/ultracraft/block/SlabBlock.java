@@ -3,7 +3,6 @@ package absolutelyaya.ultracraft.block;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.IceBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -13,6 +12,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.IntProperty;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -67,12 +67,15 @@ public class SlabBlock extends Block implements IPunchableBlock
 	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit)
 	{
 		if(state.get(LOCKED))
+		{
+			player.sendMessage(Text.translatable("message.slab_press.decorative"), true);
 			return ActionResult.FAIL;
+		}
 		if (hit == null || !(player.getStackInHand(hand).isOf(Items.DEBUG_STICK) || player.isSneaking()))
 		{
 			world.setBlockState(pos, state.cycle(ACTIVE));
 			world.playSound(null, pos, state.get(ACTIVE) ? SoundRegistry.SLAB_DEACTIVATE : SoundRegistry.SLAB_ACTIVATE, SoundCategory.BLOCKS);
-			world.updateNeighbor(pos, IceBlock.getMeltedState().getBlock(), pos);
+			world.updateNeighbor(pos, this, pos);
 			return ActionResult.SUCCESS;
 		}
 		return ActionResult.FAIL;
@@ -94,9 +97,9 @@ public class SlabBlock extends Block implements IPunchableBlock
 					state = state.with(NUMBER, Math.min(strength, 10));
 			}
 			state = state.with(POWERED, strength);
+			world.setBlockState(pos, state, Block.NOTIFY_LISTENERS);
+			world.updateNeighbors(pos, this);
 		}
-		world.setBlockState(pos, state, Block.NOTIFY_LISTENERS);
-		world.updateNeighbors(pos, this);
 	}
 	
 	@Override

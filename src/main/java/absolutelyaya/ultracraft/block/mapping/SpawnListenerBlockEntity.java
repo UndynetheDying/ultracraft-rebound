@@ -59,7 +59,7 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 				case "ultracraft:dummy" -> entities.add(FilthEntity.spawnWithoutAI(world, pos.toCenterPos().subtract(0f, 0.5f, 0f)));
 				case "ultracraft:regular_swordsmachine" -> entities.add(SwordsmachineEntity.spawnAsNonBoss(world, pos.toCenterPos()));
 				case "ultracraft:destiny_swordsmachine" -> entities.addAll(DestinyBondSwordsmachineEntity.spawn(world, pos.toCenterPos(), yaw));
-				case "ultracraft:big_rodent" -> entities.add(RodentEntity.spawn(world, pos.toCenterPos(), 1));
+				case "ultracraft:very_rodent" -> entities.add(RodentEntity.spawn(world, pos.toCenterPos(), 1));
 				case "ultracraft:hidden_mass" -> entities.add(HideousMassEntity.spawn(world, pos.toCenterPos(), true));
 				case "ultracraft:regular_mass" -> entities.add(HideousMassEntity.spawnAsNonBoss(world, pos.toCenterPos()));
 				case "ultracraft:malicious_boss" -> entities.add(MaliciousFaceEntity.spawnAsBoss(world, pos.toCenterPos()));

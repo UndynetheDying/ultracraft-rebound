@@ -78,7 +78,7 @@ public abstract class WorldMixin
 			}
 			if(room.isSuppressModifications() && room.getAreaBox().contains(pos.toCenterPos()))
 			{
-				player.sendMessage(Text.translatable("limbo.structure.modify-fail"), true);
+				player.sendMessage(Text.translatable("message.limbo.structure.modify-fail"), true);
 				return false;
 			}
 		}

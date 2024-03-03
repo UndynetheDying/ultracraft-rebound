@@ -81,7 +81,7 @@ public class LimboManager extends DimensionManager
 	@Override
 	Text getModifyFailText()
 	{
-		return Text.translatable("limbo.structure.modify-fail");
+		return Text.translatable("message.limbo.structure.modify-fail");
 	}
 	
 	void prePlaceStructures()

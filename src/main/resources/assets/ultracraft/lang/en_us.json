@@ -161,6 +161,7 @@
   "block.ultracraft.map_damage": "Map Damage Trigger",
   "block.ultracraft.map_global_redstone": "Map Global Redstone Listener",
   "block.ultracraft.map_global_receiver": "Map Global Redstone Receiver",
+  "block.ultracraft.map_global_title": "Map Global Title Listener",
   "block.ultracraft.sheetmetal": "Sheet Metal Block",
   "block.ultracraft.sheetmetal_sheet": "Sheet Metal Sheet Block",
   "block.ultracraft.sheetmetal_sheet_slab": "Sheet Metal Sheet Slab",
@@ -482,6 +483,10 @@
   "message.ultracraft.cybergrind.wave-complete": "Wave %s completed!",
   "message.ultracraft.cybergrind.end": "The Cybergrind has ended.",
   "message.ultracraft.cybergrind.end-win": "The Cybergrind was won and the Terminals are Satisfied.",
+  "message.slab_press.decorative": "It won't budge...",
+  "message.limbo.slab-press": "At the Center of Limbo, a Mechanism stirs",
+  "message.limbo.slab-open": "And finally, a Door opens",
+  "message.limbo.structure.modify-fail": "Something prevents you from modifying this Structure",
 
   "intro.ultracraft.calibration": "BOOT UP SEQUENCE READY\n\nFIRMWARE\n  §aVERSION %s§r\n\nCALIBRATION\n  §4EXPIRED§r\n  §4NEW CALIBRATION REQUIRED§r\n\n",
   "intro.ultracraft.input": "Press any Key",
@@ -752,12 +757,6 @@
   "title.tutorial.glass": "Charged Shots and Explosions can break fragile Blocks",
   "title.tutorial.parry": "You can parry Projectiles by punching them with your Feedbacker Arm",
   "title.yaya-blocking": "Oh, am I in the way? Sorry about that",
-
-  "limbo.slab_press.fail.spawn": "This must be activated from elsewhere",
-  "limbo.slab_press.fail.active": "Your Actions cannot be undone",
-  "limbo.slab_press.success": "At the Center of Limbo, a mechanism stirs",
-  "limbo.slab-open": "And finally, a Door opens",
-  "limbo.structure.modify-fail": "Something prevents you from modifying this Structure",
 
   "text.autoconfig.ultracraft.category.default": "Ultracraft",
   "text.autoconfig.ultracraft.category.ultra-hud": "UltraHUD",

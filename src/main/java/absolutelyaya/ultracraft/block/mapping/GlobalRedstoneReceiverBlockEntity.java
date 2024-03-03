@@ -105,6 +105,8 @@ public class GlobalRedstoneReceiverBlockEntity extends AbstractMappingBlockEntit
 	public void bindFlag(String flag)
 	{
 		this.flag = flag;
+		markDirty();
+		world.updateListeners(pos, getCachedState(), getCachedState(), 0);
 	}
 	
 	@Override
