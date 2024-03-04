@@ -256,24 +256,36 @@ public class Ultracraft implements ModInitializer
         if(supporterCache.containsKey(uuid) && (i = supporterCache.get(uuid)) != 0)
             return i == -1;
         boolean supporter = false;
+        JsonObject json = fetchSupporterList();
+        if(json == null)
+        {
+            Ultracraft.LOGGER.error("[ULTRACRAFT] Failed to fetch Supporters.");
+            supporterCache.put(uuid, 600);
+            return supporter;
+        }
+        supporter = JsonHelper.hasElement(json, uuid.toString());
+        if(supporter && client)
+        {
+            Ultracraft.LOGGER.info("[ULTRACRAFT] " + uuid + " has been verified as a Supporter!");
+            supporterCache.put(uuid, -1);
+        }
+        else
+            supporterCache.put(uuid, 600); //if not a supporter, only check again after 30 seconds
+        return supporter;
+    }
+    
+    public static JsonObject fetchSupporterList()
+    {
         try
         {
             URL url = new URL(SUPPORTER_LIST);
-            JsonObject json = JsonHelper.deserialize(new InputStreamReader(url.openStream()));
-            supporter = JsonHelper.hasElement(json, uuid.toString());
-            if(supporter && client)
-            {
-                Ultracraft.LOGGER.info("[ULTRACRAFT] " + uuid + " has been verified as a Supporter!");
-                supporterCache.put(uuid, -1);
-            }
-            else
-                supporterCache.put(uuid, 600); //if not a supporter, only check again after 30 seconds
+            return JsonHelper.deserialize(new InputStreamReader(url.openStream()));
         }
         catch (IOException e)
         {
             Ultracraft.LOGGER.error("[ULTRACRAFT] Failed to fetch Supporters.", e);
         }
-        return supporter;
+        return null;
     }
     
     public static void screenshake(PlayerEntity player, float strength)

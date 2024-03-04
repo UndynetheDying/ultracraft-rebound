@@ -3,6 +3,7 @@ package absolutelyaya.ultracraft.mixin.client.gui;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.ClientConfig;
 import absolutelyaya.ultracraft.client.UltracraftClient;
+import absolutelyaya.ultracraft.client.gui.screen.CreditsScreen;
 import absolutelyaya.ultracraft.client.gui.screen.IntroScreen;
 import absolutelyaya.ultracraft.client.gui.widget.TitleBGButton;
 import absolutelyaya.ultracraft.client.rendering.TitleBGRenderer;
@@ -15,6 +16,7 @@ import net.minecraft.client.gui.RotatingCubeMapRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SplashTextRenderer;
 import net.minecraft.client.gui.screen.TitleScreen;
+import net.minecraft.client.gui.widget.PressableTextWidget;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.SoundManager;
@@ -106,6 +108,9 @@ public abstract class TitleScreenMixin extends Screen
             case "ultracraft" -> ultracraft.onPress();
             default -> vanilla.onPress();
         }
+        Text t = Text.translatable("screen.ultracraft.credits.title");
+        addDrawableChild(new PressableTextWidget(2, height - 33, textRenderer.getWidth(t), 10, t,
+                button -> client.setScreen(new CreditsScreen(this)), textRenderer));
     }
     
     @Inject(method = "render", at = @At("TAIL"))

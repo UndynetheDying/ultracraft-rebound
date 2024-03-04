@@ -120,6 +120,7 @@
 - Charged shots no longer split from coins
 - Hitscans now actually get reflected off of Hideous Mass' Shielded Parts
 - Added a fuck ton of Prelude Blocks
+- Added Credits Screen
 ## Settings & Config
 - Removed almost all gamerules (only remaining is `ultra-startWithPiercer`)
 - Added Option to disable Screenshake
