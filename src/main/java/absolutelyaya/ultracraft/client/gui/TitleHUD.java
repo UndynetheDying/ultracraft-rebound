@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.client.gui;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -64,6 +65,7 @@ public class TitleHUD
 			matrices.push();
 			matrices.translate(width / 2f, height / 5f, 10);
 			matrices.scale(3f, 3f, 3f);
+			RenderSystem.enableBlend();
 			context.drawCenteredTextWithShadow(renderer, curText, 0, 0, 0xffffff);
 			matrices.pop();
 		}
@@ -80,7 +82,7 @@ public class TitleHUD
 					widestLine = w;
 			}
 			matrices.push();
-			matrices.translate(0, height / 5f * 4f, 10);
+			matrices.translate(0, height / 5f * 4f, -10);
 			matrices.push();
 			matrices.translate(width / 2f - widestLine / 2f, 0, 0);
 			context.fill(-2, -2, widestLine + 1, renderer.getWrappedLinesHeight(boxText, maxWidth), 0x88000000);

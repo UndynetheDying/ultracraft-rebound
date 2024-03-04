@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.mixin.client.gui;
 
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
+import absolutelyaya.ultracraft.client.gui.TitleHUD;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -21,5 +22,11 @@ public class IngameHudMixin
 	{
 		if(client.player instanceof WingedPlayerEntity winged && winged.getFocusedTerminal() != null)
 			ci.cancel();
+	}
+	
+	@Inject(method="render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ChatHud;render(Lnet/minecraft/client/gui/DrawContext;III)V", shift = At.Shift.BEFORE))
+	void beforeRenderChat(DrawContext context, float tickDelta, CallbackInfo ci)
+	{
+		TitleHUD.Instance.render(context, tickDelta);
 	}
 }
