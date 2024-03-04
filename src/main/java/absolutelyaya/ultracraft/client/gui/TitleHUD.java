@@ -62,7 +62,7 @@ public class TitleHUD
 		if(curText.length() > 0)
 		{
 			matrices.push();
-			matrices.translate(width / 2f, height / 5f, 0);
+			matrices.translate(width / 2f, height / 5f, 10);
 			matrices.scale(3f, 3f, 3f);
 			context.drawCenteredTextWithShadow(renderer, curText, 0, 0, 0xffffff);
 			matrices.pop();
@@ -80,7 +80,7 @@ public class TitleHUD
 					widestLine = w;
 			}
 			matrices.push();
-			matrices.translate(0, height / 5f * 4f, 0);
+			matrices.translate(0, height / 5f * 4f, 10);
 			matrices.push();
 			matrices.translate(width / 2f - widestLine / 2f, 0, 0);
 			context.fill(-2, -2, widestLine + 1, renderer.getWrappedLinesHeight(boxText, maxWidth), 0x88000000);

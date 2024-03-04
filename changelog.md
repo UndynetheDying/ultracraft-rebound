@@ -11,9 +11,15 @@
     - Cybergrind can be configured using a config file
     - "Why no random mob spawning??" trust me, it's *really* not fun.
 - Shotgun and Nailgun Recipes are no longer unlocked per default (see point below)
+- Added Cybergrind
+  - Wave-Based survival mini-game; face off against hordes of enemies
+  - Endless Cybergrind along with its own dimension and a morphing arena is planned to be added in the future as well
 - Added Playable Levels
   - These Levels are only themed around the different Layers; they're by no means recreations of the Original Levels
   - Throughout the Levels, Players are taught the new mechanics, enemies and will unlock new Weapons 
+  - Personal best times are tracked and each level has a par time; beating it under that time doesn't do anything, but you'd be cool
+  - If you complete a Level in less than the par time without dying once, you can submit your best time in the ultracraft Discords P-Rank Forum channel! (Each level has its own post in which you'd comment your best times;)
+  - Using a datapack, you can make and add Custom Levels of your own! If you publish one, we'd love to put it in the ultracraft Discord to make it easy to discover for other Players
 - Added Overheat Nailgun
   - Primary fire of all Nailgun variants now builds up "heat"
   - The higher the heat, the slower the fire rate (this one only applies to the Overheat Nailgun)

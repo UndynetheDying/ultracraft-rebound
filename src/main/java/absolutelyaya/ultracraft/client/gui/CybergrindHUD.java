@@ -68,12 +68,12 @@ public class CybergrindHUD
 		MatrixStack matrices = context.getMatrices();
 		matrices.push();
 		matrices.translate(2, 2, 0);
-		context.drawText(tRenderer, Text.of("wave: " + data.getCurrentWave() + "/" + data.getWaves()), 0, 0, 0xffffffff, true);
+		context.drawText(tRenderer, Text.translatable("screen.ultracraft.cybergrind.waves", data.getCurrentWave(), data.getWaves()), 0, 0, 0xffffffff, true);
 		matrices.translate(0, tRenderer.fontHeight, 0);
 		int enemies = lastEnemies;
 		if(enemies != data.getEnemies())
 			enemies += lastEnemies < data.getEnemies() ? 1 : -1;
-		context.drawText(tRenderer, Text.of("enemies: " + enemies), 0, 0, 0xffffffff, true);
+		context.drawText(tRenderer, Text.translatable("screen.ultracraft.cybergrind.enemies", enemies), 0, 0, 0xffffffff, true);
 		lastEnemies = enemies;
 		matrices.pop();
 	}

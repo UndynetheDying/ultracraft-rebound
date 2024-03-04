@@ -480,7 +480,8 @@
   "message.ultracraft.cybergrind.announce-pos": "§4A Cybergrind will start at [%1$s, %2$s, %3$s§4] soon...",
   "message.ultracraft.cybergrind.announce-cancel": "§7Disappointed at the sudden lack of Participants, the Terminals accept that the Festivities are cancelled.",
   "message.ultracraft.cybergrind.chosen": "§6%s§r was chosen as todays Entertainment!",
-  "message.ultracraft.cybergrind.wave-complete": "Wave %s completed!",
+  "message.ultracraft.cybergrind.wave-start": "Starting Round %s...",
+  "message.ultracraft.cybergrind.wave-complete": "Round %s completed!",
   "message.ultracraft.cybergrind.end": "The Cybergrind has ended.",
   "message.ultracraft.cybergrind.end-win": "The Cybergrind was won and the Terminals are Satisfied.",
   "message.ultracraft.cybergrind.cancel": "The Cybergrind was canceled.",
@@ -587,6 +588,8 @@
   "screen.ultracraft.timer.perfect": " [§6P§r]",
   "screen.ultracraft.timer.imperfect": " [§4S§r]",
   "screen.ultracraft.timer.best": " New Record!",
+  "screen.ultracraft.cybergrind.waves": "wave: %1$s/%2$s",
+  "screen.ultracraft.cybergrind.enemies": "enemies: %s",
 
   "level.ultracraft.error.title": "Invalid ID",
   "level.ultracraft.error.description": "The ID for this buttons level wasn't found. This shouldn't really ever happen.",

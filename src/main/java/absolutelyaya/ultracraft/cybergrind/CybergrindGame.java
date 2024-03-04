@@ -85,6 +85,14 @@ public class CybergrindGame
 		this(server, config, rand, null, -1);
 	}
 	
+	void addAllPlayersInBounds()
+	{
+		Vector4i bounds = getArenaBounds();
+		for (ServerPlayerEntity player : world.getPlayers())
+			if(!participants.contains(player) && player.getX() > bounds.x && player.getX() < bounds.z && player.getZ() > bounds.y && player.getZ() < bounds.w)
+				addParticipant(player);
+	}
+	
 	void addParticipant(PlayerEntity player)
 	{
 		if(participants.contains(player))
@@ -173,21 +181,16 @@ public class CybergrindGame
 				enemies.forEach(e -> e.setGlowing(true));
 		}
 		if(duration % 20 == 0) //add players within arena bounds to the participant list
-		{
-			Vector4i bounds = getArenaBounds();
-			for (ServerPlayerEntity player : world.getPlayers())
-				if(!participants.contains(player) && player.getX() > bounds.x && player.getX() < bounds.z && player.getZ() > bounds.y && player.getZ() < bounds.w)
-					addParticipant(player);
-		}
+			addAllPlayersInBounds();
 		if(shouldSync())
 			syncCybergrind();
 	}
 	
 	void init()
 	{
-		ServerPlayerEntity winner = initStartingPlayer();
-		this.world = winner.getServerWorld();
-		this.owner = winner;
+		ServerPlayerEntity owner = initStartingPlayer();
+		this.world = owner.getServerWorld();
+		this.owner = owner;
 		Layer curLayer = Layer.fromRegistryKey(world.getRegistryKey());
 		for (Map.Entry<EntityType<? extends HostileEntity>, IntegerEntry> entry : config.getCosts(curLayer).entrySet())
 			spawnCosts.put(entry.getKey(), entry.getValue().getValue());
@@ -199,6 +202,8 @@ public class CybergrindGame
 				waves += rand.nextBetween(config.wavesPerDifficultyLow.getValue(), config.wavesPerDifficultyHigh.getValue());
 		}
 		initialized = true;
+		addAllPlayersInBounds();
+		delay = 60;
 		if(!skipTargetAnnounce)
 			announceTarget();
 	}
@@ -261,8 +266,14 @@ public class CybergrindGame
 			end();
 			return;
 		}
-		participants.forEach(Ultracraft::rechargeWeapons);
+		participants.forEach(p -> {
+			p.sendMessage(Text.translatable("message.ultracraft.cybergrind.wave-start", currentWave)
+								  .setStyle(Style.EMPTY.withColor(Formatting.GOLD)));
+			Ultracraft.rechargeWeapons(p);
+			p.setHealth(p.getMaxHealth());
+		});
 		verboseLog("starting wave " + currentWave);
+		delay = 20;
 		calculateBudget();
 	}
 	
