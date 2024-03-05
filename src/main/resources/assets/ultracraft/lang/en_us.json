@@ -182,6 +182,7 @@
   "block.ultracraft.concrete_tile": "Industrial Concrete Tile",
   "block.ultracraft.concrete_tile_slab": "Industrial Concrete Tile Slab",
   "block.ultracraft.concrete_tile_stairs": "Industrial Concrete Tile Stairs",
+  "block.ultracraft.portal": "Elevator Panel",
 
   "entity.ultracraft.filth": "Filth",
   "entity.ultracraft.stray": "Stray",
@@ -598,7 +599,7 @@
   "screen.ultracraft.credits.test": "Playtesters // QA:",
   "screen.ultracraft.credits.localization": "Localization:",
   "screen.ultracraft.credits.localization.lolcat": "LOLCAT",
-  "screen.ultracraft.credits.supporter-info": "If you're a Supporter of Absolutelyaya on Ko-fi, but are missing from the list, or would like to be hidden, please contact them so they can add you to the list // hide you. (<- this is done manually)\nBoth Past and Present Supporters may be listed here; I greatly appreciate all of you <3",
+  "screen.ultracraft.credits.supporter-info": "If you're a Supporter (<- certified cool person) of Absolutelyaya on Ko-fi, but are missing from the list, or would like to be hidden, please contact me (<- yaya) so I can add you to the list // hide you. (<- this is done manually)\nBoth Past and Present Supporters may be listed here; I greatly appreciate all of you <3",
 
   "level.ultracraft.error.title": "Invalid ID",
   "level.ultracraft.error.description": "The ID for this buttons level wasn't found. This shouldn't really ever happen.",
