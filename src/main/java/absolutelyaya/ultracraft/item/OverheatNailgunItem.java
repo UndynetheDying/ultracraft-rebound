@@ -92,7 +92,7 @@ public class OverheatNailgunItem extends AbstractNailgunItem
 	{
 		ItemStack stack = user.getStackInHand(hand);
 		int sinks = getNbt(stack, "heatsinks");
-		if(sinks <= 0 || getNbt(stack, "heatsinking") == 1 && getNbt(stack, "heat") > 0)
+		if(sinks <= 0 || getNbt(stack, "heatsinking") == 1 || getNbt(stack, "heat") <= 0)
 			return TypedActionResult.fail(stack);
 		setNbt(stack, "heatsinking", 1);
 		setNbt(stack, "heatsinks", sinks - 1);
