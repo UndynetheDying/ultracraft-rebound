@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.dimension;
 
 import absolutelyaya.ultracraft.components.UltraComponents;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
@@ -20,7 +21,7 @@ public abstract class DimensionManager
 	{
 		if(!player.isSneaking() && world.getBlockState(hit.getBlockPos()).onUse(world, player, hand, hit).isAccepted())
 			return ActionResult.SUCCESS;
-		if(isPosNotModifiable(player, hit.getBlockPos().add(hit.getSide().getVector())))
+		if(player.getStackInHand(hand).getItem() instanceof BlockItem && isPosNotModifiable(player, hit.getBlockPos().add(hit.getSide().getVector())))
 		{
 			player.sendMessage(getModifyFailText(), true);
 			return ActionResult.FAIL;
