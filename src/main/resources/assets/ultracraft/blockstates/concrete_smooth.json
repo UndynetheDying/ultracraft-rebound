@@ -1,7 +1,24 @@
 {
   "variants": {
-    "": {
-      "model": "ultracraft:block/concrete_smooth"
-    }
+    "": [
+      {
+        "weight": 20,
+        "model": "ultracraft:block/concrete_smooth"
+      },
+      {
+        "weight": 20,
+        "model": "ultracraft:block/concrete_smooth",
+        "y": 180
+      },
+      {
+        "weight": 1,
+        "model": "ultracraft:block/concrete_smooth_crack"
+      },
+      {
+        "weight": 1,
+        "model": "ultracraft:block/concrete_smooth_crack",
+        "y": 180
+      }
+    ]
   }
 }
