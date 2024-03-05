@@ -211,6 +211,6 @@
 - Shotgun Animations now have a few sound keyframes
 - Hideous Mass Mortar and Emerge Animations now have a few sound keyframes
 - The `discharge` animation on Revolvers now also animates the Hammer of Alt Revolvers
-- Added LOLCAT localization provided by doggochleb (doesn't contain new 2.1.0 lines)
+- Added LOLCAT localization provided by Doggochleb (doesn't contain new 2.1.0 lines)
   - Community translations//localizations are always welcome! (I won't give out unreleased versions language file tho; updated localizations will have to follow in minor patches)
 ## API Changes

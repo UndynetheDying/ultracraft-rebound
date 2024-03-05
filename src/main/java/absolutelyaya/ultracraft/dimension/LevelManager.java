@@ -10,7 +10,9 @@ import absolutelyaya.ultracraft.registry.BlockRegistry;
 import net.fabricmc.fabric.api.dimension.v1.FabricDimensions;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKey;
@@ -51,13 +53,7 @@ public class LevelManager extends DimensionManager
 	public LevelManager()
 	{
 		Instance = this;
-	}
-	
-	public void onReload()
-	{
-		if(world != null)
-			destroyAllInstances();
-		nextLevelBaseX = 0;
+		new LevelDataManager();
 	}
 	
 	public void init(ServerWorld world)
@@ -138,13 +134,14 @@ public class LevelManager extends DimensionManager
 					i.place(world, pos, new BlockPos(0, 0, 0), new StructurePlacementData(), world.getRandom(), 2);
 					BlockBox box = i.calculateBoundingBox(pos, BlockRotation.NONE, new BlockPos(0, 0, 0), BlockMirror.NONE);
 					Iterable<BlockPos> blocks = BlockPos.iterate(pos, pos.add(box.getBlockCountX(), box.getBlockCountY(), box.getBlockCountZ()));
-					blocks.forEach(block -> {
-						if(world.getBlockEntity(block) instanceof AbstractMappingBlockEntity mapBlock)
+					blocks.forEach(p -> {
+						BlockEntity block = world.getBlockEntity(p);
+						if(block instanceof AbstractMappingBlockEntity mapBlock)
 							mapBlock.reset();
 					});
 					List<Entity> list = world.getOtherEntities(null, new Box(box.getMinX(), box.getMinY(), box.getMinZ(), box.getMaxX(), box.getMaxY(), box.getMaxZ()));
 					list.forEach(e -> {
-						if(!(e instanceof PlayerEntity))
+						if(!(e instanceof PlayerEntity || e instanceof DisplayEntity))
 							e.remove(Entity.RemovalReason.DISCARDED);
 					});
 					LevelInstancePool pool = instances.computeIfAbsent(levelId, k -> {

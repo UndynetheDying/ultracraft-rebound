@@ -47,7 +47,7 @@ public class CreditsScreen extends Screen
 		contributors.add(new ContributorElement("sound", "8BitBunny"));
 		contributors.add(new ContributorElement("test", "Talon_MC", "AshenWulf", "Athanes"));
 		HashMap<String, List<String>> localizerMap = new HashMap<>();
-		localizerMap.put("LOLCAT", new ArrayList<>() { { add("doggochleb"); } });
+		localizerMap.put("LOLCAT", new ArrayList<>() { { add("Doggochleb"); } });
 		localizers = new LocalizerElement(localizerMap);
 		//init Supporter list and keep it; no need to fetch the list every time the screen is opened
 		if(!initializedSupporters)
