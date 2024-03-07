@@ -151,6 +151,7 @@
 - Increased Blood Heal Radius (2 -> 4 Blocks)
 - Decreased Nail Blood Heal Amount (x0.25)
 - Increased Mauricing Radius (+0.5)
+- Slightly Buffed Malicious Face Speed (0.4 -> 0.5)
 ## Minor Changes
 - Fixed water skimming not playing sounds
 - Removed the "vents" MOTD from the non-essential resources

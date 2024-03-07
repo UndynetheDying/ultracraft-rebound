@@ -37,6 +37,7 @@ import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.DamageTypeTags;
@@ -76,7 +77,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	{
 		return HostileEntity.createMobAttributes()
 					   .add(EntityAttributes.GENERIC_MAX_HEALTH, 50.0d)
-					   .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.4d)
+					   .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.5d)
 					   .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 0.0d)
 					   .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 64)
 					   .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 1.0);
@@ -197,17 +198,18 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		nbt.putBoolean("cracked", dataTracker.get(CRACKED));
 		nbt.putBoolean("dead", dataTracker.get(DEAD));
 		nbt.putBoolean("decorative", dataTracker.get(DECORATIVE));
+		nbt.putBoolean("landed", dataTracker.get(LANDED));
 	}
 	
 	@Override
 	public void readNbt(NbtCompound nbt)
 	{
 		super.readNbt(nbt);
-		if(nbt.contains("cracked"))
+		if(nbt.contains("cracked", NbtElement.BYTE_TYPE))
 			dataTracker.set(CRACKED, nbt.getBoolean("cracked"));
-		if(nbt.contains("dead"))
+		if(nbt.contains("dead", NbtElement.BYTE_TYPE))
 			dataTracker.set(DEAD, nbt.getBoolean("dead"));
-		if(nbt.contains("decorative"))
+		if(nbt.contains("decorative", NbtElement.BYTE_TYPE))
 		{
 			boolean b = nbt.getBoolean("decorative");
 			dataTracker.set(DECORATIVE, b);
@@ -217,6 +219,14 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 				setInvulnerable(true);
 			}
 		}
+		if(nbt.contains("landed", NbtElement.BYTE_TYPE))
+			dataTracker.set(LANDED, nbt.getBoolean("landed"));
+	}
+	
+	@Override
+	public boolean cannotDespawn()
+	{
+		return super.cannotDespawn() || dataTracker.get(DECORATIVE);
 	}
 	
 	@Override
