@@ -12,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -141,7 +142,7 @@ public class LevelManager extends DimensionManager
 					});
 					List<Entity> list = world.getOtherEntities(null, new Box(box.getMinX(), box.getMinY(), box.getMinZ(), box.getMaxX(), box.getMaxY(), box.getMaxZ()));
 					list.forEach(e -> {
-						if(!(e instanceof PlayerEntity || e instanceof DisplayEntity))
+						if(!(e instanceof PlayerEntity || e instanceof DisplayEntity || e instanceof AbstractDecorationEntity))
 							e.remove(Entity.RemovalReason.DISCARDED);
 					});
 					LevelInstancePool pool = instances.computeIfAbsent(levelId, k -> {

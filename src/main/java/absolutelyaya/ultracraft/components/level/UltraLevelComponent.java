@@ -15,6 +15,7 @@ import java.util.*;
 
 public class UltraLevelComponent implements IUltraLevelComponent
 {
+	final static List<Identifier> DEFAULT_DESTINATIONS = new ArrayList<>();
 	final WorldProperties provider;
 	
 	boolean hivelWhitelistActive, graffitiWhitelistActive;
@@ -169,6 +170,8 @@ public class UltraLevelComponent implements IUltraLevelComponent
 			NbtList list = progression.getList("destinations", NbtElement.STRING_TYPE);
 			list.forEach(i -> unlockedDestinations.add(Identifier.tryParse(i.asString())));
 		}
+		else
+			unlockedDestinations.addAll(DEFAULT_DESTINATIONS);
 	}
 	
 	@Override
@@ -199,5 +202,11 @@ public class UltraLevelComponent implements IUltraLevelComponent
 		
 		tag.put("whitelists", whitelists);
 		tag.put("progression", progression);
+	}
+	
+	static {
+		DEFAULT_DESTINATIONS.add(new Identifier(Ultracraft.MOD_ID, "dimension.overworld"));
+		DEFAULT_DESTINATIONS.add(new Identifier(Ultracraft.MOD_ID, "prelude1"));
+		DEFAULT_DESTINATIONS.add(new Identifier(Ultracraft.MOD_ID, "tutorial"));
 	}
 }

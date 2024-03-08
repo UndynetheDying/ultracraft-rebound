@@ -1,10 +1,10 @@
 {
   "builtin": true,
   "title": "level.ultracraft.1-2",
-  "par-time": "4:20:69",
+  "par-time": "3:00:00",
   "author": "yaya",
-  "structure": "ultracraft:limbo/ruin1",
-  "thumbnail": "ultracraft:textures/level/placeholder.png",
+  "structure": "ultracraft:level/limbo2",
+  "thumbnail": "ultracraft:textures/level/1_2.png",
   "spawn-offset":{
     "x": 3,
     "y": 40,
