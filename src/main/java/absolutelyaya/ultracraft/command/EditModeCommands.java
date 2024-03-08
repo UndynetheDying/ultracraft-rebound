@@ -45,9 +45,9 @@ public class EditModeCommands
 									.then(literal("area").then(key().executes(EditModeCommands::editArea)))
 									.then(literal("flag")
 												  .then(literal("add").then(argument("id", string()).executes(EditModeCommands::addFlag)))
-												  .then(literal("remove").then(flag().executes(EditModeCommands::removeFlag)))
-												  .then(literal("set").then(flag().then(argument("state", bool()).executes(EditModeCommands::setFlag))))
-												  .then(literal("bind").then(key().then(flag().executes(EditModeCommands::bindFlag)))))
+												  .then(literal("remove").then(flag(false).executes(EditModeCommands::removeFlag)))
+												  .then(literal("set").then(flag(false).then(argument("state", bool()).executes(EditModeCommands::setFlag))))
+												  .then(literal("bind").then(key().then(flag(true).executes(EditModeCommands::bindFlag)))))
 									.then(literal("reparent").then(key().executes(EditModeCommands::rebindParent)))
 									.then(literal("config")
 												  .then(literal("flySpeed").then(argument("speed", floatArg()).executes(EditModeCommands::setFlySpeed)))
@@ -348,12 +348,12 @@ public class EditModeCommands
 		return builder.buildFuture();
 	}
 	
-	private static RequiredArgumentBuilder<ServerCommandSource, String> flag()
+	private static RequiredArgumentBuilder<ServerCommandSource, String> flag(boolean allowGlobal)
 	{
-		return argument("flag", string()).suggests(EditModeCommands::suggestFlags);
+		return argument("flag", string()).suggests(allowGlobal ? EditModeCommands::suggestLocalOrGlobalFlags : EditModeCommands::suggestLocalFlags);
 	}
 	
-	private static CompletableFuture<Suggestions> suggestFlags(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder)
+	private static CompletableFuture<Suggestions> suggestLocalOrGlobalFlags(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder)
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		IEditorComponent editor = UltraComponents.EDITOR.get(player);
@@ -368,6 +368,17 @@ public class EditModeCommands
 		}
 		else
 			UltraComponents.DIMENSION_DATA.get(world).getAllFlags().keySet().forEach(builder::suggest);
+		return builder.buildFuture();
+	}
+	
+	private static CompletableFuture<Suggestions> suggestLocalFlags(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder)
+	{
+		ServerPlayerEntity player = context.getSource().getPlayer();
+		IEditorComponent editor = UltraComponents.EDITOR.get(player);
+		World world = player.getWorld();
+		BlockPos pos = editor.getEditFocus("room");
+		if(pos != null && world.getBlockEntity(pos) instanceof RoomBlockEntity e)
+			e.getFlags().forEach(builder::suggest);
 		return builder.buildFuture();
 	}
 }
