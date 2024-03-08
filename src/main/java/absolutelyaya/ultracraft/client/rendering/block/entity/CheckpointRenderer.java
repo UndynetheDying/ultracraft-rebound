@@ -24,6 +24,8 @@ public class CheckpointRenderer implements BlockEntityRenderer<CheckpointBlockEn
 	@Override
 	public void render(CheckpointBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay)
 	{
+		if(entity.isInvisible())
+			return;
 		PlayerEntity player = MinecraftClient.getInstance().player;
 		BlockPos lastCheckpoint = UltraComponents.WINGED.get(player).getLastCheckpoint();
 		if(lastCheckpoint != null && lastCheckpoint.equals(entity.getPos()))

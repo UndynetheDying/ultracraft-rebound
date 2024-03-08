@@ -8,6 +8,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -21,6 +23,7 @@ public class CheckpointBlockEntity extends AbstractTriggerBlockEntity
 {
 	static List<String> attributes = new ArrayList<>();
 	double time;
+	boolean invisible;
 	
 	public CheckpointBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -49,7 +52,17 @@ public class CheckpointBlockEntity extends AbstractTriggerBlockEntity
 	@Override
 	public String getAttribute(String attribute)
 	{
+		if(attribute.equals("invisible"))
+			return String.valueOf(invisible);
 		return null;
+	}
+	
+	@Override
+	public void setAttribute(String s, String value)
+	{
+		if(s.equals("invisible"))
+			invisible = Boolean.parseBoolean(value);
+		super.setAttribute(s, value);
 	}
 	
 	@Override
@@ -93,12 +106,15 @@ public class CheckpointBlockEntity extends AbstractTriggerBlockEntity
 				if(!pos.equals(winged.getLastCheckpoint()))
 				{
 					winged.setLastCheckpoint(pos, world);
-					player.playSound(SoundRegistry.CHECKPOINT_GET, 1f, 2f);
-					for (int i = 0; i < 16; i++)
+					if(!isInvisible())
 					{
-						Vec3d pos = player.getPos().add(0, player.getHeight() / 2, 0);
-						Vec3d vel = Vec3d.ZERO.addRandom(player.getRandom(), 0.1f);
-						world.addParticle(ParticleTypes.END_ROD, pos.x, pos.y, pos.z, vel.x, vel.y, vel.z);
+						player.playSound(SoundRegistry.CHECKPOINT_GET, 1f, 2f);
+						for (int i = 0; i < 16; i++)
+						{
+							Vec3d pos = player.getPos().add(0, player.getHeight() / 2, 0);
+							Vec3d vel = Vec3d.ZERO.addRandom(player.getRandom(), 0.1f);
+							world.addParticle(ParticleTypes.END_ROD, pos.x, pos.y, pos.z, vel.x, vel.y, vel.z);
+						}
 					}
 				}
 			}
@@ -113,5 +129,29 @@ public class CheckpointBlockEntity extends AbstractTriggerBlockEntity
 	public void progressTime(double delta)
 	{
 		time += delta;
+	}
+	
+	public boolean isInvisible()
+	{
+		return invisible;
+	}
+	
+	@Override
+	public void readNbt(NbtCompound nbt)
+	{
+		super.readNbt(nbt);
+		if(nbt.contains("invisible", NbtElement.BYTE_TYPE))
+			invisible = nbt.getBoolean("invisible");
+	}
+	
+	@Override
+	protected void writeNbt(NbtCompound nbt)
+	{
+		super.writeNbt(nbt);
+		nbt.putBoolean("invisible", invisible);
+	}
+	
+	static {
+		attributes.add("invisible");
 	}
 }
