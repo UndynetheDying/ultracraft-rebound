@@ -4,12 +4,16 @@
   "par-time": "4:20:69",
   "author": "yaya",
   "author-link": "https://absolutelyaya.neocities.org/",
-  "structure": "ultracraft:example_level",
+  "structure": "ultracraft:limbo/ruin1",
   "thumbnail": "ultracraft:textures/level/placeholder.png",
   "spawn-offset":{
     "x": 16,
     "y": 8,
     "z": 9
+  },
+  "music": {
+    "calm": "minecraft:music_disc.cat",
+    "combat": "minecraft:music_disc.ward"
   },
   "version": 1
 }

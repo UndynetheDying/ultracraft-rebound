@@ -66,9 +66,9 @@ public abstract class MusicTrackerMixin
 		{
 			if(music.getCalmSound() != null)
 				calm = playModular(music.getCalmSound(), false);
-			if(music.getFightSound() != null)
-				fight = playModular(music.getFightSound(), true);
-			if(calm == null)
+			if(music.getCombatSound() != null)
+				fight = playModular(music.getCombatSound(), true);
+			if(calm == null && fight != null)
 				fight.setVolume(1f);
 			curLevelMusic = level;
 		}
@@ -87,6 +87,8 @@ public abstract class MusicTrackerMixin
 	
 	ModularMusicInstance playModular(RegistryEntry<SoundEvent> sound, boolean fight)
 	{
+		if(sound.value() == null)
+			return null;
 		ModularMusicInstance instance = new ModularMusicInstance(sound.value(), fight);
 		if (instance.getSound() != SoundManager.MISSING_SOUND)
 			client.getSoundManager().play(instance);

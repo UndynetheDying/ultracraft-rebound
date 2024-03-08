@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.data;
 
 import absolutelyaya.ultracraft.client.sound.ModularLevelMusic;
 import absolutelyaya.ultracraft.util.TimeUtil;
+import net.minecraft.block.SculkSensorBlock;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
@@ -191,12 +192,12 @@ public final class LevelData
 		if(hasMusic())
 		{
 			NbtCompound music = new NbtCompound();
-			RegistryEntry<SoundEvent> calm = this.music.getFightSound();
-			if(calm != null)
+			RegistryEntry<SoundEvent> calm = this.music.getCalmSound();
+			if(calm != null && calm.value() != null)
 				music.putString("calm", calm.value().getId().toString());
-			RegistryEntry<SoundEvent> fight = this.music.getFightSound();
-			if(fight != null)
-				music.putString("fight", fight.value().getId().toString());
+			RegistryEntry<SoundEvent> combat = this.music.getCombatSound();
+			if(combat != null && combat.value() != null)
+				music.putString("combat", combat.value().getId().toString());
 			nbt.put("music", music);
 		}
 		nbt.putFloat("spawnRot", spawnRot);
@@ -223,12 +224,12 @@ public final class LevelData
 		if(nbt.contains("music", NbtElement.COMPOUND_TYPE))
 		{
 			NbtCompound music = nbt.getCompound("music");
-			Identifier calm = null, fight = null;
+			Identifier calm = null, combat = null;
 			if(music.contains("calm", NbtElement.STRING_TYPE))
 				calm = Identifier.tryParse(music.getString("calm"));
-			if(music.contains("fight", NbtElement.STRING_TYPE))
-				fight = Identifier.tryParse(music.getString("fight"));
-			data.setMusic(calm, fight);
+			if(music.contains("combat", NbtElement.STRING_TYPE))
+				combat = Identifier.tryParse(music.getString("combat"));
+			data.setMusic(calm, combat);
 		}
 		data.setUnimplemented(nbt.getBoolean("unimplemented"));
 		data.setHidden(nbt.getBoolean("hidden"));

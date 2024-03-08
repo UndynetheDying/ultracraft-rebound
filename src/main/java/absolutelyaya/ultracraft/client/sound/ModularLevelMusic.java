@@ -8,19 +8,19 @@ import net.minecraft.util.Identifier;
 
 public class ModularLevelMusic
 {
-	final RegistryEntry<SoundEvent> calm, fight;
+	final RegistryEntry<SoundEvent> calm, combat;
 	
-	public ModularLevelMusic(Identifier calm, Identifier fight)
+	public ModularLevelMusic(Identifier calm, Identifier combat)
 	{
 		Registry<SoundEvent> registry = Registries.SOUND_EVENT;
 		this.calm = registry.getEntry(registry.get(calm));
-		this.fight = registry.getEntry(registry.get(fight));
+		this.combat = registry.getEntry(registry.get(combat));
 	}
 	
-	public ModularLevelMusic(RegistryEntry<SoundEvent> calm, RegistryEntry<SoundEvent> fight)
+	public ModularLevelMusic(RegistryEntry<SoundEvent> calm, RegistryEntry<SoundEvent> combat)
 	{
 		this.calm = calm;
-		this.fight = fight;
+		this.combat = combat;
 	}
 	
 	public RegistryEntry<SoundEvent> getCalmSound()
@@ -28,8 +28,8 @@ public class ModularLevelMusic
 		return calm;
 	}
 	
-	public RegistryEntry<SoundEvent> getFightSound()
+	public RegistryEntry<SoundEvent> getCombatSound()
 	{
-		return fight;
+		return combat;
 	}
 }
