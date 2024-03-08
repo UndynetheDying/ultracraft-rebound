@@ -19,6 +19,7 @@ public class SoundListenerBlockEntity extends AbstractListenerBlockEntity
 	static List<String> attributes = new ArrayList<>();
 	Identifier sound = new Identifier("entity.cat.ambient");
 	float pitch = 1f, volume = 1f;
+	boolean playOnDeactivate;
 	
 	public SoundListenerBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -73,6 +74,7 @@ public class SoundListenerBlockEntity extends AbstractListenerBlockEntity
 			case "sound" -> sound = Identifier.tryParse(value);
 			case "volume" -> volume = Float.parseFloat(value);
 			case "pitch" -> pitch = Float.parseFloat(value);
+			case "playOnDeactivate" -> playOnDeactivate = Boolean.parseBoolean(value);
 		}
 		super.setAttribute(s, value);
 	}
@@ -86,6 +88,7 @@ public class SoundListenerBlockEntity extends AbstractListenerBlockEntity
 			case "sound" -> sound.toString();
 			case "volume" -> String.valueOf(volume);
 			case "pitch" -> String.valueOf(pitch);
+			case "playOnDeactivate" -> String.valueOf(playOnDeactivate);
 			default -> null;
 		};
 	}
@@ -100,6 +103,8 @@ public class SoundListenerBlockEntity extends AbstractListenerBlockEntity
 			volume = nbt.getFloat("volume");
 		if(nbt.contains("pitch", NbtElement.FLOAT_TYPE))
 			pitch = nbt.getFloat("pitch");
+		if(nbt.contains("playOnDeactivate", NbtElement.BYTE_TYPE))
+			playOnDeactivate = nbt.getBoolean("playOnDeactivate");
 	}
 	
 	@Override
@@ -109,6 +114,7 @@ public class SoundListenerBlockEntity extends AbstractListenerBlockEntity
 		nbt.putString("sound", sound.toString());
 		nbt.putFloat("volume", volume);
 		nbt.putFloat("pitch", pitch);
+		nbt.putBoolean("playOnDeactivate", playOnDeactivate);
 	}
 	
 	static {
@@ -116,5 +122,6 @@ public class SoundListenerBlockEntity extends AbstractListenerBlockEntity
 		attributes.add("sound");
 		attributes.add("volume");
 		attributes.add("pitch");
+		attributes.add("playOnDeactivate");
 	}
 }

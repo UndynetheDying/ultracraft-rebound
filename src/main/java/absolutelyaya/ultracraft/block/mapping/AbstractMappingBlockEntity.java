@@ -54,6 +54,11 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 		return id;
 	}
 	
+	/**
+	 * Used for the "/edit area" Command
+	 * @param editAreaStep The current step of the area editing process
+	 * @param pos The New Corner Position for this step in <b>Global Space</b>
+	 */
 	public void setAreaCorner(int editAreaStep, BlockPos pos)
 	{
 		if(editAreaStep == 2)
@@ -63,16 +68,25 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 		setID(id); //for some reason the blocks data woN'T SYNC ANY OTHER WAY RAAAA
 	}
 	
+	/**
+	 * @param pos This Blocks Areas new minimum corner position in <b>Global Space</b>
+	 */
 	public void setMin(BlockPos pos)
 	{
 		min = pos.subtract(getPos());
 	}
 	
+	/**
+	 * @param pos This Blocks Areas new maximum corner position in <b>Global Space</b>
+	 */
 	public void setMax(BlockPos pos)
 	{
 		max = pos.subtract(getPos());
 	}
 	
+	/**
+	 * @return This Blocks Areas minimum corner position in <b>Global Space</b>
+	 */
 	public BlockPos getMin()
 	{
 		if(min == null)
@@ -80,6 +94,9 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 		return min.add(getPos());
 	}
 	
+	/**
+	 * @return This Blocks Areas maximum corner position in <b>Global Space</b>
+	 */
 	public BlockPos getMax()
 	{
 		if(max == null)
@@ -87,6 +104,9 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 		return max.add(getPos());
 	}
 	
+	/**
+	 * @return This Blocks Area as a Box in <b>Global Space</b>
+	 */
 	public Box getAreaBox()
 	{
 		return new Box(getMin(), getMax()).expand(0.5f).offset(0.5f, 0.5f, 0.5f);
@@ -118,6 +138,9 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 		return 4f;
 	}
 	
+	/**
+	 * @return This Blocks Parent Room Position in <b>World Space</b>
+	 */
 	public BlockPos getParent()
 	{
 		if(parent == null)
@@ -125,6 +148,9 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 		return parent.add(getPos());
 	}
 	
+	/**
+	 * @param pos This Blocks new Parent Position in <b>World Space</b>
+	 */
 	public void setParent(BlockPos pos)
 	{
 		if(pos == null)

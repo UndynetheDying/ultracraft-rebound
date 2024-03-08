@@ -13,7 +13,7 @@ import java.util.List;
 
 public class RedstoneListenerBlockEntity extends AbstractListenerBlockEntity
 {
-	int maxPulseDuration = 5, pulseDuration;
+	int maxPulseDuration, pulseDuration;
 	static List<String> attributes = new ArrayList<>();
 	
 	public RedstoneListenerBlockEntity(BlockPos pos, BlockState state)

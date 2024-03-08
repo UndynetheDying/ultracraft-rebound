@@ -109,7 +109,7 @@
     - Checkpoints set the Spawnpoint of a player that enters its area to the position of the Block itself.
     - If a player dies and respawns at a Checkpoint, the parent Room will check if it's empty of Players; if it is, it'll force reset
     - The Spawnpoint Text will be oriented depending on which side of the area is longer
-  - More Additions//Improvements to edit mode are already planned for the future; those will take longer to make than I'm willing to further delay this update though
+  - I'd love to expand on this System in the future; some ideas I already have will take longer to make than I'm willing to further delay this update though
 - Made Flesh Blocks break faster using Hoes
 - Shotgun Pellets are now Parriable
 - Added Large Animated Titles
