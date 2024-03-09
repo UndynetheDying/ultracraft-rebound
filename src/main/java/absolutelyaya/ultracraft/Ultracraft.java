@@ -165,20 +165,11 @@ public class Ultracraft implements ModInitializer
     
     void loadConfig(MinecraftServer server)
     {
-        if(config == null)
-            config = new ServerConfig(server);
-        else
-            config.load(server);
+        config = new ServerConfig(server);
         config.syncAll(server);
-        if(hivelConfig == null)
-            hivelConfig = new HivelConfig(server);
-        else
-            hivelConfig.load(server);
+        hivelConfig = new HivelConfig(server);
         hivelConfig.syncAll(server);
-        if(CybergrindConfig.INSTANCE == null)
-            new CybergrindConfig(server);
-        else
-            CybergrindConfig.INSTANCE.load(server);
+        new CybergrindConfig(server);
         CybergrindConfig.clearCosts();
         for (CybergrindInitializer initializer : FabricLoader.getInstance().getEntrypoints("cybergrind", CybergrindInitializer.class))
             initializer.registerEnemyCosts(CybergrindConfig.INSTANCE);
