@@ -56,6 +56,8 @@ public class SoundListenerBlockEntity extends AbstractListenerBlockEntity
 	{
 		if(newState)
 			world.playSound(null, pos, Registries.SOUND_EVENT.get(sound), SoundCategory.BLOCKS, volume, pitch);
+		else if(playOnDeactivate)
+			world.playSound(null, pos, Registries.SOUND_EVENT.get(sound), SoundCategory.BLOCKS, volume, pitch);
 		super.onStateChanged(newState);
 	}
 	
