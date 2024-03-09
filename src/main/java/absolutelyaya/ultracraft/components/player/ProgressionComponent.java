@@ -4,7 +4,6 @@ import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.gui.terminal.WeaponsTab;
-import absolutelyaya.ultracraft.registry.GameruleRegistry;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -42,13 +41,6 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 	public ProgressionComponent(PlayerEntity provider)
 	{
 		this.provider = provider;
-		unlocked.add(new Identifier(Ultracraft.MOD_ID, "pierce_revolver"));
-		if(provider.getWorld().getGameRules().getBoolean(GameruleRegistry.START_WITH_PIERCER))
-		{
-			owned.add(new Identifier(Ultracraft.MOD_ID, "pierce_revolver"));
-			unlocked.add(new Identifier(Ultracraft.MOD_ID, "marksman_revolver"));
-			unlocked.add(new Identifier(Ultracraft.MOD_ID, "sharpshooter_revolver"));
-		}
 		unlocked.add(new Identifier(Ultracraft.MOD_ID, "feedbacker"));
 		owned.add(new Identifier(Ultracraft.MOD_ID, "feedbacker"));
 	}
@@ -125,16 +117,6 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 		unlocked = new ArrayList<>();
 		owned = new ArrayList<>();
 		
-		if(provider.getWorld().getGameRules().getBoolean(GameruleRegistry.START_WITH_PIERCER))
-		{
-			owned.add(new Identifier(Ultracraft.MOD_ID, "pierce_revolver"));
-			unlocked.add(new Identifier(Ultracraft.MOD_ID, "marksman_revolver"));
-			unlocked.add(new Identifier(Ultracraft.MOD_ID, "sharpshooter_revolver"));
-		}
-		else
-			unlocked.add(new Identifier(Ultracraft.MOD_ID, "pierce_revolver"));
-		unlocked.add(new Identifier(Ultracraft.MOD_ID, "core_shotgun"));
-		unlocked.add(new Identifier(Ultracraft.MOD_ID, "attractor_nailgun"));
 		unlocked.add(new Identifier(Ultracraft.MOD_ID, "feedbacker"));
 		owned.add(new Identifier(Ultracraft.MOD_ID, "feedbacker"));
 	}

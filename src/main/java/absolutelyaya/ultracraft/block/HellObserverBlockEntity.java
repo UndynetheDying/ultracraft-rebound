@@ -2,7 +2,6 @@ package absolutelyaya.ultracraft.block;
 
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
-import absolutelyaya.ultracraft.registry.GameruleRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;

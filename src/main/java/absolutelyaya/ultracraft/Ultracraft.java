@@ -43,7 +43,6 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
 import net.minecraft.util.JsonHelper;
 import org.slf4j.Logger;
@@ -79,7 +78,6 @@ public class Ultracraft implements ModInitializer
         PacketRegistry.registerC2S();
         TagRegistry.register();
         SoundRegistry.register();
-        GameruleRegistry.register();
         RecipeSerializers.register();
         CriteriaRegistry.register();
         StatusEffectRegistry.register();
@@ -138,13 +136,6 @@ public class Ultracraft implements ModInitializer
                 wings.sync();
             }
         });
-        ServerPlayConnectionEvents.INIT.register(((handler, server) -> {
-            ServerPlayerEntity player = handler.player;
-            //detect first spawn; probably a scuffed way to do this, but hey, it works :3
-            if(player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)) == 0)
-                if(player.getWorld().getGameRules().getBoolean(GameruleRegistry.START_WITH_PIERCER))
-                    player.giveItemStack(ItemRegistry.PIERCE_REVOLVER.getDefaultStack());
-        }));
         ServerLifecycleEvents.SERVER_STARTING.register((server) -> {
             loadConfig(server);
             new CybergrindManager(server);
