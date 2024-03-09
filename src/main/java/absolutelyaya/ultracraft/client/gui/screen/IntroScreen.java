@@ -170,6 +170,7 @@ public class IntroScreen extends Screen
 				case 4 -> {
 					curText = "";
 					goalText = Text.translatable("intro.ultracraft.status", MinecraftClient.getInstance().getSession().getUsername()).getString();
+					goalText += "\n" + Text.translatable("intro.ultracraft.catchphrase").getString();
 				}
 				case 6 -> {
 					SEQUENCE_FINISHED = true;

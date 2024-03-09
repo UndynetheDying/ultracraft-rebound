@@ -218,11 +218,15 @@
 - Finally fixed the issue with the wrong Hideous Mass shaking while one is dying if multiple are present
 - Updated Goop to v0.3
 - Fixed Malicious Face sometimes starting to charge a beam attack while still performing a salvo
+- Fixed a small logic error that resulted in the intro not being repeated when setting both "repeatIntro" and "neverIntro" to true
+  - "neverIntro" is just intended to suppress showing the intro again after switching versions
+- The catchphrase in the intro now fades later than the rest
 ## Resource Changes
 - Continued Adding Sounds
 - Shotgun Animations now have a few sound keyframes
 - Hideous Mass Mortar and Emerge Animations now have a few sound keyframes
 - The `discharge` animation on Revolvers now also animates the Hammer of Alt Revolvers
+- The catchphrase is now separated into its own translation key (formerly part of `intro.ultracraft.status`)
 - Added LOLCAT localization provided by Doggochleb (doesn't contain new 2.1.0 lines)
   - Community translations//localizations are always welcome! (I won't give out unreleased versions language file tho; updated localizations will have to follow in minor patches)
 ## API Changes

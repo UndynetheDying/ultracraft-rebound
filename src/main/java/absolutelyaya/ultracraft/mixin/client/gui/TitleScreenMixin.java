@@ -72,7 +72,7 @@ public abstract class TitleScreenMixin extends Screen
     @Inject(method = "tick", at = @At("HEAD"))
     void onTick(CallbackInfo ci)
     {
-        if((!IntroScreen.SEQUENCE_FINISHED && !config.lastVersion.equals(Ultracraft.VERSION) || config.repeatIntro) && !config.neverIntro)
+        if((!IntroScreen.SEQUENCE_FINISHED && !config.lastVersion.equals(Ultracraft.VERSION) && !config.neverIntro) || config.repeatIntro)
         {
             client.setScreen(new IntroScreen());
             MinecraftClient.getInstance().getSoundManager().stop(wind);
