@@ -25,6 +25,7 @@ public class UltraLevelComponent implements IUltraLevelComponent
 	public UltraLevelComponent(WorldProperties properties)
 	{
 		provider = properties;
+		unlockedDestinations.addAll(DEFAULT_DESTINATIONS);
 	}
 	
 	@Override
@@ -171,7 +172,10 @@ public class UltraLevelComponent implements IUltraLevelComponent
 			list.forEach(i -> unlockedDestinations.add(Identifier.tryParse(i.asString())));
 		}
 		else
+		{
+			unlockedDestinations.clear();
 			unlockedDestinations.addAll(DEFAULT_DESTINATIONS);
+		}
 	}
 	
 	@Override

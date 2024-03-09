@@ -70,21 +70,21 @@ public class LimboManager extends DimensionManager
 		Ultracraft.LOGGER.info("Placing limbo/destiny-chapel");
 		templateManager.getTemplate(new Identifier(Ultracraft.MOD_ID, "limbo/destiny-chapel"))
 				.ifPresent(i -> {
-					BlockPos pos = new BlockPos(-200, 0, 0);
+					BlockPos pos = new BlockPos(-1000, 0, 0);
 					int y = world.getWorldChunk(pos).sampleHeightmap(Heightmap.Type.WORLD_SURFACE_WG, pos.getX(), pos.getZ());
 					i.place(world, pos.add(0, y - 2, -13), new BlockPos(0, 0, 0), new StructurePlacementData(), world.getRandom(), 2);
 				});
 		Ultracraft.LOGGER.info("Placing limbo/rodent");
 		templateManager.getTemplate(new Identifier(Ultracraft.MOD_ID, "limbo/rodent"))
 				.ifPresent(i -> {
-					BlockPos pos = new BlockPos(0, 0, -200);
+					BlockPos pos = new BlockPos(0, 0, -1000);
 					int y = world.getWorldChunk(pos).sampleHeightmap(Heightmap.Type.WORLD_SURFACE_WG, pos.getX(), pos.getZ());
 					i.place(world, pos.add(-18, y - 15, 0), new BlockPos(0, 0, 0), new StructurePlacementData(), world.getRandom(), 2);
 				});
 		Ultracraft.LOGGER.info("Placing limbo/cybergrind");
 		templateManager.getTemplate(new Identifier(Ultracraft.MOD_ID, "limbo/cybergrind"))
 				.ifPresent(i -> {
-					BlockPos pos = new BlockPos(200, 0, 0);
+					BlockPos pos = new BlockPos(1000, 0, 0);
 					i.place(world, pos.add(0, 0, -45), new BlockPos(0, 0, 0), new StructurePlacementData(), world.getRandom(), 2);
 				});
 		Ultracraft.LOGGER.info("Limbo fixed Structure Placement complete!");

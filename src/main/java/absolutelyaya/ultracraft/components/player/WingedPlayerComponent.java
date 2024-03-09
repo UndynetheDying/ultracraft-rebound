@@ -247,7 +247,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	
 	public void sendBoxTitle(Text text)
 	{
-		sendBoxTitle(text, 30f);
+		sendBoxTitle(text, 20f);
 	}
 	
 	@Override

@@ -1,5 +1,7 @@
 package absolutelyaya.ultracraft.block;
 
+import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -68,7 +70,7 @@ public class SlabBlock extends Block implements IPunchableBlock
 	{
 		if(state.get(LOCKED))
 		{
-			player.sendMessage(Text.translatable("message.ultracraft.slab_press.decorative"), true);
+			UltraComponents.WINGED.get(player).sendBoxTitle(Text.translatable("message.ultracraft.slab_press.decorative"), 4f);
 			return ActionResult.FAIL;
 		}
 		if (hit == null || !(player.getStackInHand(hand).isOf(Items.DEBUG_STICK) || player.isSneaking()))

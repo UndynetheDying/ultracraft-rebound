@@ -191,6 +191,8 @@ public class CybergrindGame
 	void init()
 	{
 		ServerPlayerEntity owner = initStartingPlayer();
+		if(owner == null)
+			return;
 		this.world = owner.getServerWorld();
 		this.owner = owner;
 		Layer curLayer = Layer.fromRegistryKey(world.getRegistryKey());
