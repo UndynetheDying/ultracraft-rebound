@@ -87,6 +87,8 @@ public class CybergrindGame
 	
 	void addAllPlayersInBounds()
 	{
+		if(getArenaBounds() == null)
+			return;
 		Vector4i bounds = getArenaBounds();
 		for (ServerPlayerEntity player : world.getPlayers())
 			if(!participants.contains(player) && player.getX() > bounds.x && player.getX() < bounds.z && player.getZ() > bounds.y && player.getZ() < bounds.w)
