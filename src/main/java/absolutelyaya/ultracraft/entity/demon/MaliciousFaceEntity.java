@@ -54,6 +54,7 @@ import java.util.List;
 
 public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements MeleeInterruptable, Enrageable
 {
+	protected static final float BOSS_HEALTH = 50f, REGULAR_HEALTH = 30f, CRACK_THRESHOLD = 0.5f;
 	protected static final TrackedData<Integer> ATTACK_COOLDOWN = DataTracker.registerData(MaliciousFaceEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Boolean> CRACKED = DataTracker.registerData(MaliciousFaceEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	protected static final TrackedData<Boolean> DEAD = DataTracker.registerData(MaliciousFaceEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -87,7 +88,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	protected void initGoals()
 	{
 		goalSelector.add(0, new MaliciousBeamGoal(this));
-		goalSelector.add(1, new MaliciousSalvaeGoal(this));
+		goalSelector.add(1, new MaliciousSalvoGoal(this));
 		goalSelector.add(2, new SpreadOutGoal(this));
 		goalSelector.add(3, new HoverIntoSightGoal(this));
 		goalSelector.add(4, new GainHeightGoal(this));
@@ -150,7 +151,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		}
 		else if(data.equals(BOSS))
 		{
-			float health = isBoss() ? 50f : 30f;
+			float health = getMaxHealth();
 			if(getHealth() != health)
 				setHealth(health);
 		}
@@ -170,6 +171,11 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		face.dataTracker.set(BOSS, true);
 		world.spawnEntity(face);
 		return face;
+	}
+	
+	public float getMaxHealth() //ignore this error; Zugriffserweiterer regelt :)
+	{
+		return isBoss() ? BOSS_HEALTH : REGULAR_HEALTH;
 	}
 	
 	@Override
@@ -372,7 +378,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	
 	float getCrackThreshold()
 	{
-		return isBoss() ? 25f : 15f;
+		return getMaxHealth() * CRACK_THRESHOLD;
 	}
 	
 	void drop()
@@ -724,13 +730,13 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		}
 	}
 	
-	static class MaliciousSalvaeGoal extends Goal
+	static class MaliciousSalvoGoal extends Goal
 	{
 		final MaliciousFaceEntity face;
 		LivingEntity target;
 		int timer, shots;
 		
-		MaliciousSalvaeGoal(MaliciousFaceEntity face)
+		MaliciousSalvoGoal(MaliciousFaceEntity face)
 		{
 			this.face = face;
 		}
@@ -747,6 +753,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		public void start()
 		{
 			shots = 6;
+			face.dataTracker.set(ATTACK_COOLDOWN, 20);
 		}
 		
 		@Override
@@ -763,7 +770,6 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 				shots--;
 				timer = 2;
 				face.shootBullet(target);
-				face.dataTracker.set(ATTACK_COOLDOWN, 40 + (int)(face.random.nextFloat() * 60));
 			}
 		}
 		
@@ -772,13 +778,20 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		{
 			return shots > 0 && target != null && !face.dataTracker.get(DEAD);
 		}
+		
+		@Override
+		public void stop()
+		{
+			super.stop();
+			face.dataTracker.set(ATTACK_COOLDOWN, 30 + (int)(face.random.nextFloat() * 50));
+		}
 	}
 	
 	static class MaliciousBeamGoal extends Goal
 	{
 		final MaliciousFaceEntity face;
 		LivingEntity target;
-		int timer;
+		int timer, chargeTime = 70, interruptWindow = 20;
 		Vec3d lastTargetPos, targetPos;
 		boolean repeat;
 		
@@ -800,8 +813,8 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		@Override
 		public void start()
 		{
-			timer = 100;
-			face.dataTracker.set(ATTACK_COOLDOWN, 100);
+			timer = chargeTime;
+			face.dataTracker.set(ATTACK_COOLDOWN, chargeTime + 20);
 			face.dataTracker.set(WAS_INTERRUPTED, false);
 			repeat = face.isEnraged();
 		}
@@ -817,12 +830,12 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		{
 			if(face.isEnraged() && !repeat)
 			 	timer--; //double as quick when enraged and first shot was fired
-			if(--timer > 20)
+			if(--timer > interruptWindow)
 			{
-				face.dataTracker.set(CHARGE, 100 - timer);
+				face.dataTracker.set(CHARGE, chargeTime - timer);
 				lastTargetPos = target.getPos();
 			}
-			if(timer == 20)
+			if(timer == interruptWindow)
 			{
 				Vec3d dir = target.getPos().subtract(lastTargetPos);
 				if(dir.lengthSquared() < 0.01)
@@ -832,18 +845,18 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 				face.addParryIndicatorParticle(face.getRotationVector().multiply(1.5f), false, false);
 				face.playSound(SoundRegistry.MAURICE_BEAM_TELL, 2f, 1.75f);
 			}
-			if(timer < 20)
+			if(timer < interruptWindow)
 			{
 				if(targetPos != null)
 					face.lookControl.lookAt(targetPos);
-				face.dataTracker.set(CHARGE, 100 - timer);
+				face.dataTracker.set(CHARGE, chargeTime - timer);
 			}
 			if(timer <= 0)
 			{
 				ServerHitscanHandler.performHitscan(face, ServerHitscanHandler.MALICIOUS, 0, new ServerHitscanHandler.HitscanExplosionData(5.5f, 10f, 0f, true));
 				if(repeat)
 				{
-					timer = 22;
+					timer = interruptWindow + 2;
 					repeat = false;
 					return;
 				}

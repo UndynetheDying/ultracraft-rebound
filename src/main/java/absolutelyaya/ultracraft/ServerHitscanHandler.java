@@ -121,7 +121,7 @@ public class ServerHitscanHandler
 	{
 		Vec3d origin = user.getEyePos();
 		Vec3d visualOrigin = origin.add(
-				new Vec3d(-0.5f * (user instanceof PlayerEntity player && player.getMainArm().equals(Arm.LEFT) ? -1 : 1), -0.2f, 0.4f)
+				new Vec3d(user instanceof PlayerEntity player ? (-0.5f * (player.getMainArm().equals(Arm.LEFT) ? -1 : 1)) : 0f, -0.2f, 0.4f)
 						.rotateX(-(float)Math.toRadians(user.getPitch())).rotateY(-(float) Math.toRadians(user.getYaw())));
 		Vec3d dest = user.getEyePos().add(user.getRotationVec(0.5f).multiply(64.0));
 		new Hitscan(user, origin, visualOrigin, dest, type, damage, damageType).maxHits(maxHits).explosion(explosion).perform();
@@ -367,7 +367,7 @@ public class ServerHitscanHandler
 				}
 				if(explodeProjectile && e instanceof ProjectileEntity proj && !(e instanceof IIgnoreSharpshooter || e instanceof ThrownCoinEntity))
 				{
-					ExplosionHandler.explosion(owner, world, proj.getPos(), DamageSources.get(world, DamageTypes.EXPLOSION, owner), 5f, 1f, 5f, true);
+					ExplosionHandler.explosion(owner, world, proj.getPos(), DamageSources.get(world, DamageTypes.EXPLOSION, owner), 5f, 1f, 7.5f, true);
 					proj.kill();
 					explodeProjectile = false;
 					if(winged != null)
@@ -376,7 +376,7 @@ public class ServerHitscanHandler
 				if(e instanceof ThrownCoinEntity)
 					disableExplosion = true;
 			}
-			if(explosion != null && bHit != null && !bHit.getType().equals(HitResult.Type.MISS) && !disableExplosion)
+			if(explosion != null && ((bHit != null && !bHit.getType().equals(HitResult.Type.MISS)) || finalEHit != null) && !disableExplosion)
 				ExplosionHandler.explosion(null, world, new Vec3d(modifiedTo.x, modifiedTo.y, modifiedTo.z), world.getDamageSources().explosion(owner, owner),
 						explosion.damage, explosion.falloff, explosion.radius, explosion.breakBlocks);
 			if(entities.size() == 0 && owner instanceof PlayerEntity p)

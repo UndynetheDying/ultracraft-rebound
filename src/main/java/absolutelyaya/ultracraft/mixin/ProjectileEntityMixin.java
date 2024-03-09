@@ -34,7 +34,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -51,7 +50,7 @@ public abstract class ProjectileEntityMixin extends Entity implements Projectile
 	@Shadow protected abstract void onCollision(HitResult hitResult);
 	
 	private static final TrackedData<Integer> PARRIES = DataTracker.registerData(ProjectileEntity.class, TrackedDataHandlerRegistry.INTEGER);
-	protected PlayerEntity parrier;
+	protected PlayerEntity parrier, knockbackExplosionCauser;
 	boolean frozen, boosted;
 	Vec3d preFreezeVel;
 	Consumer<Integer> onParried;
@@ -255,5 +254,12 @@ public abstract class ProjectileEntityMixin extends Entity implements Projectile
 	public void setIsParriable(Supplier<Boolean> supplier)
 	{
 		isParriable = supplier;
+	}
+	
+	@Override
+	public void onKnockedBackbyExplosion(Entity exploder)
+	{
+		if(exploder instanceof PlayerEntity player)
+			knockbackExplosionCauser = player;
 	}
 }

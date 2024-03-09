@@ -6,6 +6,7 @@ import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
+import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.TagRegistry;
 import io.netty.buffer.Unpooled;
@@ -18,7 +19,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.TntEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -87,16 +87,24 @@ public class ExplosionHandler
 		Box box = new Box(pos.subtract(radius, radius, radius), pos.add(radius, radius, radius));
 		if(damage > 0f)
 		{
-			world.getOtherEntities(null, box, e -> e.isLiving() || e instanceof ProjectileEntityAccessor).forEach(e -> {
+			//Projectile Knockback (double radius)
+			world.getOtherEntities(null, box.expand(radius), e -> e instanceof ProjectileEntityAccessor).forEach(p -> {
+				if((p.getType().isIn(EntityRegistry.EXPLOSION_AFFECTED_PROJECTILES) && p instanceof ProjectileEntityAccessor proj && !source.isOf(DamageSources.PROJBOOST)))
+				{
+					float normalizedDistance = (float)p.getPos().distanceTo(pos) / radius;
+					float vel = (float)(Math.min(radius * 0.75, 1.75f) * (normalizedDistance == 0f ? 0.75f : Math.min(1.5f - normalizedDistance, 1f)));
+					Vec3d vec = p.getPos().subtract(pos).normalize().multiply(Math.max(vel * 1.25f, Math.min(1f, p.getVelocity().length())));
+					p.setVelocity(vec);
+					proj.onKnockedBackbyExplosion(source.getSource());
+				}
+			});
+			//Living Entity Knockback
+			world.getOtherEntities(null, box, Entity::isLiving).forEach(e -> {
 				float normalizedDistance = (float)e.getPos().distanceTo(pos) / radius;
-				if((e instanceof LivingEntityAccessor living && (applyKnockbackToIgnored || !e.equals(ignored)) && living.takePunchKnockback()) ||
-						   (e instanceof ProjectileEntityAccessor && !source.isOf(DamageSources.PROJBOOST)))
+				if((e instanceof LivingEntityAccessor living && (applyKnockbackToIgnored || !e.equals(ignored)) && living.takePunchKnockback()))
 				{
 					float vel = (float)(Math.min(radius * 0.75, 1.75f) * (normalizedDistance == 0f ? 0.75f : Math.min(1.5f - normalizedDistance, 1f)));
-					if(e instanceof ProjectileEntity proj)
-						e.setVelocity(e.getPos().subtract(pos).normalize().multiply(Math.max(vel, Math.min(1f, proj.getVelocity().length()))));
-					else
-						e.addVelocity(e.getPos().subtract(pos).add(0.0, 1f - normalizedDistance, 0.0).normalize().multiply(vel));
+					e.addVelocity(e.getPos().subtract(pos).add(0.0, 1f - normalizedDistance, 0.0).normalize().multiply(vel));
 				}
 				if(e != ignored)
 				{

@@ -122,6 +122,10 @@
 - Added a fuck ton of Prelude Blocks
 - Added separate keybinds for punching with each arm
 - Added Credits Screen
+- Only selected Projectiles will now be knocked back by explosions (See Entity Type Tag `#ultracraft:explosion_affected_projectiles`)
+- Hell Bullets knocked back by explosions can now actually hit entities of their owners type
+- Fixed Malicious Faces Beam attack being **visually** offset as if it was a hitscan from a Player
+- Fixed Exploding Hitscans not actually exploding if they hit an Entity and not a Block
 ## Settings & Config
 - Removed almost all gamerules (only remaining is `ultra-startWithPiercer`)
 - Added Option to disable Screenshake
@@ -151,7 +155,11 @@
 - Increased Blood Heal Radius (2 -> 4 Blocks)
 - Decreased Nail Blood Heal Amount (x0.25)
 - Increased Mauricing Radius (+0.5)
-- Slightly Buffed Malicious Face Speed (0.4 -> 0.5)
+- Buffed Strength of Knockback Projectiles get from Mod Explosions (x1.1)
+- Buffed Sharpshooter Projectile Explosion Radius (5.0 -> 7.5)
+- Malicious Face Buff
+  - Beam Attack is now much Quicker to be more accurate to the original timing (100 -> 70 ticks)
+  - Slightly Buffed movement Speed (0.4 -> 0.5)
 ## Minor Changes
 - Fixed water skimming not playing sounds
 - Removed the "vents" MOTD from the non-essential resources
@@ -190,6 +198,7 @@
   - `#ultracraft:funis` (the joke entities)
   - `#ultracraft:streetcleaner_dodge` (entities streetcleaners will try to dodge)
   - `#ultracraft:streetcleaner_counter` (entities streetcleaners will try to counter)
+  - `#ultracraft:explosion_affected_projectiles` (only listed projectiles get thrown away by mod explosions)
 - Added Damage type tag `#ultracraft:reduced_knockback`
   - Nails use this for example
 - Added `{parries:<count>}` NBT tag to all Projectiles
@@ -208,6 +217,7 @@
 - Drones now immediately explode if damaged for 3x their max health or more
 - Finally fixed the issue with the wrong Hideous Mass shaking while one is dying if multiple are present
 - Updated Goop to v0.3
+- Fixed Malicious Face sometimes starting to charge a beam attack while still performing a salvo
 ## Resource Changes
 - Continued Adding Sounds
 - Shotgun Animations now have a few sound keyframes

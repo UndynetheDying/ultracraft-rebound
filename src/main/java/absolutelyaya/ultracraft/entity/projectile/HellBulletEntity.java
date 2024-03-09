@@ -5,7 +5,6 @@ import absolutelyaya.ultracraft.ServerHitscanHandler;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.ChainParryAccessor;
 import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
-import absolutelyaya.ultracraft.config.ProjectileBoostSetting;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
@@ -180,11 +179,19 @@ public class HellBulletEntity extends ThrownItemEntity implements ProjectileEnti
 		if(!entity.canHit() && !entity.canBeHitByProjectile())
 			return false;
 		boolean parried = isParried();
-		if(entity.getClass().equals(ignore) && !parried)
+		if(entity.getClass().equals(ignore) && !parried && getKnockbackExplosionCauser() == null)
 			return false;
 		boolean val = super.canHit(entity);
-		return val || (isOwner(entity) && parried && !entity.equals(getParrier())) ||
-					   (!isOwner(entity) && !(entity instanceof ProjectileEntity));
+		if(val)
+			return val;
+		if(isOwner(entity))
+		{
+			if(getKnockbackExplosionCauser() != null)
+				return true;
+			else if(parried && !entity.equals(getParrier()))
+				return true;
+		}
+		return !isOwner(entity) && !(entity instanceof ProjectileEntity);
 	}
 	
 	@Override
@@ -255,12 +262,20 @@ public class HellBulletEntity extends ThrownItemEntity implements ProjectileEnti
 	@Override
 	public boolean isBoostable()
 	{
-		return switch((ProjectileBoostSetting)ServerConfig.INSTANCE.projboost.getValue())
+		return switch(ServerConfig.INSTANCE.projboost.getValue())
 		{
 			case ALLOW_ALL -> true;
 			case ENTITY_TAG -> getType().isIn(EntityRegistry.PROJBOOSTABLE);
 			case LIMITED -> this instanceof ShotgunPelletEntity;
 			case DISALLOW -> false;
 		} && age < 4;
+	}
+	
+	@Override
+	public void onKnockedBackbyExplosion(Entity exploder)
+	{
+		ProjectileEntityAccessor.super.onKnockedBackbyExplosion(exploder);
+		setIgnored(null);
+		System.out.println(getKnockbackExplosionCauser());
 	}
 }
