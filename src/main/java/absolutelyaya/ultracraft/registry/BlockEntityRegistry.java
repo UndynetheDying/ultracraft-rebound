@@ -38,6 +38,7 @@ public class BlockEntityRegistry
 	public static final BlockEntityType<ForceTravelBlockEntity> MAP_TRAVEL;
 	public static final BlockEntityType<DamageBlockEntity> MAP_DAMAGE;
 	public static final BlockEntityType<CybergrindBlockEntity> MAP_CYBERGRIND;
+	public static final BlockEntityType<LightBlockEntity> MAP_LIGHT;
 	
 	public static void register() {
 	}
@@ -123,5 +124,8 @@ public class BlockEntityRegistry
 		MAP_CYBERGRIND = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				new Identifier(Ultracraft.MOD_ID, "map_cybergrind"),
 				FabricBlockEntityTypeBuilder.create(CybergrindBlockEntity::new, BlockRegistry.MAP_CYBERGRIND).build());
+		MAP_LIGHT = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Ultracraft.MOD_ID, "map_light"),
+				FabricBlockEntityTypeBuilder.create(LightBlockEntity::new, BlockRegistry.MAP_LIGHT).build());
 	}
 }

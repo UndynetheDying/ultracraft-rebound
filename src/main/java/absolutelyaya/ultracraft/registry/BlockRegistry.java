@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.block.*;
 import absolutelyaya.ultracraft.block.CarpetBlock;
 import absolutelyaya.ultracraft.block.FlowerbedBlock;
 import absolutelyaya.ultracraft.block.mapping.*;
+import absolutelyaya.ultracraft.block.mapping.LightBlock;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
@@ -146,15 +147,7 @@ public class BlockRegistry
 	public static final Block MAP_TRAVEL = register("map_travel", new ForceTravelBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_DAMAGE = register("map_damage", new DamageBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_CYBERGRIND = register("map_cybergrind", new CybergrindBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
-	
-	@SuppressWarnings("SameParameterValue")
-	private static Block register(String name, Block block, boolean item, int burn, int spread)
-	{
-		FlammableBlockRegistry.getDefaultInstance().add(block, burn, spread);
-		if(item)
-			registerItem(name, block);
-		return Registry.register(Registries.BLOCK, new Identifier(Ultracraft.MOD_ID, name), block);
-	}
+	public static final Block MAP_LIGHT = register("map_light", new LightBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK).luminance(LightBlock::getLightLevel)), true);
 	
 	private static Block register(String name, Block block, boolean item)
 	{

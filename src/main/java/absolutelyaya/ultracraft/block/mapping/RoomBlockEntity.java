@@ -52,7 +52,7 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 				for (BlockPos pos : room.getChildren())
 				{
 					if(world.getBlockEntity(pos) instanceof AbstractMappingBlockEntity block && !(block instanceof RoomBlockEntity) &&
-							   block.getParent().equals(room.getPos()))
+							   block.getParent() != null && block.getParent().equals(room.getPos()))
 						room.registerChild(pos, block);
 					else
 						room.removeChild(pos);

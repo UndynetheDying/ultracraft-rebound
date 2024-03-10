@@ -151,6 +151,7 @@
   "block.ultracraft.map_explosion": "Map Explosion Listener",
   "block.ultracraft.map_sound": "Map Sound Listener",
   "block.ultracraft.map_cybergrind": "Map Cybergrind Listener",
+  "block.ultracraft.map_light": "Map Light Listener",
   "block.ultracraft.map_checkpoint": "Map Checkpoint Trigger",
   "block.ultracraft.map_progression": "Map Progression Trigger",
   "block.ultracraft.map_title": "Map Title Trigger",

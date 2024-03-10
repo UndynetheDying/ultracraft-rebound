@@ -17,7 +17,7 @@ import java.util.List;
 public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 {
 	static List<String> attributes = new ArrayList<>();
-	Identifier close = new Identifier("spruce_planks"), open = new Identifier("air");
+	Identifier close = new Identifier("spruce_planks"), open = new Identifier("air"), reset = null;
 	boolean skull = true;
 	
 	public DoorListenerBlockEntity(BlockPos pos, BlockState state)
@@ -88,6 +88,20 @@ public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 	}
 	
 	@Override
+	public void reset()
+	{
+		state = nextState = false;
+		curActivationDelay = 0;
+		Block resetBlock = (reset != null) ? Registries.BLOCK.get(reset) : Registries.BLOCK.get(open);
+		forEachBlockInArea(pos -> {
+			BlockState state = world.getBlockState(pos);
+			if(state.isOf(Registries.BLOCK.get(close)) || state.isOf(Registries.BLOCK.get(open)))
+				world.setBlockState(pos, resetBlock.getDefaultState());
+		});
+		super.onStateChanged(false);
+	}
+	
+	@Override
 	public List<String> getAttributes()
 	{
 		return attributes;
@@ -100,6 +114,12 @@ public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 		{
 			case "closedBlock" -> close = Identifier.tryParse(value);
 			case "openBlock" -> open = Identifier.tryParse(value);
+			case "resetBlock" -> {
+				if(value.equals("null"))
+					reset = null;
+				else
+					reset = Identifier.tryParse(value);
+			}
 			case "delay" -> activationDelay = Integer.parseInt(value);
 			case "skull" -> skull = Boolean.parseBoolean(value);
 		}
@@ -113,6 +133,11 @@ public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 		{
 			case "closedBlock" -> String.valueOf(close);
 			case "openBlock" -> String.valueOf(open);
+			case "resetBlock" -> {
+				if(reset == null)
+					yield "defaultToOpenBlock";
+				yield String.valueOf(reset);
+			}
 			case "delay" -> String.valueOf(activationDelay);
 			case "skull" -> String.valueOf(skull);
 			default -> null;
@@ -127,6 +152,14 @@ public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 			close = Identifier.tryParse(nbt.getString("closedBlock"));
 		if(nbt.contains("openBlock", NbtElement.STRING_TYPE))
 			open = Identifier.tryParse(nbt.getString("openBlock"));
+		if(nbt.contains("resetBlock", NbtElement.STRING_TYPE))
+		{
+			String v = nbt.getString("resetBlock");
+			if(v.equals("null"))
+				reset = null;
+			else
+				reset = Identifier.tryParse(v);
+		}
 		if(nbt.contains("skull", NbtElement.BYTE_TYPE))
 			skull = nbt.getBoolean("skull");
 		if(nbt.contains("active", NbtElement.BYTE_TYPE))
@@ -139,6 +172,10 @@ public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 		super.writeNbt(nbt);
 		nbt.putString("closedBlock", close.toString());
 		nbt.putString("openBlock", open.toString());
+		if(reset != null)
+			nbt.putString("resetBlock", reset.toString());
+		else
+			nbt.putString("resetBlock", "null");
 		nbt.putBoolean("skull", skull);
 		nbt.putBoolean("active", state);
 	}
@@ -146,6 +183,7 @@ public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 	static {
 		attributes.add("closedBlock");
 		attributes.add("openBlock");
+		attributes.add("resetBlock");
 		attributes.add("delay");
 		attributes.add("skull");
 	}

@@ -92,7 +92,6 @@
     - Force Travel Triggers open the Travel Screen for a Player that enters it; the close button is removed though, forcing them to travel
     - Title Triggers display a title for Players that move into it
     - Damage Triggers damage entities that enter them for a given amount using a given damage type
-    - Cybergrind Triggers trigger a Cybergrind once the bound **local** flag is enabled; It sets a separate **local** Flag upon finishing the Cybergrind (if it is won)
     - Global Redstone Receivers set a **global** Flag (stored in world) to one of two values, depending on whether it is powered by redstone or not
   - Listener Blocks
     - Listen for the state of the bound **local** Flag being changed and performs an action based on its type
@@ -103,6 +102,8 @@
     - Explosion Listeners perform an explosion of chosen radius and damage when activated. These do not Break blocks, but could be used in conjunction with a Door Block to get the same effect
     - Sound Listeners play a sound when activated
     - Level Unlock Listeners unlock a Level globally (for the entire Server)
+    - Cybergrind Listeners trigger a Cybergrind once the bound **local** flag is enabled; It sets a separate **local** Flag upon finishing the Cybergrind (if it is won)
+    - Light Listeners give off a set light level when the bound **local** flag is enabled
     - Global Redstone Listeners listen for a **global** Flag (stored in world); otherwise the same as normal Redstone Listeners
     - Global Title Listeners display a title for every Player in that world when a **global** Flag is set to a specific value
   - Checkpoints
