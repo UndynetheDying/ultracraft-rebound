@@ -6,6 +6,7 @@ import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.data.LevelData;
 import absolutelyaya.ultracraft.data.LevelDataManager;
+import absolutelyaya.ultracraft.entity.demon.MaliciousFaceEntity;
 import absolutelyaya.ultracraft.registry.BlockRegistry;
 import net.fabricmc.fabric.api.dimension.v1.FabricDimensions;
 import net.minecraft.block.Block;
@@ -142,7 +143,8 @@ public class LevelManager extends DimensionManager
 					});
 					List<Entity> list = world.getOtherEntities(null, new Box(box.getMinX(), box.getMinY(), box.getMinZ(), box.getMaxX(), box.getMaxY(), box.getMaxZ()));
 					list.forEach(e -> {
-						if(!(e instanceof PlayerEntity || e instanceof DisplayEntity || e instanceof AbstractDecorationEntity))
+						boolean decorative = e instanceof MaliciousFaceEntity malicious && malicious.isDecorative();
+						if(!(decorative || e instanceof PlayerEntity || e instanceof DisplayEntity || e instanceof AbstractDecorationEntity))
 							e.remove(Entity.RemovalReason.DISCARDED);
 					});
 					LevelInstancePool pool = instances.computeIfAbsent(levelId, k -> {

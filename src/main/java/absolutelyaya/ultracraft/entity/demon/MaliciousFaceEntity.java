@@ -222,6 +222,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 			if(b)
 			{
 				drop();
+				setVelocity(0, 0, 0);
 				setInvulnerable(true);
 			}
 		}
@@ -531,6 +532,11 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	public boolean isAlive()
 	{
 		return !dataTracker.get(DEAD);
+	}
+	
+	public boolean isDecorative()
+	{
+		return dataTracker.get(DECORATIVE);
 	}
 	
 	static class MaliciousMoveControl extends MoveControl
