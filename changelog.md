@@ -128,6 +128,7 @@
 - Hell Bullets knocked back by explosions can now actually hit entities of their owners type
 - Fixed Malicious Faces Beam attack being **visually** offset as if it was a hitscan from a Player
 - Fixed Exploding Hitscans not actually exploding if they hit an Entity and not a Block
+- Filth Attacks are now interrupted if they leave the ground
 ## Settings & Config
 - Removed all gamerules
 - Added Option to disable Screenshake

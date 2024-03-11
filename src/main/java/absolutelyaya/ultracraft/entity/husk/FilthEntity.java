@@ -330,6 +330,8 @@ public class FilthEntity extends AbstractHuskEntity implements GeoEntity, MeleeI
 		@Override
 		public boolean shouldContinue()
 		{
+			if(!mob.isOnGround())
+				return false;
 			return time < getAnimLength() && mob.squaredDistanceTo(target) < 24.0 * 24.0;
 		}
 		
