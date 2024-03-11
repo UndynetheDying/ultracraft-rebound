@@ -276,6 +276,5 @@ public class HellBulletEntity extends ThrownItemEntity implements ProjectileEnti
 	{
 		ProjectileEntityAccessor.super.onKnockedBackbyExplosion(exploder);
 		setIgnored(null);
-		System.out.println(getKnockbackExplosionCauser());
 	}
 }

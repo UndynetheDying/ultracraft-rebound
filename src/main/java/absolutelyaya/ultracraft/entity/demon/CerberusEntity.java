@@ -116,7 +116,6 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 	@Override
 	public @Nullable EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt)
 	{
-		System.out.println("cerb spawn as boss -> " + dataTracker.get(BOSS));
 		onTrackedDataSet(BOSS);
 		return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
 	}
