@@ -20,6 +20,7 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
@@ -34,12 +35,13 @@ public class CerberusBlock extends HorizontalFacingBlock implements BlockEntityP
 {
 	public static final BooleanProperty EMPTY = BooleanProperty.of("empty");
 	public static final BooleanProperty SPAWNING = BooleanProperty.of("spawning");
+	public static final IntProperty BOSS = IntProperty.of("boss", 0, 2);
 	public static final IntProperty PROXIMITY = IntProperty.of("proximity", 0, 64);
 	
 	public CerberusBlock(Settings settings)
 	{
 		super(settings);
-		setDefaultState(getDefaultState().with(SPAWNING, false).with(EMPTY, false).with(PROXIMITY, 0));
+		setDefaultState(getDefaultState().with(SPAWNING, false).with(EMPTY, false).with(PROXIMITY, 0).with(BOSS, 0));
 	}
 	
 	@Nullable
@@ -51,7 +53,7 @@ public class CerberusBlock extends HorizontalFacingBlock implements BlockEntityP
 	
 	protected void appendProperties(StateManager.Builder<Block, BlockState> builder)
 	{
-		builder.add(FACING, EMPTY, SPAWNING, PROXIMITY);
+		builder.add(FACING, EMPTY, SPAWNING, PROXIMITY, BOSS);
 	}
 	
 	@Nullable
@@ -82,13 +84,21 @@ public class CerberusBlock extends HorizontalFacingBlock implements BlockEntityP
 		if(state.get(SPAWNING))
 		{
 			world.setBlockState(pos, state.with(SPAWNING, false).with(EMPTY, true), Block.NOTIFY_LISTENERS);
-			CerberusEntity cerb = new CerberusEntity(EntityRegistry.CERBERUS, world);
 			Direction dir = state.get(FACING);
 			BlockPos spawnPos = pos.add(dir.getVector());
+			int boss = state.get(BOSS);
+			CerberusEntity cerb;
+			if(boss > 0)
+				cerb = CerberusEntity.spawnAsBoss(world, new Vec3d(spawnPos.getX() + 0.5, spawnPos.getY() + 0.1, spawnPos.getZ() + 0.5), boss == 2);
+			else
+				cerb = new CerberusEntity(EntityRegistry.CERBERUS, world);
 			cerb.setPos(spawnPos.getX() + 0.5, spawnPos.getY() + 0.1, spawnPos.getZ() + 0.5);
 			cerb.setRotation(dir.asRotation());
-			world.spawnEntity(cerb);
-			cerb.initialize(world, world.getLocalDifficulty(spawnPos), SpawnReason.DISPENSER, null, null);
+			if(boss == 0)
+			{
+				world.spawnEntity(cerb);
+				cerb.initialize(world, world.getLocalDifficulty(spawnPos), SpawnReason.DISPENSER, null, null);
+			}
 		}
 	}
 	

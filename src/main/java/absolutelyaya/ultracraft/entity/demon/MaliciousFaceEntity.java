@@ -151,7 +151,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		}
 		else if(data.equals(BOSS))
 		{
-			float health = getMaxHealth();
+			float health = getTrueMaxHealth();
 			if(getHealth() != health)
 				setHealth(health);
 		}
@@ -173,7 +173,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		return face;
 	}
 	
-	public float getMaxHealth() //ignore this error; Zugriffserweiterer regelt :)
+	public float getTrueMaxHealth()
 	{
 		return isBoss() ? BOSS_HEALTH : REGULAR_HEALTH;
 	}
@@ -295,7 +295,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 			double x = random.nextDouble() * dimensions.width - dimensions.width / 2 + getX();
 			double y = random.nextDouble() * dimensions.height + getY();
 			double z = random.nextDouble() * dimensions.width - dimensions.width / 2 + getZ();
-			if(rand.nextFloat() > 0.5f + getHealth() / getMaxHealth())
+			if(rand.nextFloat() > 0.5f + getHealth() / getTrueMaxHealth())
 				getWorld().addParticle(new GoopStringParticleEffect(new Vec3d(0.56, 0.09, 0.01),
 								0.4f + rand.nextFloat() * 0.2f, true), x, y, z,
 						0f, 0f, 0f);
@@ -379,7 +379,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	
 	float getCrackThreshold()
 	{
-		return getMaxHealth() * CRACK_THRESHOLD;
+		return getTrueMaxHealth() * CRACK_THRESHOLD;
 	}
 	
 	void drop()
@@ -515,7 +515,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	
 	private float getHealthPercent()
 	{
-		return getHealth() / getMaxHealth();
+		return getHealth() / getTrueMaxHealth();
 	}
 	
 	@Override

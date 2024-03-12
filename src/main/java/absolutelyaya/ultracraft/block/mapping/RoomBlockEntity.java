@@ -3,6 +3,7 @@ package absolutelyaya.ultracraft.block.mapping;
 import absolutelyaya.ultracraft.block.CerberusBlock;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
+import absolutelyaya.ultracraft.entity.IFlagger;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import absolutelyaya.ultracraft.registry.BlockRegistry;
 import net.minecraft.block.BlockState;
@@ -92,6 +93,10 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	{
 		boolean lastActive = active;
 		active = world.getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getAreaBox(), i -> i.isAlive() && !i.isSpectator()).size() > 0;
+		
+		world.getEntitiesByType(TypeFilter.instanceOf(AbstractUltraHostileEntity.class), getAreaBox(),
+						i -> i instanceof IFlagger flagger && !flagger.isRoomListener(pos))
+				.forEach(enemy -> ((IFlagger)enemy).bindListenerRoom(pos));
 		
 		if(active) //tick child blocks
 		{

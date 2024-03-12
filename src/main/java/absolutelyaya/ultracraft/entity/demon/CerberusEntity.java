@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.entity.demon;
 
+import absolutelyaya.ultracraft.block.mapping.RoomBlockEntity;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.Enrageable;
@@ -9,6 +10,7 @@ import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
+import absolutelyaya.ultracraft.entity.IFlagger;
 import absolutelyaya.ultracraft.entity.goal.TimedAttackGoal;
 import absolutelyaya.ultracraft.entity.other.ShockwaveEntity;
 import absolutelyaya.ultracraft.entity.projectile.CerberusBallEntity;
@@ -32,6 +34,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.RaycastContext;
@@ -49,8 +52,9 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEntity, IAnimatedEnemy, Enrageable
+public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEntity, IAnimatedEnemy, Enrageable, IFlagger
 {
+	protected static final float BOSS_HEALTH = 180f, REGULAR_HEALTH = 44f;
 	protected static final TrackedData<Integer> ATTACK_COOLDOWN = DataTracker.registerData(CerberusEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
 	private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
@@ -64,6 +68,7 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 	private static final byte ANIMATION_THROW = 1;
 	private static final byte ANIMATION_RAM = 2;
 	private static final byte ANIMATION_STOMP = 3;
+	private final List<BlockPos> listenerRooms = new ArrayList<>();
 	
 	public CerberusEntity(EntityType<? extends AbstractUltraHostileEntity> entityType, World world)
 	{
@@ -107,14 +112,15 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 	{
 		if(data.equals(BOSS))
 		{
-			float health = isBoss() ? 180f : 44f;
+			float health = getTrueMaxHealth();
 			if(getHealth() != health)
 				setHealth(health);
 		}
 	}
 	
 	@Override
-	public @Nullable EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt)
+	public @Nullable EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason,
+										   @Nullable EntityData entityData, @Nullable NbtCompound entityNbt)
 	{
 		onTrackedDataSet(BOSS);
 		return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
@@ -126,7 +132,7 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 		cerb.setPosition(pos);
 		cerb.dataTracker.set(BOSS, true);
 		if(halfHealth)
-			cerb.setHealth(cerb.getMaxHealth() / 2f);
+			cerb.setHealth(cerb.getTrueMaxHealth() / 2f);
 		world.spawnEntity(cerb);
 		return cerb;
 	}
@@ -281,7 +287,8 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 	@Override
 	public void move(MovementType movementType, Vec3d movement)
 	{
-		BlockHitResult hit = getWorld().raycast(new RaycastContext(getPos(), getPos().subtract(0, 2, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, this));
+		BlockHitResult hit = getWorld().raycast(new RaycastContext(getPos(), getPos().subtract(0, 2, 0),
+				RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, this));
 		if(ServerConfig.INSTANCE.smSafeLedges.getValue() && !hit.getType().equals(HitResult.Type.MISS) && !isEnraged())
 		{
 			for (int x = -1; x <= 1; x++)
@@ -316,9 +323,19 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 			dataTracker.set(ENRAGED, nbt.getBoolean("enraged"));
 	}
 	
+	public float getTrueMaxHealth()
+	{
+		return isBoss() ? BOSS_HEALTH : REGULAR_HEALTH;
+	}
+	
+	public float getHealthPercent()
+	{
+		return getHealth() / getTrueMaxHealth();
+	}
+	
 	public boolean isCracked()
 	{
-		return getHealth() < (isBoss() ? 60f : 22f);
+		return getHealthPercent() < (isBoss() ? 0.33 : 0.5);
 	}
 	
 	@Override
@@ -334,6 +351,9 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 	{
 		if(source.isOf(DamageSources.PARRY) && source.getSource() instanceof CerberusBallEntity ball && this.equals(ball.getOwner()) && ball.isParried())
 			dataTracker.set(DROP_APPLE, true);
+		float halfOfMax = getMaxHealth() / 2;
+		if(isBoss() && getHealth() > halfOfMax && getHealth() - amount <= halfOfMax)
+			setRoomFlag("cerbWave2", true);
 		return super.damage(source, amount);
 	}
 	
@@ -341,6 +361,34 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 	protected Identifier getLootTableId()
 	{
 		return dataTracker.get(DROP_APPLE) ? new Identifier(Ultracraft.MOD_ID, "cerberus_guaranteed_apple") : super.getLootTableId();
+	}
+	
+	@Override
+	public List<BlockPos> getListenerRooms()
+	{
+		return listenerRooms;
+	}
+	
+	@Override
+	public void bindListenerRoom(BlockPos pos)
+	{
+		listenerRooms.add(pos);
+	}
+	
+	@SuppressWarnings("SameParameterValue")
+	void setRoomFlag(String flag, boolean state)
+	{
+		List<BlockPos> removalList = new ArrayList<>();
+		for (BlockPos pos : listenerRooms)
+		{
+			if(!(getWorld().getBlockEntity(pos) instanceof RoomBlockEntity room))
+			{
+				removalList.add(pos);
+				continue;
+			}
+			room.setFlag(flag, state);
+		}
+		listenerRooms.removeAll(removalList);
 	}
 	
 	static class ApproachTargetGoal extends Goal
