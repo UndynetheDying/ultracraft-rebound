@@ -46,6 +46,8 @@ public class DamageSources
 	public static final RegistryKey<DamageType> MINECART = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Ultracraft.MOD_ID, "minecart"));
 	public static final RegistryKey<DamageType> OBLITERATION = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Ultracraft.MOD_ID, "obliteration"));
 	public static final RegistryKey<DamageType> DEVOURED = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Ultracraft.MOD_ID, "devoured"));
+	public static final RegistryKey<DamageType> GOOFED = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Ultracraft.MOD_ID, "goofed"));
+	public static final RegistryKey<DamageType> SKILL_ISSUE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Ultracraft.MOD_ID, "skill_issue"));
 	
 	public static DamageSource get(World world, RegistryKey<DamageType> type)
 	{

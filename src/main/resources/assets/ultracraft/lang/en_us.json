@@ -306,6 +306,10 @@
   "death.attack.obliteration.item": "%1$s was utterly obliterated by %2$s using %3$s",
   "death.attack.devoured": "%1$s was devoured by %2$s",
   "death.attack.devoured.item": "%1$s was devoured by %2$s using %3$s",
+  "death.attack.goofed": "%1$s goofed it right at the end",
+  "death.attack.goofed.item": "%1$s goofed it right at the end",
+  "death.attack.skill_issue": "%1$s had a fatal Skill Issue",
+  "death.attack.skill_issue.item": "%1$s had a fatal Skill Issue",
 
   "itemGroup.ultracraft.item": "ULTRACRAFT",
   "itemGroup.ultracraft.edit": "Edit Mode Blocks",
