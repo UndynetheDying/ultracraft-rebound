@@ -92,7 +92,7 @@ public class LightBlockEntity extends AbstractListenerBlockEntity
 		if(nbt.contains("level", NbtElement.INT_TYPE))
 		{
 			level = nbt.getInt("level");
-			if(world.getBlockState(pos).isOf(BlockRegistry.MAP_LIGHT))
+			if(world != null && world.getBlockState(pos).isOf(BlockRegistry.MAP_LIGHT))
 				world.setBlockState(pos, world.getBlockState(pos).with(LightBlock.LEVEL_15, level));
 		}
 	}
