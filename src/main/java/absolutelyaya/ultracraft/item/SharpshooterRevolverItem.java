@@ -264,4 +264,11 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 			return Formatting.GOLD + String.valueOf(getNbt(stack, "charges"));
 		return null;
 	}
+	
+	@Override
+	public void onSwitch(World world, PlayerEntity user, int newSlot)
+	{
+		super.onSwitch(world, user, newSlot);
+		approxUseTime = -1;
+	}
 }
