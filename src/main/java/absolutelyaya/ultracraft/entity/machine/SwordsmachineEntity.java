@@ -17,6 +17,7 @@ import absolutelyaya.ultracraft.entity.other.ProgressionItemEntity;
 import absolutelyaya.ultracraft.entity.projectile.ShotgunPelletEntity;
 import absolutelyaya.ultracraft.entity.projectile.ThrownMachineSwordEntity;
 import absolutelyaya.ultracraft.item.MachineSwordItem;
+import absolutelyaya.ultracraft.particle.TeleportParticleEffect;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
@@ -35,6 +36,7 @@ import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -86,6 +88,8 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 	private static final RawAnimation SLASH_ANIM = RawAnimation.begin().thenPlay("slash");
 	private static final RawAnimation COMBO_ANIM = RawAnimation.begin().thenPlay("combo");
 	private static final RawAnimation SPIN_ANIM = RawAnimation.begin().thenPlay("spin");
+	private static final RawAnimation INTRO_FALL_ANIM = RawAnimation.begin().thenPlay("boss_intro_fall");
+	private static final RawAnimation INTRO_ANIM = RawAnimation.begin().thenPlay("boss_intro");
 	private final AnimatableInstanceCache cache = AzureLibUtil.createInstanceCache(this);
 	protected static final TrackedData<ItemStack> SWORD_STACK = DataTracker.registerData(SwordsmachineEntity.class, TrackedDataHandlerRegistry.ITEM_STACK);
 	protected static final TrackedData<Boolean> HAS_SHOTGUN = DataTracker.registerData(SwordsmachineEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -99,6 +103,8 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 	protected static final TrackedData<Integer> ATTACK_COOLDOWN = DataTracker.registerData(SwordsmachineEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Integer> BLAST_COOLDOWN = DataTracker.registerData(SwordsmachineEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Integer> THROW_COOLDOWN = DataTracker.registerData(SwordsmachineEntity.class, TrackedDataHandlerRegistry.INTEGER);
+	protected static final TrackedData<Integer> BOSS_TYPE = DataTracker.registerData(SwordsmachineEntity.class, TrackedDataHandlerRegistry.INTEGER);
+	protected static final TrackedData<Integer> INTRO_TICKS = DataTracker.registerData(SwordsmachineEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Optional<UUID>> LAST_TRAIL_ID = DataTracker.registerData(SwordsmachineEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
 	protected static final byte ANIMATION_IDLE = 0;
 	protected static final byte ANIMATION_LOOK = 1;
@@ -108,6 +114,7 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 	protected static final byte ANIMATION_SLASH = 5;
 	protected static final byte ANIMATION_COMBO = 6;
 	protected static final byte ANIMATION_SPIN = 7;
+	protected static final byte ANIMATION_INTRO = 8;
 	private final Multimap<EntityAttribute, EntityAttributeModifier> enragedModifiers;
 	int lastTrailStart = -1;
 	float swordVolume = 0f, swordPitch = 1f;
@@ -140,6 +147,8 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 		dataTracker.startTracking(NO_BREAKDOWN, false);
 		dataTracker.startTracking(MAX_STAMINA, 100);
 		dataTracker.startTracking(CURRENT_ATTACK, (byte)0);
+		dataTracker.startTracking(INTRO_TICKS, 0);
+		dataTracker.startTracking(BOSS_TYPE, 2);
 		dataTracker.startTracking(LAST_TRAIL_ID, Optional.empty());
 	}
 	
@@ -155,7 +164,14 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 			if(bt == 58 && canLoseShotgun())
 				dataTracker.set(HAS_SHOTGUN, false); //second frame of breakdown anim / lose shotgun
 			else if(bt == 0 && getAnimation() == ANIMATION_BREAKDOWN)
+			{
 				dataTracker.set(ANIMATION, ANIMATION_IDLE);
+				if(dataTracker.get(BOSS_TYPE) == 1)
+				{
+					getWorld().addParticle(new TeleportParticleEffect(getTeleportParticleSize()), getX(), getY(), getZ(), 0f, 0f, 0f);
+					remove(RemovalReason.KILLED);
+				}
+			}
 		}
 		if(data.equals(ENRAGED_TICKS))
 		{
@@ -167,6 +183,11 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 			}
 			if(t == 0)
 				getAttributes().removeModifiers(enragedModifiers);
+		}
+		if(data.equals(INTRO_TICKS))
+		{
+			if(dataTracker.get(INTRO_TICKS) == 0)
+				dataTracker.set(ANIMATION, ANIMATION_IDLE);
 		}
 		if(data.equals(BOSS))
 		{
@@ -219,6 +240,33 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 		return sm;
 	}
 	
+	/**
+	 * Types:<br>
+	 * 0 = play intro both phases<br>
+	 * 1 = play intro despawn after breakdown<br>
+	 * 2 = no intro start at phase two<br>
+	 * 3 = no intro both phases
+	 */
+	public static SwordsmachineEntity spawnAsBoss(World world, Vec3d pos, int type)
+	{
+		SwordsmachineEntity sm = new SwordsmachineEntity(EntityRegistry.SWORDSMACHINE, world);
+		sm.setPosition(pos);
+		sm.dataTracker.set(BOSS, true);
+		sm.dataTracker.set(BOSS_TYPE, type);
+		if(type < 2)
+		{
+			sm.dataTracker.set(ANIMATION, ANIMATION_INTRO);
+			sm.dataTracker.set(INTRO_TICKS, 25);
+		}
+		if(type == 2)
+		{
+			sm.setHealth(74);
+			sm.dataTracker.set(HAS_SHOTGUN, false);
+		}
+		world.spawnEntity(sm);
+		return sm;
+	}
+	
 	@Override
 	public void onInterrupt(PlayerEntity parrier)
 	{
@@ -245,6 +293,7 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 			case ANIMATION_SLASH -> controller.setAnimation(SLASH_ANIM);
 			case ANIMATION_COMBO -> controller.setAnimation(COMBO_ANIM);
 			case ANIMATION_SPIN -> controller.setAnimation(SPIN_ANIM);
+			case ANIMATION_INTRO -> controller.setAnimation(isOnGround() ? INTRO_ANIM : INTRO_FALL_ANIM);
 		}
 		return PlayState.CONTINUE;
 	}
@@ -340,11 +389,15 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 			dataTracker.set(BLAST_COOLDOWN, dataTracker.get(BLAST_COOLDOWN) - 1);
 		if(dataTracker.get(THROW_COOLDOWN) > 0)
 			dataTracker.set(THROW_COOLDOWN, dataTracker.get(THROW_COOLDOWN) - 1);
+		if(dataTracker.get(INTRO_TICKS) > 0 && isOnGround())
+			dataTracker.set(INTRO_TICKS, dataTracker.get(INTRO_TICKS) - 1);
 	}
 	
 	@Override
 	public boolean damage(DamageSource source, float amount)
 	{
+		if(isPlayingIntro() && !source.isOf(DamageTypes.OUT_OF_WORLD))
+			return false;
 		if(source.isOf(DamageSources.PROJBOOST))
 			amount *= 2.25;
 		else if(source.isOf(DamageSources.SHOTGUN))
@@ -537,9 +590,14 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 	
 	private boolean isIdle()
 	{
-		if(dataTracker.get(BREAKDOWN_TICKS) > 0 || dataTracker.get(ENRAGED_TICKS) > 200)
+		if(dataTracker.get(BREAKDOWN_TICKS) > 0 || dataTracker.get(ENRAGED_TICKS) > 200 || dataTracker.get(INTRO_TICKS) > 0)
 			return false;
 		return dataTracker.get(ANIMATION) == ANIMATION_IDLE || dataTracker.get(ANIMATION) == ANIMATION_LOOK;
+	}
+	
+	private boolean isPlayingIntro()
+	{
+		return getAnimation() == ANIMATION_INTRO && dataTracker.get(INTRO_TICKS) > 0;
 	}
 	
 	public boolean hasShotgun()

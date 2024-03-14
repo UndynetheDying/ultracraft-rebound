@@ -57,6 +57,8 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 			switch(entityType.toString())
 			{
 				case "ultracraft:dummy" -> entities.add(FilthEntity.spawnWithoutAI(world, pos.toCenterPos().subtract(0f, 0.5f, 0f)));
+				case "ultracraft:swordsmachine_wave1" -> entities.add(SwordsmachineEntity.spawnAsBoss(world, pos.toCenterPos(), 1));
+				case "ultracraft:swordsmachine_wave2" -> entities.add(SwordsmachineEntity.spawnAsBoss(world, pos.toCenterPos(), 2));
 				case "ultracraft:regular_swordsmachine" -> entities.add(SwordsmachineEntity.spawnAsNonBoss(world, pos.toCenterPos()));
 				case "ultracraft:destiny_swordsmachine" -> entities.addAll(DestinyBondSwordsmachineEntity.spawn(world, pos.toCenterPos(), yaw));
 				case "ultracraft:very_rodent" -> entities.add(RodentEntity.spawn(world, pos.toCenterPos(), 1));
@@ -71,6 +73,7 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 				e.setYaw(yaw);
 				e.setBodyYaw(yaw);
 				e.setHeadYaw(yaw);
+				e.prevYaw = yaw;
 			});
 		}
 		else if(!newState)
