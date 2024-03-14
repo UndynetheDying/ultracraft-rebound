@@ -95,7 +95,7 @@ public class ShotgunPelletEntity extends HellBulletEntity implements ProjectileE
 	{
 		Entity entity = entityHitResult.getEntity();
 		boolean parried = ((ProjectileEntityAccessor)this).isParried();
-		if(!entity.getClass().equals(ignore))
+		if(!entity.getClass().equals(ignore) && (!isOwner(entity) || getKnockbackExplosionCauser() != null))
 			entity.damage(DamageSources.get(getWorld(), DamageSources.SHOTGUN, getOwner()),
 					damage * ServerConfig.INSTANCE.shotgunDamage.getValue());
 		if(parried)
