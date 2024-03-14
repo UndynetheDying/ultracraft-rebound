@@ -65,6 +65,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	static final float DESIRED_HEIGHT = 3;
 	Vec2f deathRotation;
 	int deathTicks;
+	PlayerEntity killerPlayer;
 	
 	public MaliciousFaceEntity(EntityType<? extends AbstractUltraFlyingEntity> entityType, World world)
 	{
@@ -353,7 +354,6 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 							x, y, z, 0f, 0f, 0f);
 				}
 			}
-			return false;
 		}
 		if(source.isOf(DamageTypes.FALL))
 			return false;
@@ -370,6 +370,11 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 						UltraComponents.STYLE.get(playerAttacker).styleBonusGet(bonus);
 				});
 			}
+			if(source.getSource() instanceof PlayerEntity player)
+				killerPlayer = player;
+			else if(source.getAttacker() instanceof PlayerEntity player)
+				killerPlayer = player;
+			System.out.println(killerPlayer);
 			return false;
 		}
 		if(getHealth() - amount < getCrackThreshold() && !dataTracker.get(CRACKED))
@@ -411,7 +416,9 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 				shockwave.setGrowRate(0.5f);
 				getWorld().spawnEntity(shockwave);
 			}
-			List<Entity> entities = getWorld().getOtherEntities(this, getBoundingBox().expand(0.5, 0.5, 0.5), Entity::isLiving);
+			System.out.println(killerPlayer);
+			List<Entity> entities = getWorld().getOtherEntities(this, getBoundingBox().expand(0.5, 0.5, 0.5),
+					i -> i.isAlive() && !i.equals(killerPlayer));
 			for (Entity e : entities)
 				e.damage(DamageSources.get(getWorld(), DamageSources.MAURICE), 999f);
 			dataTracker.set(LANDED, true);
