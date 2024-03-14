@@ -99,7 +99,7 @@ public class HarpoonEntity extends AbstractSkewerEntity implements IIgnoreSharps
 				despawn();
 			}
 		}
-		if(victim != null && !dataTracker.get(RETURNING))
+		if(victim != null && !dataTracker.get(RETURNING) && !isRemoved())
 		{
 			if(!victim.isAlive())
 			{
@@ -134,7 +134,8 @@ public class HarpoonEntity extends AbstractSkewerEntity implements IIgnoreSharps
 	public Vec3d getLeashPos(float delta)
 	{
 		float f = MathHelper.RADIANS_PER_DEGREE;
-		return getLerpedPos(delta).add(new Vec3d(0f, 0.2f, -1.5f).rotateX(getPitch() * f).rotateY(getYaw() * f));
+		Vec3d pos = isInGround() ? getPos() : getLerpedPos(delta);
+		return pos.add(new Vec3d(0f, 0.2f, -1.5f).rotateX(getPitch() * f).rotateY(getYaw() * f));
 	}
 	
 	public Vector3f getStartPosition()

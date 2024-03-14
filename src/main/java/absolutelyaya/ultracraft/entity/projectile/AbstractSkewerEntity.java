@@ -69,9 +69,9 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 				return;
 			}
 			setVelocity(Vec3d.ZERO);
-			prevX = getX();
-			prevY = getY();
-			prevZ = getZ();
+			lastRenderX = prevX = getX();
+			lastRenderY = prevY = getY();
+			lastRenderZ = prevZ = getZ();
 			setPosition(victim.getPos().add(0f, victim.getHeight() / 2, 0f));
 			setYaw(prevYaw = dataTracker.get(IMPACT_YAW));
 			setPitch(prevPitch = dataTracker.get(IMPACT_PITCH));

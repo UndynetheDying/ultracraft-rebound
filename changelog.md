@@ -224,6 +224,9 @@
 - Fixed a small logic error that resulted in the intro not being repeated when setting both "repeatIntro" and "neverIntro" to true
   - "neverIntro" is just intended to suppress showing the intro again after switching versions
 - The catchphrase in the intro now fades later than the rest
+- Hopefully improved Skewer-Type Projectile Jittering
+- Potentially fixed Skewered Status Effect 
+- Improved Magnet Attraction Position
 ## Resource Changes
 - Continued Adding Sounds
 - Shotgun Animations now have a few sound keyframes
