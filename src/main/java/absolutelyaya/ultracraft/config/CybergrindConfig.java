@@ -22,12 +22,12 @@ public class CybergrindConfig extends Config
 	public final IntegerEntry wavesPerDifficultyLow = new IntegerEntry("MinWaves", 2);
 	public final IntegerEntry wavesPerDifficultyHigh = new IntegerEntry("MaxWaves", 4);
 	public final IntegerEntry wavesPerDifficultyBonus = new IntegerEntry("DifficultyBonusWaves", 0);
-	public final BooleanEntry stopUponDeath = new BooleanEntry("StopOnDeath", true);
+	public final FloatEntry wavesPerParticipantMultiplier = new FloatEntry("WavesPerParticipantMultipler", 1.1f);
 	public final FloatEntry startChance = new FloatEntry("StartChance", 0.2f);
 	public final IntegerEntry cooldown = new IntegerEntry("Cooldown", 5);
 	public final IntegerEntry arenaRadius = new IntegerEntry("ArenaRadius", 33);
 	public final BooleanEntry arenaBorderSolid = new BooleanEntry("ArenaBorderSolid", true);
-	public final IntegerEntry startDelay = new IntegerEntry("StartDelay", 1200); //1 minute
+	public final IntegerEntry startDelay = new IntegerEntry("StartDelay", 600); //30 seconds
 	static final Map<Layer, Map<EntityType<? extends HostileEntity>, IntegerEntry>> costs = new HashMap<>();
 	
 	public CybergrindConfig(MinecraftServer server)
@@ -72,8 +72,7 @@ public class CybergrindConfig extends Config
 		entries.add(wavesPerDifficultyLow);
 		entries.add(wavesPerDifficultyHigh);
 		entries.add(wavesPerDifficultyBonus);
-		entries.add(new Comment(" Stop when all participants have died"));
-		entries.add(stopUponDeath);
+		entries.add(wavesPerParticipantMultiplier);
 		entries.add(new Comment(" Chance to start a Cybergrind each Night; after a Cybergrind has ended, for [cooldown] nights, the chance will be 0."));
 		entries.add(startChance);
 		entries.add(cooldown);

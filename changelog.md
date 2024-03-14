@@ -7,7 +7,7 @@
     - Activate all 4 Slab Blocks to obtain the Slab Revolver
   - Other Random Limbo Themed Structures
   - Instead of random mob spawning, every night there's a chance for a Cybergrind to start
-    - The Amount of Waves that need to be beaten (and the amount // strength of enemies) depends on your worlds difficulty
+    - The Amount of Waves that need to be beaten (and the amount // strength of enemies) depends on your worlds difficulty and number of Participants
     - Cybergrind can be configured using a config file
     - "Why no random mob spawning??" trust me, it's *really* not fun.
 - Added Cybergrind

@@ -95,6 +95,18 @@ public class CybergrindGame
 				addParticipant(player);
 	}
 	
+	void removeAllParticipantsOutOfBounds()
+	{
+		if(getArenaBounds() == null)
+			return;
+		Vector4i bounds = getArenaBounds();
+		List<PlayerEntity> remove = new ArrayList<>();
+		for (PlayerEntity player : getParticipants())
+			if(!(player.getX() > bounds.x && player.getX() < bounds.z && player.getZ() > bounds.y && player.getZ() < bounds.w))
+				remove.add(player);
+		participants.removeAll(remove);
+	}
+	
 	void addParticipant(PlayerEntity player)
 	{
 		if(participants.contains(player))
@@ -183,7 +195,12 @@ public class CybergrindGame
 				enemies.forEach(e -> e.setGlowing(true));
 		}
 		if(duration % 20 == 0) //add players within arena bounds to the participant list
+		{
 			addAllPlayersInBounds();
+			removeAllParticipantsOutOfBounds();
+			if(getParticipants().size() == 0)
+				end();
+		}
 		if(shouldSync())
 			syncCybergrind();
 	}
@@ -198,12 +215,15 @@ public class CybergrindGame
 		Layer curLayer = Layer.fromRegistryKey(world.getRegistryKey());
 		for (Map.Entry<EntityType<? extends HostileEntity>, IntegerEntry> entry : config.getCosts(curLayer).entrySet())
 			spawnCosts.put(entry.getKey(), entry.getValue().getValue());
-		int difficulty = world.getDifficulty().getId();
+		float difficulty = world.getLocalDifficulty(center).getClampedLocalDifficulty();
 		if(waves == 0)
 		{
-			waves = config.wavesPerDifficultyBonus.getValue() * difficulty;
+			float wavef = config.wavesPerDifficultyBonus.getValue() * difficulty;
 			for (int i = 0; i < difficulty; i++)
-				waves += rand.nextBetween(config.wavesPerDifficultyLow.getValue(), config.wavesPerDifficultyHigh.getValue());
+				wavef += rand.nextBetween(config.wavesPerDifficultyLow.getValue(), config.wavesPerDifficultyHigh.getValue());
+			for (int i = 0; i < participants.size() - 1; i++)
+				wavef *= config.wavesPerParticipantMultiplier.getValue();
+			waves = (int)wavef;
 		}
 		initialized = true;
 		addAllPlayersInBounds();

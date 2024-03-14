@@ -77,6 +77,8 @@ public class CybergrindManager
 	
 	public void startCybergrind()
 	{
+		if(activeGame != null)
+			endCybergrind();
 		List<ServerPlayerEntity> candidates = getPlayersInUltracraftDimensions(server);
 		if(candidates.size() == 0)
 		{
@@ -89,6 +91,8 @@ public class CybergrindManager
 	
 	public CybergrindGame startCybergrindAt(BlockPos center, int waves)
 	{
+		if(activeGame != null)
+			endCybergrind();
 		server.getPlayerManager().broadcast(Text.translatable("message.ultracraft.cybergrind.announce-pos",
 				center.getX(), center.getY(), center.getZ()), false);
 		return activeGame = new CybergrindGame(server, config, rand, waves, center);
