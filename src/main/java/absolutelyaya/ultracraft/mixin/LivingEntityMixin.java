@@ -98,7 +98,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	int punchDuration = 60;
 	Supplier<Boolean> canBleedSupplier = () -> true, takePunchKnockpackSupplier = this::isPushable; //TODO: add Sandy Enemies (eventually)
 	int punchTicks, knuckleTicks, ticksSincePunch = Integer.MAX_VALUE, ricochetCooldown, fatique, firecooldown;
-	boolean punching, blasting, timeFrozen, punchCancelled;
+	boolean punching, blasting, timeFrozen, punchCancelled, punchInterruptable;
 	float punchProgress, prevPunchProgress, knuckleProgress, prevKnuckleProgress, recoil, lastHealth;
 	
 	public LivingEntityMixin(EntityType<?> type, World world)
@@ -450,7 +450,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	@Override
 	public boolean punch()
 	{
-		if(!punching)
+		if(!punching || punchInterruptable)
 		{
 			IArmComponent arm = UltraComponents.ARMS.get(this);
 			punchDuration = switch(arm.getActiveArm())
@@ -469,9 +469,17 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 				playSound(SoundRegistry.FEEDBACKER_PUNCH, 1f, 1f);
 			else if(arm.isKnuckleblaster())
 				playSound(SoundRegistry.KNUCKLEBLASTER_PUNCH, 1f, 1f);
+			punchInterruptable = false;
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public void fakePunch()
+	{
+		punch();
+		punchInterruptable = true;
 	}
 	
 	@Override

@@ -133,6 +133,7 @@
   - while it was funi, since the mauricing radius was increased (see tweaks section) it became too easy and thus annoying
   - You can still Maurice other Players tho ofc
 - Slightly Changed how parrying works yet again
+- The Punch animation triggered by throwing coins using a marksman can now be interrupted, making coin punching less clunky
 ## Settings & Config
 - Removed all gamerules
 - Added Option to disable Screenshake

@@ -9,6 +9,8 @@ public interface LivingEntityAccessor
 {
 	boolean punch();
 	
+	void fakePunch();
+	
 	float getPunchProgress(float tickDelta);
 	
 	boolean IsPunching();

@@ -69,7 +69,7 @@ public class MarksmanRevolverItem extends AbstractRevolverItem
 		int coins = getNbt(itemStack, "coins");
 		if(coins <= 0)
 			return TypedActionResult.pass(itemStack);
-		((LivingEntityAccessor)user).punch();
+		((LivingEntityAccessor)user).fakePunch();
 		if(!world.isClient && coins > 0)
 		{
 			if(coins == 4)

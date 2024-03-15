@@ -24,6 +24,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ShieldItem;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
@@ -47,6 +48,8 @@ public abstract class HandRendererMixin
 	@Inject(method = "renderFirstPersonItem", at = @At(value = "HEAD"), cancellable = true)
 	void onRenderFirstPersonItem(AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci)
 	{
+		if(item.getItem() instanceof ShieldItem)
+			return;
 		LivingEntityAccessor playerAccessor = ((LivingEntityAccessor)player);
 		if(hand == Hand.OFF_HAND && (playerAccessor.IsPunching() || !item.isEmpty()))
 		{
