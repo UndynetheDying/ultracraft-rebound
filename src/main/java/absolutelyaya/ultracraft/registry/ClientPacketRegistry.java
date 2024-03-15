@@ -229,8 +229,10 @@ public class ClientPacketRegistry
 			if(client.player == null)
 				return;
 			Vector3f pos = buf.readVector3f();
+			boolean alt = buf.readBoolean();
 			client.execute(() -> {
-				client.player.getWorld().addParticle(ParticleTypes.FLAME, pos.x, pos.y, pos.z, 0f, 0f, 0f);
+				client.player.getWorld().addParticle(alt ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME, pos.x, pos.y, pos.z,
+						0f, 0f, 0f);
 			});
 		}));
 		ClientPlayNetworking.registerGlobalReceiver(PacketRegistry.SKIM_S2C_PACKET_ID, ((client, handler, buf, sender) -> {

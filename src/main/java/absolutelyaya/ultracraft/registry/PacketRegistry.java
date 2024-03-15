@@ -34,6 +34,7 @@ import net.minecraft.block.BellBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
@@ -57,9 +58,7 @@ import net.minecraft.world.World;
 import org.apache.commons.lang3.ArrayUtils;
 import org.joml.Vector3f;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class PacketRegistry
 {
@@ -164,6 +163,7 @@ public class PacketRegistry
 					soap.onOffhandThrow(world, player);
 					return;
 				}
+				ServerConfig config = ServerConfig.INSTANCE;
 				
 				//Punch Entity; Takes Priority over Projectile Parries
 				if(target != null)
@@ -186,7 +186,6 @@ public class PacketRegistry
 					boolean knuckle = arm.isKnuckleblaster();
 					world.playSound(null, player.getBlockPos(), knuckle ? SoundRegistry.KNUCKLEBLASTER_PUNCH : SoundRegistry.FEEDBACKER_PUNCH ,
 							SoundCategory.PLAYERS, 0.75f, 0.5f);
-					ServerConfig config = ServerConfig.INSTANCE;
 					boolean targetDamaged = target.damage(DamageSources.get(world, knuckle ? DamageSources.KNUCKLE_PUNCH : DamageSources.PUNCH, player),
 							knuckle ? config.knuckleblasterDamage.getValue() : config.feedbackerDamage.getValue());
 					
@@ -211,37 +210,11 @@ public class PacketRegistry
 				//Fetch all Parry Candidate Projectiles
 				boolean chainingAllowed = ServerConfig.INSTANCE.parryChaining.getValue();
 				Vec3d pos = player.getEyePos();
-				Box check = new Box(pos.x - 0.3f, pos.y - 0.3f, pos.z - 0.3f,
-						pos.x + 0.3f, pos.y + 0.3f, pos.z + 0.3f)
-									.stretch(forward.multiply(0.9)).offset(new Vec3d(clientVel.mul(0.25f)))
-									.stretch(clientVel.x * 16, clientVel.y * 16, clientVel.z * 16).stretch(0, -1, 0);
-				//Get Projectiles that absolutely are in the Parry Check
-				List<ProjectileEntity> projectiles = player.getWorld().getEntitiesByClass(ProjectileEntity.class, check,
-						e -> (!((ProjectileEntityAccessor)e).isParried()) || chainingAllowed);
-				//Get Projectiles that could move into the Parry Check
-				List<ProjectileEntity> potentialProjectiles = player.getWorld().getEntitiesByClass(ProjectileEntity.class, player.getBoundingBox().expand(4),
-						e -> (!((ProjectileEntityAccessor)e).isParried() || chainingAllowed) && !projectiles.contains(e));
-				for (ProjectileEntity proj : potentialProjectiles)
-				{
-					Vec3d vel = proj.getVelocity();
-					if (check.intersects(proj.getBoundingBox().expand(vel.x, vel.y, vel.z)))
-					{
-						projectiles.add(proj);
-						break;
-					}
-				}
-				
-				if(debug)
-				{
-					addDebugParticle(player, new Vec3d(check.minX, check.minY, check.minZ));
-					addDebugParticle(player, new Vec3d(check.maxX, check.minY, check.minZ));
-					addDebugParticle(player, new Vec3d(check.minX, check.minY, check.maxZ));
-					addDebugParticle(player, new Vec3d(check.maxX, check.minY, check.maxZ));
-					addDebugParticle(player, new Vec3d(check.minX, check.maxY, check.minZ));
-					addDebugParticle(player, new Vec3d(check.maxX, check.maxY, check.minZ));
-					addDebugParticle(player, new Vec3d(check.minX, check.maxY, check.maxZ));
-					addDebugParticle(player, new Vec3d(check.maxX, check.maxY, check.maxZ));
-				}
+				HashSet<ProjectileEntity> projectiles = new HashSet<>();
+				projectiles.addAll(fetchParryCandidates(player, pos, forward, config.parryRange.getValue(), clientVel, chainingAllowed,
+						debug ? 1 : 0, null));
+				projectiles.addAll(fetchParryCandidates(player, pos, forward, config.coinPunchRange.getValue(), clientVel, chainingAllowed,
+						debug ? 2 : 0, EntityRegistry.THROWN_COIN));
 				
 				//The actual Parry Logic
 				ProjectileEntity parried;
@@ -729,7 +702,7 @@ public class PacketRegistry
 		});
 	}
 	
-	static ProjectileEntity getNearestProjectile(List<ProjectileEntity> projectiles, Vec3d to)
+	static ProjectileEntity getNearestProjectile(Set<ProjectileEntity> projectiles, Vec3d to)
 	{
 		double nearestDistance = 100.0;
 		ProjectileEntity nearest = null;
@@ -746,15 +719,67 @@ public class PacketRegistry
 		return nearest;
 	}
 	
-	static void addDebugParticle(ServerPlayerEntity p, Vec3d pos)
+	static void addDebugParticle(ServerPlayerEntity p, Vec3d pos, boolean alt)
 	{
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeVector3f(pos.toVector3f());
+		buf.writeBoolean(alt);
 		ServerPlayNetworking.send(p, DEBUG_PACKET_ID, buf);
 	}
 	
 	static void onTravelFinished(ServerPlayerEntity player)
 	{
 		ServerPlayNetworking.send(player, FINISH_TRAVELLING_PACKET_ID, new PacketByteBuf(Unpooled.buffer()));
+	}
+	
+	static HashSet<ProjectileEntity> fetchParryCandidates(ServerPlayerEntity player, Vec3d pos, Vec3d forward, float dist, Vector3f clientVel,
+													   boolean chainingAllowed, int debug, EntityType<? extends ProjectileEntity> entityType)
+	{
+		HashSet<ProjectileEntity> output = new HashSet<>();
+		Box check = new Box(pos.x - 0.3f, pos.y - 0.3f, pos.z - 0.3f,
+				pos.x + 0.3f, pos.y + 0.3f, pos.z + 0.3f)
+							.stretch(forward.multiply(dist)).offset(new Vec3d(clientVel.mul(0.25f)))
+							.stretch(clientVel.x * 16, clientVel.y * 16, clientVel.z * 16).stretch(0, -1, 0);
+		//Get Projectiles that absolutely are in the Parry Check
+		List<ProjectileEntity> projectiles = player.getWorld().getEntitiesByClass(ProjectileEntity.class, check,
+				e -> {
+					if(!(entityType == null || e.getType().equals(entityType)))
+						return false;
+					return (!((ProjectileEntityAccessor)e).isParried()) || chainingAllowed;
+				});
+		//Get Projectiles that could move into the Parry Check
+		List<ProjectileEntity> potentialProjectiles = player.getWorld().getEntitiesByClass(ProjectileEntity.class, player.getBoundingBox().expand(4),
+				e -> {
+					if(!(entityType == null || e.getType().equals(entityType)) || projectiles.contains(e))
+						return false;
+					return !(((ProjectileEntityAccessor)e).isParried() || chainingAllowed);
+				});
+		for (ProjectileEntity proj : potentialProjectiles)
+		{
+			Vec3d vel = proj.getVelocity();
+			if (check.intersects(proj.getBoundingBox().expand(vel.x, vel.y, vel.z)))
+			{
+				projectiles.add(proj);
+				break;
+			}
+		}
+		Vec3d eyePos = player.getEyePos();
+		for (ProjectileEntity proj : projectiles)
+		{
+			if(proj.getPos().subtract(eyePos).length() < dist)
+				output.add(proj);
+		}
+		if(debug > 0)
+		{
+			addDebugParticle(player, new Vec3d(check.minX, check.minY, check.minZ), debug == 2);
+			addDebugParticle(player, new Vec3d(check.maxX, check.minY, check.minZ), debug == 2);
+			addDebugParticle(player, new Vec3d(check.minX, check.minY, check.maxZ), debug == 2);
+			addDebugParticle(player, new Vec3d(check.maxX, check.minY, check.maxZ), debug == 2);
+			addDebugParticle(player, new Vec3d(check.minX, check.maxY, check.minZ), debug == 2);
+			addDebugParticle(player, new Vec3d(check.maxX, check.maxY, check.minZ), debug == 2);
+			addDebugParticle(player, new Vec3d(check.minX, check.maxY, check.maxZ), debug == 2);
+			addDebugParticle(player, new Vec3d(check.maxX, check.maxY, check.maxZ), debug == 2);
+		}
+		return output;
 	}
 }

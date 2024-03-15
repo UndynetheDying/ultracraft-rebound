@@ -24,6 +24,8 @@ public class ServerConfig extends Config
 	public final BooleanEntry bloodSaturation = new BooleanEntry("BloodSaturation", false);
 	public final BooleanEntry dodgeableOverpump = new BooleanEntry("DodgeableOverpump", false);
 	public final BooleanEntry customLevelsUnlocked = new BooleanEntry("UnlockAllCustomLevels", true);
+	public final FloatEntry parryRange = (FloatEntry)new FloatEntry("ParryRange", 2f).setRange(0f, Float.MAX_VALUE);
+	public final FloatEntry coinPunchRange = (FloatEntry)new FloatEntry("CoinPunchRange", 4f).setRange(0f, Float.MAX_VALUE);
 	//Weapon Damage
 	public final FloatEntry feedbackerDamage = (FloatEntry)new FloatEntry("FeedbackerDamage", 1f).setRange(0f, Float.MAX_VALUE);
 	public final FloatEntry knuckleblasterDamage = (FloatEntry)new FloatEntry("KnuckleblasterDamage", 2.5f).setRange(0f, Float.MAX_VALUE);
@@ -56,6 +58,8 @@ public class ServerConfig extends Config
 		entries.add(bloodSaturation);
 		entries.add(dodgeableOverpump);
 		entries.add(customLevelsUnlocked);
+		entries.add(parryRange); //TODO: add to config screen
+		entries.add(coinPunchRange); //TODO: add to config screen
 		entries.add(new Comment(" ## ############################# ##  #"));
 		entries.add(new Comment("      Weapon Damage Multipliers"));
 		entries.add(new Comment(" ## ############################# ##  #"));

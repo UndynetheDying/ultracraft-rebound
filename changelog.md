@@ -129,15 +129,20 @@
 - Fixed Malicious Faces Beam attack being **visually** offset as if it was a hitscan from a Player
 - Fixed Exploding Hitscans not actually exploding if they hit an Entity and not a Block
 - Filth Attacks are now interrupted if they leave the ground
-- Made it impossible to Maurice yourself; You can still Maurice other Players tho ofc
+- Made it impossible to Maurice yourself; 
+  - while it was funi, since the mauricing radius was increased (see tweaks section) it became too easy and thus annoying
+  - You can still Maurice other Players tho ofc
+- Slightly Changed how parrying works yet again
 ## Settings & Config
 - Removed all gamerules
 - Added Option to disable Screenshake
 - Added new Config System
   - `/ultracraft config` still works, but all hivel related entries have been moved.
+    - for now Hivel Config has to be done via the config file named `hivel.properties`; edit at your own risk (I mean, have fun ig; not like anything terrible could happen. If you fuck something up, delete the file and the defaults will be restored)
   - Config files are found under `saves/<world>/ultracraft/`
 - Added Config to allow for the overpump self-damage being dodgeable (default: `false`)
 - Added Config for how much damage the Feedbacker and Knuckleblaster do
+- Added Config for Parry and Coin Punch range (I'll make icons for these 2 later, this is kind of a last minute thing lmao)
 ## Commands
 - `/ultrawhitelist` can now be used by non-players
 - Fixed time unfreeze command not clearing the time freeze VFX on Clients
@@ -164,6 +169,8 @@
 - Malicious Face Buff
   - Beam Attack is now much Quicker to be more accurate to the original timing (100 -> 70 ticks)
   - Slightly Buffed movement Speed (0.4 -> 0.5)
+- Increased Parry Range (0.9 -> 2.0)
+- Increased Coin Punch Range (0.9 -> 4.0)
 ## Minor Changes
 - Fixed water skimming not playing sounds
 - Removed the "vents" MOTD from the non-essential resources
