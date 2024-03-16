@@ -4,7 +4,7 @@ import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.sound.ModularLevelMusic;
 import absolutelyaya.ultracraft.client.sound.ModularMusicInstance;
 import absolutelyaya.ultracraft.components.UltraComponents;
-import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.components.player.ILevelStatsComponent;
 import absolutelyaya.ultracraft.data.LevelDataManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.*;
@@ -49,8 +49,8 @@ public abstract class MusicTrackerMixin
 				stopModular();
 			return;
 		}
-		IWingedPlayerComponent winged =  UltraComponents.WINGED.get(client.player);
-		Identifier level = winged.getCurrentLevel();
+		ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(client.player);
+		Identifier level = levelStats.getCurrentLevel();
 		ModularLevelMusic music = null;
 		if(level != null)
 			music = LevelDataManager.getLevelData(level).getMusic();
@@ -74,7 +74,7 @@ public abstract class MusicTrackerMixin
 		}
 		else if(calm != null && fight != null)
 		{
-			action = MathHelper.clamp(action + (winged.isInFight() ? 0.05f : -0.05f) * client.getTickDelta() *
+			action = MathHelper.clamp(action + (levelStats.isInFight() ? 0.05f : -0.05f) * client.getTickDelta() *
 													   UltracraftClient.getConfig().musicTransitionSpeed, 0f, 1f);
 			calm.setVolume(1f - action);
 			fight.setVolume(action);

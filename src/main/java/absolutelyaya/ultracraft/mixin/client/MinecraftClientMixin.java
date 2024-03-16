@@ -100,8 +100,7 @@ public abstract class MinecraftClientMixin
 	{
 		if(player != null)
 		{
-			IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
-			Identifier level = winged.getCurrentLevel();
+			Identifier level = UltraComponents.LEVEL_STATS.get(player).getCurrentLevel();
 			if(level != null)
 				return null;
 		}

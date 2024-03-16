@@ -60,30 +60,6 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	
 	void sendBoxTitle(Text text);
 	
-	void enterLevel(Identifier levelId, String instance);
-	
-	Identifier getCurrentLevel();
-	
-	String getCurrentLevelInstance();
-	
-	boolean isInFight();
-	
-	boolean isTimerRunning();
-	
-	void startTimer();
-	
-	void stopTimer(boolean interrupted);
-	
-	long getElapsedTimer();
-	
-	void removePerfect();
-	
-	boolean isPerfect();
-	
-	long getBestTime(Identifier id);
-	
-	int getLastPlayedLevelVersion(Identifier levelId);
-	
 	void setCybergrindData(CybergrindData v);
 	
 	CybergrindData getCybergrindData();

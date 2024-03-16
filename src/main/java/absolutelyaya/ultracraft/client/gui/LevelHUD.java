@@ -1,7 +1,7 @@
 package absolutelyaya.ultracraft.client.gui;
 
 import absolutelyaya.ultracraft.components.UltraComponents;
-import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.components.player.ILevelStatsComponent;
 import absolutelyaya.ultracraft.util.TimeUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
@@ -9,12 +9,15 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Pair;
 
 public class LevelHUD
 {
 	public static LevelHUD Instance;
-	long pb, par, last;
+	long[] rankRequirements = new long[0];
+	long pb, ppb, last;
 	float displayFinishedTimer;
+	byte curTimeRank;
 	
 	public LevelHUD()
 	{
@@ -23,26 +26,29 @@ public class LevelHUD
 	
 	public void render(DrawContext context, float tickDelta)
 	{
-		IWingedPlayerComponent winged = UltraComponents.WINGED.get(MinecraftClient.getInstance().player);
-		if(winged.isTimerRunning())
-			renderTimer(context, winged.getElapsedTimer());
+		ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(MinecraftClient.getInstance().player);
+		if(levelStats.isTimerRunning())
+			renderTimer(context, levelStats.getElapsedTimer());
 		else if(displayFinishedTimer > 0)
 			renderTimer(context, last);
 		if(displayFinishedTimer > 0)
 			displayFinishedTimer -= MinecraftClient.getInstance().getLastFrameDuration() / 30f;
 	}
 	
-	public void initTimer(long pb, long par)
+	public void initTimer(Pair<Long, Long> pb, long[] rankRequirements)
 	{
-		this.pb = pb;
-		this.par = par;
+		this.pb = pb.getLeft();
+		this.ppb = pb.getRight();
+		if(rankRequirements != null)
+			this.rankRequirements = rankRequirements;
+		curTimeRank = 0;
 	}
 	
 	public void stopTimer()
 	{
 		displayFinishedTimer += 10f;
-		IWingedPlayerComponent winged = UltraComponents.WINGED.get(MinecraftClient.getInstance().player);
-		last = winged.getElapsedTimer();
+		ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(MinecraftClient.getInstance().player);
+		last = levelStats.getElapsedTimer();
 	}
 	
 	void renderTimer(DrawContext context, long elapsedTimer)
@@ -52,16 +58,10 @@ public class LevelHUD
 		if(displayFinishedTimer > 0)
 		{
 			MutableText t = Text.of(TimeUtil.milliToString(elapsedTimer)).copy();
-			if(elapsedTimer < par)
-			{
-				IWingedPlayerComponent winged = UltraComponents.WINGED.get(MinecraftClient.getInstance().player);
-				if(winged.isPerfect())
-					t.append(Text.translatable("screen.ultracraft.timer.perfect"));
-				else
-					t.append(Text.translatable("screen.ultracraft.timer.imperfect"));
-			}
+			if(rankRequirements.length > 0)
+				t.append(" ").append(Text.translatable("screen.ultracraft.timer.rank" + curTimeRank));
 			if(elapsedTimer < pb)
-				t.append(Text.translatable("screen.ultracraft.timer.best"));
+				t.append(" ").append(Text.translatable("screen.ultracraft.timer.best"));
 			RenderSystem.setShaderColor(1f, 1f, 1f, Math.min(1f, displayFinishedTimer));
 			context.drawText(tRenderer, t, (width - tRenderer.getWidth(t)) / 2, 32, 0xffffffff, true);
 			RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
@@ -69,12 +69,16 @@ public class LevelHUD
 		else
 		{
 			int col = 0xff888888;
-			if(elapsedTimer < par)
+			if(rankRequirements.length > 0 && elapsedTimer < rankRequirements[0])
 				col = 0xfff47e1b;
-			else if(elapsedTimer < pb)
+			else if(elapsedTimer < pb || pb == -1)
 				col = 0xfff4c71b;
-			Text t = Text.of(TimeUtil.milliToString(elapsedTimer));
+			MutableText t = Text.of(TimeUtil.milliToString(elapsedTimer)).copy();
+			if(rankRequirements.length > 0)
+				t.append(" ").append(Text.translatable("screen.ultracraft.timer.rank" + curTimeRank));
 			context.drawText(tRenderer, t, (width - tRenderer.getWidth(t)) / 2, 32, col, true);
 		}
+		if(curTimeRank < rankRequirements.length && elapsedTimer > rankRequirements[curTimeRank])
+			curTimeRank++;
 	}
 }

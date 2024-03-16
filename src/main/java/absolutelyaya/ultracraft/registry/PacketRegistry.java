@@ -9,10 +9,7 @@ import absolutelyaya.ultracraft.block.PedestalBlock;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
-import absolutelyaya.ultracraft.components.player.IArmComponent;
-import absolutelyaya.ultracraft.components.player.IHivelComponent;
-import absolutelyaya.ultracraft.components.player.IWingDataComponent;
-import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.components.player.*;
 import absolutelyaya.ultracraft.config.Config;
 import absolutelyaya.ultracraft.config.EnumEntry;
 import absolutelyaya.ultracraft.config.HivelConfig;
@@ -623,7 +620,7 @@ public class PacketRegistry
 					onTravelFinished(player);
 					return;
 				}
-				UltraComponents.WINGED.get(player).enterLevel(null, null);
+				UltraComponents.LEVEL_STATS.get(player).enterLevel(null, null);
 				ServerWorld world = server.getWorld(layer.worldKey);
 				BlockPos pos = layer.arrivalPos == null ? world.getSpawnPos() : layer.arrivalPos;
 				FabricDimensions.teleport(player, world, new TeleportTarget(pos.toCenterPos(), Vec3d.ZERO, world.getSpawnAngle(), 0f));
@@ -652,11 +649,11 @@ public class PacketRegistry
 					return;
 				}
 				Pair<String, LevelManager.LevelInstance> instance;
-				IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
+				ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(player);
 				if(finalInstanceId.length() > 0 && LevelManager.Instance.isInstanceExistant(finalInstanceId))
 				{
 					instance = new Pair<>(finalInstanceId, LevelManager.Instance.getInstance(finalInstanceId));
-					if(winged.getCurrentLevelInstance() != null && winged.getCurrentLevelInstance().equals(finalInstanceId) &&
+					if(levelStats.getCurrentLevelInstance() != null && levelStats.getCurrentLevelInstance().equals(finalInstanceId) &&
 							   instance.getRight().getOwner() != null && instance.getRight().getOwner().equals(player))
 						LevelManager.Instance.reloadInstance(finalInstanceId, privat);
 					else

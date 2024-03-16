@@ -30,10 +30,17 @@ public class TravelScreen extends AbstractTravelScreen
 	
 	public TravelScreen(boolean closeImmediately, boolean forced)
 	{
+		this(closeImmediately, forced, false);
+	}
+	
+	public TravelScreen(boolean closeImmediately, boolean forced, boolean noIntro)
+	{
 		super(Text.of("travel"));
 		textRenderer = MinecraftClient.getInstance().textRenderer;
 		shouldClose = closeImmediately;
 		this.forced = forced;
+		if(noIntro)
+			openAnimTime = 1f;
 	}
 	
 	@Override

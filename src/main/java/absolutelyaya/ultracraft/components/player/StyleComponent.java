@@ -81,6 +81,9 @@ public class StyleComponent implements IStyleComponent
 		{
 			style += score;
 			chain += score;
+			ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(provider);
+			if(levelStats.getCurrentLevelInstance() != null)
+				levelStats.onStyle(score);
 			markDirty();
 			if(provider instanceof ServerPlayerEntity serverPlayer)
 			{
@@ -176,6 +179,9 @@ public class StyleComponent implements IStyleComponent
 	{
 		style = (int)Math.max(style - damage * 1.5f, 0);
 		chain = (int)Math.max(chain - damage * 1.5f, 0);
+		ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(provider);
+		if(levelStats.getCurrentLevelInstance() != null)
+			levelStats.onStyle(-damage * 1.5f);
 		markDirty();
 	}
 	

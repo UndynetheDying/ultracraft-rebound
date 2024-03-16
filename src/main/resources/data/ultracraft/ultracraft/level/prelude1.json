@@ -1,15 +1,35 @@
 {
   "builtin": true,
   "title": "level.ultracraft.0-1",
-  "par-time": "4:20:69",
   "author": "yaya",
   "structure": "ultracraft:level/prelude1",
   "thumbnail": "ultracraft:textures/level/0_1.png",
+  "ranking": {
+    "time": [
+      "1:00:00",
+      "2:00:00",
+      "3:00:00",
+      "4:00:00"
+    ],
+    "kills": [
+      10,
+      5,
+      3,
+      1
+    ],
+    "style": [
+      400,
+      300,
+      200,
+      100
+    ]
+  },
   "spawn-offset":{
     "x": 3,
     "y": 45,
     "z": 16
   },
   "spawn-rot": -90,
-  "version": 2
+  "version": 2,
+  "next-level": "ultracraft:limbo1"
 }

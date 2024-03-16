@@ -22,7 +22,7 @@ public class PlayerManagerMixin
 		if(pos != null && player.getWorld().getRegistryKey().equals(winged.getCheckpointDimension()) &&
 				   player.getWorld().getBlockEntity(winged.getLastCheckpoint()) instanceof CheckpointBlockEntity checkpoint)
 		{
-			winged.removePerfect();
+			UltraComponents.LEVEL_STATS.get(player).onDeath();
 			checkpoint.onRespawn();
 		}
 	}

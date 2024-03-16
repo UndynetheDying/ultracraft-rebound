@@ -3,6 +3,7 @@ package absolutelyaya.ultracraft.dimension;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.block.mapping.AbstractMappingBlockEntity;
 import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.components.player.ILevelStatsComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.data.LevelData;
 import absolutelyaya.ultracraft.data.LevelDataManager;
@@ -238,7 +239,8 @@ public class LevelManager extends DimensionManager
 		winged.sendBoxTitle(Text.translatable(reason.message));
 		ServerWorld overworld = world.getServer().getOverworld();
 		FabricDimensions.teleport(player, overworld, new TeleportTarget(overworld.getSpawnPos().toCenterPos(), Vec3d.ZERO, player.getYaw(), player.getPitch()));
-		winged.enterLevel(null, null);
+		ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(player);
+		levelStats.enterLevel(null, null);
 	}
 	
 	public void reloadInstance(String id, boolean privat)
@@ -264,7 +266,6 @@ public class LevelManager extends DimensionManager
 			instance.players.add(player);
 		if(instance.getOwner() == null)
 			instance.setOwner(player);
-		IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
 		//teleport player
 		ServerWorld world = getWorld().getServer().getWorld(LevelManager.WORLD_KEY);
 		BlockPos spawnPos = LevelManager.getSpawnPos(id);
@@ -275,7 +276,8 @@ public class LevelManager extends DimensionManager
 		if(groundScan.getType().equals(HitResult.Type.MISS))
 			player.getWorld().setBlockState(player.getBlockPos().down(), BlockRegistry.PORTAL.getDefaultState());
 		
-		winged.enterLevel(levelIdForInstanceId.get(id), id);
+		ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(player);
+		levelStats.enterLevel(levelIdForInstanceId.get(id), id);
 	}
 	
 	public void leaveInstance(ServerPlayerEntity player, String id)
@@ -439,6 +441,7 @@ public class LevelManager extends DimensionManager
 		public final int index;
 		public ServerPlayerEntity owner;
 		public boolean privat;
+		public int kills;
 		
 		public LevelInstance(BlockPos pos, int index)
 		{
@@ -477,6 +480,16 @@ public class LevelManager extends DimensionManager
 		public int compareTo(@NotNull LevelManager.LevelInstance o)
 		{
 			return index - o.index;
+		}
+		
+		public void onKill()
+		{
+			kills++;
+		}
+		
+		public int getKills()
+		{
+			return kills;
 		}
 	}
 	

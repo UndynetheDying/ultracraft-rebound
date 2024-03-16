@@ -3,10 +3,7 @@ package absolutelyaya.ultracraft.data;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -91,8 +88,34 @@ public class LevelDataManager extends JsonDataLoader
 						JsonHelper.getInt(pos, "z", 0));
 			}
 			LevelData level = new LevelData(id, title, description, author, authorlink, structure, thumbnail, spawnOffset, builtin);
-			if(json.has("par-time"))
-				level.setParTime(JsonHelper.getString(json, "par-time"));
+			if(json.has("ranking"))
+			{
+				JsonObject ranking = json.getAsJsonObject("ranking");
+				if(ranking.has("time"))
+				{
+					JsonArray array = JsonHelper.getArray(ranking, "time");
+					String[] ranks = new String[array.size()];
+					for (int i = 0; i < array.size(); i++)
+						ranks[i] = array.get(i).getAsString();
+					level.setTimeRanks(ranks);
+				}
+				if(ranking.has("kills"))
+				{
+					JsonArray array = JsonHelper.getArray(ranking, "kills");
+					int[] ranks = new int[array.size()];
+					for (int i = 0; i < array.size(); i++)
+						ranks[i] = array.get(i).getAsInt();
+					level.setKillRanks(ranks);
+				}
+				if(ranking.has("style"))
+				{
+					JsonArray array = JsonHelper.getArray(ranking, "style");
+					int[] ranks = new int[array.size()];
+					for (int i = 0; i < array.size(); i++)
+						ranks[i] = array.get(i).getAsInt();
+					level.setStyleRanks(ranks);
+				}
+			}
 			if(json.has("music"))
 			{
 				JsonObject music = json.getAsJsonObject("music");
@@ -111,6 +134,8 @@ public class LevelDataManager extends JsonDataLoader
 				level.setVersion(JsonHelper.getInt(json, "version"));
 			if(json.has("spawn-rot"))
 				level.setSpawnRot(JsonHelper.getFloat(json, "spawn-rot"));
+			if(json.has("next-level"))
+				level.setNextLevel(Identifier.tryParse(JsonHelper.getString(json, "next-level")));
 			if(builtin)
 				builtinBuilder.put(id, level);
 			else
@@ -132,6 +157,14 @@ public class LevelDataManager extends JsonDataLoader
 			Ultracraft.LOGGER.warn("Couldn't find Level '" + id + "' in loaded lists!");
 			return ERR_DATA;
 		}
+	}
+	
+	public static Identifier getNextLevel(Identifier id)
+	{
+		LevelData data = getLevelData(id);
+		if(data.equals(ERR_DATA) || data.isUnimplemented())
+			return null;
+		return data.getNextLevel();
 	}
 	
 	public static void setLevels(ImmutableMap<Identifier, LevelData> map, boolean builtin)

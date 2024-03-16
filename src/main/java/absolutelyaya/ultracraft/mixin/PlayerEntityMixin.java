@@ -156,6 +156,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 		}
 		if(source.isOf(DamageSources.KNUCKLE_BLAST))
 			disableShield(true);
+		UltraComponents.LEVEL_STATS.get(this).onDamage();
 	}
 	
 	@Inject(method = "damage", at = @At("TAIL"))

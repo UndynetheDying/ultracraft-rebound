@@ -106,7 +106,7 @@ public abstract class AbstractTravelScreen extends Screen
 					width / 2, 32, 0xffffffff);
 		instanceButtons.forEach(b -> b.render(context, mouseX, mouseY, delta));
 		context.drawCenteredTextWithShadow(textRenderer,
-				Text.translatable("screen.ultracraft.travel.instance.title", LevelDataManager.getLevelData(selectedLevel).getTitle()),
+				Text.translatable("screen.ultracraft.travel.instance.title", LevelDataManager.getLevelData(selectedLevel).getTitleText()),
 				width / 2, 16, 0xffffffff);
 	}
 	
@@ -156,7 +156,7 @@ public abstract class AbstractTravelScreen extends Screen
 		buf.writeIdentifier(selectedLevel);
 		buf.writeString(instance == null ? "" : instance);
 		ClientPlayNetworking.send(PacketRegistry.ENTER_LEVEL_PACKET_ID, buf);
-		UltraComponents.WINGED.get(client.player).stopTimer(true);
+		UltraComponents.LEVEL_STATS.get(client.player).stopTimer(true);
 	}
 	
 	protected void selectLayer(int layer)

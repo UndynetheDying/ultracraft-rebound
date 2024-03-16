@@ -1,8 +1,11 @@
 package absolutelyaya.ultracraft.entity;
 
 import absolutelyaya.ultracraft.api.HeavyEntities;
+import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.components.player.ILevelStatsComponent;
 import absolutelyaya.ultracraft.cybergrind.CybergrindGame;
 import absolutelyaya.ultracraft.cybergrind.CybergrindManager;
+import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.particle.ParryIndicatorParticleEffect;
 import absolutelyaya.ultracraft.particle.TeleportParticleEffect;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
@@ -18,6 +21,7 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
@@ -29,6 +33,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.TypeFilter;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -292,5 +297,19 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 		if(isCybergrind())
 			return super.getLootTableId().withPrefixedPath("_cg");
 		return super.getLootTableId();
+	}
+	
+	@Override
+	public void onDeath(DamageSource damageSource)
+	{
+		super.onDeath(damageSource);
+		if(getWorld().getRegistryKey().equals(LevelManager.WORLD_KEY))
+		{
+			getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(192f), p -> true).forEach(p -> {
+				ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(p);
+				if(levelStats.getCurrentLevelInstance() != null)
+					LevelManager.Instance.getInstance(levelStats.getCurrentLevelInstance()).onKill();
+			});
+		}
 	}
 }

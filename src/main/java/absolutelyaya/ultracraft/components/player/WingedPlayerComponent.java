@@ -28,7 +28,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static absolutelyaya.ultracraft.data.LevelDataManager.getLevelData;
@@ -36,8 +35,6 @@ import static absolutelyaya.ultracraft.data.LevelDataManager.getLevelData;
 public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSyncedComponent
 {
 	PlayerEntity provider;
-	HashMap<Identifier, Long> bestTimes = new HashMap<>();
-	HashMap<Identifier, Integer> lastPlayedVersion = new HashMap<>();
 	GunCooldownManager gunCDM;
 	boolean primaryFiring, justPlayedBloodhealNoise;
 	byte wingState, lastState;
@@ -46,11 +43,6 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	BlockPos lastCheckpoint;
 	RegistryKey<World> checkpointDimension;
 	float checkpointRot;
-	Identifier currentLevel;
-	String currentLevelInstance;
-	boolean fighting, perfect;
-	int fightCheckCooldown;
-	long timerStart = -1;
 	CybergrindData cybergrindData;
 	
 	public WingedPlayerComponent(PlayerEntity provider)
@@ -251,115 +243,6 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	}
 	
 	@Override
-	public void enterLevel(Identifier levelId, String instance)
-	{
-		perfect = true;
-		stopTimer(true);
-		String lastInstance = currentLevelInstance; //prevents infinite loop when rescuing from null instance
-		currentLevelInstance = instance;
-		if(!provider.getWorld().isClient && lastInstance != null)
-			LevelManager.Instance.leaveInstance((ServerPlayerEntity)provider, lastInstance);
-		currentLevel = levelId;
-		if(levelId != null)
-			lastPlayedVersion.put(levelId, getLevelData(levelId).getVersion());
-		UltraComponents.WINGED.sync(provider);
-	}
-	
-	@Override
-	public Identifier getCurrentLevel()
-	{
-		return currentLevel;
-	}
-	
-	@Override
-	public String getCurrentLevelInstance()
-	{
-		return currentLevelInstance;
-	}
-	
-	@Override
-	public boolean isInFight()
-	{
-		if(fightCheckCooldown-- > 0)
-			return fighting;
-		fighting = provider.getWorld().getOtherEntities(provider, provider.getBoundingBox().expand(32f),
-				e -> e instanceof AbstractUltraHostileEntity && e.isAlive()).size() > 0;
-		fightCheckCooldown = 10;
-		return fighting;
-	}
-	
-	@Override
-	public boolean isTimerRunning()
-	{
-		return timerStart > -1;
-	}
-	
-	@Override
-	public void startTimer()
-	{
-		if(currentLevel == null)
-			return;
-		timerStart = System.currentTimeMillis();
-		if(provider.getWorld().isClient)
-			LevelHUD.Instance.initTimer(bestTimes.getOrDefault(currentLevel, Long.MAX_VALUE), getLevelData(currentLevel).getParTime());
-	}
-	
-	@Override
-	public void stopTimer(boolean interruption)
-	{
-		if(!interruption && currentLevel != null)
-		{
-			long elapsedTime = getElapsedTimer();
-			boolean pb = bestTimes.getOrDefault(currentLevel, Long.MAX_VALUE) > elapsedTime;
-			if(pb)
-			{
-				bestTimes.put(currentLevel, elapsedTime);
-				if(provider.getWorld().isClient)
-				{
-					Text levelName = getLevelData(currentLevel).getTitle();
-					provider.sendMessage(Text.translatable("message.ultracraft.level.new-pb-time", levelName, TimeUtil.milliToString(elapsedTime)));
-				}
-			}
-			if(provider.getWorld().isClient)
-				LevelHUD.Instance.stopTimer();
-		}
-		timerStart = -1;
-	}
-	
-	@Override
-	public long getElapsedTimer()
-	{
-		if(!isTimerRunning())
-			return -1;
-		return System.currentTimeMillis() - timerStart;
-	}
-	
-	@Override
-	public void removePerfect()
-	{
-		perfect = false;
-		UltraComponents.WINGED.sync(provider);
-	}
-	
-	@Override
-	public boolean isPerfect()
-	{
-		return perfect;
-	}
-	
-	@Override
-	public long getBestTime(Identifier id)
-	{
-		return bestTimes.getOrDefault(id, -1L);
-	}
-	
-	@Override
-	public int getLastPlayedLevelVersion(Identifier id)
-	{
-		return lastPlayedVersion.getOrDefault(id, -1);
-	}
-	
-	@Override
 	public void setCybergrindData(CybergrindData v)
 	{
 		cybergrindData = v;
@@ -386,26 +269,6 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	@Override
 	public void readFromNbt(NbtCompound tag)
 	{
-		if(tag.contains("level", NbtElement.STRING_TYPE))
-			currentLevel = new Identifier(tag.getString("level"));
-		if(tag.contains("timerStart", NbtElement.LONG_TYPE))
-			timerStart = tag.getLong("timerStart");
-		if(tag.contains("timerStart", NbtElement.LONG_TYPE))
-			timerStart = tag.getLong("timerStart");
-		if(tag.contains("perfect", NbtElement.BYTE_TYPE))
-			perfect = tag.getBoolean("perfect");
-		if(tag.contains("records", NbtElement.COMPOUND_TYPE))
-		{
-			NbtCompound records = tag.getCompound("records");
-			for(String key : records.getKeys())
-				bestTimes.put(Identifier.tryParse(key), records.getLong(key));
-		}
-		if(tag.contains("versions", NbtElement.COMPOUND_TYPE))
-		{
-			NbtCompound versions = tag.getCompound("versions");
-			for(String key : versions.getKeys())
-				lastPlayedVersion.put(Identifier.tryParse(key), versions.getInt(key));
-		}
 		if(tag.contains("checkpoint", NbtElement.COMPOUND_TYPE))
 		{
 			NbtCompound checkpoint = tag.getCompound("checkpoint");
@@ -414,34 +277,11 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			checkpointRot = checkpoint.getFloat("rot");
 			checkpointDimension = RegistryKey.of(RegistryKeys.WORLD, Identifier.tryParse(checkpoint.getString("dimension")));
 		}
-		if(tag.contains("currentLevelInstance", NbtElement.STRING_TYPE))
-			currentLevelInstance = tag.getString("currentLevelInstance");
 	}
 	
 	@Override
 	public void writeToNbt(NbtCompound tag)
 	{
-		if(getCurrentLevel() != null)
-		{
-			tag.putString("level", getCurrentLevel().toString());
-			tag.putBoolean("perfect", perfect);
-		}
-		if(timerStart != -1)
-			tag.putLong("timerStart", timerStart);
-		if(bestTimes.size() > 0)
-		{
-			NbtCompound records = new NbtCompound();
-			for (Map.Entry<Identifier, Long> e : bestTimes.entrySet())
-				records.putLong(e.getKey().toString(), e.getValue());
-			tag.put("records", records);
-		}
-		if(lastPlayedVersion.size() > 0)
-		{
-			NbtCompound records = new NbtCompound();
-			for (Map.Entry<Identifier, Integer> e : lastPlayedVersion.entrySet())
-				records.putInt(e.getKey().toString(), e.getValue());
-			tag.put("versions", records);
-		}
 		if(lastCheckpoint != null)
 		{
 			NbtCompound checkpoint = new NbtCompound();
@@ -454,8 +294,6 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			checkpoint.putString("dimension", getCheckpointDimension().getValue().toString());
 			tag.put("checkpoint", checkpoint);
 		}
-		if(currentLevelInstance != null && !currentLevelInstance.isEmpty())
-			tag.putString("currentLevelInstance", currentLevelInstance);
 	}
 	
 	@Override

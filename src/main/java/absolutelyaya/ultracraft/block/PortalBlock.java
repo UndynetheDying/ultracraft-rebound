@@ -49,6 +49,7 @@ public class PortalBlock extends Block
 		{
 			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 			buf.writeBoolean(false);
+			buf.writeBoolean(false);
 			ServerPlayNetworking.send((ServerPlayerEntity)player, PacketRegistry.TRAVEL_SCREEN_PACKET_ID, buf);
 			return ActionResult.CONSUME;
 		}

@@ -79,7 +79,7 @@ public abstract class ServerPlayerMixin extends PlayerEntity
 	{
 		if(origin.getRegistryKey() != null && !origin.getRegistryKey().equals(LevelManager.WORLD_KEY))
 			return;
-		UltraComponents.WINGED.get(this).enterLevel(null, null);
+		UltraComponents.LEVEL_STATS.get(this).enterLevel(null, null);
 		CybergrindGame cybergrind = CybergrindManager.Instance.getActiveGame();
 		if(cybergrind != null)
 			cybergrind.removeParticipant(this);

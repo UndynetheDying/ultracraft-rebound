@@ -1,7 +1,7 @@
 package absolutelyaya.ultracraft.block.mapping;
 
 import absolutelyaya.ultracraft.components.UltraComponents;
-import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.components.player.ILevelStatsComponent;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
@@ -85,11 +85,11 @@ public class TimerBlockEntity extends AbstractTriggerBlockEntity
 		containedEntities.forEach(e -> {
 			if(e instanceof PlayerEntity player)
 			{
-				IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
-				if(!winged.isTimerRunning() && start)
-					winged.startTimer();
-				else if(winged.isTimerRunning() && !start)
-					winged.stopTimer(false);
+				ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(player);
+				if(!levelStats.isTimerRunning() && start)
+					levelStats.startTimer();
+				else if(levelStats.isTimerRunning() && !start)
+					levelStats.stopTimer(false);
 			}
 		});
 	}

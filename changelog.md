@@ -153,7 +153,7 @@
 - Added `level` list to progression command; this list is effective globally//server-wide!
 - Added Debug Commands for level instancing//destructing level instances
   - DO NOT USE THESE!!!
-  - I mean, you could if you want to, but they are very likely to crash servers.
+  - I mean, you could if you want to, but they could crash servers.
 ## Tweaks
 - Buffed overpump damage towards others (10 Dmg -> 15 Dmg)
 - Hitscans don't cause Thorn Damage from Guardians anymore

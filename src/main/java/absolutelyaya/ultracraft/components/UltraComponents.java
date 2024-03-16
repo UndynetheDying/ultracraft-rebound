@@ -40,6 +40,8 @@ public final class UltraComponents implements EntityComponentInitializer, LevelC
 			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "loadout"), ILoadoutComponent.class);
 	public static final ComponentKey<IEditorComponent> EDITOR =
 			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "editor"), IEditorComponent.class);
+	public static final ComponentKey<ILevelStatsComponent> LEVEL_STATS =
+			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "level"), ILevelStatsComponent.class);
 	
 	public static final ComponentKey<ILivingComponent> LIVING =
 			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "living"), ILivingComponent.class);
@@ -62,6 +64,7 @@ public final class UltraComponents implements EntityComponentInitializer, LevelC
 		registry.registerForPlayers(HIVEL, HivelComponent::new, RespawnCopyStrategy.NEVER_COPY);
 		registry.registerForPlayers(LOADOUT, LoadoutComponent::new, RespawnCopyStrategy.ALWAYS_COPY);
 		registry.registerForPlayers(EDITOR, EditorComponent::new, RespawnCopyStrategy.ALWAYS_COPY);
+		registry.registerForPlayers(LEVEL_STATS, LevelStatsComponent::new, RespawnCopyStrategy.ALWAYS_COPY);
 		
 		registry.registerFor(LivingEntity.class, LIVING, LivingComponent::new);
 	}

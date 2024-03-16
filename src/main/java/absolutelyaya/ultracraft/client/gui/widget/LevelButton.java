@@ -3,7 +3,7 @@ package absolutelyaya.ultracraft.client.gui.widget;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
-import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.components.player.ILevelStatsComponent;
 import absolutelyaya.ultracraft.data.LevelData;
 import absolutelyaya.ultracraft.data.LevelDataManager;
 import absolutelyaya.ultracraft.util.RenderingUtil;
@@ -39,21 +39,21 @@ public class LevelButton extends ClickableWidget
 	static final TextRenderer tRenderer;
 	public final Identifier preview, destination;
 	final Text description, author;
-	final String authorLink, parTime;
+	final String authorLink;
 	final Consumer<Identifier> action;
 	final int version;
-	boolean isUnlocked, isUnimplemented, isHidden;
+	boolean isUnlocked, isUnimplemented, isHidden, hasMusic, hasRankingData;
 	float hoverAnim, animTime;
 	
 	public LevelButton(int x, int y, LevelData data, Consumer<Identifier> action)
 	{
-		super(x, y, 96, 64, data.getTitle());
-		description = data.getDescription();
+		super(x, y, 96, 64, data.getTitleText());
+		description = data.getDescriptionText();
 		if(data.getBuiltin())
 			author = Text.of("");
 		else
 			author = Text.translatable("screen.ultracraft.level.author",
-					data.getAuthor().getString().length() > 0 ? data.getAuthor() : Text.translatable("level.ultracaft.author.unknown"));
+					data.getAuthorText().getString().length() > 0 ? data.getAuthorText() : Text.translatable("level.ultracaft.author.unknown"));
 		String authorLink = data.getAuthorLink();
 		if(authorLink.length() > 0)
 		{
@@ -70,7 +70,6 @@ public class LevelButton extends ClickableWidget
 		this.authorLink = authorLink;
 		preview = data.getThumbnail();
 		destination = data.getID();
-		parTime = data.getParTimeString();
 		isHidden = data.isHidden();
 		isUnimplemented = data.isUnimplemented();
 		version = data.getVersion();
@@ -85,6 +84,8 @@ public class LevelButton extends ClickableWidget
 		isUnlocked = global.isDestinationUnlocked(destination);
 		if(!isUnlocked)
 			setMessage(Text.of(getMessage().getString().replaceAll("[^ ]", "?")));
+		hasRankingData = data.hasFullRankingData();
+		hasMusic = data.hasMusic();
 		calcDimensions();
 	}
 	
@@ -92,7 +93,7 @@ public class LevelButton extends ClickableWidget
 	{
 		super(x, y, 96, 64, title);
 		description = author = Text.of("");
-		authorLink = parTime = "";
+		authorLink = "";
 		this.preview = preview;
 		this.destination = destination;
 		version = -1;
@@ -129,17 +130,17 @@ public class LevelButton extends ClickableWidget
 		}
 		MinecraftClient client = MinecraftClient.getInstance();
 		animTime += delta / 5f;
-		IWingedPlayerComponent winged = UltraComponents.WINGED.get(client.player);
+		ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(client.player);
 		RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
 		MatrixStack matrices = context.getMatrices();
 		matrices.push();
 		matrices.translate(getX(), getY(), 0f);
-		context.fill(0, 0, width, height, 0x88000000);
+		context.fill(0, 0, width, height, levelStats.getBestRank(destination) == 0 ? 0x88f49f00 : 0x88000000);
 		hoverAnim = MathHelper.lerp(delta / 5f, hoverAnim, isHovered() && isUnlocked && alpha > 0.5 ? 1f : 0f);
 		if(isHovered() && isUnlocked && alpha > 0.5)
 			context.drawBorder(-1, -1, width + 2, height + 2, 0xffffffff);
 		//update marker
-		if(isUnlocked && winged.getLastPlayedLevelVersion(destination) < version)
+		if(isUnlocked && levelStats.getLastPlayedLevelVersion(destination) < version)
 		{
 			matrices.push();
 			matrices.translate(width, 0, 0);
@@ -155,27 +156,31 @@ public class LevelButton extends ClickableWidget
 			matrices.push();
 			matrices.translate(0f, 0f, Math.max(hoverAnim * 10f - 7.5f, 0f));
 			//time-panel
-			if(parTime != null && !parTime.isEmpty())
+			if(hasRankingData)
 			{
-				Text par = Text.translatable("screen.ultracraft.level.par-time", parTime);
-				long pbTime = winged.getBestTime(destination);
-				Text pb = Text.translatable("screen.ultracraft.level.pb-time", pbTime == -1 ? "-" : TimeUtil.milliToString(pbTime));
-				int timeBoxWidth = Math.max(tRenderer.getWidth(par), tRenderer.getWidth(pb)) + 6;
+				Text header = Text.translatable("screen.ultracraft.level.time-header");
+				long time = levelStats.getBestTime(destination, false);
+				Text ppb = Text.translatable("screen.ultracraft.level.ppb-time", time == -1 ? "-" : TimeUtil.milliToString(time));
+				time = levelStats.getBestTime(destination, true);
+				Text pb = Text.translatable("screen.ultracraft.level.pb-time", time == -1 ? "-" : TimeUtil.milliToString(time));
+				int timeBoxWidth = Math.max(Math.max(tRenderer.getWidth(ppb), tRenderer.getWidth(pb)), tRenderer.getWidth(header)) + 6;
 				matrices.push();
 				matrices.translate((-timeBoxWidth - 8) * hoverAnim, 0f, 0f);
-				context.fill(0, 0, timeBoxWidth, tRenderer.fontHeight * 3 + 12, 0xff000000);
-				context.drawBorder(0, 0, timeBoxWidth, tRenderer.fontHeight * 3 + 12, 0xffffffff);
-				context.drawText(tRenderer, Text.translatable("screen.ultracraft.level.time-header").getWithStyle(Style.EMPTY.withUnderline(true)).get(0),
+				context.fill(0, 0, timeBoxWidth, tRenderer.fontHeight * 3 + 11, 0xff000000);
+				context.drawBorder(0, 0, timeBoxWidth, tRenderer.fontHeight * 3 + 11, 0xffffffff);
+				context.drawText(tRenderer, header.getWithStyle(Style.EMPTY.withUnderline(true)).get(0),
 						3, 3, 0xffffffff, true);
-				context.drawText(tRenderer, par, 3, 7 + tRenderer.fontHeight, 0xffffffff, true);
+				context.drawText(tRenderer, ppb, 3, 7 + tRenderer.fontHeight, 0xffffffff, true);
 				context.drawText(tRenderer, pb, 3, 9 + tRenderer.fontHeight * 2, 0xffffffff, true);
 				matrices.pop();
 			}
+			int descBoxHeight = 0;
 			//description-panel
 			if(!description.getString().isEmpty())
 			{
 				matrices.push();
-				int descBoxWidth = 128, descBoxHeight = tRenderer.getWrappedLinesHeight(description, descBoxWidth) + 8;
+				int descBoxWidth = 128;
+				descBoxHeight = tRenderer.getWrappedLinesHeight(description, descBoxWidth) + 8;
 				matrices.translate((width + 8) * hoverAnim, 0f, 0f);
 				context.fill(0, 0, descBoxWidth, descBoxHeight, 0xff000000);
 				context.drawBorder(0, 0, descBoxWidth, descBoxHeight, 0xffffffff);
@@ -184,6 +189,20 @@ public class LevelButton extends ClickableWidget
 					context.drawText(tRenderer, line, 3, 3, 0xffffffff, true);
 					matrices.translate(0, tRenderer.fontHeight + 1, 0f);
 				}
+				matrices.pop();
+			}
+			//music hint
+			if(hasMusic)
+			{
+				matrices.push();
+				if(descBoxHeight > 0)
+					matrices.translate(0, descBoxHeight + 2, 0);
+				Text t = Text.translatable("screen.ultracraft.level.music-hint");
+				int boxWidth = tRenderer.getWidth(t) + 6, boxHeight = tRenderer.fontHeight + 5;
+				matrices.translate((width + 8) * hoverAnim, 0f, 0f);
+				context.fill(0, 0, boxWidth, boxHeight, 0xff000000);
+				context.drawBorder(0, 0, boxWidth, boxHeight, 0xffffffff);
+				context.drawText(tRenderer, t, 3, 3, 0xffffffff, true);
 				matrices.pop();
 			}
 			matrices.pop();

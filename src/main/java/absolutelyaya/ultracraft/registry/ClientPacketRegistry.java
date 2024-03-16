@@ -5,16 +5,13 @@ import absolutelyaya.goop.client.GoopClient;
 import absolutelyaya.goop.particles.GoopDropParticleEffect;
 import absolutelyaya.ultracraft.ExplosionHandler;
 import absolutelyaya.ultracraft.client.gui.CybergrindHUD;
-import absolutelyaya.ultracraft.client.gui.screen.AbstractTravelScreen;
+import absolutelyaya.ultracraft.client.gui.screen.*;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.ITrailEnjoyer;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.TitleHUD;
-import absolutelyaya.ultracraft.client.gui.screen.HellObserverScreen;
-import absolutelyaya.ultracraft.client.gui.screen.ServerConfigScreen;
-import absolutelyaya.ultracraft.client.gui.screen.TravelScreen;
 import absolutelyaya.ultracraft.client.rendering.EditModeRenderer;
 import absolutelyaya.ultracraft.client.rendering.UltraHudRenderer;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
@@ -368,8 +365,9 @@ public class ClientPacketRegistry
 		})));
 		ClientPlayNetworking.registerGlobalReceiver(TRAVEL_SCREEN_PACKET_ID, (((client, handler, buf, responseSender) -> {
 			boolean forced = buf.readBoolean();
+			boolean ranking = buf.readBoolean() && UltraComponents.LEVEL_STATS.get(client.player).getCurrentLevelInstance() != null;
 			client.execute(() -> {
-				client.setScreen(new TravelScreen(false, forced));
+				client.setScreen(ranking ? new LevelRankingScreen() : new TravelScreen(false, forced));
 			});
 		})));
 		ClientPlayNetworking.registerGlobalReceiver(EDIT_PING_PACKET_ID, (((client, handler, buf, responseSender) -> {

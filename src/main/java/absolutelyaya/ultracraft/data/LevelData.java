@@ -2,7 +2,6 @@ package absolutelyaya.ultracraft.data;
 
 import absolutelyaya.ultracraft.client.sound.ModularLevelMusic;
 import absolutelyaya.ultracraft.util.TimeUtil;
-import net.minecraft.block.SculkSensorBlock;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
@@ -10,8 +9,12 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public final class LevelData
@@ -21,12 +24,14 @@ public final class LevelData
 	final Identifier thumbnail, structure;
 	final BlockPos spawnOffset;
 	final boolean builtin;
-	String parTimeString;
-	long parTime;
+	String[] timeStrings;
+	long[] timeRanks;
+	int[] killRanks, styleRanks;
 	ModularLevelMusic music;
 	boolean unimplemented, hidden;
 	float spawnRot;
 	int version;
+	Identifier nextLevel;
 	
 	public LevelData(Identifier id, String title, String description, String author, String authorLink, Identifier structure, Identifier thumbnail, BlockPos spawnOffset, boolean builtin)
 	{
@@ -46,17 +51,22 @@ public final class LevelData
 		return id;
 	}
 	
-	public Text getTitle()
+	public Text getTitleText()
 	{
 		return Text.translatable(title);
 	}
 	
-	public Text getDescription()
+	public String getTitleKey()
+	{
+		return title;
+	}
+	
+	public Text getDescriptionText()
 	{
 		return Text.translatable(description);
 	}
 	
-	public Text getAuthor()
+	public Text getAuthorText()
 	{
 		return Text.translatable(author);
 	}
@@ -66,19 +76,39 @@ public final class LevelData
 		return authorLink;
 	}
 	
-	public boolean hasParTime()
+	public boolean hasFullRankingData()
 	{
-		return parTime > 0 && parTimeString.length() > 0;
+		return hasTimeRanking() && hasKillRanking() && hasStyleRanking();
 	}
 	
-	public long getParTime()
+	public boolean hasTimeRanking()
 	{
-		return parTime;
+		return timeRanks != null && timeRanks.length > 0;
 	}
 	
-	public String getParTimeString()
+	public boolean hasKillRanking()
 	{
-		return parTimeString;
+		return killRanks != null && killRanks.length > 0;
+	}
+	
+	public boolean hasStyleRanking()
+	{
+		return styleRanks != null && styleRanks.length > 0;
+	}
+	
+	public long[] getTimeRanks()
+	{
+		return timeRanks;
+	}
+	
+	public int[] getKillRanks()
+	{
+		return killRanks;
+	}
+	
+	public int[] getStyleRanks()
+	{
+		return styleRanks;
 	}
 	
 	public Identifier getThumbnail()
@@ -111,17 +141,40 @@ public final class LevelData
 		return music;
 	}
 	
-	public void setParTime(String string)
+	public void setTimeRanks(String[] strings)
 	{
-		parTime = TimeUtil.parseToMilli(string);
-		if(parTime > -1)
-			parTimeString = string;
+		List<Pair<String, Long>> ranks = new ArrayList<>();
+		for (String s : strings)
+		{
+			long time = TimeUtil.parseToMilli(s);
+			if(time > -1)
+				ranks.add(new Pair<>(s, time));
+		}
+		timeRanks = new long[ranks.size()];
+		timeStrings = new String[ranks.size()];
+		for (int i = 0; i < ranks.size(); i++)
+		{
+			timeStrings[i] = ranks.get(i).getLeft();
+			timeRanks[i] = ranks.get(i).getRight();
+		}
 	}
 	
-	public void setParTime(long time)
+	public void setTimeRanks(long[] ranks)
 	{
-		parTime = time;
-		parTimeString = TimeUtil.milliToString(time);
+		timeRanks = ranks;
+		timeStrings = new String[ranks.length];
+		for (int i = 0; i < ranks.length; i++)
+			timeStrings[i] = TimeUtil.milliToString(ranks[i]);
+	}
+	
+	public void setKillRanks(int[] ranks)
+	{
+		killRanks = ranks;
+	}
+	
+	public void setStyleRanks(int[] ranks)
+	{
+		styleRanks = ranks;
 	}
 	
 	public boolean getBuiltin()
@@ -169,6 +222,57 @@ public final class LevelData
 		this.version = version;
 	}
 	
+	public Identifier getNextLevel()
+	{
+		return nextLevel;
+	}
+	
+	public void setNextLevel(Identifier nextLevel)
+	{
+		this.nextLevel = nextLevel;
+	}
+	
+	public int getRankForTime(long time)
+	{
+		return getRankForRequirement(time, timeRanks);
+	}
+	
+	public int getRankForKills(int kills)
+	{
+		return getRankForRequirement(kills, killRanks);
+	}
+	
+	public int getRankForStyle(int style)
+	{
+		return getRankForRequirement(style, styleRanks);
+	}
+	
+	int getRankForRequirement(long val, long[] list)
+	{
+		int rank = 0;
+		for (long i : list)
+		{
+			if (i < val)
+				rank++;
+			else
+				break;
+		}
+		return rank;
+	}
+	
+	int getRankForRequirement(long val, int[] list)
+	{
+		int rank = 0;
+		for (long i : list)
+		{
+			if (i > val)
+				rank++;
+			else
+				break;
+		}
+		return rank;
+	}
+	
 	public NbtCompound asNbt()
 	{
 		NbtCompound nbt = new NbtCompound();
@@ -187,8 +291,14 @@ public final class LevelData
 		nbt.putBoolean("builtin", builtin);
 		nbt.putBoolean("unimplemented", unimplemented);
 		nbt.putBoolean("hidden", hidden);
-		if(hasParTime())
-			nbt.putLong("parTime", parTime);
+		if(hasFullRankingData())
+		{
+			NbtCompound rankingData = new NbtCompound();
+			rankingData.putLongArray("timeRanks", timeRanks);
+			rankingData.putIntArray("killRanks", killRanks);
+			rankingData.putIntArray("styleRanks", styleRanks);
+			nbt.put("rankingData", rankingData);
+		}
 		if(hasMusic())
 		{
 			NbtCompound music = new NbtCompound();
@@ -202,6 +312,8 @@ public final class LevelData
 		}
 		nbt.putFloat("spawnRot", spawnRot);
 		nbt.putInt("version", version);
+		if(nextLevel != null)
+			nbt.putString("nextLevel", nextLevel.toString());
 		return nbt;
 	}
 	
@@ -219,8 +331,13 @@ public final class LevelData
 		boolean builtin = nbt.getBoolean("builtin");
 		LevelData data = new LevelData(Identifier.tryParse(id), title, description, author, authorLink,
 				Identifier.tryParse(structure), Identifier.tryParse(thumbnail), spawnOffset, builtin);
-		if(nbt.contains("parTime", NbtElement.LONG_TYPE))
-			data.setParTime(nbt.getLong("parTime"));
+		if(nbt.contains("rankingData", NbtElement.COMPOUND_TYPE))
+		{
+			NbtCompound ranking = nbt.getCompound("rankingData");
+			data.setTimeRanks(ranking.getLongArray("timeRanks"));
+			data.setKillRanks(ranking.getIntArray("killRanks"));
+			data.setStyleRanks(ranking.getIntArray("styleRanks"));
+		}
 		if(nbt.contains("music", NbtElement.COMPOUND_TYPE))
 		{
 			NbtCompound music = nbt.getCompound("music");
@@ -235,6 +352,8 @@ public final class LevelData
 		data.setHidden(nbt.getBoolean("hidden"));
 		data.setSpawnRot(nbt.getFloat("spawnRot"));
 		data.setVersion(nbt.getInt("version"));
+		if(nbt.contains("nextLevel", NbtElement.STRING_TYPE))
+			data.setNextLevel(Identifier.tryParse(nbt.getString("nextLevel")));
 		return data;
 	}
 	
@@ -256,8 +375,10 @@ public final class LevelData
 					   "description=" + description + ", " +
 					   "author=" + author + ", " +
 					   "authorLink=" + authorLink + ", " +
-					   "parTime=" + parTime + ", " +
-					   "parTimeString=" + parTimeString + ", " +
+					   "TimeRanks=" + Arrays.toString(timeRanks) + ", " +
+					   "TimeRankStrings=" + Arrays.toString(timeStrings) + ", " +
+					   "KillRanks=" + Arrays.toString(killRanks) + ", " +
+					   "StyleRanks=" + Arrays.toString(styleRanks) + ", " +
 					   "thumbnail=" + thumbnail + ", " +
 					   "structure=" + structure + ", " +
 					   "spawnOffset=" + spawnOffset + ']';
