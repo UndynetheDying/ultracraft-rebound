@@ -8,6 +8,7 @@ import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.components.world.IDimensionDataComponent;
 import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.config.Setting;
+import absolutelyaya.ultracraft.data.LevelData;
 import absolutelyaya.ultracraft.data.LevelDataManager;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.dimension.LevelManager;
@@ -590,7 +591,12 @@ public class Commands
 	
 	private static CompletableFuture<Suggestions> levelIdProvider(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder)
 	{
-		LevelDataManager.getAllLevels().keySet().forEach(id -> builder.suggest(id.toString()));
+		LevelDataManager.getAllLevels().keySet().forEach(id ->
+		{
+			LevelData data = LevelDataManager.getLevelData(id);
+			if(!data.isUnimplemented() && !data.isHidden())
+				builder.suggest(id.toString());
+		});
 		return builder.buildFuture();
 	}
 }
