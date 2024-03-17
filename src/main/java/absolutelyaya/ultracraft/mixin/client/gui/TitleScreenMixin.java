@@ -20,6 +20,7 @@ import net.minecraft.client.gui.widget.PressableTextWidget;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.SoundManager;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
@@ -45,8 +46,8 @@ public abstract class TitleScreenMixin extends Screen
     private static final ClientConfig config = UltracraftClient.getConfig();
     private static final Identifier BG_ICON_TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/misc/bg_icons.png");
     RotatingCubeMapRenderer ultraBG, defaultBG, limboBG;
-    SoundInstance wind;
-    int windTicks;
+    SoundInstance ambience;
+    int ambienceTicks;
     
     protected TitleScreenMixin(Text title)
     {
@@ -75,19 +76,26 @@ public abstract class TitleScreenMixin extends Screen
         if((!IntroScreen.SEQUENCE_FINISHED && !config.lastVersion.equals(Ultracraft.VERSION) && !config.neverIntro) || config.repeatIntro)
         {
             client.setScreen(new IntroScreen());
-            MinecraftClient.getInstance().getSoundManager().stop(wind);
+            MinecraftClient.getInstance().getSoundManager().stop(ambience);
         }
         
-        if(wind == null)
-            wind = PositionedSoundInstance.ambient(SoundRegistry.ELEVATOR_FALL, 1f, 0.75f);
-        else if (wind.canPlay() && windTicks <= 0 && backgroundRenderer.equals(ultraBG))
+        if(ambience == null)
         {
-            if (wind.getSound() != SoundManager.MISSING_SOUND)
-                MinecraftClient.getInstance().getSoundManager().play(wind);
-            windTicks += 190;
+            switch (config.BGID)
+            {
+                case "limbo" -> ambience = PositionedSoundInstance.ambient(SoundEvents.BLOCK_LAVA_AMBIENT, 1f, 0.25f);
+                case "ultracraft" -> ambience = PositionedSoundInstance.ambient(SoundRegistry.ELEVATOR_FALL, 1f, 0.75f);
+                default -> ambience = null;
+            }
         }
-        if(windTicks > 0)
-            windTicks--;
+        else if (ambience.canPlay() && ambienceTicks <= 0)
+        {
+            if (ambience.getSound() != SoundManager.MISSING_SOUND)
+                MinecraftClient.getInstance().getSoundManager().play(ambience);
+            ambienceTicks += 190;
+        }
+        if(ambienceTicks > 0)
+            ambienceTicks--;
     }
     
     @Inject(method = "init", at = @At("TAIL"))
@@ -125,8 +133,9 @@ public abstract class TitleScreenMixin extends Screen
     
     void setBG(String bg)
     {
-        MinecraftClient.getInstance().getSoundManager().stop(wind);
-        windTicks = 0;
+        MinecraftClient.getInstance().getSoundManager().stop(ambience);
+        ambience = null;
+        ambienceTicks = 0;
         backgroundRenderer = switch(bg)
         {
             case "limbo" -> limboBG;

@@ -43,6 +43,7 @@ import java.util.Random;
 @SuppressWarnings("SameParameterValue")
 public class UltraHudRenderer
 {
+	private static final Vector3f[] STYLE_OFFSETS = new Vector3f[] { new Vector3f(-43, -5, 40), new Vector3f(-2, -5, 20), new Vector3f(2, 0, 0) };
 	private static final ClientConfig config = UltracraftClient.getConfig();
 	final Identifier GUI_TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/ultrahud.png");
 	final Identifier STYLE_TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/style.png");
@@ -248,7 +249,7 @@ public class UltraHudRenderer
 		int guiScale = client.options.getGuiScale().getValue();
 		if(guiScale == 0)
 			guiScale = 3;
-		float scale = guiScale * 0.2f;
+		float scale = Math.min(guiScale, 3) * 0.2f;
 		matrices.scale(scale, scale, scale);
 		//main box
 		Matrix4f textureMatrix = new Matrix4f(matrices.peek().getPositionMatrix());
@@ -300,7 +301,8 @@ public class UltraHudRenderer
 		int count = Math.min(style.getBonusQueue().size(), 6);
 		matrices.push();
 		matrices.scale(0.5f, -0.5f, -1f);
-		matrices.translate(flip ? 124 : 144, -100, 10);
+		Vector3f offset = STYLE_OFFSETS[MathHelper.clamp(guiScale - 1, 0, STYLE_OFFSETS.length - 1)];
+		matrices.translate((flip ? 124 : 144) + offset.x, -100 + offset.y, 10 + offset.z);
 		if(alpha > 0f)
 		{
 			matrices.push();
