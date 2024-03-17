@@ -12,6 +12,7 @@ import net.minecraft.structure.StructureTemplateManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 
@@ -20,12 +21,6 @@ public class LimboManager extends DimensionManager
 	public static final Identifier ID = new Identifier(Ultracraft.MOD_ID, "limbo");
 	public static final RegistryKey<World> WORLD_KEY = RegistryKey.of(RegistryKeys.WORLD, ID);
 	final ServerWorld world;
-	
-	final String FLAG_SLAB1 = "slab1";
-	final String FLAG_SLAB2 = "slab2";
-	final String FLAG_SLAB3 = "slab3";
-	final String FLAG_SLAB4 = "slab4";
-	final String FLAG_SLAB_CHAMBER_OPEN = "slab_open";
 	
 	public LimboManager(ServerWorld world)
 	{
@@ -59,6 +54,8 @@ public class LimboManager extends DimensionManager
 	void prePlaceStructures()
 	{
 		Ultracraft.LOGGER.info("Placing fixed Limbo Structures...");
+		boolean tileDrops = world.getGameRules().getBoolean(GameRules.DO_TILE_DROPS);
+		world.getGameRules().get(GameRules.DO_TILE_DROPS).set(false, world.getServer());
 		StructureTemplateManager templateManager = world.getStructureTemplateManager();
 		Ultracraft.LOGGER.info("Placing limbo/spawn");
 		templateManager.getTemplate(new Identifier(Ultracraft.MOD_ID, "limbo/spawn"))
@@ -88,6 +85,7 @@ public class LimboManager extends DimensionManager
 					i.place(world, pos.add(0, 0, -45), new BlockPos(0, 0, 0), new StructurePlacementData(), world.getRandom(), 2);
 				});
 		Ultracraft.LOGGER.info("Limbo fixed Structure Placement complete!");
+		world.getGameRules().get(GameRules.DO_TILE_DROPS).set(tileDrops, world.getServer());
 		UltraComponents.DIMENSION_DATA.get(world).setFixedStructuresPlaced(true);
 	}
 }

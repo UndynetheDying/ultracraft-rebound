@@ -215,7 +215,7 @@ public class CybergrindGame
 		Layer curLayer = Layer.fromRegistryKey(world.getRegistryKey());
 		for (Map.Entry<EntityType<? extends HostileEntity>, IntegerEntry> entry : config.getCosts(curLayer).entrySet())
 			spawnCosts.put(entry.getKey(), entry.getValue().getValue());
-		float difficulty = world.getLocalDifficulty(center).getClampedLocalDifficulty();
+		float difficulty = world.getLocalDifficulty(owner.getBlockPos()).getClampedLocalDifficulty();
 		if(waves == 0)
 		{
 			float wavef = config.wavesPerDifficultyBonus.getValue() * difficulty;
