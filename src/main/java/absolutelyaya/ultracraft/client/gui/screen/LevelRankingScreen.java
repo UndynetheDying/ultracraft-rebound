@@ -20,6 +20,7 @@ public class LevelRankingScreen extends AbstractTravelScreen
 	ILevelStatsComponent levelStats;
 	Text title;
 	int timeRank = -1, killRank = -1, styleRank = -1, finalRank = -1;
+	ButtonWidget nextLevelButton;
 	
 	public LevelRankingScreen()
 	{
@@ -35,19 +36,23 @@ public class LevelRankingScreen extends AbstractTravelScreen
 		title = Text.translatable(data.getTitleKey() + ".title");
 		if(data.hasFullRankingData())
 		{
-			timeRank = data.getRankForTime(levelStats.getLastStoppedTimer());
+			long time = levelStats.getLastStoppedTimer();
+			timeRank = data.getRankForTime(time);
 			killRank = data.getRankForKills(levelStats.getKills());
 			styleRank = data.getRankForStyle(levelStats.getStyle());
 			finalRank = (int)Math.ceil((timeRank + killRank + styleRank) / 3f);
 			if(levelStats.getDeaths() > 0)
 				finalRank++;
+			levelStats.setBestRank(levelStats.getCurrentLevel(), finalRank);
+			if(time != -1)
+				levelStats.setBestTime(levelStats.getCurrentLevel(), finalRank == 0, time);
 		}
 		
 		instanceButtons.clear();
 		instanceButtons.add(addDrawable(ButtonWidget.builder(Text.translatable("screen.ultracraft.ranking.select"),
 				press -> client.setScreen(new TravelScreen(false, true, true)))
 							.dimensions(width / 2 - 92, height / 2 + 75, 75, 20).build()));
-		ButtonWidget nextLevelButton = addDrawable(ButtonWidget.builder(Text.translatable("screen.ultracraft.ranking.next"),
+		nextLevelButton = addDrawable(ButtonWidget.builder(Text.translatable("screen.ultracraft.ranking.next"),
 				press -> {
 					selectLevel(data.getNextLevel());
 					String curInstance = levelStats.getCurrentLevelInstance();
@@ -60,6 +65,12 @@ public class LevelRankingScreen extends AbstractTravelScreen
 						enterInstance("");
 		}).dimensions(width / 2 + 17, height / 2 + 75, 75, 20).build());
 		instanceButtons.add(nextLevelButton);
+		refreshNextLevelButton();
+	}
+	
+	public void refreshNextLevelButton()
+	{
+		LevelData data = LevelDataManager.getLevelData(levelStats.getCurrentLevel());
 		Identifier nextLevel = data.getNextLevel();
 		if(nextLevel == null)
 		{

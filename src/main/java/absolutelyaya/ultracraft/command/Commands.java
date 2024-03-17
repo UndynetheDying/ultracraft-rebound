@@ -85,11 +85,18 @@ public class Commands
 					.then(literal("end").executes(Commands::executeDebugEndCybergrind)))
 				.then(literal("flag").then(argument("dimension", dimension())
 					.then(literal("set").then(argument("id", string()).suggests(Commands::globalFlagForWorldProvider).then(argument("value", integer()).executes(Commands::executeDebugSetGlobalFlag))))
-					.then(literal("get").then(argument("id", string()).suggests(Commands::globalFlagForWorldProvider).executes(Commands::executeDebugGetGlobalFlag))))))
+					.then(literal("get").then(argument("id", string()).suggests(Commands::globalFlagForWorldProvider).executes(Commands::executeDebugGetGlobalFlag)))))
+				.then(literal("records").then(literal("reset").then(argument("target", players())
+					.then(argument("level", identifier()).suggests(Commands::levelIdProvider)
+						.then(literal("time").executes(Commands::executeDebugResetBestTime))
+						.then(literal("rank").executes(Commands::executeDebugResetBestRank)))
+					.then(literal("all")
+						.then(literal("time").executes(Commands::executeDebugResetAllBestTimes))
+						.then(literal("rank").executes(Commands::executeDebugResetAllBestRanks)))))))
 			.then(literal("progression").requires(source -> source.hasPermissionLevel(2))
 				.then(argument("list", string()).suggests(Commands::progressionListTypeProvider)
 					.then(literal("list").then(argument("target", player()).executes(Commands::executeProgressionList)))
-					.then(literal("grant").then(argument("target", players()).then(argument("entry", identifier()).executes(Commands::executeProgressionGrant))))
+					.then(literal("grant").then(argument("target", players()).then(argument("entry", identifier()).suggests(Commands::progressionOptionsProvider).executes(Commands::executeProgressionGrant))))
 					.then(literal("grant-all").then(argument("target", players()).executes(Commands::executeProgressionGrantAll)))
 					.then(literal("revoke").then(argument("target", players()).then(argument("entry", identifier()).suggests(Commands::progressionListProvider).executes(Commands::executeProgressionRevoke)))))
 				.then(literal("reset").then(argument("target", players()).executes(Commands::executeProgressionReset))))
@@ -222,6 +229,20 @@ public class Commands
 		ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "target");
 		String list = context.getArgument("list", String.class);
 		getProgressionList(target, list).forEach(i -> builder.suggest(i.toString()));
+		return builder.buildFuture();
+	}
+	
+	private static CompletableFuture<Suggestions> progressionOptionsProvider(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder) throws CommandSyntaxException
+	{
+		ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "target");
+		String list = context.getArgument("list", String.class);
+		IProgressionComponent progression = UltraComponents.PROGRESSION.get(target);
+		switch(list)
+		{
+			case "unlocked", "obtained" -> progression.getAllGearEntries().forEach(id -> builder.suggest(id.toString()));
+			case "level" -> levelIdProvider(context, builder);
+			default -> new ArrayList<>();
+		}
 		return builder.buildFuture();
 	}
 	
@@ -503,5 +524,73 @@ public class Commands
 		int value = dimensionData.getFlag(flag);
 		context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.globalflag.get", flag, dimension, value), false);
 		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int executeDebugResetBestRank(CommandContext<ServerCommandSource> context) throws CommandSyntaxException
+	{
+		Collection<ServerPlayerEntity> targets = EntityArgumentType.getPlayers(context, "target");
+		Identifier levelId = IdentifierArgumentType.getIdentifier(context, "level");
+		targets.forEach(target -> {
+			UltraComponents.LEVEL_STATS.get(target).setBestRank(levelId, -1);
+			UltraComponents.LEVEL_STATS.sync(target);
+		});
+		int size = targets.size();
+		if(size > 1)
+			context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.level.rank-reset.success-multiple", levelId, size), true);
+		else if(size > 0)
+			context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.level.rank-reset.success", levelId, ((ServerPlayerEntity)targets.toArray()[0]).getDisplayName()), true);
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int executeDebugResetBestTime(CommandContext<ServerCommandSource> context) throws CommandSyntaxException
+	{
+		Collection<ServerPlayerEntity> targets = EntityArgumentType.getPlayers(context, "target");
+		Identifier levelId = IdentifierArgumentType.getIdentifier(context, "level");
+		targets.forEach(target -> {
+			UltraComponents.LEVEL_STATS.get(target).resetBestTime(levelId);
+			UltraComponents.LEVEL_STATS.sync(target);
+		});
+		int size = targets.size();
+		if(size > 1)
+			context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.level.time-reset.success-multiple", levelId, size), true);
+		else if(size > 0)
+			context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.level.time-reset.success", levelId, ((ServerPlayerEntity)targets.toArray()[0]).getDisplayName()), true);
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int executeDebugResetAllBestRanks(CommandContext<ServerCommandSource> context) throws CommandSyntaxException
+	{
+		Collection<ServerPlayerEntity> targets = EntityArgumentType.getPlayers(context, "target");
+		targets.forEach(target -> {
+			LevelDataManager.getAllLevels().keySet().forEach(id -> UltraComponents.LEVEL_STATS.get(target).setBestRank(id, -1));
+			UltraComponents.LEVEL_STATS.sync(target);
+		});
+		int size = targets.size();
+		if(size > 1)
+			context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.level.rank-reset-all.success-multiple", size), true);
+		else if(size > 0)
+			context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.level.rank-reset-all.success", ((ServerPlayerEntity)targets.toArray()[0]).getDisplayName()), true);
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int executeDebugResetAllBestTimes(CommandContext<ServerCommandSource> context) throws CommandSyntaxException
+	{
+		Collection<ServerPlayerEntity> targets = EntityArgumentType.getPlayers(context, "target");
+		targets.forEach(target -> {
+			LevelDataManager.getAllLevels().keySet().forEach(id -> UltraComponents.LEVEL_STATS.get(target).resetBestTime(id));
+			UltraComponents.LEVEL_STATS.sync(target);
+		});
+		int size = targets.size();
+		if(size > 1)
+			context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.level.time-reset-all.success-multiple", size), true);
+		else if(size > 0)
+			context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.level.time-reset-all.success", ((ServerPlayerEntity)targets.toArray()[0]).getDisplayName()), true);
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static CompletableFuture<Suggestions> levelIdProvider(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder)
+	{
+		LevelDataManager.getAllLevels().keySet().forEach(id -> builder.suggest(id.toString()));
+		return builder.buildFuture();
 	}
 }

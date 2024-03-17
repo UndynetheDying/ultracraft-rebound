@@ -4,11 +4,15 @@ import absolutelyaya.ultracraft.client.gui.LevelHUD;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
+import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.util.TimeUtil;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -42,6 +46,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	{
 		deaths = 0;
 		style = 0;
+		lastStoppedTimer = -1;
 		undamaged = true;
 		stopTimer(true);
 		String lastInstance = currentLevelInstance; //prevents infinite loop when rescuing from null instance
@@ -96,30 +101,51 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	@Override
 	public void stopTimer(boolean interruption)
 	{
-		UltraComponents.LEVEL_STATS.sync(provider);
+		//if(!isTimerRunning())
+		//{
+		//	timerStart = -1;
+		//	return;
+		//}
+		//UltraComponents.LEVEL_STATS.sync(provider);
 		if(!interruption && currentLevel != null)
 		{
-			long elapsedTime = getElapsedTimer();
-			Pair<Long, Long> pb = bestTimes.getOrDefault(currentLevel, new Pair<>(Long.MAX_VALUE, Long.MAX_VALUE));
-			long best = pb.getLeft(), perfectBest = pb.getRight();
-			if(best > elapsedTime)
-				best = elapsedTime;
-			if(isPerfect() && perfectBest > elapsedTime)
-				perfectBest = elapsedTime;
-			if(best != pb.getLeft() || (perfectBest != -1 && perfectBest != pb.getRight()))
-			{
-				bestTimes.put(currentLevel, new Pair<>(best, perfectBest));
-				if(provider.getWorld().isClient)
-				{
-					Text levelName = getLevelData(currentLevel).getTitleText();
-					provider.sendMessage(Text.translatable("message.ultracraft.level.new-pb-time", levelName, TimeUtil.milliToString(elapsedTime)));
-				}
-			}
+			lastStoppedTimer = getElapsedTimer();
 			if(provider.getWorld().isClient)
 				LevelHUD.Instance.stopTimer();
-			lastStoppedTimer = elapsedTime;
 		}
 		timerStart = -1;
+	}
+	
+	@Override
+	public void setBestTime(Identifier levelId, boolean perfect, long time)
+	{
+		if(time == -1)
+			return;
+		Pair<Long, Long> pb = bestTimes.getOrDefault(levelId, new Pair<>(-1L, -1L));
+		boolean pbChanged = false;
+		if(perfect && (pb.getRight() == -1 || time < pb.getRight()))
+		{
+			pb.setRight(time);
+			pbChanged = true;
+		}
+		if(pb.getLeft() == -1 || time < pb.getLeft())
+		{
+			pb.setLeft(time);
+			pbChanged = true;
+		}
+		if(!pbChanged)
+			return;
+		bestTimes.put(levelId, pb);
+		if(provider.getWorld().isClient)
+		{
+			Text levelName = getLevelData(levelId).getTitleText();
+			provider.sendMessage(Text.translatable("message.ultracraft.level.new-pb-time", levelName, TimeUtil.milliToString(time)));
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			buf.writeIdentifier(levelId);
+			buf.writeLong(time);
+			buf.writeBoolean(perfect);
+			ClientPlayNetworking.send(PacketRegistry.SUBMIT_BEST_TIME_PACKET_ID, buf);
+		}
 	}
 	
 	@Override
@@ -200,6 +226,12 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	}
 	
 	@Override
+	public void resetBestTime(Identifier levelId)
+	{
+		bestTimes.remove(levelId);
+	}
+	
+	@Override
 	public int getLastPlayedLevelVersion(Identifier id)
 	{
 		return lastPlayedVersion.getOrDefault(id, -1);
@@ -209,6 +241,27 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	public int getBestRank(Identifier levelId)
 	{
 		return bestRanks.getOrDefault(levelId, -1);
+	}
+	
+	@Override
+	public void setBestRank(Identifier levelId, int rank)
+	{
+		if(rank == -1)
+		{
+			bestRanks.remove(levelId);
+			return;
+		}
+		//lower is better!! P-Rank == 0
+		if(bestRanks.containsKey(levelId) && bestRanks.get(levelId) <= rank)
+			return;
+		bestRanks.put(levelId, rank);
+		if(provider.getWorld().isClient)
+		{
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			buf.writeIdentifier(levelId);
+			buf.writeByte(rank);
+			ClientPlayNetworking.send(PacketRegistry.SUBMIT_BEST_RANK_PACKET_ID, buf);
+		}
 	}
 	
 	@Override
@@ -226,6 +279,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 			deaths = tag.getInt("deaths");
 		if(tag.contains("bestTimes", NbtElement.COMPOUND_TYPE))
 		{
+			bestTimes.clear();
 			NbtCompound records = tag.getCompound("bestTimes");
 			for(String key : records.getKeys())
 			{
@@ -235,6 +289,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 		}
 		if(tag.contains("bestRanks", NbtElement.COMPOUND_TYPE))
 		{
+			bestRanks.clear();
 			NbtCompound records = tag.getCompound("bestRanks");
 			for(String key : records.getKeys())
 				bestRanks.put(Identifier.tryParse(key), records.getInt(key));
@@ -252,13 +307,10 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	@Override
 	public void writeToNbt(NbtCompound tag)
 	{
-		if(timerStart != -1)
-			tag.putLong("timerStart", timerStart);
-		if(lastStoppedTimer != -1)
-			tag.putLong("lastStoppedTime", lastStoppedTimer);
-		if(style > 0)
-			tag.putFloat("style", style);
-		if(bestTimes.size() > 0)
+		tag.putLong("timerStart", timerStart);
+		tag.putLong("lastStoppedTime", lastStoppedTimer);
+		tag.putFloat("style", style);
+		if(bestTimes != null)
 		{
 			NbtCompound records = new NbtCompound();
 			for (Map.Entry<Identifier, Pair<Long, Long>> e : bestTimes.entrySet())
@@ -270,7 +322,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 			}
 			tag.put("bestTimes", records);
 		}
-		if(bestRanks.size() > 0)
+		if(bestRanks != null)
 		{
 			NbtCompound records = new NbtCompound();
 			for (Map.Entry<Identifier, Integer> e : bestRanks.entrySet())

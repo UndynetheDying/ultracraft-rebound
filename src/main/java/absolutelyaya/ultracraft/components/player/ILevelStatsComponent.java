@@ -20,6 +20,8 @@ public interface ILevelStatsComponent extends ComponentV3
 	
 	void stopTimer(boolean interrupted);
 	
+	void setBestTime(Identifier levelId, boolean perfect, long time);
+	
 	long getElapsedTimer();
 	
 	long getLastStoppedTimer();
@@ -42,7 +44,11 @@ public interface ILevelStatsComponent extends ComponentV3
 	
 	long getBestTime(Identifier levelId, boolean perfect);
 	
+	void resetBestTime(Identifier levelId);
+	
 	int getLastPlayedLevelVersion(Identifier levelId);
 	
 	int getBestRank(Identifier levelId);
+	
+	void setBestRank(Identifier levelId, int rank);
 }

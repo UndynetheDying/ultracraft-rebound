@@ -121,6 +121,12 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 		owned.add(new Identifier(Ultracraft.MOD_ID, "feedbacker"));
 	}
 	
+	@Override
+	public List<Identifier> getAllGearEntries()
+	{
+		return ENTRIES;
+	}
+	
 	public void sync()
 	{
 		UltraComponents.PROGRESSION.sync(provider);

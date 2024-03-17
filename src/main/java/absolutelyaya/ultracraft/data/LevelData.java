@@ -234,6 +234,8 @@ public final class LevelData
 	
 	public int getRankForTime(long time)
 	{
+		if(time == -1)
+			return -1;
 		return getRankForRequirement(time, timeRanks);
 	}
 	

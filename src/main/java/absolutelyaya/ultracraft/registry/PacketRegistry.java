@@ -94,6 +94,8 @@ public class PacketRegistry
 	public static final Identifier REQUEST_INSTANCES_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "instances_c2s");
 	public static final Identifier REQUEST_FULL_CYBERGRIND_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "request_cybergrind");
 	public static final Identifier SWITCH_SLOT_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "slot_c2s");
+	public static final Identifier SUBMIT_BEST_RANK_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "rank_c2s");
+	public static final Identifier SUBMIT_BEST_TIME_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "time_c2s");
 	
 	public static final Identifier FREEZE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "freeze");
 	public static final Identifier HITSCAN_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "scan");
@@ -693,9 +695,18 @@ public class PacketRegistry
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.SWITCH_SLOT_PACKET_ID, (server, player, handler, buf, sender) -> {
 			int lastSlot = buf.readByte();
 			int newSlot = buf.readByte();
-			server.execute(() -> {
-				UltraComponents.WINGED.get(player).onUpdateActiveSlot(lastSlot, newSlot);
-			});
+			server.execute(() -> UltraComponents.WINGED.get(player).onUpdateActiveSlot(lastSlot, newSlot));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.SUBMIT_BEST_RANK_PACKET_ID, (server, player, handler, buf, sender) -> {
+			Identifier levelId = buf.readIdentifier();
+			byte rank = buf.readByte();
+			server.execute(() -> UltraComponents.LEVEL_STATS.get(player).setBestRank(levelId, rank));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.SUBMIT_BEST_TIME_PACKET_ID, (server, player, handler, buf, sender) -> {
+			Identifier levelId = buf.readIdentifier();
+			long time = buf.readLong();
+			boolean perfect = buf.readBoolean();
+			server.execute(() -> UltraComponents.LEVEL_STATS.get(player).setBestTime(levelId, perfect, time));
 		});
 	}
 	

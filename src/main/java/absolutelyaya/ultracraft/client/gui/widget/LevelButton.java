@@ -35,6 +35,7 @@ import java.util.function.Consumer;
 
 public class LevelButton extends ClickableWidget
 {
+	final static String[] RANKS = new String[] { "P", "§4S", "§6A", "§eB", "§aC", "§bD", "§9E", "§8F" };
 	static final Identifier UPDATE_MARKER_TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/particle/shock.png");
 	static final TextRenderer tRenderer;
 	public final Identifier preview, destination;
@@ -159,9 +160,9 @@ public class LevelButton extends ClickableWidget
 			if(hasRankingData)
 			{
 				Text header = Text.translatable("screen.ultracraft.level.time-header");
-				long time = levelStats.getBestTime(destination, false);
+				long time = levelStats.getBestTime(destination, true);
 				Text ppb = Text.translatable("screen.ultracraft.level.ppb-time", time == -1 ? "-" : TimeUtil.milliToString(time));
-				time = levelStats.getBestTime(destination, true);
+				time = levelStats.getBestTime(destination, false);
 				Text pb = Text.translatable("screen.ultracraft.level.pb-time", time == -1 ? "-" : TimeUtil.milliToString(time));
 				int timeBoxWidth = Math.max(Math.max(tRenderer.getWidth(ppb), tRenderer.getWidth(pb)), tRenderer.getWidth(header)) + 6;
 				matrices.push();
@@ -221,6 +222,13 @@ public class LevelButton extends ClickableWidget
 			context.drawText(tRenderer, t.get(0),
 					(width - tRenderer.getWidth(t.get(0))) / 2, 64,
 					authorLink.isEmpty() || isHoveringAuthorLink(mouseX, mouseY) ? 0xffffffff : 0x3972bd, true);
+		}
+		//Best Rank
+		int rank = levelStats.getBestRank(destination);
+		if(rank > -1)
+		{
+			Text text = Text.of(RANKS[Math.min(rank, RANKS.length)]);
+			context.drawText(tRenderer, text, width / 2 + 38, 54, 0xffffffff, rank != 0);
 		}
 		matrices.pop();
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);

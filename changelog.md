@@ -18,8 +18,8 @@
   - These Levels are only themed around the different Layers; they're by no means recreations of the Original Levels
   - Throughout the Levels, Players are taught the new mechanics, enemies and will unlock new Weapons
     - You will obtain the Piercer Revolver at the beginning of the first Prelude Level for Instance
-  - Personal best times are tracked and each level has a par time; beating it under that time doesn't do anything, but you'd be cool
-  - If you complete a Level in less than the par time without dying once, you can submit your best time in the ultracraft Discords P-Rank Forum channel! (Each level has its own post in which you'd comment your best times;)
+  - At the end of a Level, your performance will be ranked in 3 Categories; Time, Kills and Style
+  - If you beat a level without dying and have an S-Rank in all 3 Ctagories, you can put your run in the ultracraft Discords P-Rank Forum channel! (Each level has its own post in which you'd comment your best times)
   - Using a datapack, you can make and add Custom Levels of your own! If you publish one, we'd love to put it in the ultracraft Discord to make it easy to discover for other Players
 - Added Overheat Nailgun
   - Primary fire of all Nailgun variants now builds up "heat"
@@ -154,6 +154,7 @@
 - Added Debug Commands for level instancing//destructing level instances
   - DO NOT USE THESE!!!
   - I mean, you could if you want to, but they could crash servers.
+- Added Debug Commands to reset best level completion times//ranks
 ## Tweaks
 - Buffed overpump damage towards others (10 Dmg -> 15 Dmg)
 - Hitscans don't cause Thorn Damage from Guardians anymore

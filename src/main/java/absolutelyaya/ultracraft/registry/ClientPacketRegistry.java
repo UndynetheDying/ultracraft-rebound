@@ -413,6 +413,8 @@ public class ClientPacketRegistry
 				global.setDestinations(ids);
 				if(client.currentScreen instanceof TravelScreen travel)
 					travel.initButtons();
+				if(client.currentScreen instanceof LevelRankingScreen ranking)
+					ranking.refreshNextLevelButton();
 			});
 		})));
 		ClientPlayNetworking.registerGlobalReceiver(SEND_LEVELS_PACKET_ID, (((client, handler, buf, responseSender) -> {
