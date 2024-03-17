@@ -23,8 +23,8 @@ public class CybergrindConfig extends Config
 	public final IntegerEntry wavesPerDifficultyHigh = new IntegerEntry("MaxWaves", 4);
 	public final IntegerEntry wavesPerDifficultyBonus = new IntegerEntry("DifficultyBonusWaves", 0);
 	public final FloatEntry wavesPerParticipantMultiplier = new FloatEntry("WavesPerParticipantMultipler", 1.1f);
-	public final FloatEntry startChance = new FloatEntry("StartChance", 0.2f);
-	public final IntegerEntry cooldown = new IntegerEntry("Cooldown", 5);
+	public final FloatEntry startChance = new FloatEntry("StartChance", 0.5f);
+	public final IntegerEntry cooldown = new IntegerEntry("Cooldown", 3);
 	public final IntegerEntry arenaRadius = new IntegerEntry("ArenaRadius", 33);
 	public final BooleanEntry arenaBorderSolid = new BooleanEntry("ArenaBorderSolid", true);
 	public final IntegerEntry startDelay = new IntegerEntry("StartDelay", 600); //30 seconds

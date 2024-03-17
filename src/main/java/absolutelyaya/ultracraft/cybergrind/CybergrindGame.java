@@ -215,19 +215,19 @@ public class CybergrindGame
 		Layer curLayer = Layer.fromRegistryKey(world.getRegistryKey());
 		for (Map.Entry<EntityType<? extends HostileEntity>, IntegerEntry> entry : config.getCosts(curLayer).entrySet())
 			spawnCosts.put(entry.getKey(), entry.getValue().getValue());
-		float difficulty = world.getLocalDifficulty(owner.getBlockPos()).getClampedLocalDifficulty();
+		float difficulty = world.getDifficulty().getId();
 		if(waves == 0)
 		{
 			float wavef = config.wavesPerDifficultyBonus.getValue() * difficulty;
 			for (int i = 0; i < difficulty; i++)
 				wavef += rand.nextBetween(config.wavesPerDifficultyLow.getValue(), config.wavesPerDifficultyHigh.getValue());
 			for (int i = 0; i < participants.size() - 1; i++)
-				wavef *= config.wavesPerParticipantMultiplier.getValue();
+				wavef += wavef * config.wavesPerParticipantMultiplier.getValue();
 			waves = (int)wavef;
 		}
 		initialized = true;
 		addAllPlayersInBounds();
-		delay = 60;
+		delay += 60;
 		if(!skipTargetAnnounce)
 			announceTarget();
 	}
