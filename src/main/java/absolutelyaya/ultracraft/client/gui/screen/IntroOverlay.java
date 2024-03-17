@@ -18,7 +18,7 @@ import java.util.List;
 
 public class IntroOverlay extends Overlay
 {
-	float alpha = 3.5f;
+	float alpha = 2.5f;
 	
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta)
