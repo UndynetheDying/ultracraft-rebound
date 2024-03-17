@@ -64,7 +64,7 @@ public class TitleHUD
 		{
 			matrices.push();
 			matrices.translate(width / 2f, height / 5f, 10);
-			matrices.scale(3f, 3f, 3f);
+			matrices.scale(2f, 2f, 2f);
 			RenderSystem.enableBlend();
 			context.drawCenteredTextWithShadow(renderer, curText, 0, 0, 0xffffff);
 			matrices.pop();

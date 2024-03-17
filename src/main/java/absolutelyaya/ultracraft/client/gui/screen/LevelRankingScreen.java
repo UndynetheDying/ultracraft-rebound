@@ -6,6 +6,7 @@ import absolutelyaya.ultracraft.data.LevelData;
 import absolutelyaya.ultracraft.data.LevelDataManager;
 import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.util.TimeUtil;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -13,6 +14,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 
 public class LevelRankingScreen extends AbstractTravelScreen
 {
@@ -21,6 +23,7 @@ public class LevelRankingScreen extends AbstractTravelScreen
 	Text title;
 	int timeRank = -1, killRank = -1, styleRank = -1, finalRank = -1;
 	ButtonWidget nextLevelButton;
+	float anim = 0f;
 	
 	public LevelRankingScreen()
 	{
@@ -30,6 +33,7 @@ public class LevelRankingScreen extends AbstractTravelScreen
 	@Override
 	protected void init()
 	{
+		anim = 0f;
 		super.init();
 		levelStats = UltraComponents.LEVEL_STATS.get(client.player);
 		LevelData data = LevelDataManager.getLevelData(levelStats.getCurrentLevel());
@@ -84,10 +88,12 @@ public class LevelRankingScreen extends AbstractTravelScreen
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta)
 	{
+		anim += client.getLastFrameDuration() / 20f;
 		super.render(context, mouseX, mouseY, delta);
 		MatrixStack matrices = context.getMatrices();
 		matrices.push();
 		//title
+		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		matrices.push();
 		matrices.translate((width - textRenderer.getWidth(title) * 2f) / 2f, height / 2f - 90, 0f);
 		matrices.scale(2f, 2f, 2f);
@@ -98,33 +104,36 @@ public class LevelRankingScreen extends AbstractTravelScreen
 		matrices.translate(width / 2f - 92, height / 2f - 59, 0f);
 		//time
 		Text time = Text.of(TimeUtil.milliToString(levelStats.getLastStoppedTimer()));
-		drawPanel(context, Text.translatable("screen.ultracraft.ranking.time"), time, true, timeRank);
+		drawPanel(context, Text.translatable("screen.ultracraft.ranking.time"), time, true, timeRank, 0.5f, 0.1f);
 		//kills
 		matrices.translate(0, 25, 0);
 		Text kills = Text.of(String.valueOf(levelStats.getKills()));
-		drawPanel(context, Text.translatable("screen.ultracraft.ranking.kills"), kills, true, killRank);
+		drawPanel(context, Text.translatable("screen.ultracraft.ranking.kills"), kills, true, killRank, 0.6f, 0.1f);
 		//style
 		matrices.translate(0, 25, 0);
 		Text style = Text.of(String.valueOf(levelStats.getStyle()));
-		drawPanel(context, Text.translatable("screen.ultracraft.ranking.style"), style, true, styleRank);
+		drawPanel(context, Text.translatable("screen.ultracraft.ranking.style"), style, true, styleRank, 0.7f, 0.1f);
 		//restarts
 		matrices.translate(0, 25, 0);
 		int restarts = levelStats.getDeaths();
 		Text restartsText = Text.translatable("screen.ultracraft.ranking." + (restarts == 0 ? "no-restarts" : "restarts"), restarts);
 		Text damagedText = Text.translatable(restarts == 0 && levelStats.isUndamaged() ? "screen.ultracraft.ranking.no-damage" : "");
-		drawPanel(context, restartsText, damagedText, false, -1);
+		drawPanel(context, restartsText, damagedText, false, -1, 0.8f, 0.1f);
 		//secrets
 		matrices.translate(0, 25, 0);
 		drawPanel(context, Text.translatable("screen.ultracraft.ranking.secrets"), Text.translatable("screen.ultracraft.ranking.secrets-tba"),
-				false, -1);
+				false, -1, 0.9f, 0.1f);
 		matrices.pop();
 		//BIG final rank
+		float alpha = MathHelper.clamp(anim - 1f, 0f, 0.25f) * 4f;
+		RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
 		matrices.push();
 		if(finalRank > -1 && finalRank < RANKS.length)
 		{
 			context.fill(width / 2 + 26, height / 2 - 59, width / 2 + 90, height / 2 + 6, finalRank == 0 ? 0xffffa200 : 0x88000000);
 			matrices.translate(width / 2f + 16 + 24, height / 2f - 59 + 8, 0);
-			matrices.scale(6f, 6f, 6f);
+			float scale = 6f + (1f - alpha);
+			matrices.scale(scale, scale, scale);
 			context.drawText(textRenderer, RANKS[finalRank], 0, 0, 0xffffffff, finalRank > 0);
 		}
 		else
@@ -135,12 +144,15 @@ public class LevelRankingScreen extends AbstractTravelScreen
 			context.drawText(textRenderer, t, 0, 0, 0xffffffff, true);
 		}
 		matrices.pop();
-		
+		RenderSystem.enableBlend();
 		matrices.pop();
 	}
 	
-	void drawPanel(DrawContext context, Text header, Text value, boolean indentValue, int rank)
+	void drawPanel(DrawContext context, Text header, Text value, boolean indentValue, int rank, float appearDelay, float appearTime)
 	{
+		if(openAnimTime < appearDelay)
+			return;
+		RenderSystem.setShaderColor(1f, 1f, 1f, Math.min((anim - appearDelay) * appearTime * (1f / appearTime), 1f));
 		if(rank > -1)
 			rank += 1;
 		MatrixStack matrices = context.getMatrices();
