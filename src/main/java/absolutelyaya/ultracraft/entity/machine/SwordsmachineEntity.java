@@ -167,10 +167,7 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 			{
 				dataTracker.set(ANIMATION, ANIMATION_IDLE);
 				if(dataTracker.get(BOSS_TYPE) == 1)
-				{
-					getWorld().addParticle(new TeleportParticleEffect(getTeleportParticleSize()), getX(), getY(), getZ(), 0f, 0f, 0f);
 					remove(RemovalReason.KILLED);
-				}
 			}
 		}
 		if(data.equals(ENRAGED_TICKS))
@@ -649,6 +646,8 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 		super.onRemoved();
 		if(getWorld().isClient)
 			setCurrentAttackTrail((byte)0); //remove attack Trail in case there is one
+		if(dataTracker.get(BOSS_TYPE) == 1)
+			getWorld().addParticle(new TeleportParticleEffect(getTeleportParticleSize()), getX(), getY(), getZ(), 0f, 0f, 0f);
 	}
 	
 	@Override
