@@ -28,6 +28,8 @@ public interface IUltraLevelComponent extends ComponentV3
 	
 	boolean isDestinationUnlocked(Identifier id);
 	
+	boolean isAnyLimboDestinationUnlocked();
+	
 	boolean unlockDestination(Identifier id);
 	
 	void unlockAllDestinations();

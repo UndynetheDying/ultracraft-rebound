@@ -83,6 +83,15 @@ public class UltraLevelComponent implements IUltraLevelComponent
 	}
 	
 	@Override
+	public boolean isAnyLimboDestinationUnlocked()
+	{
+		return isDestinationUnlocked(new Identifier(Ultracraft.MOD_ID, "limbo1")) ||
+					   isDestinationUnlocked(new Identifier(Ultracraft.MOD_ID, "limbo2")) ||
+					   isDestinationUnlocked(new Identifier(Ultracraft.MOD_ID, "limbo3")) ||
+					   isDestinationUnlocked(new Identifier(Ultracraft.MOD_ID, "dimension.limbo"));
+	}
+	
+	@Override
 	public boolean unlockDestination(Identifier id)
 	{
 		if(!isDestinationUnlocked(id))
