@@ -63,7 +63,7 @@ public class EditModeCommands
 		editor.toggleEditMode();
 		editor.sync();
 		boolean b = editor.isActive();
-		context.getSource().sendFeedback(() -> Text.of(player.getName().getString() + (b ? " has entered edit mode" : " has left edit mode")), true);
+		context.getSource().sendFeedback(() -> Text.translatable(b ? "command.ultracraft.edit.enable" : "command.ultracraft.edit.disable", player.getName().getString()), true);
 		return Command.SINGLE_SUCCESS;
 	}
 	
@@ -84,15 +84,14 @@ public class EditModeCommands
 					BlockEntity blockEntity = world.getBlockEntity(pos);
 					if(blockEntity instanceof RoomBlockEntity room)
 					{
-						context.getSource().sendMessage(Text.of("Room found: '" + room.getID() + "' at " + x + " " + y + " " + z));
+						context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.ping.room-found", room.getID(), x, y, z));
 						roomBlocks.add(pos);
 					}
 					else if(blockEntity instanceof AbstractMappingBlockEntity block)
 					{
 						if(block.getParent() == null || !(world.getBlockEntity(block.getParent()) instanceof RoomBlockEntity))
 						{
-							context.getSource().sendMessage(Text.of("Orphan " + block.getFocusKey() + " found: '" +
-																			block.getID() + "' at " + x + " " + y + " " + z));
+							context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.ping.orphan-found", block.getFocusKey(), block.getID(), x, y, z));
 							orphans.add(pos);
 						}
 					}
@@ -108,9 +107,9 @@ public class EditModeCommands
 			buf.writeBlockPos(pos);
 		ServerPlayNetworking.send(player, PacketRegistry.EDIT_PING_PACKET_ID, buf);
 		if(roomBlocks.size() == 0)
-			context.getSource().sendMessage(Text.of("No Rooms :("));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.ping.no-results"));
 		if(orphans.size() > 0)
-			context.getSource().sendMessage(Text.of(orphans.size() + " Orphans found."));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.ping.orphan-count", orphans.size() ));
 		return Command.SINGLE_SUCCESS;
 	}
 	
@@ -121,7 +120,7 @@ public class EditModeCommands
 		buf.writeInt(0);
 		buf.writeInt(0);
 		ServerPlayNetworking.send(player, PacketRegistry.EDIT_PING_PACKET_ID, buf);
-		context.getSource().sendMessage(Text.of("Ping Results cleared"));
+		context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.ping.clear"));
 		return Command.SINGLE_SUCCESS;
 	}
 	
@@ -134,10 +133,10 @@ public class EditModeCommands
 		if(pos != null && player.getWorld().getBlockEntity(pos) instanceof AbstractMappingBlockEntity e)
 		{
 			e.setID(name);
-			context.getSource().sendMessage(Text.of("Renamed successfully"));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.name.success"));
 		}
 		else
-			context.getSource().sendMessage(Text.of("Nothing focused with key '" + key + "'"));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.name.fail", key));
 		return Command.SINGLE_SUCCESS;
 	}
 	
@@ -151,16 +150,16 @@ public class EditModeCommands
 		{
 			if(!block.isAreaModifiable())
 			{
-				context.getSource().sendMessage(Text.of("Area of key '" + key + "' is not resizeable"));
+				context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.area.not-resizeable", key));
 				return Command.SINGLE_SUCCESS;
 			}
 			editor.setEditAreaStep(2);
 			editor.setEditAreaCore(pos);
 			editor.sync();
-			context.getSource().sendMessage(Text.of("Ready to change Area; Right Click 2 Blocks"));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.area.begin"));
 		}
 		else
-			context.getSource().sendMessage(Text.of("Nothing focused with key '" + key + "'"));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.nothing-focused" + key));
 		return Command.SINGLE_SUCCESS;
 	}
 	
@@ -175,17 +174,17 @@ public class EditModeCommands
 		BlockPos roomPos = getSelectedRoom(player);
 		if(roomPos == null)
 		{
-			context.getSource().sendMessage(Text.of("No Room Selected"));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.no-room"));
 			return Command.SINGLE_SUCCESS;
 		}
 		String id = context.getArgument("id", String.class);
 		if(player.getWorld().getBlockEntity(roomPos) instanceof RoomBlockEntity room)
 		{
 			room.registerFlag(id);
-			context.getSource().sendMessage(Text.of("Flag '" + id + "' registered"));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.flag.add", id));
 		}
 		else
-			context.getSource().sendMessage(Text.of("Error: focused room pos is not a room"));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.room-but-no-room"));
 		return Command.SINGLE_SUCCESS;
 	}
 	
@@ -195,14 +194,14 @@ public class EditModeCommands
 		BlockPos roomPos = getSelectedRoom(player);
 		if(roomPos == null)
 		{
-			context.getSource().sendMessage(Text.of("No Room Selected"));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.no-room"));
 			return Command.SINGLE_SUCCESS;
 		}
 		String flag = context.getArgument("flag", String.class);
 		if(player.getWorld().getBlockEntity(roomPos) instanceof RoomBlockEntity room)
-			context.getSource().sendMessage(Text.of("Flag '" + flag + "' " + (room.removeFlag(flag) ? "removed" : "wasn't there to begin with")));
+			context.getSource().sendMessage(Text.translatable(room.removeFlag(flag) ? "command.ultracraft.edit.flag.remove.success" : "command.ultracraft.edit.flag.remove.nothing-there", flag));
 		else
-			context.getSource().sendMessage(Text.of("Error: focused room pos is not a room"));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.room-but-no-room"));
 		return Command.SINGLE_SUCCESS;
 	}
 	
@@ -212,7 +211,7 @@ public class EditModeCommands
 		BlockPos roomPos = getSelectedRoom(player);
 		if(roomPos == null)
 		{
-			context.getSource().sendMessage(Text.of("No Room Selected"));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.no-room"));
 			return Command.SINGLE_SUCCESS;
 		}
 		String flag = context.getArgument("flag", String.class);
@@ -220,12 +219,12 @@ public class EditModeCommands
 		if(player.getWorld().getBlockEntity(roomPos) instanceof RoomBlockEntity room)
 		{
 			if(room.setFlag(flag, state))
-				context.getSource().sendMessage(Text.of("Flag '" + flag + "' set to " + state));
+				context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.flag.set.success", flag, state));
 			else
-				context.getSource().sendMessage(Text.of("Flag '" + flag + "' doesn't exist"));
+				context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.flag.set.fail", flag));
 		}
 		else
-			context.getSource().sendMessage(Text.of("Error: focused room pos is not a room"));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.room-but-no-room"));
 		return Command.SINGLE_SUCCESS;
 	}
 	
@@ -238,10 +237,10 @@ public class EditModeCommands
 		if(pos != null && player.getWorld().getBlockEntity(pos) instanceof FlagBindable e)
 		{
 			e.bindFlag(flag);
-			context.getSource().sendMessage(Text.of("Bound Flag '" + flag + "' to focused key '" + key + "'"));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.flag.bind", flag, key));
 		}
 		else
-			context.getSource().sendMessage(Text.of("Nothing focused with key '" + key + "'"));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.nothing-focused"));
 		
 		return Command.SINGLE_SUCCESS;
 	}
@@ -252,7 +251,7 @@ public class EditModeCommands
 		String key = context.getArgument("key", String.class);
 		if(key.equals("room"))
 		{
-			context.getSource().sendMessage(Text.of("Rooms don't have Parents."));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.rebind.room"));
 			return Command.SINGLE_SUCCESS;
 		}
 		BlockPos pos = UltraComponents.EDITOR.get(player).getEditFocus(key);
@@ -263,10 +262,10 @@ public class EditModeCommands
 			entity.setParent(null);
 			if(player.getWorld().getBlockEntity(lastParent) instanceof RoomBlockEntity room)
 				room.removeChild(pos);
-			context.getSource().sendMessage(Text.of("Rebinding Parent of key '" + key + "'"));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.rebind.start", key));
 		}
 		else
-			context.getSource().sendMessage(Text.of("Nothing focused with key '" + key + "'"));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.nothing-focused"));
 		return Command.SINGLE_SUCCESS;
 	}
 	
@@ -277,7 +276,7 @@ public class EditModeCommands
 		IEditorComponent editor = UltraComponents.EDITOR.get(player);
 		editor.setFlySpeed(speed);
 		editor.sync();
-		context.getSource().sendMessage(Text.of(("Edit mode Fly Speed set to " + speed)));
+		context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.config.speed", speed));
 		return Command.SINGLE_SUCCESS;
 	}
 	
@@ -288,7 +287,7 @@ public class EditModeCommands
 		editor.toggleNoClip();
 		editor.sync();
 		boolean b = editor.isNoClip();
-		context.getSource().sendMessage(Text.of((b ? " activated NoClip in edit mode" : " deactivated NoClip in edit mode")));
+		context.getSource().sendMessage(Text.translatable(b ? "command.ultracraft.edit.config.no-clip.on" : "command.ultracraft.edit.config.no-clip.off"));
 		return Command.SINGLE_SUCCESS;
 	}
 	
@@ -299,7 +298,7 @@ public class EditModeCommands
 		editor.toggleShowAreaOwner();
 		editor.sync();
 		boolean b = editor.isShowAreaOwner();
-		context.getSource().sendMessage(Text.of((b ? " lines between areas and owners are now shown" : " lines between areas and owners are now hidden")));
+		context.getSource().sendMessage(Text.translatable(b ? "command.ultracraft.edit.config.show-area-owner.on" : "command.ultracraft.edit.config.show-area-owner.off"));
 		return Command.SINGLE_SUCCESS;
 	}
 	
@@ -325,14 +324,14 @@ public class EditModeCommands
 			List<String> attributes = e.getAttributes();
 			if(!attributes.contains(attribute))
 			{
-				context.getSource().sendMessage(Text.of("Attribute '" + attribute + "' not found on focused key '" + key + "'"));
+				context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.attribute.not-found", attribute, key));
 				return Command.SINGLE_SUCCESS;
 			}
 			e.setAttribute(attribute, value);
-			context.getSource().sendMessage(Text.of("Set Attribute '" + attribute + "' to '" + value + "' on focused key '" + key + "'"));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.attribute.set", attribute, value, key));
 		}
 		else
-			context.getSource().sendMessage(Text.of("Nothing focused with key '" + key + "'"));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.nothing-focused"));
 		return Command.SINGLE_SUCCESS;
 	}
 	
