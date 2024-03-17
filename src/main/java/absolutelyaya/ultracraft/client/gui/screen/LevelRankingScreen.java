@@ -33,7 +33,6 @@ public class LevelRankingScreen extends AbstractTravelScreen
 	@Override
 	protected void init()
 	{
-		anim = 0f;
 		super.init();
 		levelStats = UltraComponents.LEVEL_STATS.get(client.player);
 		LevelData data = LevelDataManager.getLevelData(levelStats.getCurrentLevel());

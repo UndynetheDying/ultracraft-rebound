@@ -303,7 +303,7 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 	public void onDeath(DamageSource damageSource)
 	{
 		super.onDeath(damageSource);
-		if(getWorld().getRegistryKey().equals(LevelManager.WORLD_KEY))
+		if(getWorld().getRegistryKey().equals(LevelManager.WORLD_KEY) && !getWorld().isClient)
 		{
 			getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(192f), p -> true).forEach(p -> {
 				ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(p);

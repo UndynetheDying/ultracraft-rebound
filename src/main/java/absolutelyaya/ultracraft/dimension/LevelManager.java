@@ -484,7 +484,8 @@ public class LevelManager extends DimensionManager
 		
 		public void onKill()
 		{
-			kills++;
+			if(!Instance.world.isClient)
+				kills++;
 		}
 		
 		public int getKills()

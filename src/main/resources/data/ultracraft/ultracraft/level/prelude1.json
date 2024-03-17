@@ -12,10 +12,10 @@
       "4:00:00"
     ],
     "kills": [
-      118,
-      80,
-      70,
-      50
+      59,
+      40,
+      30,
+      15
     ],
     "style": [
       400,
@@ -31,5 +31,5 @@
   },
   "spawn-rot": -90,
   "version": 2,
-  "next-level": "ultracraft:limbo1"
+  "next-level": "ultracraft:prelude2"
 }
