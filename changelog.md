@@ -134,6 +134,8 @@
   - You can still Maurice other Players tho ofc
 - Slightly Changed how parrying works yet again
 - The Punch animation triggered by throwing coins using a marksman can now be interrupted, making coin punching less clunky
+- Filths and Drones no longer randomly wander around
+- All Enemies now ignore Visibility when targeting Players
 ## Settings & Config
 - Removed all gamerules
 - Added Option to disable Screenshake

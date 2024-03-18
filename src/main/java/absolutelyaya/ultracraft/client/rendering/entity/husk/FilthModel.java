@@ -46,7 +46,7 @@ public class FilthModel extends GeoModel<FilthEntity>
 		
 		
 		EntityModelData extraData = (EntityModelData)animationState.getExtraData().get(DataTickets.ENTITY_MODEL_DATA);
-		if(head != null && !animatable.isInAttackAnimation())
+		if(head != null && animatable.isNotInAttackAnimation())
 		{
 			head.setRotX(head.getRotX() + extraData.headPitch() * f);
 			head.setRotY(extraData.netHeadYaw() * f);
