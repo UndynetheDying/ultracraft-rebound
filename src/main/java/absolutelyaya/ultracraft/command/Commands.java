@@ -594,9 +594,11 @@ public class Commands
 		LevelDataManager.getAllLevels().keySet().forEach(id ->
 		{
 			LevelData data = LevelDataManager.getLevelData(id);
-			if(!data.isUnimplemented() && !data.isHidden())
+			if(!data.isUnimplemented())
 				builder.suggest(id.toString());
 		});
+		builder.suggest("ultracraft:dimension.prelude");
+		builder.suggest("ultracraft:dimension.limbo");
 		return builder.buildFuture();
 	}
 }
