@@ -1,7 +1,6 @@
 {
   "builtin": true,
   "title": "level.ultracraft.1-C",
-  "par-time": "4:20:69",
   "author": "Ashenwulf",
   "structure": "ultracraft:limbo/ruin1",
   "thumbnail": "ultracraft:textures/level/placeholder.png",
@@ -11,5 +10,6 @@
     "z": 9
   },
   "hidden": true,
+  "unimplemented": true,
   "version": 1
 }
