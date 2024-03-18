@@ -128,7 +128,7 @@ public abstract class CameraMixin
 				Vec3d offset = rotationize(new Vec3d(1.5f * f, f, -1.5f * f * (flip ? -1 : 1)));
 				HitResult hitResult = area.raycast(new RaycastContext(getPos(), getPos().add(offset), RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, focusedEntity));
 				if(!hitResult.getType().equals(HitResult.Type.MISS))
-					offset = hitResult.getPos().subtract(getPos()).add(rotationize(new Vec3d(0f, 0f, 0.2f * (flip ? -1 : 1))));
+					offset = hitResult.getPos().subtract(getPos()).add(rotationize(new Vec3d(0f, -0.2f, 0.2f * (flip ? -1 : 1))));
 				setPos(new Vec3d(pos.x + offset.x, pos.y + offset.y, pos.z + offset.z));
 			}
 		}
