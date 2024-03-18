@@ -237,6 +237,8 @@
 - Hopefully improved Skewer-Type Projectile Jittering
 - Potentially fixed Skewered Status Effect 
 - Improved Magnet Attraction Position
+- Fixed the offset between mouse and terminal cursor while focused
+- Added Lava Ambience to Limbo Main Menu BG
 ## Resource Changes
 - Continued Adding Sounds
 - Shotgun Animations now have a few sound keyframes

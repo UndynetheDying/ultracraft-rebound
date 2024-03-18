@@ -31,6 +31,8 @@ public class GameRendererMixin
 	@Shadow @Final private Camera camera;
 	
 	float slideViewTilt = 0f, lastFovBonus = 0f;
+	double lastForcedFov = -1;
+	boolean forceFoV;
 	
 	@Inject(method = "bobView", at = @At("HEAD"), cancellable = true)
 	public void onBobView(MatrixStack matrices, float tickDelta, CallbackInfo ci)
@@ -78,6 +80,17 @@ public class GameRendererMixin
 			lastFovBonus = MathHelper.lerp(tickDelta / 4f, lastFovBonus, 0f);
 			return original + lastFovBonus;
 		}
+		if(MinecraftClient.getInstance().player instanceof WingedPlayerEntity winged && winged.getFocusedTerminal() != null)
+		{
+			if(!forceFoV)
+			{
+				lastForcedFov = original;
+				forceFoV = true;
+			}
+			return lastForcedFov = MathHelper.lerp(tickDelta / 4, lastForcedFov, 90f);
+		}
+		else if(forceFoV)
+			forceFoV = false;
 		return original;
 	}
 }
