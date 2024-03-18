@@ -155,6 +155,7 @@
   "block.ultracraft.map_checkpoint": "Map Checkpoint Trigger",
   "block.ultracraft.map_progression": "Map Progression Trigger",
   "block.ultracraft.map_title": "Map Title Trigger",
+  "block.ultracraft.map_title_listener": "Map Title Listener",
   "block.ultracraft.map_timer": "Map Timer Trigger",
   "block.ultracraft.map_receiver": "Map Redstone Receiver",
   "block.ultracraft.map_travel": "Map Force Travel Trigger",

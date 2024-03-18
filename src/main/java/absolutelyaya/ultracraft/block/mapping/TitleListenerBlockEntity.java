@@ -4,7 +4,6 @@ import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -15,17 +14,47 @@ import org.joml.Vector4f;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TitleTriggerBlockEntity extends AbstractTriggerBlockEntity
+public class TitleListenerBlockEntity extends AbstractListenerBlockEntity
 {
 	static List<String> attributes = new ArrayList<>();
-	List<? extends LivingEntity> lastContained = new ArrayList<>();
 	String text = "title.placeholder";
 	boolean large;
 	
-	public TitleTriggerBlockEntity(BlockPos pos, BlockState state)
+	public TitleListenerBlockEntity(BlockPos pos, BlockState state)
 	{
-		super(BlockEntityRegistry.MAP_TITLE, pos, state);
+		super(BlockEntityRegistry.MAP_TITLE_LISTENER, pos, state);
 		id = "title";
+	}
+	
+	@Override
+	public Text getAreaLabel()
+	{
+		return Text.of("Tl-" + flag + "->" + id);
+	}
+	
+	@Override
+	public float getAreaLabelSize()
+	{
+		return 0f;
+	}
+	
+	@Override
+	protected void onStateChanged(boolean newState)
+	{
+		if(!newState)
+			return;
+		if(world.getBlockEntity(getParent()) instanceof RoomBlockEntity room)
+		{
+			for (PlayerEntity player : room.getContainedPlayers())
+			{
+				IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
+				if(large)
+					winged.sendBigTitle(Text.translatable(text));
+				else
+					winged.sendBoxTitle(Text.translatable(text));
+			}
+		}
+		super.onStateChanged(newState);
 	}
 	
 	@Override
@@ -37,7 +66,7 @@ public class TitleTriggerBlockEntity extends AbstractTriggerBlockEntity
 	@Override
 	public String getTexture()
 	{
-		return "title";
+		return "title_listener";
 	}
 	
 	@Override
@@ -53,6 +82,7 @@ public class TitleTriggerBlockEntity extends AbstractTriggerBlockEntity
 		{
 			case "large" -> String.valueOf(large);
 			case "text" -> text;
+			case "delay" -> String.valueOf(activationDelay);
 			default -> null;
 		};
 	}
@@ -64,41 +94,9 @@ public class TitleTriggerBlockEntity extends AbstractTriggerBlockEntity
 		{
 			case "large" -> large = Boolean.parseBoolean(value);
 			case "text" -> text = value;
+			case "delay" -> activationDelay = Integer.parseInt(value);
 		}
 		super.setAttribute(s, value);
-	}
-	
-	@Override
-	Class<? extends LivingEntity> getTargetClass()
-	{
-		return PlayerEntity.class;
-	}
-	
-	@Override
-	public Text getAreaLabel()
-	{
-		if(flag != null)
-			return Text.of("Tt-" + flag + "->" + id);
-		return Text.of("Tt-" + id);
-	}
-	
-	@Override
-	void tick()
-	{
-		super.tick();
-		if(flag != null && world.getBlockEntity(getParent()) instanceof RoomBlockEntity room && !room.checkFlag(flag))
-			return;
-		containedEntities.forEach(e -> {
-			if(e instanceof PlayerEntity player && !lastContained.contains(player))
-			{
-				IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
-				if(large)
-					winged.sendBigTitle(Text.translatable(text));
-				else
-					winged.sendBoxTitle(Text.translatable(text));
-			}
-		});
-		lastContained = containedEntities;
 	}
 	
 	@Override
@@ -123,5 +121,6 @@ public class TitleTriggerBlockEntity extends AbstractTriggerBlockEntity
 	static {
 		attributes.add("large");
 		attributes.add("text");
+		attributes.add("delay");
 	}
 }

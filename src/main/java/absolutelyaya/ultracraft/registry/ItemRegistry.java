@@ -401,6 +401,7 @@ public class ItemRegistry
 			content.add(BlockRegistry.MAP_TIMER);
 			content.add(BlockRegistry.MAP_TRAVEL);
 			content.add(BlockRegistry.MAP_TITLE);
+			content.add(BlockRegistry.MAP_TITLE_LISTENER);
 			content.add(BlockRegistry.MAP_DAMAGE);
 			content.add(BlockRegistry.MAP_REDSTONE);
 			content.add(BlockRegistry.MAP_RECEIVER);

@@ -3,17 +3,20 @@ package absolutelyaya.ultracraft.block.mapping;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.text.Text;
+import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector4f;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -178,6 +181,13 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 			for (int y = 0; y < Math.abs(size.getY()); y++)
 				for (int z = 0; z < Math.abs(size.getZ()); z++)
 					consumer.accept(min.add(x, y, z));
+	}
+	
+	public List<PlayerEntity> getContainedPlayers()
+	{
+		if(!isAreaModifiable())
+			return new ArrayList<>();
+		return world.getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getAreaBox(), i -> i.isAlive() && !i.isSpectator());
 	}
 	
 	public abstract List<String> getAttributes();

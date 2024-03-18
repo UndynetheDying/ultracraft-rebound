@@ -141,6 +141,7 @@ public class BlockRegistry
 	public static final Block MAP_CHECKPOINT = register("map_checkpoint", new CheckpointBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_PROGRESSION = register("map_progression", new ProgressionTriggerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_TITLE = register("map_title", new TitleTriggerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
+	public static final Block MAP_TITLE_LISTENER = register("map_title_listener", new TitleListenerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_GLOBAL_TITLE = register("map_global_title", new GlobalTitleListenerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_TIMER = register("map_timer", new TimerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_LEVEL = register("map_level", new LevelUnlockBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);

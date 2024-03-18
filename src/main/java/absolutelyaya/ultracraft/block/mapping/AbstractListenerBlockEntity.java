@@ -43,6 +43,9 @@ public abstract class AbstractListenerBlockEntity extends AbstractMappingBlockEn
 		return flag;
 	}
 	
+	/**
+	 * gets called when the bound flag is enabled, NOT taking delay attribute into account
+	 */
 	@Override
 	public void onActivateFlag()
 	{
@@ -52,6 +55,9 @@ public abstract class AbstractListenerBlockEntity extends AbstractMappingBlockEn
 		nextState = true;
 	}
 	
+	/**
+	 * gets called when the bound flag is disabled, NOT taking delay attribute into account
+	 */
 	@Override
 	public void onDeactivateFlag()
 	{
@@ -60,6 +66,9 @@ public abstract class AbstractListenerBlockEntity extends AbstractMappingBlockEn
 		nextState = false;
 	}
 	
+	/**
+	 * gets called when the bound flag changes, taking delay attribute into account
+	 */
 	protected void onStateChanged(boolean newState)
 	{
 		updateNeighbors();

@@ -92,7 +92,7 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	void tick()
 	{
 		boolean lastActive = active;
-		active = world.getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getAreaBox(), i -> i.isAlive() && !i.isSpectator()).size() > 0;
+		active = getContainedPlayers().size() > 0;
 		
 		world.getEntitiesByType(TypeFilter.instanceOf(AbstractUltraHostileEntity.class), getAreaBox(),
 						i -> i instanceof IFlagger flagger && !flagger.isRoomListener(pos))

@@ -90,7 +90,7 @@
     - Redstone Receivers set a **local** Flag when their redstone power state changes
     - Timer Triggers start or stop a Players Timer; only works inside Levels
     - Force Travel Triggers open the Travel Screen for a Player that enters it; the close button is removed though, forcing them to travel
-    - Title Triggers display a title for Players that move into it
+    - Title Triggers display a title for Players that move into it; if a **local** flag is bound, it'll only display a title if the flag is enabled
     - Damage Triggers damage entities that enter them for a given amount using a given damage type
     - Global Redstone Receivers set a **global** Flag (stored in world) to one of two values, depending on whether it is powered by redstone or not
   - Listener Blocks
@@ -104,6 +104,7 @@
     - Level Unlock Listeners unlock a Level globally (for the entire Server)
     - Cybergrind Listeners trigger a Cybergrind once the bound **local** flag is enabled; It sets a separate **local** Flag upon finishing the Cybergrind (if it is won)
     - Light Listeners give off a set light level when the bound **local** flag is enabled
+    - Title Listeners display a title for every Player in the parent Rooms Area when the bound **local** flag is enabled.
     - Global Redstone Listeners listen for a **global** Flag (stored in world); otherwise the same as normal Redstone Listeners
     - Global Title Listeners display a title for every Player in that world when a **global** Flag is set to a specific value
   - Checkpoints
