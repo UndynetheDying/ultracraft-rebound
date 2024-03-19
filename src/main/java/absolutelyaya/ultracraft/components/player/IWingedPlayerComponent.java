@@ -6,7 +6,6 @@ import dev.onyxstudios.cca.api.v3.component.ComponentV3;
 import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +45,7 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	
 	BlockPos getLastCheckpoint();
 	
-	void setLastCheckpoint(BlockPos pos, World dimension);
+	boolean setLastCheckpoint(BlockPos pos, World dimension);
 	
 	RegistryKey<World> getCheckpointDimension();
 	

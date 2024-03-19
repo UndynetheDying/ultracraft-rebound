@@ -11,7 +11,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
@@ -243,10 +242,11 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 		return null;
 	}
 	
-	public void resetIfEmpty()
+	public boolean resetIfEmpty()
 	{
 		if(!active)
 			reset();
+		return !active;
 	}
 	
 	@Override

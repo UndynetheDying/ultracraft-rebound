@@ -1,7 +1,9 @@
 package absolutelyaya.ultracraft.block.mapping;
 
 import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.components.player.ILevelStatsComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.block.BlockState;
@@ -71,10 +73,11 @@ public class CheckpointBlockEntity extends AbstractTriggerBlockEntity
 		return PlayerEntity.class;
 	}
 	
-	public void onRespawn()
+	public boolean onRespawn()
 	{
 		if(world.getBlockEntity(getParent()) instanceof RoomBlockEntity room)
-			room.resetIfEmpty();
+			return room.resetIfEmpty();
+		return false;
 	}
 	
 	@Override
@@ -103,9 +106,11 @@ public class CheckpointBlockEntity extends AbstractTriggerBlockEntity
 			if(e instanceof PlayerEntity player)
 			{
 				IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
+				ILevelStatsComponent stats = UltraComponents.LEVEL_STATS.get(player);
 				if(!pos.equals(winged.getLastCheckpoint()))
 				{
-					winged.setLastCheckpoint(pos, world);
+					if(winged.setLastCheckpoint(pos, world) && stats.getCurrentLevelInstance() != null)
+						LevelManager.Instance.getInstance(stats.getCurrentLevelInstance()).onCheckpoint();
 					if(!isInvisible())
 					{
 						player.playSound(SoundRegistry.CHECKPOINT_GET, 1f, 2f);

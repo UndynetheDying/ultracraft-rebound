@@ -441,7 +441,7 @@ public class LevelManager extends DimensionManager
 		public final int index;
 		public ServerPlayerEntity owner;
 		public boolean privat;
-		public int kills;
+		public int kills, lastCheckpointKills;
 		
 		public LevelInstance(BlockPos pos, int index)
 		{
@@ -482,9 +482,21 @@ public class LevelManager extends DimensionManager
 			return index - o.index;
 		}
 		
+		public void onCheckpoint()
+		{
+			if(!(Instance.world.isClient && !Instance.world.getServer().isRemote()))
+				lastCheckpointKills = kills;
+		}
+		
+		public void restoreLastCheckpointKills()
+		{
+			if(!(Instance.world.isClient && !Instance.world.getServer().isRemote()))
+				kills = lastCheckpointKills;
+		}
+		
 		public void onKill()
 		{
-			if(!Instance.world.isClient)
+			if(!(Instance.world.isClient && !Instance.world.getServer().isRemote()))
 				kills++;
 		}
 		

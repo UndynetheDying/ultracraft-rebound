@@ -2,7 +2,9 @@ package absolutelyaya.ultracraft.mixin;
 
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.block.mapping.CheckpointBlockEntity;
+import absolutelyaya.ultracraft.components.player.ILevelStatsComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.dimension.LevelManager;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -22,8 +24,10 @@ public class PlayerManagerMixin
 		if(pos != null && player.getWorld().getRegistryKey().equals(winged.getCheckpointDimension()) &&
 				   player.getWorld().getBlockEntity(winged.getLastCheckpoint()) instanceof CheckpointBlockEntity checkpoint)
 		{
-			UltraComponents.LEVEL_STATS.get(player).onDeath();
-			checkpoint.onRespawn();
+			ILevelStatsComponent stats = UltraComponents.LEVEL_STATS.get(player);
+			stats.onDeath();
+			if(checkpoint.onRespawn() && stats.getCurrentLevelInstance() != null)
+				LevelManager.Instance.getInstance(stats.getCurrentLevelInstance()).restoreLastCheckpointKills();
 		}
 	}
 }

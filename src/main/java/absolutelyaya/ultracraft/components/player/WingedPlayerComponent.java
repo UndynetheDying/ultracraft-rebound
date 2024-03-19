@@ -1,16 +1,12 @@
 package absolutelyaya.ultracraft.components.player;
 
-import absolutelyaya.ultracraft.client.gui.LevelHUD;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.cybergrind.CybergrindData;
-import absolutelyaya.ultracraft.dimension.LevelManager;
-import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
-import absolutelyaya.ultracraft.util.TimeUtil;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -27,10 +23,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
-
-import static absolutelyaya.ultracraft.data.LevelDataManager.getLevelData;
 
 public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSyncedComponent
 {
@@ -186,14 +178,18 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	}
 	
 	@Override
-	public void setLastCheckpoint(BlockPos pos, World dimension)
+	public boolean setLastCheckpoint(BlockPos pos, World dimension)
 	{
+		boolean changed = false;
+		if(!lastCheckpoint.equals(pos))
+			changed = true;
 		lastCheckpoint = pos;
 		checkpointRot = provider.getYaw();
 		if(dimension != null)
 			checkpointDimension = dimension.getRegistryKey();
 		else
 			checkpointDimension = null;
+		return changed;
 	}
 	
 	@Override
