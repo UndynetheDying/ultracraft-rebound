@@ -158,7 +158,7 @@ public class LevelRankingScreen extends AbstractTravelScreen
 		matrices.push();
 		context.fill(0, 0, 115, 24, 0x88000000);
 		matrices.translate(2, 2, 0);
-		context.drawText(textRenderer, header.getWithStyle(Style.EMPTY.withUnderline(true)).get(0), 0, 0, 0xffffffff, true);
+		context.drawText(textRenderer, header, 0, 0, 0xffffffff, true);
 		matrices.push();
 		matrices.translate(13, textRenderer.fontHeight + 2, 0);
 		if(indentValue)
