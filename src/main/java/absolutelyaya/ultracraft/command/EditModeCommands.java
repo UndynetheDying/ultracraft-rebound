@@ -159,7 +159,7 @@ public class EditModeCommands
 			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.area.begin"));
 		}
 		else
-			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.nothing-focused" + key));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.nothing-focused", key));
 		return Command.SINGLE_SUCCESS;
 	}
 	

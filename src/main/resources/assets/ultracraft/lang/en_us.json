@@ -766,7 +766,7 @@
   "stylebonus.ultracraft.test": "+ ULTRAtest",
   "stylebonus.ultracraft.kill": "+ KILL",
   "stylebonus.ultracraft.air_kill": "+ AIRSHOT",
-  "stylebonus.ultracraft.doublekill": "§6+ DOUBKE KILL",
+  "stylebonus.ultracraft.doublekill": "§6+ DOUBLE KILL",
   "stylebonus.ultracraft.tripplekill": "§6+ TRIPPLE KILL",
   "stylebonus.ultracraft.multikill": "§6+ MULTIKILL",
   "stylebonus.ultracraft.big_kill": "+ BIG KILL",
@@ -844,6 +844,7 @@
   "title.tutorial.blood": "Deal close damage to douse yourself in §4fresh blood§r and regain Health",
   "title.tutorial.glass": "Charged Shots and Explosions can break fragile Blocks",
   "title.tutorial.parry": "You can parry Projectiles by punching them with your Feedbacker Arm",
+  "title.tutorial.explode": "Charge Up the Core Eject Shotgun to launch an Exploding Projectile",
   "title.yaya-blocking": "Oh, am I in the way? Sorry about that",
 
   "text.autoconfig.ultracraft.category.default": "Ultracraft",
