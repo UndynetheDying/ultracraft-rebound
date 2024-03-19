@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.block.CerberusBlock;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.entity.IFlagger;
+import absolutelyaya.ultracraft.entity.demon.CerberusEntity;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import absolutelyaya.ultracraft.registry.BlockRegistry;
 import net.minecraft.block.BlockState;
@@ -127,7 +128,7 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 		for (AbstractMappingBlockEntity child : children.values())
 			if(child != null)
 				child.reset();
-		world.getEntitiesByType(TypeFilter.instanceOf(AbstractUltraHostileEntity.class), getAreaBox(), LivingEntity::isAlive)
+		world.getEntitiesByType(TypeFilter.instanceOf(CerberusEntity.class), getAreaBox(), LivingEntity::isAlive)
 				.forEach(e -> {
 					if(e.isAlive())
 						e.remove(Entity.RemovalReason.DISCARDED);
