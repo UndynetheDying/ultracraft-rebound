@@ -21,6 +21,7 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.joml.Vector2i;
@@ -231,7 +232,7 @@ public class FilthEntity extends AbstractHuskEntity implements GeoEntity, MeleeI
 		});
 	}
 	
-	static class FilthAttackGoal extends Goal
+	static abstract class FilthAttackGoal extends Goal
 	{
 		final protected FilthEntity mob;
 		final protected float velocity;
@@ -268,15 +269,9 @@ public class FilthEntity extends AbstractHuskEntity implements GeoEntity, MeleeI
 			return mob.isOnGround() && mob.isNotInAttackAnimation();
 		}
 		
-		protected int getApplyVelocityFrame()
-		{
-			return -1;
-		}
+		abstract int getApplyVelocityFrame();
 		
-		protected int getAnimLength()
-		{
-			return 0;
-		}
+		abstract int getAnimLength();
 		
 		@Override
 		public void start()
@@ -329,8 +324,9 @@ public class FilthEntity extends AbstractHuskEntity implements GeoEntity, MeleeI
 		@Override
 		public boolean shouldContinue()
 		{
-			//if(!mob.isOnGround())
-			//	return false;
+			if(mob.getWorld().getBlockState(BlockPos.ofFloored(mob.getPos().subtract(0, 0.1f, 0))).isAir() &&
+					   (!hop || time < getApplyVelocityFrame()))
+				return false; //interrupt attacsk in air
 			return time < getAnimLength() && mob.squaredDistanceTo(target) < distance * distance;
 		}
 		
