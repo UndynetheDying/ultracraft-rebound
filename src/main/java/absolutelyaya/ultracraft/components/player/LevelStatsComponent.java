@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.components.player;
 
+import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.gui.LevelHUD;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.dimension.LevelManager;
@@ -55,7 +56,11 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 			LevelManager.Instance.leaveInstance((ServerPlayerEntity)provider, lastInstance);
 		currentLevel = levelId;
 		if(levelId != null)
+		{
 			lastPlayedVersion.put(levelId, getLevelData(levelId).getVersion());
+			Ultracraft.rechargeWeapons(provider);
+			provider.setHealth(provider.getMaxHealth());
+		}
 		UltraComponents.LEVEL_STATS.sync(provider);
 	}
 	
