@@ -1,8 +1,10 @@
 package absolutelyaya.ultracraft.block.mapping;
 
+import absolutelyaya.ultracraft.components.UltraComponents;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.TypeFilter;
@@ -79,7 +81,7 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 	void tick()
 	{
 		boolean condition = (containedEntities = world.getEntitiesByType(TypeFilter.instanceOf(getTargetClass()), getAreaBox(),
-				i -> i.isAlive() && !i.isSpectator())).size() > targetThreshold;
+				this::isValidTarget)).size() > targetThreshold;
 		if(inverted)
 			condition = !condition; //invert
 		boolean wasActive = isActive();
@@ -94,6 +96,13 @@ public abstract class AbstractTriggerBlockEntity extends AbstractMappingBlockEnt
 			justReset = false;
 			room.setFlag(flag, isActive());
 		}
+	}
+	
+	boolean isValidTarget(LivingEntity entity)
+	{
+		if(entity instanceof PlayerEntity player && UltraComponents.EDITOR.get(player).isGhost())
+			return false;
+		return entity.isAlive() && !entity.isSpectator();
 	}
 	
 	@Override

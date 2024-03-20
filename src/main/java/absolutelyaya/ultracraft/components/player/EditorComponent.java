@@ -18,7 +18,7 @@ public class EditorComponent implements IEditorComponent
 	HashMap<String, BlockPos> focus = new HashMap<>();
 	BlockPos editAreaCore, rebindingParent;
 	int editAreaStep;
-	boolean active, showAreaOwner = true, noClip = true;
+	boolean active, showAreaOwner = true, noClip = true, ghost = false;
 	float flySpeed = 3f;
 	
 	public EditorComponent(PlayerEntity provider)
@@ -151,9 +151,9 @@ public class EditorComponent implements IEditorComponent
 	}
 	
 	@Override
-	public void toggleShowAreaOwner()
+	public boolean toggleShowAreaOwner()
 	{
-		showAreaOwner = !showAreaOwner;
+		return showAreaOwner = !showAreaOwner;
 	}
 	
 	@Override
@@ -169,9 +169,9 @@ public class EditorComponent implements IEditorComponent
 	}
 	
 	@Override
-	public void toggleNoClip()
+	public boolean toggleNoClip()
 	{
-		noClip = !noClip;
+		return noClip = !noClip;
 	}
 	
 	@Override
@@ -186,6 +186,24 @@ public class EditorComponent implements IEditorComponent
 		flySpeed = v;
 		if(active)
 			provider.getAbilities().setFlySpeed(v / 20f);
+	}
+	
+	@Override
+	public void setGhost(boolean v)
+	{
+		ghost = v;
+	}
+	
+	@Override
+	public boolean isGhost()
+	{
+		return active && ghost;
+	}
+	
+	@Override
+	public boolean toggleGhost()
+	{
+		return ghost = !ghost;
 	}
 	
 	@Override
@@ -209,6 +227,8 @@ public class EditorComponent implements IEditorComponent
 			setNoClip(tag.getBoolean("noclip"));
 		if(tag.contains("flySpeed", NbtElement.FLOAT_TYPE))
 			setFlySpeed(tag.getFloat("flySpeed"));
+		if(tag.contains("ghost", NbtElement.BYTE_TYPE))
+			setGhost(tag.getBoolean("ghost"));
 	}
 	
 	@Override
@@ -221,5 +241,6 @@ public class EditorComponent implements IEditorComponent
 		tag.putBoolean("showAreaOwner", showAreaOwner);
 		tag.putBoolean("noclip", noClip);
 		tag.putFloat("flySpeed", flySpeed);
+		tag.putBoolean("ghost", ghost);
 	}
 }

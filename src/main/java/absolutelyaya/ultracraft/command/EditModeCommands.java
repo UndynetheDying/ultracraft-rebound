@@ -52,7 +52,8 @@ public class EditModeCommands
 									.then(literal("config")
 												  .then(literal("flySpeed").then(argument("speed", floatArg()).executes(EditModeCommands::setFlySpeed)))
 												  .then(literal("noClip").executes(EditModeCommands::executeToggleNoClip))
-												  .then(literal("showAreaOwner").executes(EditModeCommands::executeToggleShowAreaOwner)))
+												  .then(literal("showAreaOwner").executes(EditModeCommands::executeToggleShowAreaOwner))
+												  .then(literal("ghost").executes(EditModeCommands::executeToggleGhost)))
 									.then(literal("attribute").then(literal("set").then(key().then(argument("attribute", string()).suggests(EditModeCommands::suggestAttibutes).then(argument("value", string()).executes(EditModeCommands::setAttribute)))))));
 	}
 	
@@ -284,9 +285,8 @@ public class EditModeCommands
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		IEditorComponent editor = UltraComponents.EDITOR.get(player);
-		editor.toggleNoClip();
+		boolean b = editor.toggleNoClip();
 		editor.sync();
-		boolean b = editor.isNoClip();
 		context.getSource().sendMessage(Text.translatable(b ? "command.ultracraft.edit.config.no-clip.on" : "command.ultracraft.edit.config.no-clip.off"));
 		return Command.SINGLE_SUCCESS;
 	}
@@ -295,10 +295,19 @@ public class EditModeCommands
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		IEditorComponent editor = UltraComponents.EDITOR.get(player);
-		editor.toggleShowAreaOwner();
+		boolean b = editor.toggleShowAreaOwner();
 		editor.sync();
-		boolean b = editor.isShowAreaOwner();
 		context.getSource().sendMessage(Text.translatable(b ? "command.ultracraft.edit.config.show-area-owner.on" : "command.ultracraft.edit.config.show-area-owner.off"));
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int executeToggleGhost(CommandContext<ServerCommandSource> context)
+	{
+		ServerPlayerEntity player = context.getSource().getPlayer();
+		IEditorComponent editor = UltraComponents.EDITOR.get(player);
+		boolean b = editor.toggleGhost();
+		editor.sync();
+		context.getSource().sendMessage(Text.translatable(b ? "command.ultracraft.edit.config.ghost.on" : "command.ultracraft.edit.config.ghost.off"));
 		return Command.SINGLE_SUCCESS;
 	}
 	

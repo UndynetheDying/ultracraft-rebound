@@ -42,17 +42,23 @@ public interface IEditorComponent extends ComponentV3, AutoSyncedComponent
 	
 	void setShowAreaOwner(boolean v);
 	
-	void toggleShowAreaOwner();
+	boolean toggleShowAreaOwner();
 	
 	boolean isNoClip();
 	
 	void setNoClip(boolean v);
 	
-	void toggleNoClip();
+	boolean toggleNoClip();
 	
 	float getFlySpeed();
 	
 	void setFlySpeed(float v);
+	
+	void setGhost(boolean v);
+	
+	boolean isGhost();
+	
+	boolean toggleGhost();
 	
 	void sync();
 }
