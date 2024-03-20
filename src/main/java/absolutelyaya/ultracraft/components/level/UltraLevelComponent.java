@@ -105,8 +105,11 @@ public class UltraLevelComponent implements IUltraLevelComponent
 		unlockDestination(new Identifier(Ultracraft.MOD_ID, "dimension.overworld"));
 		unlockDestination(new Identifier(Ultracraft.MOD_ID, "tutorial"));
 		unlockDestination(new Identifier(Ultracraft.MOD_ID, "prelude1"));
+		unlockDestination(new Identifier(Ultracraft.MOD_ID, "prelude2"));
+		unlockDestination(new Identifier(Ultracraft.MOD_ID, "prelude3"));
 		unlockDestination(new Identifier(Ultracraft.MOD_ID, "limbo1"));
 		unlockDestination(new Identifier(Ultracraft.MOD_ID, "dimension.limbo"));
+		unlockDestination(new Identifier(Ultracraft.MOD_ID, "limbo2"));
 	}
 	
 	@Override
