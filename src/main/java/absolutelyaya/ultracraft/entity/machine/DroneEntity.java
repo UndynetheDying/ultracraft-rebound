@@ -92,7 +92,7 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 	public static DefaultAttributeContainer getDefaultAttributes()
 	{
 		return HostileEntity.createMobAttributes()
-					   .add(EntityAttributes.GENERIC_MAX_HEALTH, 2.0d)
+					   .add(EntityAttributes.GENERIC_MAX_HEALTH, 4.0d)
 					   .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.5d)
 					   .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 8.0d)
 					   .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 64.0d).build();
@@ -221,7 +221,7 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 		dead = true;
 		ExplosionHandler.explosion(this, getWorld(), getPos(),
 				DamageSources.get(getWorld(), DamageTypes.EXPLOSION, this, source != null ? source.getAttacker() : this),
-				6, 2, 2f, true);
+				7, 2, 2f, true);
 		if(!getWorld().isClient)
 			drop(source);
 		discard();

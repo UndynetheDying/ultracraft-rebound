@@ -58,7 +58,7 @@ public class OverheatNailgunItem extends AbstractNailgunItem
 				if(getNbt(stack, "heatsinks") == 0)
 					cdm.setCooldown(this, 8, GunCooldownManager.PRIMARY);
 				else
-					cdm.setCooldown(this, (int)Math.floor(heat / 20f), GunCooldownManager.PRIMARY);
+					cdm.setCooldown(this, (int)Math.floor(heat / 25f), GunCooldownManager.PRIMARY);
 			}
 			else
 			{

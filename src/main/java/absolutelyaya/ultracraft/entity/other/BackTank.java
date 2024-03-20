@@ -100,7 +100,7 @@ public class BackTank extends Entity
 		{
 			owner.damage(DamageSources.get(getWorld(), DamageSources.BACK_TANK, this, source.getAttacker()), 999);
 			ExplosionHandler.explosion(owner, getWorld(), getPos(), DamageSources.get(getWorld(), DamageTypes.EXPLOSION, this, source.getAttacker()),
-					8, 5, 3f, true);
+					10, 5, 3f, true);
 			if(source.getAttacker() instanceof ServerPlayerEntity player)
 				Ultracraft.freeze(player, 6);
 			kill();

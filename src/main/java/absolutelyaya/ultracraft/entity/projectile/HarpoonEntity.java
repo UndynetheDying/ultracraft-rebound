@@ -151,7 +151,7 @@ public class HarpoonEntity extends AbstractSkewerEntity implements IIgnoreSharps
 		if(dataTracker.get(RETURNING) || victim != null)
 			return;
 		if(entityHitResult.getEntity() instanceof LivingEntity living)
-			living.damage(DamageSources.get(getWorld(), DamageSources.HARPOON, this, getOwner()), 3.5f);
+			living.damage(DamageSources.get(getWorld(), DamageSources.HARPOON, this, getOwner()), 5f);
 		super.onEntityHit(entityHitResult);
 	}
 	

@@ -51,7 +51,7 @@ public class HideousMortarEntity extends HellBulletEntity implements ProjectileE
 	protected void onCollision(HitResult hitResult)
 	{
 		super.onCollision(hitResult);
-		ExplosionHandler.explosion(getOwner(), getWorld(), hitResult.getPos(), getDamageSources().explosion(this, getOwner()), 15f, 4f, 4f, true);
+		ExplosionHandler.explosion(getOwner(), getWorld(), hitResult.getPos(), getDamageSources().explosion(this, getOwner()), 12f, 6f, 2.5f, true);
 	}
 	
 	public static HideousMortarEntity spawn(LivingEntity owner, World world)

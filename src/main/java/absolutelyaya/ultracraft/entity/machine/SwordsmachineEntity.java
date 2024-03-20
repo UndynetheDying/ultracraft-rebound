@@ -77,6 +77,7 @@ import java.util.UUID;
 
 public class SwordsmachineEntity extends AbstractUltraHostileEntity implements GeoEntity, MeleeInterruptable, Enrageable, ITrailEnjoyer
 {
+	protected static final float BOSS_HEALTH = 250f, REGULAR_HEALTH = 60f, BOSS_PHASE_RATIO = 0.4f, REGULAR_PHASE_RATIO = 0.5f;
 	private static final int trailLifetime = 40;
 	private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
 	private static final RawAnimation HAND_CLOSED_ANIM = RawAnimation.begin().thenLoop("hand_closed");
@@ -189,7 +190,7 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 		}
 		if(data.equals(BOSS))
 		{
-			float health = isBoss() ? 125f : 60f;
+			float health = getTrueMaxHealth();
 			if(getHealth() > health)
 				setHealth(health);
 		}
@@ -206,7 +207,7 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 	public static DefaultAttributeContainer.Builder getDefaultAttributes()
 	{
 		return HostileEntity.createMobAttributes()
-					   .add(EntityAttributes.GENERIC_MAX_HEALTH, 125.0d)
+					   .add(EntityAttributes.GENERIC_MAX_HEALTH, BOSS_HEALTH)
 					   .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3d)
 					   .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 8.0d)
 					   .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 64.0d)
@@ -227,6 +228,16 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 		targetSelector.add(0, new TargetPlayerGoal(this));
 		targetSelector.add(0, new TargetHuskGoal(this));
 		targetSelector.add(1, new RevengeGoal(this));
+	}
+	
+	float getTrueMaxHealth()
+	{
+		return isBoss() ? BOSS_HEALTH : REGULAR_HEALTH;
+	}
+	
+	float getPhaseRatio()
+	{
+		return 1f - (isBoss() ? BOSS_PHASE_RATIO : REGULAR_PHASE_RATIO);
 	}
 	
 	public static SwordsmachineEntity spawnAsNonBoss(World world, Vec3d pos)
@@ -403,7 +414,7 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 		boolean b = super.damage(source, amount);
 		if(dataTracker.get(NO_BREAKDOWN))
 			return b;
-		if(!getWorld().isClient && dataTracker.get(BREAKDOWN_TICKS) <= 0 && canLoseShotgun() && dataTracker.get(HAS_SHOTGUN) && getHealth() < (isBoss() ? 75 : 30))
+		if(!getWorld().isClient && dataTracker.get(BREAKDOWN_TICKS) <= 0 && canLoseShotgun() && dataTracker.get(HAS_SHOTGUN) && getHealth() < getTrueMaxHealth() * getPhaseRatio())
 		{
 			dataTracker.set(BREAKDOWN_TICKS, 60);
 			dataTracker.set(ANIMATION, ANIMATION_BREAKDOWN);
@@ -546,7 +557,7 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 	{
 		Vec3d dir = new Vec3d(0f, 0f, 1f);
 		dir = dir.rotateY((float)Math.toRadians(-getBodyYaw()));
-		for (int i = 0; i < 16; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			ShotgunPelletEntity bullet = ShotgunPelletEntity.spawn(this, getWorld(), false);
 			bullet.setVelocity(dir.x, dir.y, dir.z, 1f, 20f);
@@ -631,11 +642,9 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 		return dataTracker.get(SWORD_STACK);
 	}
 	
-	@Override
-	public boolean tryAttack(Entity target)
+	public boolean tryAttack(Entity target, float damage)
 	{
-		float f = (float)this.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
-		boolean b = target.damage(DamageSources.get(getWorld(), DamageSources.SWORDSMACHINE, this), f);
+		boolean b = target.damage(DamageSources.get(getWorld(), DamageSources.SWORDSMACHINE, this), damage);
 		if(b && target instanceof LivingEntity living)
 			MachineSwordItem.applyUniqueHitEffect(dataTracker.get(SWORD_STACK), living, 1f);
 		return b;
@@ -1017,7 +1026,7 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 						e -> (e instanceof PlayerEntity || (sm.shouldHuntHusks() && e instanceof AbstractHuskEntity) || e.equals(sm.getTarget())) &&
 									 !damaged.contains(e));
 				hit.forEach(e -> {
-					if(sm.tryAttack(e))
+					if(sm.tryAttack(e, 8))
 						damaged.add(e);
 				});
 			}
@@ -1125,7 +1134,7 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 						e -> (e instanceof PlayerEntity || (sm.shouldHuntHusks() && e instanceof AbstractHuskEntity) || e.equals(sm.getTarget())) &&
 									 !damaged.contains(e));
 				hit.forEach(e -> {
-					if(sm.tryAttack(e))
+					if(sm.tryAttack(e, 5))
 						damaged.add(e);
 				});
 			}
@@ -1220,7 +1229,7 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 						e -> (e instanceof PlayerEntity || (sm.shouldHuntHusks() && e instanceof AbstractHuskEntity) || e.equals(sm.getTarget())) &&
 									 !damaged.contains(e));
 				hit.forEach(e -> {
-					if(sm.tryAttack(e))
+					if(sm.tryAttack(e, 6))
 						damaged.add(e);
 				});
 			}

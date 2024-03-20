@@ -65,11 +65,12 @@ public abstract class AbstractShotgunItem extends AbstractWeaponItem implements 
 					getShotAnimationName() + (b ? "2" : ""));
 			cdm.setCooldown(this, getPrimaryCooldown(), GunCooldownManager.PRIMARY);
 			b = !b;
-			for (int i = 0; i < getPelletCount(user.getMainHandStack()); i++)
+			ItemStack stack = user.getMainHandStack();
+			for (int i = 0; i < getPelletCount(stack); i++)
 			{
 				//guarantees that the first bullet goes straight and only that one is actually boostable (if this isn't a shotgun parry)
 				ShotgunPelletEntity bullet = ShotgunPelletEntity.spawn(user, world, i == 0 && !parry);
-				bullet.setVelocity(dir.x, dir.y, dir.z, i == 0 ? 1f : 1.5f, i == 0 && !parry ? 1f : 15f);
+				bullet.setVelocity(dir.x, dir.y, dir.z, i == 0 ? 1f : 1.5f, i == 0 && !parry ? 1f : getDivergence(stack));
 				if(parry && i == 0)
 					bullet.increaseDamage(2f);
 				bullet.addVelocity(userVelocity);
@@ -133,6 +134,11 @@ public abstract class AbstractShotgunItem extends AbstractWeaponItem implements 
 			triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(), "switch" + (b ? "2" : ""));
 			b = !b;
 		}
+	}
+	
+	protected float getDivergence(ItemStack stack)
+	{
+		return 15f;
 	}
 	
 	@Override

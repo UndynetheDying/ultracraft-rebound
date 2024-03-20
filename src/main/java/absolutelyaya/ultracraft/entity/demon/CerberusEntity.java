@@ -54,7 +54,7 @@ import java.util.List;
 
 public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEntity, IAnimatedEnemy, Enrageable, IFlagger
 {
-	protected static final float BOSS_HEALTH = 180f, REGULAR_HEALTH = 44f;
+	protected static final float BOSS_HEALTH = 160f, REGULAR_HEALTH = 44f;
 	protected static final TrackedData<Integer> ATTACK_COOLDOWN = DataTracker.registerData(CerberusEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
 	private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
@@ -80,7 +80,7 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 	public static DefaultAttributeContainer.Builder getDefaultAttributes()
 	{
 		return AbstractUltraHostileEntity.createMobAttributes()
-					   .add(EntityAttributes.GENERIC_MAX_HEALTH, 180.0d)
+					   .add(EntityAttributes.GENERIC_MAX_HEALTH, BOSS_HEALTH)
 					   .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3d)
 					   .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6.0d)
 					   .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 64.0d)
@@ -515,7 +515,7 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 						.forEach(p -> {
 							if(!hits.contains(p))
 							{
-								p.damage(mob.getDamageSources().mobAttack(mob), 8f);
+								p.damage(mob.getDamageSources().mobAttack(mob), 5f);
 								p.setVelocity(ramDir.multiply(3).add(0.0, 0.5, 0.0));
 								hits.add(p);
 							}
@@ -578,6 +578,7 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 				{
 					shockwave.setAffectOnly(PlayerEntity.class);
 					shockwave.setDamage(5f);
+					shockwave.setGrowRate(0.35f);
 					shockwave.setOwner(mob);
 				}
 			}

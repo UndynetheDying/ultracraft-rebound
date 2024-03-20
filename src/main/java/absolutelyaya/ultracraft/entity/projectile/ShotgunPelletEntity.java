@@ -14,6 +14,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.BlockStateParticleEffect;
@@ -95,7 +96,7 @@ public class ShotgunPelletEntity extends HellBulletEntity implements ProjectileE
 	{
 		Entity entity = entityHitResult.getEntity();
 		boolean parried = ((ProjectileEntityAccessor)this).isParried();
-		if(!entity.getClass().equals(ignore) && (!isOwner(entity) || getKnockbackExplosionCauser() != null))
+		if(!entity.getClass().equals(ignore) && (!isOwner(entity) || (getKnockbackExplosionCauser() != null && !(owner instanceof PlayerEntity))))
 			entity.damage(DamageSources.get(getWorld(), DamageSources.SHOTGUN, getOwner()),
 					damage * ServerConfig.INSTANCE.shotgunDamage.getValue());
 		if(parried)
@@ -123,7 +124,7 @@ public class ShotgunPelletEntity extends HellBulletEntity implements ProjectileE
 	public void onParriedCollision(HitResult hitResult)
 	{
 		Vec3d pos = hitResult.getPos();
-		ExplosionHandler.explosion(null, getWorld(), pos, DamageSources.get(getWorld(), DamageSources.PROJBOOST, parrier), 3.5f, 2.3f, 3f, true);
+		ExplosionHandler.explosion(null, getWorld(), pos, DamageSources.get(getWorld(), DamageSources.PROJBOOST, parrier), 7f, 4.6f, 3f, true);
 		if(hitResult.getType().equals(HitResult.Type.ENTITY) && isParried())
 			UltraComponents.STYLE.get(parrier).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "projboost")));
 	}

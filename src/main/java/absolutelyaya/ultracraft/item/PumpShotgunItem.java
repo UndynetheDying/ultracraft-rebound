@@ -120,7 +120,7 @@ public class PumpShotgunItem extends AbstractShotgunItem
 		{
 			winged.setBloodHealCooldown(10);
 			ExplosionHandler.explosion(user, world, user.getPos().add(user.getRotationVector()),
-					DamageSources.get(world, DamageSources.OVERCHARGE, user), 15, 0, 3, true, true);
+					DamageSources.get(world, DamageSources.OVERCHARGE, user), 20, 16.6f, 3, true, true);
 			if(!(ServerConfig.INSTANCE.dodgeableOverpump.getValue() && UltraComponents.HIVEL.get(user).isDashing()))
 				user.damage(DamageSources.get(world, DamageSources.OVERCHARGE_SELF), 10);
 		}
@@ -198,9 +198,23 @@ public class PumpShotgunItem extends AbstractShotgunItem
 		if(charge == 0)
 			return 10;
 		else if(charge == 1)
-			return 15;
+			return 16;
 		else if(charge == 2)
+			return 24;
+		else
+			return 0;
+	}
+	
+	@Override
+	protected float getDivergence(ItemStack stack)
+	{
+		int charge = getNbt(stack, "charge");
+		if(charge == 0)
+			return 15;
+		else if(charge == 1)
 			return 20;
+		else if(charge == 2)
+			return 25;
 		else
 			return 0;
 	}

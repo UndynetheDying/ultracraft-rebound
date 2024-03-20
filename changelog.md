@@ -137,6 +137,8 @@
 - The Punch animation triggered by throwing coins using a marksman can now be interrupted, making coin punching less clunky
 - Filths and Drones no longer randomly wander around
 - All Enemies now ignore Visibility when targeting Players
+- Shooting Core Ejects with a Hitscan now actually increases the damage of the caused explosion
+- Swordsmachines different melee Attacks now actually do different damage amounts
 ## Settings & Config
 - Removed all gamerules
 - Added Option to disable Screenshake
@@ -176,6 +178,49 @@
   - Slightly Buffed movement Speed (0.4 -> 0.5)
 - Increased Parry Range (0.9 -> 2.0)
 - Increased Coin Punch Range (0.9 -> 4.0)
+- Players are now exempt from damage boost (mod damage is multiplied by 2.5 towards non-mod entities, with some exceptions)
+- Nerfed Cerberus to be closer to the Original
+  - Nerfed Ram Damage (8 -> 5)
+  - Nerfed Ball Damage (8 -> 7)
+  - Nerfed Boss Health (180 -> 160)
+  - Buffed Shockwave Growth Rate, ironically making it easier to dodge (0.25 -> 0.35)
+- Tweaked Hideous Mass to be closer to the Original
+  - Slam Shockwave Damage (3 -> 6)
+  - Clap Shockwave Damage (2 -> 4)
+  - Harpoon Damage (3.5 -> 5) **(effective for Hideous Skewer as well)**
+  - Mortar Damage (15 -> 12)
+  - Mortar Damage Falloff (4 -> 6)
+  - Mortar Explosion Radius (4 -> 2.5)
+- Tweaked Swordsmachine to be closer to the Original
+  - Boss Health (125 -> 250)
+  - Shotgun Pellet Count (16 -> 10)
+  - Combo Slash Damage (8 -> 5)
+  - Spin (8 -> 6)
+- Tweaked Agony//Tundra to be closer to the Original
+  - Health (90 -> 100)
+- Tweaked Drone to be closer to the Original
+  - Health (2 -> 4)
+  - Explosion Damage (6 -> 7)
+- Tweaked Streetcleaner to be closer to the Original
+  - Eplosion Damage (8 -> 10)
+- Tweaked a bunch of weapons to account for the Enemy Health Scaling (can't believe I forgor to do that)
+  - Revolvers
+    - Primary (1 -> 2)
+    - Sharpshooter alt (3 -> 2)
+  - All Shotguns
+    - Proj-Boost Explosion Damage (3.5 -> 7)
+    - Proj-Boost Explosion Falloff (2.3 -> 4.6)
+  - Core Eject Shotgun
+    - Core Eject Explosion Damage (10 -> 7)
+    - Core Eject Explosion Damage Falloff (4 -> 4.6)
+    - Core Eject Snipe Explosion Damage (10 -> 14)
+    - Core Eject Snipe Explosion Damage Falloff (4 -> 9.2)
+  - Pump Shotgun
+    - 1 Pump Pellets (15 -> 16)
+    - 2 Pump Pellets (20 -> 24)
+    - Overpump Explosion Damage (15 -> 20)
+    - Overpump Explosion Damage Falloff (0 -> 16.6)
+    - Pumps now actually decrease accuracy
 ## Minor Changes
 - Fixed water skimming not playing sounds
 - Removed the "vents" MOTD from the non-essential resources

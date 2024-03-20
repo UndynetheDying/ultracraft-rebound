@@ -143,7 +143,7 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 	
 	protected float getPrimaryDamage()
 	{
-		return isAlternate() ? 2.5f : 1f;
+		return isAlternate() ? 2.5f : 2f;
 	}
 	
 	protected int getSharpshooterRechargeTime()

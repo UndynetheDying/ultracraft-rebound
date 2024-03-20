@@ -63,6 +63,7 @@ import java.util.List;
 
 public class HideousMassEntity extends AbstractUltraHostileEntity implements GeoEntity, IAnimatedEnemy, Enrageable
 {
+	protected static final float BOSS_HEALTH = 250f, REGULAR_HEALTH = 120f;
 	protected static final TrackedData<Integer> ATTACK_COOLDOWN = DataTracker.registerData(HideousMassEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Integer> MORTAR_COUNTER = DataTracker.registerData(HideousMassEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Integer> SLAM_COUNTER = DataTracker.registerData(HideousMassEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -140,7 +141,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 	public static DefaultAttributeContainer.Builder getDefaultAttributes()
 	{
 		return HostileEntity.createMobAttributes()
-					   .add(EntityAttributes.GENERIC_MAX_HEALTH, 175.0d)
+					   .add(EntityAttributes.GENERIC_MAX_HEALTH, BOSS_HEALTH)
 					   .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3d)
 					   .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 1.0d)
 					   .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 64.0d);
@@ -169,9 +170,9 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		goalSelector.add(1, new StandupGoal(this));
 		goalSelector.add(2, new MortarAttackGoal(this));
 		goalSelector.add(3, new ClapAttackGoal(this));
-		goalSelector.add(4, new HarpoonAttackGoal(this));
-		goalSelector.add(5, new SlamAttackGoal(this, true));
-		goalSelector.add(5, new SlamAttackGoal(this, false));
+		goalSelector.add(3, new HarpoonAttackGoal(this));
+		goalSelector.add(4, new SlamAttackGoal(this, true));
+		goalSelector.add(4, new SlamAttackGoal(this, false));
 		
 		targetSelector.add(1, new TargetPlayerGoal(this));
 	}
@@ -244,7 +245,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		}
 		if(data.equals(BOSS))
 		{
-			float health = isBoss() ? 175f : 75f;
+			float health = getTrueMaxHealth();
 			if(getHealth() > health)
 				setHealth(health);
 		}
@@ -333,6 +334,11 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 			dataTracker.set(ENRAGED, nbt.getBoolean("enraged"));
 		if(!nbt.contains("boss", NbtElement.BYTE_TYPE))
 			dataTracker.set(BOSS, true);
+	}
+	
+	float getTrueMaxHealth()
+	{
+		return isBoss() ? BOSS_HEALTH : REGULAR_HEALTH;
 	}
 	
 	void setAllMainPartsEnabled(boolean b)
@@ -501,7 +507,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 	private void shockwave()
 	{
 		ShockwaveEntity shockwave = new ShockwaveEntity(EntityRegistry.SHOCKWAVE, getWorld());
-		shockwave.setDamage(3f);
+		shockwave.setDamage(6f);
 		shockwave.setGrowRate(0.6f);
 		shockwave.setAffectOnly(PlayerEntity.class);
 		shockwave.setPosition(getPos().add(0f, 0.5f, 0f));
@@ -512,7 +518,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 	private void clap()
 	{
 		VerticalShockwaveEntity shockwave = new VerticalShockwaveEntity(EntityRegistry.VERICAL_SHOCKWAVE, getWorld());
-		shockwave.setDamage(2f);
+		shockwave.setDamage(4f);
 		shockwave.setYaw(getYaw());
 		shockwave.setGrowRate(0.6f);
 		shockwave.setAffectOnly(PlayerEntity.class);
