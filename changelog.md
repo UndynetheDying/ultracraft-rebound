@@ -146,6 +146,9 @@
   - If the progression Entry is already obtained AND any Weapon of the unlocked Weapons Type is already held, the item entity will disappear for that Client
   - Previously these would disappear from the client if they just had the set progression entry already; This Behavior could soft-lock Players in Prelude2, and potentially other future levels
   - Additionally, the item pickup animation works correctly for these now as well
+- Added Unlock Logic to Progression System
+  - **obtaining** a progression entry that would **unlock** other progression entries, will now automatically do so
+  - for example, **obtaining** a Piercer Revolver through any method (crafting, commands, progression triggers, whatever) will unlock the recipes for the Marksman and Sharpshooter Revolvers
 ## Settings & Config
 - Removed all gamerules
 - Added Option to disable Screenshake
