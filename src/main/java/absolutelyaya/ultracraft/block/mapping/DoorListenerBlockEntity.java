@@ -95,7 +95,7 @@ public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 		Block resetBlock = (reset != null) ? Registries.BLOCK.get(reset) : Registries.BLOCK.get(open);
 		forEachBlockInArea(pos -> {
 			BlockState state = world.getBlockState(pos);
-			if(state.isOf(Registries.BLOCK.get(close)) || state.isOf(Registries.BLOCK.get(open)))
+			if(!state.isOf(resetBlock) && (state.isOf(Registries.BLOCK.get(close)) || state.isOf(Registries.BLOCK.get(open))))
 				world.setBlockState(pos, resetBlock.getDefaultState());
 		});
 		super.onStateChanged(false);
