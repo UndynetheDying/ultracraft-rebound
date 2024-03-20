@@ -9,7 +9,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.world.World;
@@ -23,7 +22,7 @@ public class ShockwaveEntity extends Entity
 	int duration = 100;
 	float damage = 2f, velocity = 1f, growRate = 0.25f;
 	Class<?> ignored;
-	Class<?> affectOnly;
+	Class<? extends Entity> affectOnly;
 	Entity owner;
 	final List<Entity> hits = new ArrayList<>();
 	
@@ -71,9 +70,11 @@ public class ShockwaveEntity extends Entity
 			discard();
 		setRadius(getRadius() + growRate);
 		
+		if(getWorld().isClient)
+			return;
 		if(affectOnly != null)
 		{
-			getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox(), this::shouldDamage).forEach(e -> {
+			getWorld().getEntitiesByType(TypeFilter.instanceOf(affectOnly), getBoundingBox(), this::shouldDamage).forEach(e -> {
 				e.damage(DamageSources.get(getWorld(), DamageSources.SHOCKWAVE, owner), damage);
 				e.setVelocity(0f, velocity, 0f);
 				hits.add(e);
@@ -91,10 +92,12 @@ public class ShockwaveEntity extends Entity
 	
 	boolean shouldDamage(Entity entity)
 	{
-		float dist = distanceTo(entity);
+		if(hits.contains(entity))
+			return false;
 		if(HeavyEntities.isHeavy(entity.getType()))
 			return false;
-		return entity.isAlive() && dist < getRadius() + 1f && dist > getRadius() - 3f && !entity.getClass().equals(ignored) && !hits.contains(entity);
+		float dist = distanceTo(entity);
+		return entity.isAlive() && dist < getRadius() + 1f && dist > getRadius() - 3f && !entity.getClass().equals(ignored);
 	}
 	
 	@Override
@@ -175,7 +178,7 @@ public class ShockwaveEntity extends Entity
 		this.ignored = ignored;
 	}
 	
-	public void setAffectOnly(Class<?> affect)
+	public void setAffectOnly(Class<? extends Entity> affect)
 	{
 		this.affectOnly = affect;
 	}
