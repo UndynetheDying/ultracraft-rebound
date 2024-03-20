@@ -124,6 +124,8 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	@ModifyArgs(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;applyDamage(Lnet/minecraft/entity/damage/DamageSource;F)V"))
 	void modifyAppliedDamage(Args args)
 	{
+		if((Object)this instanceof PlayerEntity)
+			return;
 		DamageSource source = args.get(0);
 		float amount = args.get(1);
 		if(source.isIn(DamageTypeTags.ULTRACRAFT) && !source.isIn(DamageTypeTags.UNBOOSTED) && !((Object)this instanceof AbstractUltraHostileEntity))
