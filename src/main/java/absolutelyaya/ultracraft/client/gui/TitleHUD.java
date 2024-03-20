@@ -81,11 +81,12 @@ public class TitleHUD
 				if(w > widestLine)
 					widestLine = w;
 			}
+			int boxHeight = renderer.getWrappedLinesHeight(boxText, maxWidth);
 			matrices.push();
-			matrices.translate(0, height / 5f * 4f, -10);
+			matrices.translate(0, height - 42 - boxHeight, -10);
 			matrices.push();
 			matrices.translate(width / 2f - widestLine / 2f, 0, 0);
-			context.fill(-2, -2, widestLine + 1, renderer.getWrappedLinesHeight(boxText, maxWidth), 0x88000000);
+			context.fill(-2, -2, widestLine + 1, boxHeight, 0x88000000);
 			matrices.pop();
 			for (int i = 0; i < lines.size(); i++)
 				context.drawText(renderer, lines.get(i), width / 2 - renderer.getWidth(lines.get(i)) / 2, i * renderer.fontHeight, 0xffffff, false);
