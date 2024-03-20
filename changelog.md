@@ -139,6 +139,13 @@
 - All Enemies now ignore Visibility when targeting Players
 - Shooting Core Ejects with a Hitscan now actually increases the damage of the caused explosion
 - Swordsmachines different melee Attacks now actually do different damage amounts
+- Changed how Progression Item Entities work
+  - They work like client side Item Entities. Every Player can pick them up individually, as long as it exists on the Server
+  - They can be set to either only give a progression entry, or also the item itself
+  - If the progression Entry not yet obtained but any Weapon of the unlocked Weapons Type is held, it'll unlock the progression entry but will not give an Item
+  - If the progression Entry is already obtained AND any Weapon of the unlocked Weapons Type is already held, the item entity will disappear for that Client
+  - Previously these would disappear from the client if they just had the set progression entry already; This Behavior could soft-lock Players in Prelude2, and potentially other future levels
+  - Additionally, the item pickup animation works correctly for these now as well
 ## Settings & Config
 - Removed all gamerules
 - Added Option to disable Screenshake

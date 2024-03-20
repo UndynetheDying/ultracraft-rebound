@@ -3,9 +3,14 @@ package absolutelyaya.ultracraft.components.player;
 import absolutelyaya.ultracraft.Weapon;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
+import absolutelyaya.ultracraft.util.InventoryUtil;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
@@ -13,6 +18,7 @@ import net.minecraft.nbt.NbtString;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.DefaultedList;
 
 import java.util.*;
 
@@ -77,6 +83,39 @@ public class LoadoutComponent implements ILoadoutComponent
 		for (Identifier identifier : loadout)
 			if (identifier != null && identifier.equals(alt))
 				return true;
+		return false;
+	}
+	
+	@Override
+	public boolean isWeaponTypeHeld(Weapon weapon)
+	{
+		for (Identifier id : weapon.ids)
+		{
+			PlayerInventory inv = provider.getInventory();
+			Item outputItem = Registries.ITEM.get(id);
+			if(inv.offHand.get(0).isOf(outputItem))
+				return true;
+			DefaultedList<ItemStack> invList = inv.main;
+			if(outputItem != null && InventoryUtil.containsItem(invList, outputItem, 1))
+				return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean tryDispenseWeapon(Weapon weapon, Identifier itemID)
+	{
+		boolean alt = isAltInLoadout(weapon, itemID);
+		if(!isWeaponTypeHeld(weapon) && (isInLoadout(weapon, itemID) || alt))
+		{
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			buf.writeIdentifier(itemID);
+			buf.writeInt(weapon.ordinal());
+			buf.writeBoolean(alt);
+			ClientPlayNetworking.send(PacketRegistry.TERMINAL_WEAPON_DISPENSE_PACKET_ID, buf);
+			provider.giveItemStack(Registries.ITEM.get(alt ? weapon.getAlt(itemID) : itemID).getDefaultStack());
+			return true;
+		}
 		return false;
 	}
 	

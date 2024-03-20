@@ -12,23 +12,15 @@ import absolutelyaya.ultracraft.components.player.ILoadoutComponent;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
 import absolutelyaya.ultracraft.data.UltraRecipeManager;
 import absolutelyaya.ultracraft.recipe.UltraRecipe;
-import absolutelyaya.ultracraft.registry.PacketRegistry;
-import absolutelyaya.ultracraft.util.InventoryUtil;
-import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
-import net.minecraft.util.collection.DefaultedList;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
@@ -141,45 +133,23 @@ public class WeaponsTab extends Tab
 					craftButton.setClickable(false);
 					return true;
 				}
-				PlayerEntity player = MinecraftClient.getInstance().player;
 				Identifier itemID = selectedCategory.ids[selectedWeapon];
-				boolean alt = loadout.isAltInLoadout(selectedCategory, itemID);
-				if(progression.isOwned(itemID) && !isResultTypeHeld() && (loadout.isInLoadout(selectedCategory, itemID) || alt))
+				if(progression.isOwned(itemID))
+					loadout.tryDispenseWeapon(selectedCategory, itemID);
+				else
 				{
-					PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-					buf.writeIdentifier(itemID);
-					buf.writeInt(selectedCategory.ordinal());
-					buf.writeBoolean(alt);
-					ClientPlayNetworking.send(PacketRegistry.TERMINAL_WEAPON_DISPENSE_PACKET_ID, buf);
-					player.giveItemStack(Registries.ITEM.get(alt ? selectedCategory.getAlt(itemID) : itemID).getDefaultStack());
-					refreshTab();
-					return true;
+					PlayerEntity player = MinecraftClient.getInstance().player;
+					if(selectedRecipe.canCraft(player) <= 1)
+						return true;
+					selectedRecipe.craft(player);
 				}
-				if(selectedRecipe.canCraft(player) <= 1)
-					return true;
-				selectedRecipe.craft(player);
+				refreshTab();
 				return true;
 			}
 			default -> {
 				return super.onButtonClicked(action, value);
 			}
 		}
-	}
-	
-	boolean isResultTypeHeld()
-	{
-		for (Identifier weapon : selectedCategory.ids)
-		{
-			PlayerEntity player = MinecraftClient.getInstance().player;
-			PlayerInventory inv = player.getInventory();
-			Item outputItem = Registries.ITEM.get(weapon);
-			if(inv.offHand.get(0).isOf(outputItem))
-				return true;
-			DefaultedList<ItemStack> invList = inv.main;
-			if(outputItem != null && InventoryUtil.containsItem(invList, outputItem, 1))
-				return true;
-		}
-		return false;
 	}
 	
 	boolean isResultItemInLoadout(ILoadoutComponent loadout)
@@ -258,7 +228,7 @@ public class WeaponsTab extends Tab
 							new Vector2i(0, 0), 0.001f, new Vector2i(16, 16), new Vector2i(0, 0), new Vector2i(16, 16)),
 							amount + " " + Text.translatable(item.getTranslationKey()).getString() + (amount > 0 ? "s" : "")));
 				});
-				if (isResultTypeHeld() && progression.isOwned(weaponId))
+				if (loadout.isWeaponTypeHeld(selectedCategory) && progression.isOwned(weaponId))
 					craftButton.setLabel(Text.translatable("terminal.held").getString());
 				else if (!isResultItemInLoadout(loadout))
 					craftButton.setLabel(Text.translatable("terminal.not-equipped").getString());
@@ -266,7 +236,7 @@ public class WeaponsTab extends Tab
 					craftButton.setLabel(Text.translatable("terminal." + (progression.isOwned(weaponId) ? "dispense" : "craft")).getString());
 			}
 		}
-		boolean clickable = selectedRecipe != null && !(isResultTypeHeld() && progression.isOwned(weaponId)) && isResultItemInLoadout(loadout);
+		boolean clickable = selectedRecipe != null && !(loadout.isWeaponTypeHeld(selectedCategory) && progression.isOwned(weaponId)) && isResultItemInLoadout(loadout);
 		craftButton.setClickable(clickable).setColor(clickable ? 0xffffffff : 0xff888888);
 		return true;
 	}

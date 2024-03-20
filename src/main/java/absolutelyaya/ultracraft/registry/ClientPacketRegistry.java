@@ -31,6 +31,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.particle.ItemPickupParticle;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -476,6 +477,14 @@ public class ClientPacketRegistry
 					last.setCurrentWave(data.getInt("currentWave"));
 				if(data.contains("enemies", NbtElement.INT_TYPE))
 					last.setEnemies(data.getInt("enemies"));
+			});
+		})));
+		ClientPlayNetworking.registerGlobalReceiver(PICKUP_PROGRESSION_ITEM_ID, (((client, handler, buf, responseSender) -> {
+			int entityID = buf.readInt();
+			client.execute(() -> {
+				client.particleManager.addParticle(new ItemPickupParticle(client.getEntityRenderDispatcher(), client.getBufferBuilders(),
+						client.world, client.world.getEntityById(entityID), client.player));
+				client.world.removeEntity(entityID, Entity.RemovalReason.DISCARDED);
 			});
 		})));
 	}
