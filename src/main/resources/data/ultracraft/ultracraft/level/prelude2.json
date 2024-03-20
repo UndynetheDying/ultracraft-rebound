@@ -3,37 +3,34 @@
   "title": "level.ultracraft.0-2",
   "par-time": "4:20:69",
   "author": "yaya",
-  "structure": "ultracraft:limbo/ruin1",
-  "thumbnail": "ultracraft:textures/level/placeholder.png",
+  "structure": "ultracraft:level/prelude2",
+  "thumbnail": "ultracraft:textures/level/0_2.png",
   "ranking": {
     "time": [
-      "1:00:00",
-      "2:00:00",
-      "3:00:00",
-      "4:00:00"
+      "6:00:00",
+      "7:00:00",
+      "8:00:00",
+      "10:00:00"
     ],
     "kills": [
-      999,
-      999,
-      999,
-      999,
-      999,
-      999
+      96,
+      85,
+      74,
+      60
     ],
     "style": [
-      9999,
-      9999,
-      9999,
-      9999,
-      9999,
-      9999
+      4000,
+      3500,
+      2500,
+      1750
     ]
   },
   "spawn-offset":{
-    "x": 16,
-    "y": 8,
-    "z": 9
+    "x": 3,
+    "y": 55,
+    "z": 86
   },
+  "spawn-rot": -90,
   "version": 1,
   "next-level": "ultracraft:prelude3"
 }
