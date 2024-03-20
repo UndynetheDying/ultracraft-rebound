@@ -251,7 +251,7 @@ public class CybergrindGame
 	{
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeText(owner.getDisplayName());
-		server.getPlayerManager().getPlayerList().forEach(p -> ServerPlayNetworking.send(p, PacketRegistry.ANNOUNCE_CYBERGRIND, buf));
+		server.getPlayerManager().getPlayerList().forEach(p -> ServerPlayNetworking.send(p, PacketRegistry.ANNOUNCE_CYBERGRIND_ID, buf));
 	}
 	
 	boolean shouldSync()
@@ -277,7 +277,7 @@ public class CybergrindGame
 			buf.writeNbt(nbt);
 		participants.forEach(p -> {
 			if(p instanceof ServerPlayerEntity serverPlayer)
-				ServerPlayNetworking.send(serverPlayer, PacketRegistry.SYNC_CYBERGRIND, buf);
+				ServerPlayNetworking.send(serverPlayer, PacketRegistry.SYNC_CYBERGRIND_ID, buf);
 		});
 	}
 	

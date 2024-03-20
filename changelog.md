@@ -70,7 +70,7 @@
   - Edit mode lets you see known mapping blocks; to search for them, use `/edit ping`. 
   - Mapping Blocks themselves have no rendering (with the only exception being checkpoints) and aren't interactable outside of edit mode.
   - Each Component is its own Block and has an Area (with some exceptions)
-  - This System is not exactly designed for accessibility; I might write a Guide on it in the future, but I won't teach it ot people individually.
+  - This System is not exactly designed for accessibility; I will make a tutorial on it in the near future, but I won't teach it to people individually.
   - Flags
     - There's "Local" and "Global" Flags
     - **Local** Flags are stored in a room and can only be true or false

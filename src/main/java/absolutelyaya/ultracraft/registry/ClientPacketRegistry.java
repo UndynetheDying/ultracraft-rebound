@@ -446,13 +446,13 @@ public class ClientPacketRegistry
 			if(client.currentScreen instanceof AbstractTravelScreen travel)
 				travel.setShouldClose();
 		})));
-		ClientPlayNetworking.registerGlobalReceiver(ANNOUNCE_CYBERGRIND, (((client, handler, buf, responseSender) -> {
+		ClientPlayNetworking.registerGlobalReceiver(ANNOUNCE_CYBERGRIND_ID, (((client, handler, buf, responseSender) -> {
 			Text result = buf.readText();
 			CybergrindHUD hud = CybergrindHUD.Instance;
 			if(hud != null)
 				hud.startAnnouncementSequence(result);
 		})));
-		ClientPlayNetworking.registerGlobalReceiver(SYNC_CYBERGRIND, (((client, handler, buf, responseSender) -> {
+		ClientPlayNetworking.registerGlobalReceiver(SYNC_CYBERGRIND_ID, (((client, handler, buf, responseSender) -> {
 			byte mode = buf.readByte();
 			NbtCompound data = mode != CybergrindData.DESTROY_SYNC ? buf.readNbt() : new NbtCompound();
 			client.execute(() -> {

@@ -133,8 +133,8 @@ public class PacketRegistry
 	public static final Identifier SEND_LEVELS_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "levels_s2c");
 	public static final Identifier SEND_LEVEL_INSTANCES_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "instances_s2c");
 	public static final Identifier FINISH_TRAVELLING_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "travel_end");
-	public static final Identifier ANNOUNCE_CYBERGRIND = new Identifier(Ultracraft.MOD_ID, "announce_cybergrind");
-	public static final Identifier SYNC_CYBERGRIND = new Identifier(Ultracraft.MOD_ID, "sync_cybergrind");
+	public static final Identifier ANNOUNCE_CYBERGRIND_ID = new Identifier(Ultracraft.MOD_ID, "announce_cybergrind");
+	public static final Identifier SYNC_CYBERGRIND_ID = new Identifier(Ultracraft.MOD_ID, "sync_cybergrind");
 	public static final Identifier PICKUP_PROGRESSION_ITEM_ID = new Identifier(Ultracraft.MOD_ID, "pickup_progression");
 	
 	public static void registerC2S()
