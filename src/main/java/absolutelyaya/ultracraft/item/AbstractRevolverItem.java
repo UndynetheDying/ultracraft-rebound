@@ -6,16 +6,21 @@ import absolutelyaya.ultracraft.Weapon;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import mod.azure.azurelib.animatable.GeoItem;
 import mod.azure.azurelib.core.animation.Animation;
 import mod.azure.azurelib.core.animation.RawAnimation;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public abstract class AbstractRevolverItem extends AbstractWeaponItem implements GeoItem
 {
@@ -160,5 +165,18 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 	public Weapon getWeaponType()
 	{
 		return Weapon.REVOLVER;
+	}
+	
+	@Override
+	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
+	{
+		super.appendTooltip(stack, world, tooltip, context);
+		if(isAlternate())
+		{
+			tooltip.add(Text.translatable("item.ultracraft.revolver.alternate.lore1"));
+			tooltip.add(Text.translatable("item.ultracraft.revolver.alternate.lore2"));
+		}
+		else
+			tooltip.add(Text.translatable("item.ultracraft.revolver.lore1"));
 	}
 }

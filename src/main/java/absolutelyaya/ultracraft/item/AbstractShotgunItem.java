@@ -9,6 +9,7 @@ import absolutelyaya.ultracraft.entity.demon.MaliciousFaceEntity;
 import absolutelyaya.ultracraft.entity.projectile.ShotgunPelletEntity;
 import absolutelyaya.ultracraft.particle.ParryIndicatorParticleEffect;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
@@ -16,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.text.Text;
 import net.minecraft.util.Arm;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -24,6 +26,9 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import mod.azure.azurelib.animatable.GeoItem;
 import mod.azure.azurelib.core.animation.RawAnimation;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public abstract class AbstractShotgunItem extends AbstractWeaponItem implements GeoItem
 {
@@ -145,5 +150,13 @@ public abstract class AbstractShotgunItem extends AbstractWeaponItem implements 
 	public Weapon getWeaponType()
 	{
 		return Weapon.SHOTGUN;
+	}
+	
+	@Override
+	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
+	{
+		super.appendTooltip(stack, world, tooltip, context);
+		tooltip.add(Text.translatable("item.ultracraft.shotgun.lore1"));
+		tooltip.add(Text.translatable(getTranslationKey() + ".lore1"));
 	}
 }
