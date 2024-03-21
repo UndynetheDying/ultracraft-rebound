@@ -34,6 +34,8 @@ public interface ILevelStatsComponent extends ComponentV3
 	
 	int getKills();
 	
+	void setKills(int val);
+	
 	int getStyle();
 	
 	void onStyle(float score);

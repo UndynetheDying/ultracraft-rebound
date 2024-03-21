@@ -110,7 +110,11 @@ public class CheckpointBlockEntity extends AbstractTriggerBlockEntity
 				if(!pos.equals(winged.getLastCheckpoint()))
 				{
 					if(winged.setLastCheckpoint(pos, world) && stats.getCurrentLevelInstance() != null)
-						LevelManager.Instance.getInstance(stats.getCurrentLevelInstance()).onCheckpoint();
+					{
+						LevelManager.LevelInstance inst = LevelManager.Instance.getInstance(stats.getCurrentLevelInstance());
+						if(inst != null)
+							inst.onCheckpoint();
+					}
 					if(!isInvisible())
 					{
 						player.playSound(SoundRegistry.CHECKPOINT_GET, 1f, 2f);

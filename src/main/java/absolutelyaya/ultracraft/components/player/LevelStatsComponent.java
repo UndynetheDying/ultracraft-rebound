@@ -33,7 +33,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	Identifier currentLevel;
 	String currentLevelInstance;
 	boolean fighting, undamaged;
-	int fightCheckCooldown, deaths;
+	int fightCheckCooldown, deaths, kills;
 	float style;
 	long timerStart = -1, lastStoppedTimer = -1;
 	
@@ -191,8 +191,15 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	{
 		LevelManager.LevelInstance inst = LevelManager.Instance.getInstance(currentLevelInstance);
 		if(inst == null)
-			return 0;
+			return kills;
 		return inst.getKills();
+	}
+	
+	@Override
+	public void setKills(int kills)
+	{
+		this.kills = kills;
+		UltraComponents.LEVEL_STATS.sync(provider);
 	}
 	
 	@Override
@@ -282,6 +289,8 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 			style = tag.getLong("style");
 		if(tag.contains("deaths", NbtElement.INT_TYPE))
 			deaths = tag.getInt("deaths");
+		if(tag.contains("kills", NbtElement.INT_TYPE))
+			kills = tag.getInt("kills");
 		if(tag.contains("bestTimes", NbtElement.COMPOUND_TYPE))
 		{
 			bestTimes.clear();
@@ -315,6 +324,8 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 		tag.putLong("timerStart", timerStart);
 		tag.putLong("lastStoppedTime", lastStoppedTimer);
 		tag.putFloat("style", style);
+		tag.putInt("deaths", deaths);
+		tag.putInt("kills", kills);
 		if(bestTimes != null)
 		{
 			NbtCompound records = new NbtCompound();
@@ -344,7 +355,6 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 		if(getCurrentLevel() != null)
 		{
 			tag.putString("level", getCurrentLevel().toString());
-			tag.putInt("deaths", deaths);
 		}
 		if(currentLevelInstance != null && !currentLevelInstance.isEmpty())
 			tag.putString("currentLevelInstance", currentLevelInstance);

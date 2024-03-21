@@ -491,18 +491,24 @@ public class LevelManager extends DimensionManager
 		public void restoreLastCheckpointKills()
 		{
 			if(!(Instance.world.isClient && !Instance.world.getServer().isRemote()))
-				kills = lastCheckpointKills;
+				setKills(lastCheckpointKills);
 		}
 		
 		public void onKill()
 		{
 			if(!(Instance.world.isClient && !Instance.world.getServer().isRemote()))
-				kills++;
+				setKills(kills + 1);
 		}
 		
 		public int getKills()
 		{
 			return kills;
+		}
+		
+		void setKills(int i)
+		{
+			kills = i;
+			players.forEach(p -> UltraComponents.LEVEL_STATS.get(p).setKills(i));
 		}
 	}
 	
