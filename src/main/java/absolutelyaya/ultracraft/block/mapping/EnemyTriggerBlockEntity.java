@@ -1,15 +1,19 @@
 package absolutelyaya.ultracraft.block.mapping;
 
+import absolutelyaya.ultracraft.block.CerberusBlock;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EnemyTriggerBlockEntity extends AbstractTriggerBlockEntity
 {
@@ -43,6 +47,34 @@ public class EnemyTriggerBlockEntity extends AbstractTriggerBlockEntity
 	public String getTexture()
 	{
 		return "enemy_trigger";
+	}
+	
+	@Override
+	void tick()
+	{
+		boolean condition = (containedEntities = world.getEntitiesByType(TypeFilter.instanceOf(getTargetClass()), getAreaBox(),
+				this::isValidTarget)).size() > targetThreshold;
+		AtomicBoolean cerbs = new AtomicBoolean();
+		forEachBlockInArea(pos -> {
+			BlockState state = world.getBlockState(pos);
+			if(state.getBlock() instanceof CerberusBlock && state.get(CerberusBlock.SPAWNING))
+				cerbs.set(true);
+		});
+		condition = condition || cerbs.get();
+		if(inverted)
+			condition = !condition; //invert
+		boolean wasActive = isActive();
+		if(!condition && active > 0 && (selfResetting || active < activateDelay || (justReset && inverted)))
+			active--;
+		if(condition && active < activateDelay * 2)
+			active++;
+		active = MathHelper.clamp(active, 0, activateDelay * 2);
+		
+		if(flag != null && getParent() != null && world.getBlockEntity(getParent()) instanceof RoomBlockEntity room && isActive() != wasActive)
+		{
+			justReset = false;
+			room.setFlag(flag, isActive());
+		}
 	}
 	
 	@Override
