@@ -374,7 +374,6 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 				killerPlayer = player;
 			else if(source.getAttacker() instanceof PlayerEntity player)
 				killerPlayer = player;
-			System.out.println(killerPlayer);
 			return false;
 		}
 		if(getHealth() - amount < getCrackThreshold() && !dataTracker.get(CRACKED))
@@ -416,7 +415,6 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 				shockwave.setGrowRate(0.5f);
 				getWorld().spawnEntity(shockwave);
 			}
-			System.out.println(killerPlayer);
 			List<Entity> entities = getWorld().getOtherEntities(this, getBoundingBox().expand(0.5, 0.5, 0.5),
 					i -> i.isAlive() && !i.equals(killerPlayer));
 			for (Entity e : entities)
