@@ -1,15 +1,6 @@
 ## Major Changes
 - Added Prelude Structure to Overworld
   - Complete this Dungeon to obtain a Teleporter that can be used to travel to other Layers
-- Added Limbo Dimension
-  - Custom Worldgen inspired by Limbo
-  - Pre-placed Structures with Scripted Events and Progression
-    - Activate all 4 Slab Blocks to obtain the Slab Revolver
-  - Other Random Limbo Themed Structures
-  - Instead of random mob spawning, every night there's a chance for a Cybergrind to start
-    - The Amount of Waves that need to be beaten (and the amount // strength of enemies) depends on your worlds difficulty and number of Participants
-    - Cybergrind can be configured using a config file
-    - "Why no random mob spawning??" trust me, it's *really* not fun.
 - Added Cybergrind
   - Wave-Based survival mini-game; face off against hordes of enemies
   - Endless Cybergrind along with its own dimension and a morphing arena is planned to be added in the future as well
@@ -31,6 +22,15 @@
   - Have a Hammer that has to be pulled back before firing; if the variant is switched before this happens, it'll be pulled back when you switch back to that weapon.
   - Piercer pierces more
   - Sharpshooter has only 1 Charge, but spins at full speed instantly
+- Added Limbo Dimension
+  - Custom Worldgen inspired by Limbo
+  - Pre-placed Structures with Scripted Events and Progression
+    - Activate all 4 Slab Blocks to obtain the Slab Revolver
+  - Other Random Limbo Themed Structures
+  - Instead of random mob spawning, every night there's a chance for a Cybergrind to start
+    - The Amount of Waves that need to be beaten (and the amount // strength of enemies) depends on your worlds difficulty and number of Participants
+    - Cybergrind can be configured using a config file
+    - "Why no random mob spawning??" trust me, it's *really* not fun.
 - Removed cooldown caused by stopping to use the Flamethrower
 - Added Slab Blocks
   - Right click // Punch to toggle; alternatively, use a redstone signal of level 15

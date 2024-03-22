@@ -43,7 +43,7 @@ public class CreditsScreen extends Screen
 		super(Text.translatable("screen.ultracraft.credits.title"));
 		this.parent = parent;
 		contributors.add(new ContributorElement("dev", "Absolutelyaya"));
-		contributors.add(new ContributorElement("build", "Talon_MC", "AshenWulf"));
+		contributors.add(new ContributorElement("build", "Talon_MC", "AshenWulf", "Marmalude"));
 		contributors.add(new ContributorElement("sound", "8BitBunny"));
 		contributors.add(new ContributorElement("test", "Talon_MC", "AshenWulf", "Athanes", "Marmalude"));
 		HashMap<String, List<String>> localizerMap = new HashMap<>();
