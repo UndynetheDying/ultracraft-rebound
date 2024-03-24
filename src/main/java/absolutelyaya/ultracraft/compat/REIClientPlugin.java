@@ -63,7 +63,14 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 				EntryStacks.of(BlockRegistry.MAP_LEVEL),
 				EntryStacks.of(BlockRegistry.MAP_TIMER),
 				EntryStacks.of(BlockRegistry.MAP_TRAVEL),
-				EntryStacks.of(BlockRegistry.MAP_TITLE));
+				EntryStacks.of(BlockRegistry.MAP_TITLE),
+				EntryStacks.of(BlockRegistry.MAP_TITLE_LISTENER),
+				EntryStacks.of(BlockRegistry.MAP_DAMAGE),
+				EntryStacks.of(BlockRegistry.MAP_CYBERGRIND),
+				EntryStacks.of(BlockRegistry.MAP_LIGHT),
+				EntryStacks.of(BlockRegistry.MAP_GLOBAL_REDSTONE),
+				EntryStacks.of(BlockRegistry.MAP_GLOBAL_RECEIVER),
+				EntryStacks.of(BlockRegistry.MAP_GLOBAL_TITLE));
 		registry.group(new Identifier(Ultracraft.MOD_ID, "mapping"), Text.translatable("rei-group.ultracraft.mapping"), entries);
 	}
 }
