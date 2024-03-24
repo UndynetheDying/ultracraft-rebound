@@ -180,9 +180,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	@Override
 	public boolean setLastCheckpoint(BlockPos pos, World dimension)
 	{
-		boolean changed = false;
-		if(!lastCheckpoint.equals(pos))
-			changed = true;
+		boolean changed = lastCheckpoint == null || !lastCheckpoint.equals(pos);
 		lastCheckpoint = pos;
 		checkpointRot = provider.getYaw();
 		if(dimension != null)
