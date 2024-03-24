@@ -282,6 +282,15 @@ public class ServerHitscanHandler
 		}
 		
 		/**
+		 * Marks a hitscans damage as being from an alternate Marksman; or on other words, performing coin splits should reset all hammers on the revolver
+		 */
+		public Hitscan resetHammers()
+		{
+			damageSource.resetHammers();
+			return this;
+		}
+		
+		/**
 		 * Marks a hitscan as being the charged shot of a revolver; mainly used for making coins not split
 		 */
 		public Hitscan charged()

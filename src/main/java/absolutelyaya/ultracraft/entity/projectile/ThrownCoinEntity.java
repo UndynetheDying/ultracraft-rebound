@@ -9,6 +9,7 @@ import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.HitscanDamageSource;
 import absolutelyaya.ultracraft.entity.demon.MaliciousFaceEntity;
+import absolutelyaya.ultracraft.item.AbstractRevolverItem;
 import absolutelyaya.ultracraft.item.CoinItem;
 import absolutelyaya.ultracraft.registry.*;
 import absolutelyaya.ultracraft.util.AutoAimUtil;
@@ -192,7 +193,15 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 			return false;
 		}
 		if(isSplittable() && !splitting)
+		{
 			dataTracker.set(SPLITS, dataTracker.get(SPLITS) + 1);
+			if(hitscanSource.isAlternate() && hitscanSource.isResetHammers() && hitscanSource.getSourcePlayer() != null)
+			{
+				ItemStack stack = hitscanSource.getSourcePlayer().getMainHandStack();
+				if(stack.getItem() instanceof AbstractRevolverItem revolver)
+					revolver.resetAllHammers(stack);
+			}
+		}
 		return hitNext(hitscanSource, amount, attacker);
 	}
 	

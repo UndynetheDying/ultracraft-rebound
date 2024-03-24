@@ -290,6 +290,7 @@ public class Ultracraft implements ModInitializer
             {
                 revolver.setNbt(stack, "coins", revolver.getNbtDefault("coins"));
                 revolver.setNbt(stack, "charges", revolver.getNbtDefault("charges"));
+                revolver.resetAllHammers(stack);
             }
             else if (item instanceof AbstractNailgunItem nailgun && nailgun.getNbt(stack, "nails") < 100)
                 nailgun.setNbt(stack, "nails", 100);

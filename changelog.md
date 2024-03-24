@@ -21,6 +21,7 @@
   - Slower, but does more damage and pierces up to 1 weak enemy
   - Have a Hammer that has to be pulled back before firing; if the variant is switched before this happens, it'll be pulled back when you switch back to that weapon.
   - Piercer pierces more
+  - Marksman coin splits reset all Hammers and hit a single target multiple times instead of multiple
   - Sharpshooter has only 1 Charge, but spins at full speed instantly
 - Added Limbo Dimension
   - Custom Worldgen inspired by Limbo
