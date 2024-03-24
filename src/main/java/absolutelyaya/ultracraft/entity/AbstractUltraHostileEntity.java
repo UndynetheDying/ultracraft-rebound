@@ -190,7 +190,7 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 			bossBar.clearPlayers();
 		else if(!wasBossbarVisible && isBossBarVisible())
 		{
-			getWorld().getPlayers(TargetPredicate.DEFAULT.ignoreVisibility(), this, getBoundingBox().expand(64))
+			getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(64), p -> true)
 					.forEach(p -> bossBar.addPlayer((ServerPlayerEntity)p));
 		}
 		wasBossbarVisible = isBossBarVisible();
