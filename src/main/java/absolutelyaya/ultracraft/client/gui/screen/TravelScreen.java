@@ -6,7 +6,6 @@ import absolutelyaya.ultracraft.client.gui.widget.LevelButton;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
 import absolutelyaya.ultracraft.data.LevelDataManager;
-import absolutelyaya.ultracraft.dimension.LevelManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -126,7 +125,7 @@ public class TravelScreen extends AbstractTravelScreen
 				x += freeroam.getWidth() + spacing;
 				LevelButton limbo2 = new LevelButton(x, height / 2 - 32,
 						getLevelData(new Identifier(Ultracraft.MOD_ID, "limbo2")), this::selectLevel);
-				x += limbo1.getWidth() + spacing;
+				x += limbo2.getWidth() + spacing;
 				buttons.add(new LevelButton(x, height / 2 - 32,
 						getLevelData(new Identifier(Ultracraft.MOD_ID, "luna")), ignored -> {}));
 				buttons.addAll(List.of(freeroam, limbo1, limbo2));
