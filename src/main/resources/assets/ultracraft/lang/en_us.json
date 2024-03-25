@@ -547,6 +547,7 @@
   "message.ultracraft.travel.error-notunlocked": "That Destination isn't unlocked on the Server!",
   "message.ultracraft.travel.error-instance": "Failed to instantiate Level Structure!",
   "message.ultracraft.travel.new-destination": "New Level '%s' has been unlocked!",
+  "message.ultracraft.travel.new-freeroam-destination": "A new Freeroam Dimension has been unlocked!",
   "message.ultracraft.rescue.level-destroyed": "The Level you were in was Destroyed; You were brought back to the Overworlds Spawn Position.",
   "message.ultracraft.rescue.void": "Whoops, sorry about that; You were brought back to the Overworlds Spawn Position.",
   "message.ultracraft.rescue.null": "The Level you were supposedly in doesn't exist; You were brought back to the Overworlds Spawn Position.",

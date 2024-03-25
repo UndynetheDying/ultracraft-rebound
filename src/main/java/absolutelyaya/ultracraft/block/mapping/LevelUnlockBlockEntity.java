@@ -75,9 +75,12 @@ public class LevelUnlockBlockEntity extends AbstractListenerBlockEntity
 		if(world.isClient || !b)
 			return;
 		LevelData data = LevelDataManager.getLevelData(level);
-		if(data != null)
+		if(!data.equals(LevelDataManager.ERR_DATA))
 			world.getServer().getPlayerManager().getPlayerList()
 					.forEach(p -> p.sendMessage(Text.translatable("message.ultracraft.travel.new-destination", data.getTitleText())));
+		else if(level.getPath().startsWith("dimension"))
+			world.getServer().getPlayerManager().getPlayerList()
+					.forEach(p -> p.sendMessage(Text.translatable("message.ultracraft.travel.new-freeroam-destination")));
 		super.onStateChanged(newState);
 	}
 	
