@@ -114,8 +114,12 @@ public class LevelButton extends ClickableWidget
 	
 	void calcDimensions()
 	{
-		width = Math.max(96, Math.max(tRenderer.getWidth(getMessage()), tRenderer.getWidth(author))) + 8;
+		width = Math.max(96, Math.max(tRenderer.getWidth(getMessage()), tRenderer.getWidth(author))) + 8; // min == 104
 		height = 64 + (author.getString().length() > 0 ? tRenderer.fontHeight : 0) + (authorLink.length() > 0 ? 2 : 0);
+	}
+	
+	public void selfCenter()
+	{
 		setX(getX() - width / 2);
 	}
 	

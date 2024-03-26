@@ -39,10 +39,11 @@ public class CustomLevelSelectScreen extends AbstractTravelScreen
 		listHeight = 32;
 		LevelDataManager.getAllCustomLevels().forEach((id, data) -> {
 			LevelButton b = new LevelButton(width / 2, listHeight, data, this::selectLevel);
+			b.selfCenter();
 			levelButtons.add(b);
-			maxScroll = listHeight - 32;
 			listHeight += b.getHeight() + 8;
 		});
+		maxScroll = listHeight - 32;
 	}
 	
 	@Override
