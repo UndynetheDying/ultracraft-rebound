@@ -109,6 +109,8 @@ public class MagnetEntity extends AbstractSkewerEntity implements GeoEntity, IIg
 	
 	public Vec3d getAttractOffset()
 	{
+		if(getVictim() != null)
+			return Vec3d.ZERO;
 		float f = MathHelper.RADIANS_PER_DEGREE;
 		return new Vec3d(0f, 0.2f, -1.5f).rotateX(getPitch() * f).rotateY(getYaw() * f);
 	}
@@ -138,8 +140,8 @@ public class MagnetEntity extends AbstractSkewerEntity implements GeoEntity, IIg
 	{
 		if(victim != null)
 			return;
-		if(entityHitResult.getEntity() instanceof LivingEntity living)
-			living.damage(DamageSources.get(getWorld(), DamageSources.MAGNET, this, getOwner()), 3.5f);
+		//if(entityHitResult.getEntity() instanceof LivingEntity living)
+		//	living.damage(DamageSources.get(getWorld(), DamageSources.MAGNET, this, getOwner()), 3.5f);
 		super.onEntityHit(entityHitResult);
 	}
 	

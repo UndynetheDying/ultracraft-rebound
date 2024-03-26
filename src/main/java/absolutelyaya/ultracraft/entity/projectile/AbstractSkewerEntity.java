@@ -147,7 +147,6 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 		victim = entity;
 		dataTracker.set(IMPACT_YAW, getYaw());
 		dataTracker.set(IMPACT_PITCH, getPitch());
-		entity.damage(DamageSources.get(getWorld(), DamageSources.MAGNET, this, getOwner()), 3.5f);
 		if(this instanceof ProjectileEntityAccessor proj && proj.isParried())
 			proj.onParriedCollision(entityHitResult);
 	}

@@ -171,6 +171,8 @@
   - DO NOT USE THESE!!!
   - I mean, you could if you want to, but they could crash servers.
 - Added Debug Commands to reset best level completion times//ranks
+- fixed all Skewer Type Projectiles dealing a magnets impact damage on top of their normal damage
+- Magnets no longer deal damage on impact at all
 ## Tweaks
 - Buffed overpump damage towards others (10 Dmg -> 15 Dmg)
 - Hitscans don't cause Thorn Damage from Guardians anymore
