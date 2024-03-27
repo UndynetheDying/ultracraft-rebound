@@ -7,6 +7,7 @@ import net.minecraft.block.ShapeContext;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.state.StateManager;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.math.random.Random;
@@ -56,5 +57,11 @@ public class VentBlock extends FacingBlock
 			case UP -> VoxelShapes.cuboid(0f, 0f, 0f, 1f, 2f / 16f, 1f);
 			case DOWN -> VoxelShapes.cuboid(0f, 14f / 16f, 0f, 1f, 1f, 1f);
 		};
+	}
+	
+	@Override
+	public BlockState rotate(BlockState state, BlockRotation rotation)
+	{
+		return state.with(FACING, rotation.rotate(state.get(FACING)));
 	}
 }

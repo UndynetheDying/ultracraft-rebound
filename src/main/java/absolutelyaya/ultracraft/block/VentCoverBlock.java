@@ -6,6 +6,7 @@ import net.minecraft.block.FacingBlock;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
@@ -50,5 +51,11 @@ public class VentCoverBlock extends FacingBlock
 			case UP -> VoxelShapes.cuboid(0f, 12f / 16f, 0f, 1f, 14f / 16f, 1f);
 			case DOWN -> VoxelShapes.cuboid(0f, 2f / 16f, 0f, 1f, 4f / 16f, 1f);
 		};
+	}
+	
+	@Override
+	public BlockState rotate(BlockState state, BlockRotation rotation)
+	{
+		return state.with(FACING, rotation.rotate(state.get(FACING)));
 	}
 }
