@@ -62,7 +62,7 @@ public class ItemRegistry
 			new Identifier(Ultracraft.MOD_ID, "killerfish"), new KillerFishItem(new FabricItemSettings()));
 	public static final Item BLOOD_RAY = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "bloodray"), new Item(new FabricItemSettings()
-						.food(new FoodComponent.Builder().hunger(4)
+						.food(new FoodComponent.Builder().hunger(4).alwaysEdible()
 							  .statusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 500, 0), 1f).build())));
 	public static final DroneMaskItem DRONE_MASK = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "drone_mask"), new DroneMaskItem(new FabricItemSettings()));

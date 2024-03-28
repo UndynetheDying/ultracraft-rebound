@@ -204,6 +204,7 @@
   - Mortar Damage (15 -> 12)
   - Mortar Damage Falloff (4 -> 6)
   - Mortar Explosion Radius (4 -> 2.5)
+  - Reduced un-hide radius (16 -> 10)
 - Tweaked Swordsmachine to be closer to the Original
   - Boss Health (125 -> 250)
   - Shotgun Pellet Count (16 -> 10)
@@ -296,6 +297,7 @@
 - Fixed a small logic error that resulted in the intro not being repeated when setting both "repeatIntro" and "neverIntro" to true
   - "neverIntro" is just intended to suppress showing the intro again after switching versions
 - The catchphrase in the intro now fades later than the rest
+- Made Bloodrays always edible
 - Hopefully improved Skewer-Type Projectile Jittering
 - Potentially fixed Skewered Status Effect 
 - Improved Magnet Attraction Position
