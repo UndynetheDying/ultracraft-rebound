@@ -77,6 +77,7 @@ public abstract class ServerPlayerMixin extends PlayerEntity
 	@Inject(method = "worldChanged", at = @At("HEAD"))
 	void onWorldChanged(ServerWorld origin, CallbackInfo ci)
 	{
+		UltraComponents.WINGED.get(this).setLastCheckpoint(null, null);
 		if(origin.getRegistryKey() != null && !origin.getRegistryKey().equals(LevelManager.WORLD_KEY))
 			return;
 		UltraComponents.LEVEL_STATS.get(this).enterLevel(null, null);
@@ -96,7 +97,7 @@ public abstract class ServerPlayerMixin extends PlayerEntity
 	@WrapOperation(method = "copyFrom", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;isSpectator()Z"))
 	boolean shouldKeepInventory(ServerPlayerEntity instance, Operation<Boolean> original)
 	{
-		if(instance.getWorld().getRegistryKey().equals(LevelManager.WORLD_KEY))
+		if(instance.getWorld().getRegistryKey().equals(LevelManager.WORLD_KEY) || UltraComponents.WINGED.get(instance).getLastCheckpoint() != null)
 			return true;
 		return original.call(instance);
 	}

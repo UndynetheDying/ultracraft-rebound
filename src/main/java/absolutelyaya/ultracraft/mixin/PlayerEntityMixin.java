@@ -191,7 +191,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	@Inject(method="dropInventory", at = @At("HEAD"), cancellable = true)
 	void onDropInventory(CallbackInfo ci)
 	{
-		if(getWorld().getRegistryKey().equals(LevelManager.WORLD_KEY))
+		if(getWorld().getRegistryKey().equals(LevelManager.WORLD_KEY) || UltraComponents.WINGED.get(this).getLastCheckpoint() != null)
 			ci.cancel();
 	}
 	
