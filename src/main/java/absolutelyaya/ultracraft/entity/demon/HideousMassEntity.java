@@ -920,7 +920,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 				return false;
 			if(mob.getAnimation() != ANIMATION_IDLE)
 				return false;
-			List<PlayerEntity> nearby = mob.getWorld().getPlayers(TargetPredicate.DEFAULT.setPredicate(e -> e.distanceTo(mob) < 16f), mob,
+			List<PlayerEntity> nearby = mob.getWorld().getPlayers(TargetPredicate.DEFAULT.setPredicate(e -> e.distanceTo(mob) < 10f), mob,
 					mob.getBoundingBox().expand(64));
 			return mob.getTarget() != null && mob.isHidden() && nearby.size() > 0;
 		}
