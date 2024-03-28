@@ -124,8 +124,8 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	{
 		for (String key : flags.keySet())
 			setFlag(key, false);
-		for (AbstractMappingBlockEntity child : children.values())
-			if(child != null)
+		for (BlockPos pos : children.keySet())
+			if(world.getBlockEntity(this.pos.add(pos)) instanceof AbstractMappingBlockEntity child && child.getParent().equals(this.pos))
 				child.reset();
 		world.getEntitiesByType(TypeFilter.instanceOf(CerberusEntity.class), getAreaBox(), LivingEntity::isAlive)
 				.forEach(e -> {
