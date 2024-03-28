@@ -9,8 +9,14 @@ import net.minecraft.structure.StructurePiecesCollector;
 import net.minecraft.structure.StructureTemplateManager;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Heightmap;
+import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.world.gen.StructureAccessor;
+import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.structure.Structure;
 import net.minecraft.world.gen.structure.StructureType;
 
@@ -18,7 +24,7 @@ import java.util.Optional;
 
 public class AbandonedFacilityStructure extends Structure
 {
-	static final Identifier ID = new Identifier(Ultracraft.MOD_ID, "abandoned_facility1");
+	static final Identifier ID = new Identifier(Ultracraft.MOD_ID, "abandoned_facility/1");
 	public static final Codec<AbandonedFacilityStructure> CODEC = AbandonedFacilityStructure.createCodec(AbandonedFacilityStructure::new);
 	
 	protected AbandonedFacilityStructure(Config config)
@@ -35,8 +41,7 @@ public class AbandonedFacilityStructure extends Structure
 	private void addPieces(StructurePiecesCollector collector, Structure.Context context)
 	{
 		getStructurePosition(context).ifPresent(pos -> {
-			BlockRotation blockRotation = BlockRotation.random(context.random());
-			collector.addPiece(new Piece(context.structureTemplateManager(), ID, pos.position().up(100), blockRotation));
+			collector.addPiece(new Piece(context.structureTemplateManager(), ID, pos.position(), BlockRotation.NONE));
 		});
 	}
 	
@@ -50,12 +55,19 @@ public class AbandonedFacilityStructure extends Structure
 	{
 		public Piece(StructureTemplateManager structureTemplateManager, Identifier id, BlockPos pos, BlockRotation rot)
 		{
-			super(StructureRegistry.ABANDONED_FACILITY_PIECE, structureTemplateManager, id, pos.up(100), rot);
+			super(StructureRegistry.ABANDONED_FACILITY_PIECE, structureTemplateManager, id, pos, rot);
 		}
 		
 		public Piece(StructureContext structureContext, NbtCompound nbt)
 		{
 			super(StructureRegistry.ABANDONED_FACILITY_PIECE, structureContext, nbt);
+		}
+		
+		@Override
+		public void generate(StructureWorldAccess world, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, Random random, BlockBox chunkBox, ChunkPos chunkPos, BlockPos pivot)
+		{
+			pos = startPos.down(38);
+			super.generate(world, structureAccessor, chunkGenerator, random, chunkBox, chunkPos, pivot);
 		}
 	}
 }

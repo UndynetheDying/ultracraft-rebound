@@ -7,8 +7,14 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.structure.*;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Heightmap;
+import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.world.gen.StructureAccessor;
+import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.structure.Structure;
 import net.minecraft.world.gen.structure.StructureType;
 
@@ -56,6 +62,13 @@ public class LimboRuinStructure extends Structure
 		public Piece(StructureContext structureContext, NbtCompound nbt)
 		{
 			super(StructureRegistry.LIMBO_RUIN_PIECE, structureContext, nbt);
+		}
+		
+		@Override
+		public void generate(StructureWorldAccess world, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, Random random, BlockBox chunkBox, ChunkPos chunkPos, BlockPos pivot)
+		{
+			pos = startPos.down();
+			super.generate(world, structureAccessor, chunkGenerator, random, chunkBox, chunkPos, pivot);
 		}
 	}
 }
