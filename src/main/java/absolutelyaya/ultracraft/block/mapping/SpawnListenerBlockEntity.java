@@ -1,7 +1,6 @@
 package absolutelyaya.ultracraft.block.mapping;
 
 import absolutelyaya.ultracraft.Ultracraft;
-import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.entity.demon.CerberusEntity;
 import absolutelyaya.ultracraft.entity.demon.HideousMassEntity;
 import absolutelyaya.ultracraft.entity.demon.MaliciousFaceEntity;
