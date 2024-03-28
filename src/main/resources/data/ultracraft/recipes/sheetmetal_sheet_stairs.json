@@ -1,16 +1,17 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "##",
-    "##"
+    "#  ",
+    "## ",
+    "###"
   ],
   "key": {
     "#": {
-      "tag": "c:iron_bars"
+      "item": "ultracraft:sheetmetal_sheet"
     }
   },
   "result": {
-    "item": "ultracraft:vent_cover",
+    "item": "ultracraft:sheetmetal_sheet_stairs",
     "count": 4
   }
 }

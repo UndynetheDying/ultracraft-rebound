@@ -1,15 +1,15 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "##"
+    "###"
   ],
   "key": {
     "#": {
-      "tag": "ultracraft:foliage"
+      "item": "ultracraft:concrete_tile"
     }
   },
   "result": {
-    "item": "ultracraft:flowerbed",
-    "count": 8
+    "item": "ultracraft:concrete_tile_slab",
+    "count": 6
   }
 }

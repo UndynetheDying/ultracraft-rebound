@@ -1,7 +1,7 @@
 {
   "type": "minecraft:stonecutting",
   "ingredient": {
-    "item": "ultracraft:adorned_railing"
+    "tag": "c:iron_bars"
   },
   "result": "minecraft:iron_bars",
   "count": 1

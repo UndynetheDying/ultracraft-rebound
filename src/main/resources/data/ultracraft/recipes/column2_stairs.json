@@ -1,16 +1,17 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "##",
-    "##"
+    "#  ",
+    "## ",
+    "###"
   ],
   "key": {
     "#": {
-      "tag": "c:iron_bars"
+      "item": "ultracraft:column2"
     }
   },
   "result": {
-    "item": "ultracraft:vent_cover",
+    "item": "ultracraft:column2_stairs",
     "count": 4
   }
 }

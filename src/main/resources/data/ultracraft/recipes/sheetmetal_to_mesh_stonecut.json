@@ -1,8 +1,8 @@
 {
   "type": "minecraft:stonecutting",
   "ingredient": {
-    "tag": "c:iron_bars"
+    "tag": "ultracraft:sheetmetal_blocks"
   },
-  "result": "ultracraft:adorned_railing",
+  "result": "ultracraft:mesh",
   "count": 1
 }
