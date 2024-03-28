@@ -438,9 +438,9 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 		{
 			return switch (mob.getTargetDistance())
 			{
-				case 1 -> 6;
+				case 1 -> 2;
 				case 2 -> 4;
-				case 3 -> 2;
+				case 3 -> 6;
 				default -> 10;
 			};
 		}
@@ -483,9 +483,9 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 		{
 			return switch (mob.getTargetDistance())
 			{
-				case 1 -> 2;
+				case 1 -> 4;
 				case 2 -> 3;
-				case 3 -> 4;
+				case 3 -> 2;
 				default -> 10;
 			};
 		}
@@ -551,9 +551,9 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 		{
 			return switch (mob.getTargetDistance())
 			{
-				case 1 -> 1;
+				case 1 -> 6;
 				case 2 -> 3;
-				case 3 -> 6;
+				case 3 -> 1;
 				default -> 10;
 			};
 		}

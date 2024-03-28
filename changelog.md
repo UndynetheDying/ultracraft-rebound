@@ -152,6 +152,7 @@
   - for example, **obtaining** a Piercer Revolver through any method (crafting, commands, progression triggers, whatever) will unlock the recipes for the Marksman and Sharpshooter Revolvers
 - Added initial attack cooldown to Cancerous Rodent
 - Cancerous Rodent is now immune to Cancer and Fire Damage
+- Fixed Cerberus Distance//Attack Priorities being flipped
 ## Settings & Config
 - Removed all gamerules
 - Added Option to disable Screenshake
