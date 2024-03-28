@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.entity.demon;
 
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
+import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.entity.goal.TargetPlayerGoal;
 import absolutelyaya.ultracraft.entity.projectile.CancerBulletEntity;
@@ -12,6 +13,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -61,7 +63,7 @@ public class RodentEntity extends AbstractUltraHostileEntity implements GeoEntit
 	{
 		super.initDataTracker();
 		dataTracker.startTracking(SIZE, 0);
-		dataTracker.startTracking(ATTACK_COOLDOWN, 0);
+		dataTracker.startTracking(ATTACK_COOLDOWN, 50);
 	}
 	
 	@Override
@@ -203,6 +205,20 @@ public class RodentEntity extends AbstractUltraHostileEntity implements GeoEntit
 	{
 		if(getSize() == 0)
 			super.takeKnockback(strength, x, z);
+	}
+	
+	@Override
+	public boolean damage(DamageSource source, float amount)
+	{
+		if(source.isOf(DamageSources.CANCER))
+			return false;
+		return super.damage(source, amount);
+	}
+	
+	@Override
+	public boolean isFireImmune()
+	{
+		return true;
 	}
 	
 	static class RodentAttackGoal extends Goal

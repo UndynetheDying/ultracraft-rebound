@@ -150,6 +150,8 @@
 - Added Unlock Logic to Progression System
   - **obtaining** a progression entry that would **unlock** other progression entries, will now automatically do so
   - for example, **obtaining** a Piercer Revolver through any method (crafting, commands, progression triggers, whatever) will unlock the recipes for the Marksman and Sharpshooter Revolvers
+- Added initial attack cooldown to Cancerous Rodent
+- Cancerous Rodent is now immune to Cancer and Fire Damage
 ## Settings & Config
 - Removed all gamerules
 - Added Option to disable Screenshake
