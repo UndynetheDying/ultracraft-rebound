@@ -1,8 +1,8 @@
 {
   "materials": [
     { "item": "minecraft:iron_ingot", "count": 32 },
-    { "item": "minecraft:redstone", "count": 69 },
-    { "item": "minecraft:ender_eye", "count": 8 }
+    { "item": "minecraft:redstone", "count": 32 },
+    { "item": "minecraft:ender_eye", "count": 4 }
   ],
   "result": "ultracraft:sharpshooter_revolver",
   "extra-output": [],

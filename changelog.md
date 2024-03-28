@@ -234,6 +234,7 @@
     - Overpump Explosion Damage (15 -> 20)
     - Overpump Explosion Damage Falloff (0 -> 16.6)
     - Pumps now actually decrease accuracy
+- made sharpshooter cheaper
 ## Minor Changes
 - Fixed water skimming not playing sounds
 - Removed the "vents" MOTD from the non-essential resources
