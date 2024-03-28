@@ -89,6 +89,17 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 	}
 	
 	@Override
+	public void reset()
+	{
+		super.reset();
+		entities.forEach(e -> {
+			if(e != null && e.isAlive())
+				e.remove(Entity.RemovalReason.DISCARDED);
+		});
+		entities.clear();
+	}
+	
+	@Override
 	public float getAreaLabelSize()
 	{
 		return 0f;
