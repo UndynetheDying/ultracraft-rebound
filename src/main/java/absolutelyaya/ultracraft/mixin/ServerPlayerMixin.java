@@ -18,12 +18,14 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.stat.Stat;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.GameMode;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
@@ -40,6 +42,8 @@ public abstract class ServerPlayerMixin extends PlayerEntity
 	@Shadow public abstract boolean isSpectator();
 	
 	@Shadow public abstract void onRecipeCrafted(Recipe<?> recipe, List<ItemStack> ingredients);
+	
+	@Shadow public abstract boolean isCreative();
 	
 	@ModifyReturnValue(method = "getSpawnPointPosition", at = @At("RETURN"))
 	BlockPos onGetSpawnPoint(BlockPos original)
@@ -100,5 +104,11 @@ public abstract class ServerPlayerMixin extends PlayerEntity
 		if(instance.getWorld().getRegistryKey().equals(LevelManager.WORLD_KEY) || UltraComponents.WINGED.get(instance).getLastCheckpoint() != null)
 			return true;
 		return original.call(instance);
+	}
+	
+	@Inject(method = "changeGameMode", at = @At("TAIL"))
+	void onSetGameMode(GameMode gameMode, CallbackInfoReturnable<Boolean> cir)
+	{
+		UltraComponents.LEVEL_STATS.get(this).setInvalid();
 	}
 }

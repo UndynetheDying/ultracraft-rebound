@@ -53,4 +53,8 @@ public interface ILevelStatsComponent extends ComponentV3
 	int getBestRank(Identifier levelId);
 	
 	void setBestRank(Identifier levelId, int rank);
+	
+	void setInvalid();
+	
+	boolean isInvalid();
 }

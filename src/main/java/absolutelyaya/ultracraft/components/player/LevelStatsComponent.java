@@ -32,7 +32,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	HashMap<Identifier, Integer> bestRanks = new HashMap<>();
 	Identifier currentLevel;
 	String currentLevelInstance;
-	boolean fighting, undamaged;
+	boolean fighting, undamaged, invalid;
 	int fightCheckCooldown, deaths, kills;
 	float style;
 	long timerStart = -1, lastStoppedTimer = -1;
@@ -49,6 +49,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 		style = 0;
 		lastStoppedTimer = -1;
 		undamaged = true;
+		invalid = false;
 		stopTimer(true);
 		String lastInstance = currentLevelInstance; //prevents infinite loop when rescuing from null instance
 		currentLevelInstance = instance;
@@ -124,7 +125,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	@Override
 	public void setBestTime(Identifier levelId, boolean perfect, long time)
 	{
-		if(time == -1)
+		if(time == -1 || isInvalid())
 			return;
 		Pair<Long, Long> pb = bestTimes.getOrDefault(levelId, new Pair<>(-1L, -1L));
 		boolean pbChanged = false;
@@ -263,6 +264,8 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 			bestRanks.remove(levelId);
 			return;
 		}
+		if(isInvalid())
+			return;
 		//lower is better!! P-Rank == 0
 		if(bestRanks.containsKey(levelId) && bestRanks.get(levelId) <= rank)
 			return;
@@ -274,6 +277,18 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 			buf.writeByte(rank);
 			ClientPlayNetworking.send(PacketRegistry.SUBMIT_BEST_RANK_PACKET_ID, buf);
 		}
+	}
+	
+	@Override
+	public void setInvalid()
+	{
+		invalid = true;
+		UltraComponents.LEVEL_STATS.sync(provider);
+	}
+	
+	public boolean isInvalid()
+	{
+		return invalid || provider.isCreative() || provider.isSpectator();
 	}
 	
 	@Override
@@ -291,6 +306,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 			deaths = tag.getInt("deaths");
 		if(tag.contains("kills", NbtElement.INT_TYPE))
 			kills = tag.getInt("kills");
+		invalid = tag.contains("invalid", NbtElement.BYTE_TYPE);
 		if(tag.contains("bestTimes", NbtElement.COMPOUND_TYPE))
 		{
 			bestTimes.clear();
@@ -326,6 +342,8 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 		tag.putFloat("style", style);
 		tag.putInt("deaths", deaths);
 		tag.putInt("kills", kills);
+		if(invalid)
+			tag.putBoolean("invalid", true);
 		if(bestTimes != null)
 		{
 			NbtCompound records = new NbtCompound();
