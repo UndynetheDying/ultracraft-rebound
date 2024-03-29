@@ -17,6 +17,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -319,7 +320,7 @@ public class LevelManager extends DimensionManager
 	@Override
 	public ActionResult onBlockInteract(PlayerEntity player, World world, Hand hand, BlockHitResult hit)
 	{
-		return ActionResult.PASS;
+		return player.isCreative() || !(player.getStackInHand(hand).getItem() instanceof BlockItem) ? ActionResult.PASS : ActionResult.FAIL;
 	}
 	
 	@Override
