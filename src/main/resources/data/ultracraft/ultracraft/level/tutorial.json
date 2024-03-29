@@ -10,5 +10,6 @@
     "z": 5
   },
   "spawn-rot": -90,
-  "version": 1
+  "version": 1,
+  "next-level": "ultracraft:prelude1"
 }
