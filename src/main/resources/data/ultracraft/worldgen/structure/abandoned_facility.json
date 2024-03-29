@@ -1,6 +1,6 @@
 {
   "type": "ultracraft:abandoned_facility",
-  "biomes": "#minecraft:is_overworld",
+  "biomes": "#ultracraft:has_abandoned_facility",
   "step": "surface_structures",
   "spawn_overrides": {},
   "terrain_adaptation": "none"
