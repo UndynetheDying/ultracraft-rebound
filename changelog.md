@@ -192,7 +192,7 @@
 - Malicious Face Buff
   - Beam Attack is now much Quicker to be more accurate to the original timing (100 -> 70 ticks)
   - Slightly Buffed movement Speed (0.4 -> 0.5)
-- Increased Parry Range (0.9 -> 2.0)
+- Increased Parry Range (0.9 -> 3.0)
 - Increased Coin Punch Range (0.9 -> 4.0)
 - Players are now exempt from damage boost (mod damage is multiplied by 2.5 towards non-mod entities, with some exceptions)
 - Nerfed Cerberus to be closer to the Original

@@ -24,7 +24,7 @@ public class ServerConfig extends Config
 	public final BooleanEntry bloodSaturation = new BooleanEntry("BloodSaturation", false);
 	public final BooleanEntry dodgeableOverpump = new BooleanEntry("DodgeableOverpump", false);
 	public final BooleanEntry customLevelsUnlocked = new BooleanEntry("UnlockAllCustomLevels", true);
-	public final FloatEntry parryRange = (FloatEntry)new FloatEntry("ParryRange", 2f).setRange(0f, Float.MAX_VALUE);
+	public final FloatEntry parryRange = (FloatEntry)new FloatEntry("ParryRange", 3f).setRange(0f, Float.MAX_VALUE);
 	public final FloatEntry coinPunchRange = (FloatEntry)new FloatEntry("CoinPunchRange", 4f).setRange(0f, Float.MAX_VALUE);
 	//Weapon Damage
 	public final FloatEntry feedbackerDamage = (FloatEntry)new FloatEntry("FeedbackerDamage", 1f).setRange(0f, Float.MAX_VALUE);
