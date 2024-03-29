@@ -179,6 +179,8 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 			{
 				getAttributes().addTemporaryModifiers(enragedModifiers);
 				dataTracker.set(ANIMATION, ANIMATION_IDLE);
+				if(dataTracker.get(BOSS_TYPE) == 1)
+					remove(RemovalReason.KILLED);
 			}
 			if(t == 0)
 				getAttributes().removeModifiers(enragedModifiers);
