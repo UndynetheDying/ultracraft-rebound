@@ -160,9 +160,9 @@ public class LevelRankingScreen extends AbstractTravelScreen
 		matrices.translate(2, 2, 0);
 		context.drawText(textRenderer, header, 0, 0, 0xffffffff, true);
 		matrices.push();
-		matrices.translate(13, textRenderer.fontHeight + 2, 0);
+		matrices.translate(0, textRenderer.fontHeight + 2, 0);
 		if(indentValue)
-			matrices.translate(13, 0, 0);
+			matrices.translate(23, 0, 0);
 		context.drawText(textRenderer, value, 0, 0, 0xffffffff, true);
 		matrices.pop();
 		if(rank > -1)

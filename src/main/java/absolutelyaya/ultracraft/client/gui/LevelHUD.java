@@ -26,13 +26,17 @@ public class LevelHUD
 	
 	public void render(DrawContext context, float tickDelta)
 	{
-		ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(MinecraftClient.getInstance().player);
+		MinecraftClient client = MinecraftClient.getInstance();
+		ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(client.player);
+		boolean gamePaused = client.isPaused();
+		if(gamePaused != levelStats.isTimerPaused())
+			levelStats.setTimerPaused(gamePaused);
 		if(levelStats.isTimerRunning())
 			renderTimer(context, levelStats.getElapsedTimer());
 		else if(displayFinishedTimer > 0)
 			renderTimer(context, last);
 		if(displayFinishedTimer > 0)
-			displayFinishedTimer -= MinecraftClient.getInstance().getLastFrameDuration() / 30f;
+			displayFinishedTimer -= client.getLastFrameDuration() / 30f;
 	}
 	
 	public void initTimer(Pair<Long, Long> pb, long[] rankRequirements)

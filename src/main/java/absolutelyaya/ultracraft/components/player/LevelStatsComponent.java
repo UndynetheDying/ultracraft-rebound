@@ -35,7 +35,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	boolean fighting, undamaged, invalid;
 	int fightCheckCooldown, deaths, kills;
 	float style;
-	long timerStart = -1, lastStoppedTimer = -1;
+	long timerStart = -1, lastStoppedTimer = -1, timerPause = -1;
 	
 	public LevelStatsComponent(PlayerEntity provider)
 	{
@@ -100,6 +100,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 		if(currentLevel == null)
 			return;
 		timerStart = System.currentTimeMillis();
+		timerPause = -1;
 		if(provider.getWorld().isClient)
 			LevelHUD.Instance.initTimer(bestTimes.getOrDefault(currentLevel, new Pair<>(-1L, -1L)), getLevelData(currentLevel).getTimeRanks());
 	}
@@ -120,6 +121,36 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 				LevelHUD.Instance.stopTimer();
 		}
 		timerStart = -1;
+	}
+	
+	@Override
+	public void setTimerPaused(boolean v)
+	{
+		if(v && !isTimerPaused() && isTimerRunning())
+			timerPause = System.currentTimeMillis();
+		else if(isTimerPaused() && isTimerRunning())
+		{
+			timerStart += System.currentTimeMillis() - timerPause;
+			timerPause = -1;
+		}
+	}
+	
+	@Override
+	public boolean isTimerPaused()
+	{
+		return timerPause != -1;
+	}
+	
+	@Override
+	public long getElapsedTimer()
+	{
+		if(!isTimerRunning())
+			return -1;
+		long time = System.currentTimeMillis();
+		if(timerPause == -1)
+			return time - timerStart;
+		else
+			return (time - timerStart) - (time - timerPause);
 	}
 	
 	@Override
@@ -155,23 +186,9 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	}
 	
 	@Override
-	public long getElapsedTimer()
-	{
-		if(!isTimerRunning())
-			return -1;
-		return System.currentTimeMillis() - timerStart;
-	}
-	
-	@Override
 	public long getLastStoppedTimer()
 	{
 		return lastStoppedTimer;
-	}
-	
-	@Override
-	public boolean isPerfect()
-	{
-		return deaths == 0;
 	}
 	
 	@Override
@@ -307,6 +324,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 		if(tag.contains("kills", NbtElement.INT_TYPE))
 			kills = tag.getInt("kills");
 		invalid = tag.contains("invalid", NbtElement.BYTE_TYPE);
+		undamaged = tag.contains("undamaged", NbtElement.BYTE_TYPE);
 		if(tag.contains("bestTimes", NbtElement.COMPOUND_TYPE))
 		{
 			bestTimes.clear();
@@ -344,6 +362,8 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 		tag.putInt("kills", kills);
 		if(invalid)
 			tag.putBoolean("invalid", true);
+		if(undamaged)
+			tag.putBoolean("undamaged", undamaged);
 		if(bestTimes != null)
 		{
 			NbtCompound records = new NbtCompound();

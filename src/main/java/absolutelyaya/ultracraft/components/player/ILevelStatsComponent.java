@@ -20,13 +20,21 @@ public interface ILevelStatsComponent extends ComponentV3
 	
 	void stopTimer(boolean interrupted);
 	
-	void setBestTime(Identifier levelId, boolean perfect, long time);
+	/**
+	 * Client only; this isn't networked
+	 */
+	void setTimerPaused(boolean v);
+	
+	/**
+	 * Client only; this isn't networked
+	 */
+	boolean isTimerPaused();
 	
 	long getElapsedTimer();
 	
-	long getLastStoppedTimer();
+	void setBestTime(Identifier levelId, boolean perfect, long time);
 	
-	boolean isPerfect();
+	long getLastStoppedTimer();
 	
 	void onDeath();
 	
