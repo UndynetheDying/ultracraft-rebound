@@ -341,7 +341,10 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		if(dataTracker.get(DEAD))
 		{
 			if(source.isOf(DamageTypes.STARVE)) //starve because there's no way this damage would occur accidentally
+			{
 				setHealth(0);
+				return true;
+			}
 			if(source.isOf(DamageSources.SLAM) && !isInvulnerable())
 			{
 				setHealth(0);
@@ -353,7 +356,9 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 					getWorld().addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, Blocks.CHISELED_STONE_BRICKS.getDefaultState()),
 							x, y, z, 0f, 0f, 0f);
 				}
+				return true;
 			}
+			return false;
 		}
 		if(source.isOf(DamageTypes.FALL))
 			return false;
