@@ -99,14 +99,12 @@ public class UltraHudRenderer
 			matrices.pop();
 		}
 		
-		renderHotbar(matrices, client, cam, player, wingsActive, delta);
 		if(wings.isActive() && config.showStylePanel)
 			renderStyle(matrices, client, player, Math.max(delta, 0f), MathHelper.clamp(styleTimer, 0f, 1f));
+		renderHotbar(matrices, client, cam, player, wingsActive, delta);
 		
 		if(whitelistHintDisplayTimer > 0.001f)
-		{
 			whitelistHintDisplayTimer -= delta / 20f;
-		}
 	}
 	
 	public void renderHotbar(MatrixStack matrices, MinecraftClient client, Camera cam, ClientPlayerEntity player, boolean wingsActive, float delta)
