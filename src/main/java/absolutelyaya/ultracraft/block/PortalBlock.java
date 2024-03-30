@@ -45,7 +45,7 @@ public class PortalBlock extends Block
 	@Override
 	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit)
 	{
-		if(!world.isClient)
+		if(!world.isClient && !player.isSpectator())
 		{
 			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 			buf.writeBoolean(false);
