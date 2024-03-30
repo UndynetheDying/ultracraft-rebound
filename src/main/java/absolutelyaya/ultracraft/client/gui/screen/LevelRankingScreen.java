@@ -11,7 +11,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -43,7 +42,7 @@ public class LevelRankingScreen extends AbstractTravelScreen
 			timeRank = data.getRankForTime(time);
 			killRank = data.getRankForKills(levelStats.getKills());
 			styleRank = data.getRankForStyle(levelStats.getStyle());
-			finalRank = (int)Math.ceil((timeRank + killRank + styleRank) / 3f);
+			finalRank = (int)Math.ceil(((timeRank == -1 ? 5 : timeRank) + killRank + styleRank) / 3f);
 			if(levelStats.getDeaths() > 0)
 				finalRank++;
 			levelStats.setBestRank(levelStats.getCurrentLevel(), finalRank);
@@ -102,7 +101,8 @@ public class LevelRankingScreen extends AbstractTravelScreen
 		matrices.push();
 		matrices.translate(width / 2f - 92, height / 2f - 59, 0f);
 		//time
-		Text time = Text.of(TimeUtil.milliToString(levelStats.getLastStoppedTimer()));
+		long stoppedTime = levelStats.getLastStoppedTimer();
+		Text time = stoppedTime == -1 ? Text.translatable("screen.ultracraft.ranking.untracked") : Text.of(TimeUtil.milliToString(stoppedTime));
 		drawPanel(context, Text.translatable("screen.ultracraft.ranking.time"), time, true, timeRank, 0.5f, 0.1f);
 		//kills
 		matrices.translate(0, 25, 0);

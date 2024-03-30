@@ -663,6 +663,7 @@
   "screen.ultracraft.level.pb-time":  "Any Rank: %s",
   "screen.ultracraft.level.music-hint": "This Level has Music!",
   "screen.ultracraft.ranking.time":"Time:",
+  "screen.ultracraft.ranking.untracked":"untracked",
   "screen.ultracraft.ranking.kills": "Kills:",
   "screen.ultracraft.ranking.style": "Style:",
   "screen.ultracraft.ranking.secrets": "Secrets:",
