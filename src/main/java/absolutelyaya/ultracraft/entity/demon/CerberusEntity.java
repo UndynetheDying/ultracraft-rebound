@@ -90,10 +90,10 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 	@Override
 	protected void initGoals()
 	{
+		targetSelector.add(0, new StepOnMeUwUGoal(this));
+		targetSelector.add(0, new RamAttackGoal(this));
 		targetSelector.add(0, new ThrowAttackGoal(this));
-		targetSelector.add(1, new RamAttackGoal(this));
-		targetSelector.add(2, new StepOnMeUwUGoal(this));
-		targetSelector.add(3, new ApproachTargetGoal(this));
+		targetSelector.add(1, new ApproachTargetGoal(this));
 		
 		targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
 	}
@@ -234,10 +234,10 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 	
 	int getTargetDistance()
 	{
-		double sqrDist = squaredDistanceTo(getTarget());
-		if(sqrDist > 24 * 24)
+		double dist = getBoundingBox().getCenter().distanceTo(getTarget().getPos());
+		if(dist > 6)
 			return 3;
-		else if(sqrDist > 14 * 14)
+		else if(dist > 3)
 			return 2;
 		else
 			return 1;
@@ -431,16 +431,18 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 		@Override
 		public boolean canStart()
 		{
-			return super.canStart() && mob.getRandom().nextInt(likelyhoodPerDistance()) == 0;
+			if(super.canStart())
+				return mob.getRandom().nextInt(likelyhoodPerDistance()) == 0;
+			return false;
 		}
 		
 		int likelyhoodPerDistance()
 		{
 			return switch (mob.getTargetDistance())
 			{
-				case 1 -> 2;
-				case 2 -> 4;
-				case 3 -> 6;
+				case 1 -> 16;
+				case 2 -> 5;
+				case 3 -> 2;
 				default -> 10;
 			};
 		}
@@ -476,7 +478,9 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 		@Override
 		public boolean canStart()
 		{
-			return super.canStart() && mob.getRandom().nextInt(likelyhoodPerDistance()) == 0;
+			if(super.canStart())
+				return mob.getRandom().nextInt(likelyhoodPerDistance()) == 0;
+			return false;
 		}
 		
 		int likelyhoodPerDistance()
@@ -484,8 +488,8 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 			return switch (mob.getTargetDistance())
 			{
 				case 1 -> 4;
-				case 2 -> 3;
-				case 3 -> 2;
+				case 2 -> 2;
+				case 3 -> 8;
 				default -> 10;
 			};
 		}
@@ -544,16 +548,18 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 		@Override
 		public boolean canStart()
 		{
-			return super.canStart() && mob.getRandom().nextInt(likelyhoodPerDistance()) == 0;
+			if(super.canStart())
+				return mob.getRandom().nextInt(likelyhoodPerDistance()) == 0;
+			return false;
 		}
 		
 		int likelyhoodPerDistance()
 		{
 			return switch (mob.getTargetDistance())
 			{
-				case 1 -> 6;
-				case 2 -> 3;
-				case 3 -> 1;
+				case 1 -> 2;
+				case 2 -> 8;
+				case 3 -> 18;
 				default -> 10;
 			};
 		}
