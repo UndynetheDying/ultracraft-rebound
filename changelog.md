@@ -238,7 +238,9 @@
     - Overpump Explosion Damage (15 -> 20)
     - Overpump Explosion Damage Falloff (0 -> 16.6)
     - Pumps now actually decrease accuracy
-- made sharpshooter cheaper
+- Made sharpshooter cheaper
+- Reduced Core Eject alt fire charge time (30 -> 20 ticks // 1.5 -> 1 second)
+- Reduced Marksman Coin recharge time (200 -> 100 ticks // 10 -> 5 seconds)
 ## Minor Changes
 - Fixed water skimming not playing sounds
 - Removed the "vents" MOTD from the non-essential resources

@@ -100,7 +100,7 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 		{
 			setNbt(stack, "coins", coins + 1);
 			if(coins + 1 < 4)
-				cdm.setCooldown(this, 200, GunCooldownManager.SECONDARY);
+				cdm.setCooldown(this, getMarksmanRechargeTime(), GunCooldownManager.SECONDARY);
 			player.playSound(SoundRegistry.REVOLVER_ALT_CHARGE, 0.1f, 1.75f);
 		}
 		//Sharpshooter Charges Tick
@@ -154,6 +154,11 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 	protected float getPrimaryDamage()
 	{
 		return isAlternate() ? 2.5f : 2f;
+	}
+	
+	protected int getMarksmanRechargeTime()
+	{
+		return 100;
 	}
 	
 	protected int getSharpshooterRechargeTime()

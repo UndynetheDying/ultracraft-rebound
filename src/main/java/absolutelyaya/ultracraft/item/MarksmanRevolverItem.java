@@ -77,7 +77,7 @@ public class MarksmanRevolverItem extends AbstractRevolverItem
 		if(!world.isClient && coins > 0)
 		{
 			if(coins == 4)
-				cdm.setCooldown(this, 200, GunCooldownManager.SECONDARY);
+				cdm.setCooldown(this, getMarksmanRechargeTime(), GunCooldownManager.SECONDARY);
 			setNbt(itemStack, "coins", coins - 1);
 			user.playSound(SoundRegistry.COIN_TOSS, 0.1f, 1.75f);
 		}

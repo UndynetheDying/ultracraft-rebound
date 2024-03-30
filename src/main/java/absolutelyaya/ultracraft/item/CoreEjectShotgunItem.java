@@ -131,7 +131,7 @@ public class CoreEjectShotgunItem extends AbstractShotgunItem
 	@Override
 	public int getMaxUseTime(ItemStack stack)
 	{
-		return 30;
+		return 20;
 	}
 	
 	@Override
