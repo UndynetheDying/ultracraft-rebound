@@ -3,23 +3,26 @@ package absolutelyaya.ultracraft.entity.demon;
 import absolutelyaya.goop.particles.GoopStringParticleEffect;
 import absolutelyaya.ultracraft.ExplosionHandler;
 import absolutelyaya.ultracraft.ServerHitscanHandler;
+import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.Enrageable;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.accessor.MeleeInterruptable;
-import absolutelyaya.ultracraft.client.UltracraftClient;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
+import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraFlyingEntity;
+import absolutelyaya.ultracraft.entity.goal.TargetPlayerGoal;
 import absolutelyaya.ultracraft.entity.other.ShockwaveEntity;
 import absolutelyaya.ultracraft.entity.projectile.HellBulletEntity;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
-import absolutelyaya.ultracraft.registry.GameruleRegistry;
 import absolutelyaya.ultracraft.registry.ParticleRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.control.LookControl;
 import net.minecraft.entity.ai.control.MoveControl;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -31,47 +34,52 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.Heightmap;
-import net.minecraft.world.World;
+import net.minecraft.world.*;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
 import java.util.List;
 
 public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements MeleeInterruptable, Enrageable
 {
+	protected static final float BOSS_HEALTH = 50f, REGULAR_HEALTH = 30f, CRACK_THRESHOLD = 0.5f;
 	protected static final TrackedData<Integer> ATTACK_COOLDOWN = DataTracker.registerData(MaliciousFaceEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Boolean> CRACKED = DataTracker.registerData(MaliciousFaceEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	protected static final TrackedData<Boolean> DEAD = DataTracker.registerData(MaliciousFaceEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+	protected static final TrackedData<Boolean> DECORATIVE = DataTracker.registerData(MaliciousFaceEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	protected static final TrackedData<Boolean> LANDED = DataTracker.registerData(MaliciousFaceEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	protected static final TrackedData<Boolean> WAS_INTERRUPTED = DataTracker.registerData(MaliciousFaceEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	protected static final TrackedData<Integer> CHARGE = DataTracker.registerData(MaliciousFaceEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	static final float DESIRED_HEIGHT = 3;
 	Vec2f deathRotation;
 	int deathTicks;
+	PlayerEntity killerPlayer;
 	
 	public MaliciousFaceEntity(EntityType<? extends AbstractUltraFlyingEntity> entityType, World world)
 	{
 		super(entityType, world);
 		this.moveControl = new MaliciousMoveControl(this);
+		this.lookControl = new MaliciousLookControl(this);
 		((LivingEntityAccessor)this).setTakePunchKnockbackSupplier(() -> false); //disable knockback
 	}
 	
 	public static DefaultAttributeContainer.Builder getDefaultAttributes()
 	{
 		return HostileEntity.createMobAttributes()
-					   .add(EntityAttributes.GENERIC_MAX_HEALTH, 30.0d)
-					   .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.4d)
+					   .add(EntityAttributes.GENERIC_MAX_HEALTH, 50.0d)
+					   .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.5d)
 					   .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 0.0d)
 					   .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 64)
 					   .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 1.0);
@@ -81,12 +89,12 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	protected void initGoals()
 	{
 		goalSelector.add(0, new MaliciousBeamGoal(this));
-		goalSelector.add(1, new MaliciousSalvaeGoal(this));
+		goalSelector.add(1, new MaliciousSalvoGoal(this));
 		goalSelector.add(2, new SpreadOutGoal(this));
 		goalSelector.add(3, new HoverIntoSightGoal(this));
 		goalSelector.add(4, new GainHeightGoal(this));
 		
-		targetSelector.add(0, new ActiveTargetGoal<>(this, PlayerEntity.class, 4, false, false, (a) -> true));
+		targetSelector.add(1, new TargetPlayerGoal(this));
 	}
 	
 	@Override
@@ -96,6 +104,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		dataTracker.startTracking(ATTACK_COOLDOWN, 100);
 		dataTracker.startTracking(CRACKED, false);
 		dataTracker.startTracking(DEAD, false);
+		dataTracker.startTracking(DECORATIVE, false);
 		dataTracker.startTracking(LANDED, false);
 		dataTracker.startTracking(WAS_INTERRUPTED, false);
 		dataTracker.startTracking(CHARGE, 0);
@@ -116,8 +125,14 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 				getWorld().addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, Blocks.CHISELED_STONE_BRICKS.getDefaultState()),
 						x, y, z, 0f, 0f, 0f);
 			}
-			if(getWorld().getDifficulty().equals(Difficulty.HARD) || getWorld().getGameRules().getBoolean(GameruleRegistry.EFFECTIVELY_VIOLENT))
+			if(getWorld().getDifficulty().equals(Difficulty.HARD) || ServerConfig.INSTANCE.effectivelyViolent.getValue())
+			{
 				playSound(SoundRegistry.GENERIC_ENRAGE, 1.5f, 0.9f);
+				if(!getWorld().isClient)
+					getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(32), i -> true)
+							.forEach(p -> UltraComponents.STYLE.get(p)
+												  .styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "enrage"))));
+			}
 		}
 		else if(data.equals(LANDED) && dataTracker.get(LANDED))
 		{
@@ -135,6 +150,33 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 			deathRotation = new Vec2f(getPitch(), getYaw());
 			((LivingEntityAccessor)this).setCanBleedSupplier(() -> false); //disable bleeding
 		}
+		else if(data.equals(BOSS))
+		{
+			float health = getTrueMaxHealth();
+			if(getHealth() != health)
+				setHealth(health);
+		}
+	}
+	
+	@Override
+	public @Nullable EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt)
+	{
+		onTrackedDataSet(BOSS);
+		return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
+	}
+	
+	public static MaliciousFaceEntity spawnAsBoss(World world, Vec3d pos)
+	{
+		MaliciousFaceEntity face = new MaliciousFaceEntity(EntityRegistry.MALICIOUS_FACE, world);
+		face.setPosition(pos);
+		face.dataTracker.set(BOSS, true);
+		world.spawnEntity(face);
+		return face;
+	}
+	
+	public float getTrueMaxHealth()
+	{
+		return isBoss() ? BOSS_HEALTH : REGULAR_HEALTH;
 	}
 	
 	@Override
@@ -162,16 +204,37 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		super.writeCustomDataToNbt(nbt);
 		nbt.putBoolean("cracked", dataTracker.get(CRACKED));
 		nbt.putBoolean("dead", dataTracker.get(DEAD));
+		nbt.putBoolean("decorative", dataTracker.get(DECORATIVE));
+		nbt.putBoolean("landed", dataTracker.get(LANDED));
 	}
 	
 	@Override
 	public void readNbt(NbtCompound nbt)
 	{
 		super.readNbt(nbt);
-		if(nbt.contains("cracked"))
+		if(nbt.contains("cracked", NbtElement.BYTE_TYPE))
 			dataTracker.set(CRACKED, nbt.getBoolean("cracked"));
-		if(nbt.contains("dead"))
+		if(nbt.contains("dead", NbtElement.BYTE_TYPE))
 			dataTracker.set(DEAD, nbt.getBoolean("dead"));
+		if(nbt.contains("decorative", NbtElement.BYTE_TYPE))
+		{
+			boolean b = nbt.getBoolean("decorative");
+			dataTracker.set(DECORATIVE, b);
+			if(b)
+			{
+				drop();
+				setVelocity(0, 0, 0);
+				setInvulnerable(true);
+			}
+		}
+		if(nbt.contains("landed", NbtElement.BYTE_TYPE))
+			dataTracker.set(LANDED, nbt.getBoolean("landed"));
+	}
+	
+	@Override
+	public boolean cannotDespawn()
+	{
+		return super.cannotDespawn() || dataTracker.get(DECORATIVE);
 	}
 	
 	@Override
@@ -233,7 +296,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 			double x = random.nextDouble() * dimensions.width - dimensions.width / 2 + getX();
 			double y = random.nextDouble() * dimensions.height + getY();
 			double z = random.nextDouble() * dimensions.width - dimensions.width / 2 + getZ();
-			if(rand.nextFloat() > 0.5f + getHealth() / getMaxHealth())
+			if(rand.nextFloat() > 0.5f + getHealth() / getTrueMaxHealth())
 				getWorld().addParticle(new GoopStringParticleEffect(new Vec3d(0.56, 0.09, 0.01),
 								0.4f + rand.nextFloat() * 0.2f, true), x, y, z,
 						0f, 0f, 0f);
@@ -256,12 +319,14 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	public void tick()
 	{
 		super.tick();
-		if(dataTracker.get(DEAD))
+		if(dataTracker.get(DEAD) && !dataTracker.get(DECORATIVE))
 		{
 			deathTicks++;
 			if(deathTicks > 200)
 				kill();
 		}
+		if(!dataTracker.get(DEAD) && dataTracker.get(DECORATIVE))
+			dataTracker.set(DEAD, true);
 	}
 	
 	@Override
@@ -269,15 +334,18 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	{
 		if(source.isIn(DamageTypeTags.IS_EXPLOSION))
 			return false;
-		if(source.isOf(DamageSources.POUND))
-			amount *= 2;
+		if(source.isOf(DamageSources.SLAM))
+			amount *= 3.5;
 		if(source.isOf(DamageSources.CHARGEBACK))
 			amount = 999;
 		if(dataTracker.get(DEAD))
 		{
 			if(source.isOf(DamageTypes.STARVE)) //starve because there's no way this damage would occur accidentally
+			{
 				setHealth(0);
-			if(source.isOf(DamageSources.POUND))
+				return true;
+			}
+			if(source.isOf(DamageSources.SLAM) && !isInvulnerable())
 			{
 				setHealth(0);
 				for (int i = 0; i < 32; i++)
@@ -288,6 +356,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 					getWorld().addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, Blocks.CHISELED_STONE_BRICKS.getDefaultState()),
 							x, y, z, 0f, 0f, 0f);
 				}
+				return true;
 			}
 			return false;
 		}
@@ -295,16 +364,39 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 			return false;
 		if(getHealth() - amount <= 0f && !dataTracker.get(DEAD))
 		{
-			dataTracker.set(DEAD, true);
-			setNoGravity(false);
-			setHealth(1);
-			setInvulnerable(true);
-			addVelocity(0f, 0.1f, 0f);
+			drop();
+			LivingEntity attacker = getAttacker();
+			if(!(attacker instanceof PlayerEntity) && source.getSource() instanceof LivingEntity living)
+				attacker = living;
+			if(attacker instanceof PlayerEntity playerAttacker)
+			{
+				StyleBonusManager.getBonuses().forEach((id, bonus) -> {
+					if(bonus.check(getWorld(), getType(), source.getType()))
+						UltraComponents.STYLE.get(playerAttacker).styleBonusGet(bonus);
+				});
+			}
+			if(source.getSource() instanceof PlayerEntity player)
+				killerPlayer = player;
+			else if(source.getAttacker() instanceof PlayerEntity player)
+				killerPlayer = player;
 			return false;
 		}
-		if(getHealth() - amount < getMaxHealth() / 2 && !dataTracker.get(CRACKED))
+		if(getHealth() - amount < getCrackThreshold() && !dataTracker.get(CRACKED))
 			dataTracker.set(CRACKED, true);
 		return super.damage(source, amount);
+	}
+	
+	float getCrackThreshold()
+	{
+		return getTrueMaxHealth() * CRACK_THRESHOLD;
+	}
+	
+	void drop()
+	{
+		dataTracker.set(DEAD, true);
+		setNoGravity(false);
+		setHealth(1);
+		addVelocity(0f, 0.1f, 0f);
 	}
 	
 	@Override
@@ -318,7 +410,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	{
 		if(dataTracker.get(DEAD) && onGround)
 		{
-			if(!getWorld().isClient)
+			if(!getWorld().isClient && !dataTracker.get(DECORATIVE))
 			{
 				ShockwaveEntity shockwave = new ShockwaveEntity(EntityRegistry.SHOCKWAVE, getWorld());
 				shockwave.setPosition(getBlockPos().toCenterPos().add(0, 0.5, 0));
@@ -328,11 +420,14 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 				shockwave.setGrowRate(0.5f);
 				getWorld().spawnEntity(shockwave);
 			}
-			List<Entity> entities = getWorld().getOtherEntities(this, getBoundingBox(), Entity::isLiving);
+			List<Entity> entities = getWorld().getOtherEntities(this, getBoundingBox().expand(0.5, 0.5, 0.5),
+					i -> i.isAlive() && !i.equals(killerPlayer));
 			for (Entity e : entities)
 				e.damage(DamageSources.get(getWorld(), DamageSources.MAURICE), 999f);
 			dataTracker.set(LANDED, true);
 			setPosition(getPos().subtract(0f, 0.5f, 0f));
+			if(dataTracker.get(CYBERGRIND))
+				kill();
 		}
 	}
 	
@@ -372,9 +467,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	
 	public boolean isEnraged()
 	{
-		if(getWorld().isClient)
-			return isCracked() && (getWorld().getDifficulty().equals(Difficulty.HARD) || UltracraftClient.isViolentFeaturesEnabled(getWorld()));
-		return isCracked() && (getWorld().getDifficulty().equals(Difficulty.HARD) || getWorld().getGameRules().getBoolean(GameruleRegistry.EFFECTIVELY_VIOLENT));
+		return isCracked() && (getWorld().getDifficulty().equals(Difficulty.HARD) || ServerConfig.INSTANCE.effectivelyViolent.getValue());
 	}
 	
 	@Override
@@ -432,7 +525,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	
 	private float getHealthPercent()
 	{
-		return getHealth() / getMaxHealth();
+		return getHealth() / getTrueMaxHealth();
 	}
 	
 	@Override
@@ -449,6 +542,11 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	public boolean isAlive()
 	{
 		return !dataTracker.get(DEAD);
+	}
+	
+	public boolean isDecorative()
+	{
+		return dataTracker.get(DECORATIVE);
 	}
 	
 	static class MaliciousMoveControl extends MoveControl
@@ -507,6 +605,21 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		{
 			Box box = face.getBoundingBox().offset(direction.multiply(0.5));
 			return !face.getWorld().isSpaceEmpty(face, box);
+		}
+	}
+	
+	static class MaliciousLookControl extends LookControl
+	{
+		public MaliciousLookControl(MobEntity entity)
+		{
+			super(entity);
+		}
+		
+		@Override
+		public void tick()
+		{
+			if(entity.isAlive())
+				super.tick();
 		}
 	}
 	
@@ -633,13 +746,13 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		}
 	}
 	
-	static class MaliciousSalvaeGoal extends Goal
+	static class MaliciousSalvoGoal extends Goal
 	{
 		final MaliciousFaceEntity face;
 		LivingEntity target;
 		int timer, shots;
 		
-		MaliciousSalvaeGoal(MaliciousFaceEntity face)
+		MaliciousSalvoGoal(MaliciousFaceEntity face)
 		{
 			this.face = face;
 		}
@@ -656,6 +769,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		public void start()
 		{
 			shots = 6;
+			face.dataTracker.set(ATTACK_COOLDOWN, 20);
 		}
 		
 		@Override
@@ -672,7 +786,6 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 				shots--;
 				timer = 2;
 				face.shootBullet(target);
-				face.dataTracker.set(ATTACK_COOLDOWN, 40 + (int)(face.random.nextFloat() * 60));
 			}
 		}
 		
@@ -681,13 +794,20 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		{
 			return shots > 0 && target != null && !face.dataTracker.get(DEAD);
 		}
+		
+		@Override
+		public void stop()
+		{
+			super.stop();
+			face.dataTracker.set(ATTACK_COOLDOWN, 30 + (int)(face.random.nextFloat() * 50));
+		}
 	}
 	
 	static class MaliciousBeamGoal extends Goal
 	{
 		final MaliciousFaceEntity face;
 		LivingEntity target;
-		int timer;
+		int timer, chargeTime = 70, interruptWindow = 20;
 		Vec3d lastTargetPos, targetPos;
 		boolean repeat;
 		
@@ -709,8 +829,8 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		@Override
 		public void start()
 		{
-			timer = 100;
-			face.dataTracker.set(ATTACK_COOLDOWN, 100);
+			timer = chargeTime;
+			face.dataTracker.set(ATTACK_COOLDOWN, chargeTime + 20);
 			face.dataTracker.set(WAS_INTERRUPTED, false);
 			repeat = face.isEnraged();
 		}
@@ -726,12 +846,12 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		{
 			if(face.isEnraged() && !repeat)
 			 	timer--; //double as quick when enraged and first shot was fired
-			if(--timer > 20)
+			if(--timer > interruptWindow)
 			{
-				face.dataTracker.set(CHARGE, 100 - timer);
+				face.dataTracker.set(CHARGE, chargeTime - timer);
 				lastTargetPos = target.getPos();
 			}
-			if(timer == 20)
+			if(timer == interruptWindow)
 			{
 				Vec3d dir = target.getPos().subtract(lastTargetPos);
 				if(dir.lengthSquared() < 0.01)
@@ -741,18 +861,18 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 				face.addParryIndicatorParticle(face.getRotationVector().multiply(1.5f), false, false);
 				face.playSound(SoundRegistry.MAURICE_BEAM_TELL, 2f, 1.75f);
 			}
-			if(timer < 20)
+			if(timer < interruptWindow)
 			{
 				if(targetPos != null)
 					face.lookControl.lookAt(targetPos);
-				face.dataTracker.set(CHARGE, 100 - timer);
+				face.dataTracker.set(CHARGE, chargeTime - timer);
 			}
 			if(timer <= 0)
 			{
 				ServerHitscanHandler.performHitscan(face, ServerHitscanHandler.MALICIOUS, 0, new ServerHitscanHandler.HitscanExplosionData(5.5f, 10f, 0f, true));
 				if(repeat)
 				{
-					timer = 22;
+					timer = interruptWindow + 2;
 					repeat = false;
 					return;
 				}

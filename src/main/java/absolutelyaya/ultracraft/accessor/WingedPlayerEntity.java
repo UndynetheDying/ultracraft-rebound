@@ -1,11 +1,13 @@
 package absolutelyaya.ultracraft.accessor;
 
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
+import absolutelyaya.ultracraft.config.HivelConfig;
 import absolutelyaya.ultracraft.entity.other.BackTank;
 import net.minecraft.util.math.Vec3d;
 
 public interface WingedPlayerEntity
 {
+	void initMovementConfig(HivelConfig config);
 	
 	Vec3d[] getWingPose();
 	
@@ -17,11 +19,9 @@ public interface WingedPlayerEntity
 	
 	Vec3d getSlideDir();
 	
-	void updateSpeedGamerule();
+	void updateSpeedConfig();
 	
-	void updateSpeedGamerule(boolean wingsActive);
-	
-	boolean hasJustJumped();
+	void updateSpeedConfig(boolean wingsActive);
 	
 	void setFocusedTerminal(TerminalBlockEntity terminal);
 	
@@ -32,4 +32,18 @@ public interface WingedPlayerEntity
 	void setBackTank(BackTank tank);
 	
 	BackTank getBacktank();
+	
+	float getScreenShake();
+	
+	void addScreenshake(float val);
+	
+	boolean isSliding();
+	
+	void setSliding(boolean v);
+	
+	boolean isSlamming();
+	
+	void setSlamming(boolean v);
+	
+	void onParry();
 }

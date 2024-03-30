@@ -3,14 +3,16 @@ package absolutelyaya.ultracraft;
 import absolutelyaya.ultracraft.accessor.EntityAccessor;
 import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.HitscanDamageSource;
+import absolutelyaya.ultracraft.entity.demon.HideousPart;
 import absolutelyaya.ultracraft.entity.other.AbstractOrbEntity;
 import absolutelyaya.ultracraft.entity.other.BackTank;
 import absolutelyaya.ultracraft.entity.projectile.IIgnoreSharpshooter;
 import absolutelyaya.ultracraft.entity.projectile.ThrownCoinEntity;
-import absolutelyaya.ultracraft.registry.GameruleRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.util.AutoAimUtil;
 import io.netty.buffer.Unpooled;
@@ -51,6 +53,7 @@ public class ServerHitscanHandler
 	public static final byte MALICIOUS = 5;
 	public static final byte COIN_RICOCHET = 6;
 	public static final byte SHARPSHOOTER = 7;
+	public static final byte SLAB = 8;
 	
 	static final Queue<IScheduledHitscan> scheduleAdditions = new ArrayDeque<>();
 	static final List<IScheduledHitscan> schedule = new ArrayList<>();
@@ -89,6 +92,16 @@ public class ServerHitscanHandler
 			ServerPlayNetworking.send(player, PacketRegistry.HITSCAN_PACKET_ID, buf);
 	}
 	
+	public static Hitscan makeBasicHitscan(LivingEntity user, byte type, float damage, RegistryKey<DamageType> damageType)
+	{
+		Vec3d origin = user.getEyePos();
+		Vec3d visualOrigin = origin.add(
+				new Vec3d(-0.5f * (user instanceof PlayerEntity player && player.getMainArm().equals(Arm.LEFT) ? -1 : 1), -0.2f, 0.4f)
+						.rotateX(-(float)Math.toRadians(user.getPitch())).rotateY(-(float) Math.toRadians(user.getYaw())));
+		Vec3d dest = user.getEyePos().add(user.getRotationVec(0.5f).multiply(64.0));
+		return new Hitscan(user, origin, visualOrigin, dest, type, damage, damageType);
+	}
+	
 	public static void performHitscan(LivingEntity user, byte type, float damage)
 	{
 		performHitscan(user, type, damage, 1, DamageSources.GUN, null);
@@ -108,7 +121,7 @@ public class ServerHitscanHandler
 	{
 		Vec3d origin = user.getEyePos();
 		Vec3d visualOrigin = origin.add(
-				new Vec3d(-0.5f * (user instanceof PlayerEntity player && player.getMainArm().equals(Arm.LEFT) ? -1 : 1), -0.2f, 0.4f)
+				new Vec3d(user instanceof PlayerEntity player ? (-0.5f * (player.getMainArm().equals(Arm.LEFT) ? -1 : 1)) : 0f, -0.2f, 0.4f)
 						.rotateX(-(float)Math.toRadians(user.getPitch())).rotateY(-(float) Math.toRadians(user.getYaw())));
 		Vec3d dest = user.getEyePos().add(user.getRotationVec(0.5f).multiply(64.0));
 		new Hitscan(user, origin, visualOrigin, dest, type, damage, damageType).maxHits(maxHits).explosion(explosion).perform();
@@ -123,10 +136,10 @@ public class ServerHitscanHandler
 		return !(entity instanceof ProjectileEntity || entity instanceof AbstractOrbEntity);
 	}
 	
-	static float getDamageMultipier(World world, byte type)
+	static float getDamageMultipier(byte type)
 	{
-		if(type == NORMAL || type == REVOLVER_PIERCE || type == COIN_RICOCHET || type == SHARPSHOOTER)
-			return world.getGameRules().getInt(GameruleRegistry.REVOLVER_DAMAGE);
+		if(type == NORMAL || type == REVOLVER_PIERCE || type == COIN_RICOCHET || type == SHARPSHOOTER || type == SLAB)
+			return ServerConfig.INSTANCE.revolverDamage.getValue();
 		return 1f;
 	}
 	
@@ -142,7 +155,7 @@ public class ServerHitscanHandler
 	
 	public static void performBouncingHitscan(Hitscan scan)
 	{
-		HitscanResult lastResult = scan.damageMult(getDamageMultipier(scan.owner.getWorld(), scan.type)).perform();
+		HitscanResult lastResult = scan.damageMult(getDamageMultipier(scan.type)).perform();
 		if(scan.bounces < scan.maxBounces)
 		{
 			if(lastResult.finalHit != null)
@@ -188,10 +201,11 @@ public class ServerHitscanHandler
 		public LivingEntity owner;
 		public Vec3d from, visualFrom, dest;
 		public byte type;
-		public float damage, autoAim = 0f, damageMultiplier;
+		public float damage, autoAim = 0f, damageMultiplier, damageIncrements;
 		public HitscanDamageSource damageSource;
-		public int maxHits = 1, bounces = 0, maxBounces = 0;
+		public int maxHits = 1, maxHitsPerEntity, bounces = 0, maxBounces = 0;
 		public HitscanExplosionData explosion = null;
+		boolean semiPierce, charged;
 		
 		public Hitscan(LivingEntity owner, Vec3d from, Vec3d visualFrom, Vec3d dest, byte type, float damage, RegistryKey<DamageType> damageType)
 		{
@@ -247,6 +261,49 @@ public class ServerHitscanHandler
 			return this;
 		}
 		
+		/**
+		 * Mainly used by the Alternate Revolvers to emulate their unique piercing behavior
+		 */
+		public Hitscan semiPierce(int maxHitsPerEntity, float damageIncrements)
+		{
+			this.maxHitsPerEntity = maxHitsPerEntity;
+			this.damageIncrements = damageIncrements;
+			this.semiPierce = maxHitsPerEntity > 1;
+			return this;
+		}
+		
+		/**
+		 * Marks a hitscans damage as being from an Alternate Revolver
+		 */
+		public Hitscan alternate()
+		{
+			damageSource.alternate();
+			return this;
+		}
+		
+		/**
+		 * Marks a hitscans damage as being from an alternate Marksman; or on other words, performing coin splits should reset all hammers on the revolver
+		 */
+		public Hitscan resetHammers()
+		{
+			damageSource.resetHammers();
+			return this;
+		}
+		
+		/**
+		 * Marks a hitscan as being the charged shot of a revolver; mainly used for making coins not split
+		 */
+		public Hitscan charged()
+		{
+			charged = true;
+			return this;
+		}
+		
+		public boolean isCharged()
+		{
+			return charged;
+		}
+		
 		public HitscanResult perform()
 		{
 			World world = owner.getWorld();
@@ -256,6 +313,7 @@ public class ServerHitscanHandler
 			Vec3d dir = dest.subtract(from).normalize();
 			Box box = new Box(from.subtract(-1f, -1f, -1f), from.add(1f, 1f, 1f)).stretch(dir.multiply(64.0)).expand(1.0, 1.0, 1.0);
 			EntityHitResult finalEHit = null;
+			float remainingDamage = damage;
 			boolean searchForEntities = true;
 			while (searchForEntities)
 			{
@@ -264,34 +322,61 @@ public class ServerHitscanHandler
 						(entity) -> !entities.contains(entity) && isValidTarget(entity, type), 0.25f, 64f);
 				if(eHit == null || eHit.getEntity() == null)
 					break;
-				searchForEntities = eHit.getType() != HitResult.Type.MISS && maxHits > 0;
+				searchForEntities = eHit.getType() != HitResult.Type.MISS && (maxHits > 0 || (semiPierce && remainingDamage > 0));
 				if(eHit.getType() != HitResult.Type.MISS)
 					finalEHit = eHit;
 				if(searchForEntities)
 				{
 					maxHits--;
 					from = eHit.getPos();
-					if(maxHits == 0)
+					if((maxHits == 0 && !(semiPierce && remainingDamage > 0)) || (eHit.getEntity() instanceof HideousPart part && part.isDeflective()))
+					{
+						searchForEntities = false;
 						modifiedTo = eHit.getPos();
-					entities.add(eHit.getEntity());
+					}
+					Entity e = eHit.getEntity();
+					entities.add(e);
+					if(semiPierce && e instanceof LivingEntity livingHit)
+						remainingDamage = Math.max(remainingDamage - calcSemiPierceDamage(livingHit, remainingDamage), 0);
+					if(e instanceof ThrownCoinEntity)
+						searchForEntities = false;
 				}
 			}
+			remainingDamage = damage;
 			boolean disableExplosion = false;
 			IWingedPlayerComponent winged = null;
 			if(owner instanceof WingedPlayerEntity)
-				winged = UltraComponents.WINGED_ENTITY.get(owner);
+				winged = UltraComponents.WINGED.get(owner);
 			boolean explodeProjectile = type == SHARPSHOOTER && winged != null && winged.getSharpshooterCooldown() <= 0;
 			for (int i = 0; i < entities.size(); i++)
 			{
 				Entity e = entities.get(i);
+				if(e instanceof HideousPart part && part.isDeflective())
+				{
+					sendPacket((ServerWorld)owner.getWorld(), modifiedTo, modifiedTo.add(Vec3d.ZERO.addRandom(e.getWorld().random, 1)
+																								 .normalize().multiply(64)), type);
+					break;
+				}
 				if((e instanceof BackTank && i > 0) || e == null) //Back Tanks shouldn't be hit after an entity is pierced
 					continue;
-				//hit the last pierced enemy with up to 10 of the remaining pierce shots. A Pierce revolver shot that hits just one enemy, will damage it 3 times.
-				for (int j = 0; j < Math.min(10, i == entities.size() - 1 && maxHits < 16 ? maxHits + 1 : 1); j++)
-					e.damage(damageSource, damage * getDamageMultipier(world, type));
+				
+				if(semiPierce && e instanceof LivingEntity living)
+				{
+					float semiPierceDamage = calcSemiPierceDamage(living, remainingDamage);
+					e.damage(damageSource, semiPierceDamage * getDamageMultipier(type));
+					remainingDamage = Math.max(remainingDamage - semiPierceDamage, 0);
+					if(remainingDamage <= 0) //stop when there's no remaining damage
+						break;
+				}
+				else
+				{
+					//hit the last pierced enemy with up to 10 of the remaining pierce shots. A Pierce revolver shot that hits just one enemy, will damage it 3 times.
+					for (int j = 0; j < Math.min(10, i == entities.size() - 1 && maxHits < 16 ? maxHits + 1 : 1); j++)
+						e.damage(damageSource, damage * getDamageMultipier(type));
+				}
 				if(explodeProjectile && e instanceof ProjectileEntity proj && !(e instanceof IIgnoreSharpshooter || e instanceof ThrownCoinEntity))
 				{
-					ExplosionHandler.explosion(owner, world, proj.getPos(), DamageSources.get(world, DamageTypes.EXPLOSION, owner), 5f, 1f, 5f, true);
+					ExplosionHandler.explosion(owner, world, proj.getPos(), DamageSources.get(world, DamageTypes.EXPLOSION, owner), 5f, 1f, 7.5f, true);
 					proj.kill();
 					explodeProjectile = false;
 					if(winged != null)
@@ -300,7 +385,7 @@ public class ServerHitscanHandler
 				if(e instanceof ThrownCoinEntity)
 					disableExplosion = true;
 			}
-			if(explosion != null && bHit != null && !bHit.getType().equals(HitResult.Type.MISS) && !disableExplosion)
+			if(explosion != null && ((bHit != null && !bHit.getType().equals(HitResult.Type.MISS)) || finalEHit != null) && !disableExplosion)
 				ExplosionHandler.explosion(null, world, new Vec3d(modifiedTo.x, modifiedTo.y, modifiedTo.z), world.getDamageSources().explosion(owner, owner),
 						explosion.damage, explosion.falloff, explosion.radius, explosion.breakBlocks);
 			if(entities.size() == 0 && owner instanceof PlayerEntity p)
@@ -316,6 +401,13 @@ public class ServerHitscanHandler
 				return new HitscanResult(finalEHit, dir, entities.size()); //EntityHit
 			else
 				return null; //miss
+		}
+		
+		float calcSemiPierceDamage(LivingEntity victim, float remainingDamage)
+		{
+			float maxDamage = Math.min(victim.getHealth(), maxHitsPerEntity * damageIncrements);
+			float incrementalDamage = (float)Math.ceil(maxDamage / damageIncrements) * damageIncrements;
+			return Math.min(incrementalDamage, remainingDamage);
 		}
 	}
 	

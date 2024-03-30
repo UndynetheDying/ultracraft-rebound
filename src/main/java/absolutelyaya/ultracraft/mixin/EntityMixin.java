@@ -1,12 +1,19 @@
 package absolutelyaya.ultracraft.mixin;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.EntityAccessor;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
+import absolutelyaya.ultracraft.components.player.IEditorComponent;
+import absolutelyaya.ultracraft.components.player.IHivelComponent;
+import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.config.HivelConfig;
+import absolutelyaya.ultracraft.cybergrind.CybergrindData;
 import absolutelyaya.ultracraft.registry.ParticleRegistry;
 import absolutelyaya.ultracraft.registry.TagRegistry;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.particle.ParticleEffect;
@@ -16,6 +23,8 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.joml.Vector3f;
+import org.joml.Vector4i;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -43,6 +52,14 @@ public abstract class EntityMixin implements EntityAccessor
 	
 	@Shadow public abstract boolean isAlive();
 	
+	@Shadow public abstract void setVelocity(Vec3d velocity);
+	
+	@Shadow public abstract Vec3d getVelocity();
+	
+	@Shadow public abstract Vec3d getPos();
+	
+	@Shadow public abstract void move(MovementType movementType, Vec3d movement);
+	
 	Supplier<Boolean> isTargettableSupplier = this::isAlive;
 	Supplier<Vec3d> relativeTargetPointSupplier = () -> getBoundingBox().getCenter();
 	Function<Entity, Integer> targetPriorityFunction = entity -> 0;
@@ -64,8 +81,7 @@ public abstract class EntityMixin implements EntityAccessor
 	@ModifyArgs(method = "updateVelocity", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;movementInputToVelocity(Lnet/minecraft/util/math/Vec3d;FF)Lnet/minecraft/util/math/Vec3d;"))
 	public void onConvertMovementInputToVel(Args args)
 	{
-		if(getWorld().isClient() && this instanceof WingedPlayerEntity winged && UltraComponents.WING_DATA.get(winged).isActive() &&
-				   winged instanceof PlayerEntity p && p.isSprinting())
+		if(getWorld().isClient() && this instanceof WingedPlayerEntity winged && winged.isSliding())
 		{
 			float slideDirRot = (float)Math.toDegrees(Math.atan2(winged.getSlideDir().z, winged.getSlideDir().x));
 			float cappedYaw = ((float)args.get(2) + 90f) % 360f;
@@ -74,6 +90,22 @@ public abstract class EntityMixin implements EntityAccessor
 			float delta = angleDelta(cappedYaw, slideDirRot);
 			args.set(1, (float)args.get(1) * (Math.max((1f - delta / 45f), 0f) - Math.max((delta - 135f) / 45f, 0f)));
 			args.set(2, slideDirRot - 90f);
+		}
+	}
+	
+	@Inject(method = "updateVelocity", at = @At("TAIL"))
+	void onAfterUpdateVelocity(float speed, Vec3d movementInput, CallbackInfo ci)
+	{
+		if(!(this instanceof WingedPlayerEntity))
+			return;
+		IHivelComponent hivel = UltraComponents.HIVEL.get(this);
+		if(hivel.shouldIgnoreSlowdown())
+		{
+			float y = (float)getVelocity().y;
+			float s = (float)getVelocity().horizontalLength();
+			if(s < hivel.getMaxNoSlowdownVelocity() || s < HivelConfig.INSTANCE.dragVelocitySoftcap.getValue())
+				hivel.setMaxNoSlowdownVelocity(s);
+			setVelocity(getVelocity().multiply(1f, 0f, 1f).normalize().multiply(hivel.getMaxNoSlowdownVelocity()).add(0f, y, 0f));
 		}
 	}
 	
@@ -87,6 +119,40 @@ public abstract class EntityMixin implements EntityAccessor
 		else if(effect.equals(ParticleTypes.BUBBLE))
 			return ParticleRegistry.BLOOD_BUBBLE;
 		else return effect;
+	}
+	
+	@ModifyReturnValue(method = "adjustMovementForCollisions", at = @At("RETURN"))
+	Vec3d onAdjustMovementForCollision(Vec3d original)
+	{
+		if(!((Object)this instanceof PlayerEntity player))
+			return original;
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
+		CybergrindData cybergrind = winged.getCybergrindData();
+		if(cybergrind == null || !cybergrind.isSolidBounds())
+			return original;
+		Vector4i bounds = cybergrind.getArenaBounds();
+		Vector3f movement = original.toVector3f();
+		Vector3f pos = getPos().toVector3f();
+		if(pos.x + original.x < bounds.x)
+			movement.x = Math.max(bounds.x - pos.x, 0);
+		else if(pos.x + original.x > bounds.z)
+			movement.x = Math.min(bounds.z - pos.x, 0);
+		if(pos.z + original.z < bounds.y)
+			movement.z = bounds.y - pos.z;
+		else if(pos.z + original.z > bounds.w)
+			movement.z = bounds.w - pos.z;
+		return new Vec3d(movement.x, original.y, movement.z);
+	}
+	
+	@ModifyReturnValue(method = "wouldPoseNotCollide", at = @At("RETURN"))
+	boolean onWouldPoseNotCollide(boolean original)
+	{
+		if(!((Object)this instanceof PlayerEntity player))
+			return original;
+		IEditorComponent editor = UltraComponents.EDITOR.get(player);
+		if(editor != null && editor.isActive())
+			return editor.isNoClip();
+		return original;
 	}
 	
 	boolean isInBlood()

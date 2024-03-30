@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "ultracraft:block/sheetmetal_sheet",
+    "side": "ultracraft:block/sheetmetal_sheet",
+    "top": "ultracraft:block/sheetmetal_sheet"
+  }
+}

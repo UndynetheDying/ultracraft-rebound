@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.item;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.api.HeavyEntities;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.rendering.item.HarpoonGunRenderer;
@@ -9,17 +10,19 @@ import absolutelyaya.ultracraft.entity.projectile.HarpoonEntity;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 import mod.azure.azurelib.animatable.GeoItem;
 import mod.azure.azurelib.animatable.SingletonGeoAnimatable;
@@ -61,7 +64,7 @@ public class HarpoonGunItem extends AbstractWeaponItem implements GeoItem
 	@Override
 	public boolean onPrimaryFire(World world, PlayerEntity user, Vec3d userVelocity)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(user).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(user).getGunCooldownManager();
 		if(!cdm.isUsable(this, GunCooldownManager.PRIMARY))
 			return false;
 		ItemStack ammoStack = null;
@@ -96,7 +99,7 @@ public class HarpoonGunItem extends AbstractWeaponItem implements GeoItem
 	@Override
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand)
 	{
-		if(!UltraComponents.WINGED_ENTITY.get(user).getGunCooldownManager().isUsable(this, GunCooldownManager.SECONDARY))
+		if(!UltraComponents.WINGED.get(user).getGunCooldownManager().isUsable(this, GunCooldownManager.SECONDARY))
 			return TypedActionResult.fail(user.getStackInHand(hand));
 		onAltFire(world, user);
 		return TypedActionResult.consume(user.getStackInHand(hand));
@@ -124,7 +127,7 @@ public class HarpoonGunItem extends AbstractWeaponItem implements GeoItem
 			harpoon.setReturning(true);
 		}
 		user.setVelocity(ownerVelocity.normalize().multiply(Math.min(harpoons.size(), 3)));
-		UltraComponents.WINGED_ENTITY.get(user).getGunCooldownManager().setCooldown(this, 100, GunCooldownManager.SECONDARY);
+		UltraComponents.WINGED.get(user).getGunCooldownManager().setCooldown(this, 100, GunCooldownManager.SECONDARY);
 		if(!world.isClient)
 			triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(), "altFire");
 		user.playSound(SoundRegistry.REPULSIVE_SKEWER_REEL, 1f, 1f);
@@ -186,22 +189,15 @@ public class HarpoonGunItem extends AbstractWeaponItem implements GeoItem
 	}
 	
 	@Override
-	Item[] getVariants()
-	{
-		return new Item[0];
-	}
-	
-	@Override
-	int getSwitchCooldown()
+	int getSwitchCooldown(ItemStack stack)
 	{
 		return 0;
 	}
 	
-	
 	@Override
-	public int getItemBarStep(ItemStack stack)
+	protected int getWeaponCooldownStep(ItemStack stack)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		if(!cdm.isUsable(this, GunCooldownManager.PRIMARY))
 			return (int)(cdm.getCooldownPercent(getCooldownClass(stack), GunCooldownManager.PRIMARY) * 14);
 		else
@@ -209,18 +205,28 @@ public class HarpoonGunItem extends AbstractWeaponItem implements GeoItem
 	}
 	
 	@Override
+	protected boolean shouldShowCooldown(ItemStack stack)
+	{
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		return super.shouldShowCooldown(stack) || !cdm.isUsable(this, GunCooldownManager.SECONDARY);
+	}
+	
+	@Override
 	public int getItemBarColor(ItemStack stack)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		if(Ultracraft.SERVER_SIDE)
+			return 0xdc8f00;
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		if(cdm.isUsable(this, GunCooldownManager.PRIMARY))
 			return 0xdfb728;
 		return 0xdc8f00;
 	}
 	
 	@Override
-	public boolean isItemBarVisible(ItemStack stack)
+	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(MinecraftClient.getInstance().player).getGunCooldownManager();
-		return super.isItemBarVisible(stack) || !cdm.isUsable(this, GunCooldownManager.SECONDARY);
+		super.appendTooltip(stack, world, tooltip, context);
+		tooltip.add(Text.translatable("item.ultracraft.harpoon_gun.lore1"));
+		tooltip.add(Text.translatable("item.ultracraft.harpoon_gun.lore2"));
 	}
 }

@@ -1,12 +1,12 @@
 package absolutelyaya.ultracraft.mixin.client.render;
 
-import absolutelyaya.ultracraft.UltraComponents;
-import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.client.rendering.entity.feature.ArmFeature;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.item.PlushieItem;
+import absolutelyaya.ultracraft.item.SwordsmachinePlushieItem;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
@@ -24,6 +24,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ShieldItem;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
@@ -47,6 +48,8 @@ public abstract class HandRendererMixin
 	@Inject(method = "renderFirstPersonItem", at = @At(value = "HEAD"), cancellable = true)
 	void onRenderFirstPersonItem(AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci)
 	{
+		if(item.getItem() instanceof ShieldItem)
+			return;
 		LivingEntityAccessor playerAccessor = ((LivingEntityAccessor)player);
 		if(hand == Hand.OFF_HAND && (playerAccessor.IsPunching() || !item.isEmpty()))
 		{
@@ -72,7 +75,7 @@ public abstract class HandRendererMixin
 			setArmVisibility(model, right ? Arm.LEFT : Arm.RIGHT, true, true);
 			
 			if(playerAccessor.getKnuckleBlastProgress(tickDelta) > 0)
-				Ultracraft.positionKnuckleBlast(matrices, equipProgress, !right);
+				positionKnuckleBlastArm(matrices, equipProgress, !right);
 			else
 				positionPunchArm(matrices, equipProgress, !right, !item.isEmpty());
 			
@@ -108,6 +111,10 @@ public abstract class HandRendererMixin
 			{
 				matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-85f * flip));
 				matrices.translate(0.15 * flip, 0.05, -0.1);
+			}
+			else if (item.getItem() instanceof SwordsmachinePlushieItem)
+			{
+				matrices.translate(-0.2 * flip, 0, 0.1);
 			}
 			else if (item.getItem() instanceof PlushieItem)
 			{
@@ -174,6 +181,29 @@ public abstract class HandRendererMixin
 		matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(flip * yaw * 30.0f));
 		matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(flip * roll * -20.0f));
 		positionBaseArm(matrices, flipped);
+	}
+	
+	void positionKnuckleBlastArm(MatrixStack matrices, float equipProgress, boolean flipped)
+	{
+		if (!(MinecraftClient.getInstance().player instanceof LivingEntityAccessor living))
+			return;
+		float blast = living.getKnuckleBlastProgress(MinecraftClient.getInstance().getTickDelta());
+		int flip = flipped ? 1 : -1;
+		float swing = MathHelper.sqrt(blast);
+		float x = 0.1f * Math.min(MathHelper.sin(swing * (float)Math.PI + 0.25f), 0.5f) * 2f;
+		float y = -0.05f * (MathHelper.sin(swing * (float)Math.PI + 0.25f));
+		float z = 0.4f * Math.min(MathHelper.sin(blast * (float)Math.PI + 0.25f), 0.5f) * 2f;
+		matrices.translate(flip * (x + 0.64000005f), y - 0.6f + equipProgress * -0.6f, z - 0.71999997f);
+		matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(flip * 45.0f));
+		float roll = MathHelper.sin(blast * blast * (float)Math.PI) / 2f;
+		float yaw = MathHelper.sin(swing * (float)Math.PI) / 1.5f;
+		matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(flip * yaw * 30.0f));
+		matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(flip * roll * -20.0f));
+		matrices.translate(flip * -1.0f, 3.6f, 3.5f);
+		matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(flip * 120.0f));
+		matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(200.0f));
+		matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(flip * -135.0f));
+		matrices.translate(flip * 5.6f, 0.0f, 0.0f);
 	}
 	
 	void positionBaseArm(MatrixStack matrices, boolean flipped)

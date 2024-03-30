@@ -1,23 +1,26 @@
 package absolutelyaya.ultracraft.item;
 
 import absolutelyaya.ultracraft.ExplosionHandler;
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.rendering.item.PumpShotgunRenderer;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 import mod.azure.azurelib.animatable.GeoItem;
 import mod.azure.azurelib.animatable.SingletonGeoAnimatable;
@@ -29,6 +32,7 @@ import mod.azure.azurelib.core.animation.RawAnimation;
 import mod.azure.azurelib.core.object.PlayState;
 import mod.azure.azurelib.util.AzureLibUtil;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -74,7 +78,7 @@ public class PumpShotgunItem extends AbstractShotgunItem
 		Hand hand = user.getActiveHand();
 		if(hand.equals(Hand.OFF_HAND))
 			return;
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(user).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(user).getGunCooldownManager();
 		if(!cdm.isUsable(this, GunCooldownManager.SECONDARY))
 			return;
 		user.setCurrentHand(hand);
@@ -89,7 +93,7 @@ public class PumpShotgunItem extends AbstractShotgunItem
 		else
 		{
 			int charge = getNbt(stack, "charge");
-			user.playSound(SoundRegistry.SHOTGUN_PUMP, 0.5f, 0.8f + 0.1f * Math.min(charge + 1, 3));
+			user.playSound(SoundRegistry.SHOTGUN_PUMP, 1f, 0.8f + 0.1f * Math.min(charge + 1, 3));
 		}
 		cdm.setCooldown(this, cooldown, GunCooldownManager.SECONDARY);
 	}
@@ -112,7 +116,7 @@ public class PumpShotgunItem extends AbstractShotgunItem
 		ItemStack itemStack = user.getMainHandStack();
 		boolean overcharge = getPelletCount(itemStack) == 0;
 		boolean b = super.onPrimaryFire(world, user, userVelocity);
-		IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(user);
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(user);
 		if(!b)
 			return false;
 		setNbt(itemStack, "charge", 0);
@@ -120,8 +124,9 @@ public class PumpShotgunItem extends AbstractShotgunItem
 		{
 			winged.setBloodHealCooldown(10);
 			ExplosionHandler.explosion(user, world, user.getPos().add(user.getRotationVector()),
-					DamageSources.get(world, DamageSources.OVERCHARGE, user), 10, 0, 3, true, true);
-			user.damage(DamageSources.get(world, DamageSources.OVERCHARGE_SELF), 4);
+					DamageSources.get(world, DamageSources.OVERCHARGE, user), 20, 16.6f, 3, true, true);
+			if(!(ServerConfig.INSTANCE.dodgeableOverpump.getValue() && UltraComponents.HIVEL.get(user).isDashing()))
+				user.damage(DamageSources.get(world, DamageSources.OVERCHARGE_SELF), 10);
 		}
 		return true;
 	}
@@ -130,6 +135,7 @@ public class PumpShotgunItem extends AbstractShotgunItem
 	public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected)
 	{
 		super.inventoryTick(stack, world, entity, slot, selected);
+		selected = isMainHandstack(stack, entity);
 		if(!selected && stack.hasNbt() && stack.getNbt().contains("charge"))
 			stack.getNbt().remove("charge");
 		else if(stack.hasNbt() && getNbt(stack, "charge") == 3 && entity.age % 6 == 4)
@@ -151,7 +157,8 @@ public class PumpShotgunItem extends AbstractShotgunItem
 										.triggerableAnim("shot_pump", AnimationShot)
 										.triggerableAnim("shot_pump2", AnimationShot2)
 										.triggerableAnim("pump", AnimationPump)
-										.triggerableAnim("pump2", AnimationPump2));
+										.triggerableAnim("pump2", AnimationPump2)
+										.setSoundKeyframeHandler(this::handleAnimSound));
 	}
 	
 	@Override
@@ -195,9 +202,23 @@ public class PumpShotgunItem extends AbstractShotgunItem
 		if(charge == 0)
 			return 10;
 		else if(charge == 1)
-			return 15;
+			return 16;
 		else if(charge == 2)
+			return 24;
+		else
+			return 0;
+	}
+	
+	@Override
+	protected float getDivergence(ItemStack stack)
+	{
+		int charge = getNbt(stack, "charge");
+		if(charge == 0)
+			return 15;
+		else if(charge == 1)
 			return 20;
+		else if(charge == 2)
+			return 25;
 		else
 			return 0;
 	}
@@ -222,9 +243,16 @@ public class PumpShotgunItem extends AbstractShotgunItem
 	}
 	
 	@Override
-	protected void onSwitch(PlayerEntity user, World world)
+	public void onSwitch(World world, PlayerEntity user, int newSlot)
 	{
 		setNbt(user.getMainHandStack(), "charge", getNbtDefault("charge"));
-		super.onSwitch(user, world);
+		super.onSwitch(world, user, newSlot);
+	}
+	
+	@Override
+	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
+	{
+		super.appendTooltip(stack, world, tooltip, context);
+		tooltip.add(Text.translatable(getTranslationKey() + ".lore2"));
 	}
 }

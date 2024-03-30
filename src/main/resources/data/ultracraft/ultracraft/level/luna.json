@@ -1,0 +1,15 @@
+{
+  "builtin": true,
+  "title": "Clair de Lune",
+  "description": "Tales say that the moon bewitches man, yet in reality, it is the man that despairs at the moon.",
+  "author": "yaya",
+  "structure": "ultracraft:limbo/ruin1",
+  "thumbnail": "ultracraft:textures/level/err.png",
+  "spawn-offset":{
+    "x": 16,
+    "y": 8,
+    "z": 9
+  },
+  "unimplemented": true,
+  "version": 1
+}

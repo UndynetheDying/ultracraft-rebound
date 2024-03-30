@@ -1,7 +1,7 @@
 package absolutelyaya.ultracraft.client.gui.screen;
 
 import absolutelyaya.ultracraft.Ultracraft;
-import absolutelyaya.ultracraft.client.Ultraconfig;
+import absolutelyaya.ultracraft.client.ClientConfig;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -29,7 +29,7 @@ public class IntroScreen extends Screen
 	int timer, step;
 	String goalText, curText = "";
 	float closeButtonAlpha = 0f, popupSize = 0f;
-	Ultraconfig config;
+	ClientConfig config;
 	
 	public IntroScreen()
 	{
@@ -170,6 +170,7 @@ public class IntroScreen extends Screen
 				case 4 -> {
 					curText = "";
 					goalText = Text.translatable("intro.ultracraft.status", MinecraftClient.getInstance().getSession().getUsername()).getString();
+					goalText += "\n" + Text.translatable("intro.ultracraft.catchphrase").getString();
 				}
 				case 6 -> {
 					SEQUENCE_FINISHED = true;

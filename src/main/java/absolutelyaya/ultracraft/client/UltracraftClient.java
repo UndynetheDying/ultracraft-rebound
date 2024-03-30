@@ -1,13 +1,16 @@
 package absolutelyaya.ultracraft.client;
 
 import absolutelyaya.goop.client.GoopClient;
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.client.gui.*;
+import absolutelyaya.ultracraft.client.rendering.CybergrindArenaRenderer;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.api.terminal.TerminalCodeRegistry;
 import absolutelyaya.ultracraft.client.gui.screen.EpilepsyPopupScreen;
 import absolutelyaya.ultracraft.client.gui.screen.ServerConfigScreen;
 import absolutelyaya.ultracraft.client.gui.terminal.PetTab;
+import absolutelyaya.ultracraft.client.rendering.EditModeRenderer;
 import absolutelyaya.ultracraft.client.rendering.TrailRenderer;
 import absolutelyaya.ultracraft.client.rendering.UltraHudRenderer;
 import absolutelyaya.ultracraft.client.rendering.block.entity.*;
@@ -23,13 +26,13 @@ import absolutelyaya.ultracraft.client.rendering.entity.machine.SwordsmachineRen
 import absolutelyaya.ultracraft.client.rendering.entity.machine.V2Renderer;
 import absolutelyaya.ultracraft.client.rendering.entity.other.*;
 import absolutelyaya.ultracraft.client.rendering.entity.projectile.*;
-import absolutelyaya.ultracraft.client.sound.MovingMachineSwordSoundInstance;
-import absolutelyaya.ultracraft.client.sound.MovingSlideSoundInstance;
-import absolutelyaya.ultracraft.client.sound.MovingSwordsmachineSoundInstance;
-import absolutelyaya.ultracraft.client.sound.MovingWindSoundInstance;
+import absolutelyaya.ultracraft.client.sound.*;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
+import absolutelyaya.ultracraft.config.*;
+import absolutelyaya.ultracraft.entity.husk.AbstractHuskEntity;
 import absolutelyaya.ultracraft.entity.machine.SwordsmachineEntity;
+import absolutelyaya.ultracraft.entity.projectile.IHomingProjectile;
 import absolutelyaya.ultracraft.entity.projectile.ThrownMachineSwordEntity;
 import absolutelyaya.ultracraft.particle.*;
 import absolutelyaya.ultracraft.registry.*;
@@ -71,9 +74,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Uuids;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.joml.Vector3f;
 
@@ -91,14 +92,9 @@ public class UltracraftClient implements ClientModInitializer
 	private static ShaderProgram wingsColoredProgram, wingsColoredUIProgram, texPosFade, flesh, sky;
 	public static ClientHitscanHandler HITSCAN_HANDLER;
 	public static TrailRenderer TRAIL_RENDERER;
+	private static EditModeRenderer EDITMODE_RENDERER;
 	public static boolean REPLACE_MENU_MUSIC = true, APPLY_ENTITY_POSES, GRAFFITI_WHITELISTED = true, SODIUM = true, IRIS = false;
-	static GameruleRegistry.Setting HiVelOption = GameruleRegistry.Setting.FREE;
-	static GameruleRegistry.Setting TimeFreezeOption = GameruleRegistry.Setting.FORCE_ON;
-	static GameruleRegistry.RegenSetting bloodRegen = GameruleRegistry.RegenSetting.ALWAYS;
-	static GameruleRegistry.ProjectileBoostSetting projBoost = GameruleRegistry.ProjectileBoostSetting.LIMITED;
-	static GameruleRegistry.GraffitiSetting GraffitiOption = GameruleRegistry.GraffitiSetting.ALLOW_ALL;
-	static boolean disableHandswap = false, slamStorage = true, fallDamage = false, drowning = false, effectivelyViolent = false, wasMovementSoundsEnabled, parryChaining, supporter = false, joinInfoPending, terminalProt;
-	public static int jumpBoost, speed, gravityReduction;
+	static boolean wasMovementSoundsEnabled, supporter = false, joinInfoPending, travelling;
 	static float screenblood;
 	static Vector3f[] wingColors = new Vector3f[] { new Vector3f(247f, 255f, 154f), new Vector3f(117f, 154f, 255f) };
 	static final Vector3f[] defaultWingColors = new Vector3f[] { new Vector3f(247f, 255f, 154f), new Vector3f(117f, 154f, 255f) };
@@ -106,7 +102,12 @@ public class UltracraftClient implements ClientModInitializer
 	static Optional<Boolean> forcedHivel = Optional.empty();
 	
 	static UltraHudRenderer hudRenderer;
-	static ConfigHolder<Ultraconfig> config;
+	static WeaponInfoHUD weaponInfoHUD;
+	static EditModeHUD editModeHUD;
+	static TitleHUD titleHUD;
+	static LevelHUD levelHUD;
+	static CybergrindHUD cybergrindHUD;
+	static ConfigHolder<ClientConfig> config;
 	
 	@Override
 	public void onInitializeClient()
@@ -114,7 +115,7 @@ public class UltracraftClient implements ClientModInitializer
 		SODIUM = FabricLoader.getInstance().getModContainer("sodium").isPresent();
 		IRIS = FabricLoader.getInstance().getModContainer("iris").isPresent();
 		
-		config = AutoConfig.register(Ultraconfig.class, GsonConfigSerializer::new);
+		config = AutoConfig.register(ClientConfig.class, GsonConfigSerializer::new);
 		KeybindRegistry.register();
 		
 		//EntityRenderers
@@ -184,6 +185,8 @@ public class UltracraftClient implements ClientModInitializer
 		BlockEntityRendererFactories.register(BlockEntityRegistry.HELL_OBSERVER, context -> new HellObserverRenderer());
 		BlockEntityRendererFactories.register(BlockEntityRegistry.HELL_SPAWNER, context -> new HellSpawnerBlockRenderer());
 		BlockEntityRendererFactories.register(BlockEntityRegistry.SKY, context -> new SkyBlockRenderer());
+		BlockEntityRendererFactories.register(BlockEntityRegistry.MAP_CHECKPOINT, context -> new CheckpointRenderer());
+		BlockEntityRendererFactories.register(BlockEntityRegistry.MAP_DOOR, context -> new DoorListenerRenderer());
 		//Player Animations
 		PlayerAnimator.init();
 		
@@ -194,6 +197,7 @@ public class UltracraftClient implements ClientModInitializer
 		
 		HITSCAN_HANDLER = new ClientHitscanHandler();
 		TRAIL_RENDERER = new TrailRenderer();
+		EDITMODE_RENDERER = new EditModeRenderer();
 		
 		ResourceManagerHelper.registerBuiltinResourcePack(new Identifier("ultracraft_non_essential"),
 				FabricLoader.getInstance().getModContainer(Ultracraft.MOD_ID).orElseThrow(), Text.literal("ULTRACRAFT Non-Essential"),
@@ -207,7 +211,24 @@ public class UltracraftClient implements ClientModInitializer
 		
 		hudRenderer = new UltraHudRenderer();
 		WorldRenderEvents.END.register((context) -> hudRenderer.render(context.tickDelta(), context.camera()));
+		weaponInfoHUD = new WeaponInfoHUD();
+		editModeHUD = new EditModeHUD();
+		titleHUD = new TitleHUD();
+		levelHUD = new LevelHUD();
+		cybergrindHUD = new CybergrindHUD();
+		HudRenderCallback.EVENT.register((context, delta) -> {
+			weaponInfoHUD.render(context, delta);
+			editModeHUD.render(context, delta);
+			levelHUD.render(context, delta);
+			cybergrindHUD.render(context);
+		});
 		
+		ClientPlayConnectionEvents.INIT.register((handler, client) -> {
+			new ServerConfig(client.getServer());
+			new HivelConfig(client.getServer());
+			if(config.get().serverJoinInfo)
+				joinInfoPending = true;
+		});
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
 			refreshSupporter();
 			IWingDataComponent wings = UltraComponents.WING_DATA.get(client.player);
@@ -215,9 +236,8 @@ public class UltracraftClient implements ClientModInitializer
 			wings.setColor(wingColors[1], 1);
 			wings.setPattern(wingPattern);
 			if(forcedHivel.isEmpty())
-				wings.setVisible(config.get().hivel);
+				wings.setActive(config.get().hivel);
 			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-			buf.writeBoolean(wings.isActive());
 			buf.writeVector3f(wings.getColors()[0]);
 			buf.writeVector3f(wings.getColors()[1]);
 			buf.writeString(wings.getPattern());
@@ -227,8 +247,6 @@ public class UltracraftClient implements ClientModInitializer
 			ClientPlayNetworking.send(PacketRegistry.ARM_VISIBLE_PACKET_ID, buf);
 			if(config.get().showEpilepsyWarning)
 				MinecraftClient.getInstance().setScreen(new EpilepsyPopupScreen(null));
-			if(config.get().serverJoinInfo)
-				joinInfoPending = true;
 		});
 		
 		ClientEntityEvents.ENTITY_LOAD.register((entity, clientWorld) -> {
@@ -251,6 +269,10 @@ public class UltracraftClient implements ClientModInitializer
 				MinecraftClient.getInstance().getSoundManager().play(new MovingMachineSwordSoundInstance(sword));
 			else if (entity instanceof SwordsmachineEntity sm)
 				MinecraftClient.getInstance().getSoundManager().play(new MovingSwordsmachineSoundInstance(sm));
+			else if (entity instanceof AbstractHuskEntity husk)
+				MinecraftClient.getInstance().getSoundManager().play(new MovingHuskScreamSoundInstance(husk));
+			else if (entity instanceof IHomingProjectile projectile)
+				MinecraftClient.getInstance().getSoundManager().play(new MovingHomingProjectileSoundInstance(projectile));
 		});
 		
 		LivingEntityFeatureRendererRegistrationCallback.EVENT.register((type, renderer, helper, context) -> {
@@ -267,8 +289,11 @@ public class UltracraftClient implements ClientModInitializer
 		WorldRenderEvents.BEFORE_ENTITIES.register((ctx) -> APPLY_ENTITY_POSES = true);
 		
 		WorldRenderEvents.AFTER_ENTITIES.register((ctx) -> {
+			float delta = MinecraftClient.getInstance().getLastFrameDuration();
 			UltracraftClient.HITSCAN_HANDLER.render(ctx.matrixStack(), ctx.camera(), ctx.tickDelta());
 			UltracraftClient.TRAIL_RENDERER.render(ctx.matrixStack(), ctx.camera());
+			UltracraftClient.EDITMODE_RENDERER.render(ctx.matrixStack(), ctx.camera(), delta);
+			CybergrindArenaRenderer.render(ctx.matrixStack(), ctx.camera(), delta);
 			APPLY_ENTITY_POSES = false;
 		});
 		
@@ -336,16 +361,21 @@ public class UltracraftClient implements ClientModInitializer
 				sound.play(new MovingWindSoundInstance(player));
 			}
 			wasMovementSoundsEnabled = config.get().movementSounds;
+			if(joinInfoPending)
+				serverSyncFinished();
 		});
 		//Block Layers
 		FluidRenderHandlerRegistry.INSTANCE.register(FluidRegistry.STILL_BLOOD, FluidRegistry.Flowing_BLOOD,
 				new SimpleFluidRenderHandler(new Identifier(Ultracraft.MOD_ID, "block/blood_still"), new Identifier(Ultracraft.MOD_ID, "block/blood_flow")));
-		BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getSolid(), FluidRegistry.STILL_BLOOD, FluidRegistry.Flowing_BLOOD);
+		BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(), FluidRegistry.STILL_BLOOD, FluidRegistry.Flowing_BLOOD);
 		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.FLESH, //prevent Sodium from crashing when trying to render Flesh Blocks
 				SODIUM ? RenderLayers.getSolid() : RenderLayers.getFlesh());
 		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.ADORNED_RAILING, RenderLayer.getCutout());
 		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.VENT_COVER, RenderLayer.getCutout());
+		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.SLAB_BLOCK, RenderLayer.getCutout());
 		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.SKY_BLOCK, RenderLayer.getTranslucent());
+		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.FLOWERBED, RenderLayer.getTranslucent());
+		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.ZOOTYCOONCHAINLINKFENCE, RenderLayer.getCutout());
 		
 		TerminalCodeRegistry.registerCode("florp", t -> t.setTab(new PetTab()));
 		TerminalCodeRegistry.registerCode("somethingwicked", new TerminalCodeRegistry.Result(t -> {
@@ -361,41 +391,44 @@ public class UltracraftClient implements ClientModInitializer
 		refreshSupporter();
 	}
 	
-	public static void sendJoinInfo(MinecraftClient client, boolean manual)
+	public static boolean sendJoinInfo(MinecraftClient client, boolean manual)
 	{
-		if(client.player == null)
-			return;
+		ServerConfig sConfig = ServerConfig.INSTANCE;
+		HivelConfig hivelConfig = HivelConfig.INSTANCE;
+		if(client.player == null || sConfig == null)
+			return false;
 		client.player.sendMessage(Text.translatable("message.ultracraft.join-info-header"));
-		if(!HiVelOption.equals(GameruleRegistry.Setting.FREE))
+		if(!sConfig.hivel.getValue().equals(Setting.FREE))
 			client.player.sendMessage(Text.translatable("message.ultracraft.hi-vel-forced",
-					HiVelOption.equals(GameruleRegistry.Setting.FORCE_ON) ? Text.translatable("options.on") : Text.translatable("options.off")));
+					sConfig.hivel.getValue().equals(Setting.FORCE_ON) ? Text.translatable("options.on") : Text.translatable("options.off")));
 		else
 			client.player.sendMessage(Text.translatable("message.ultracraft.hi-vel-free"));
 		if(client.getServer() != null && client.getServer().isRemote())
 			client.player.sendMessage(Text.translatable("message.ultracraft.freeze-forced",
-					TimeFreezeOption.equals(GameruleRegistry.Setting.FORCE_ON) ? Text.translatable("options.on") : Text.translatable("options.off")));
-		client.player.sendMessage(Text.translatable("message.ultracraft.attributes", speed, jumpBoost,
-				MathHelper.clamp(gravityReduction * 10, 0, 99)).append("%"));
-		client.player.sendMessage(Text.translatable("message.ultracraft.blood-heal." + bloodRegen.name()));
-		if(fallDamage)
+					sConfig.timestop.getValue().equals(Setting.FORCE_ON) ? Text.translatable("options.on") : Text.translatable("options.off")));
+		client.player.sendMessage(Text.translatable("message.ultracraft.attributes", hivelConfig.speed.getValue(), hivelConfig.jumpBoost.getValue(),
+				(hivelConfig.gravity.getValue() * 100f)).append("%"));
+		client.player.sendMessage(Text.translatable("message.ultracraft.blood-heal." + sConfig.bloodHeal.getValue().name()));
+		if(hivelConfig.fallDamage.getValue())
 			client.player.sendMessage(Text.translatable("message.ultracraft.fall-damage"));
-		if(drowning)
+		if(hivelConfig.drowning.getValue())
 			client.player.sendMessage(Text.translatable("message.ultracraft.drowning"));
 		if(config.get().detailedJoinInfo || manual)
 		{
-			client.player.sendMessage(Text.translatable("message.ultracraft.projectile-boost." + projBoost.name()));
-			if(disableHandswap)
+			client.player.sendMessage(Text.translatable("message.ultracraft.projectile-boost." + ServerConfig.INSTANCE.projboost.getValue().name()));
+			if(sConfig.disableHandswap.getValue())
 				client.player.sendMessage(Text.translatable("message.ultracraft.disabled-handswap"));
-			if(!slamStorage)
+			if(!hivelConfig.storage.getValue())
 				client.player.sendMessage(Text.translatable("message.ultracraft.disabled-slamstorage"));
-			if(effectivelyViolent)
+			if(sConfig.effectivelyViolent.getValue())
 				client.player.sendMessage(Text.translatable("message.ultracraft.effectively-violent"));
-			if(parryChaining)
+			if(sConfig.parryChaining.getValue())
 				client.player.sendMessage(Text.translatable("message.ultracraft.parry-chaining"));
 		}
 		if(!manual)
 			client.player.sendMessage(Text.translatable("message.ultracraft.join-info"));
 		client.player.sendMessage(Text.translatable("========================================="));
+		return true;
 	}
 	
 	public static void addBlood(float f)
@@ -408,19 +441,14 @@ public class UltracraftClient implements ClientModInitializer
 		screenblood = 0f;
 	}
 	
-	public static boolean isHandSwapEnabled()
-	{
-		return disableHandswap;
-	}
-	
 	public static void toggleHiVelEnabled()
 	{
 		PlayerEntity player = MinecraftClient.getInstance().player;
 		if(player == null)
 			return;
 		IWingDataComponent wings = UltraComponents.WING_DATA.get(player);
-		GameruleRegistry.Setting option = HiVelOption;
-		if(option.equals(GameruleRegistry.Setting.FREE))
+		Setting option = ServerConfig.INSTANCE.hivel.getValue();
+		if(option.equals(Setting.FREE))
 		{
 			setHiVel(!wings.isActive(), false);
 			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
@@ -432,17 +460,17 @@ public class UltracraftClient implements ClientModInitializer
 		else
 			player.sendMessage(
 					Text.translatable("message.ultracraft.hi-vel-forced",
-									Text.translatable(option.equals(GameruleRegistry.Setting.FORCE_ON) ? "options.on" : "options.off")), true);
+									Text.translatable(option.equals(Setting.FORCE_ON) ? "options.on" : "options.off")), true);
 	}
 	
 	public static boolean isSlamStorageEnabled()
 	{
-		return slamStorage;
+		return HivelConfig.INSTANCE.storage.getValue();
 	}
 	
 	public static boolean isViolentFeaturesEnabled(World world)
 	{
-		return world.getDifficulty() == Difficulty.HARD || effectivelyViolent;
+		return world.getDifficulty() == Difficulty.HARD || ServerConfig.INSTANCE.effectivelyViolent.getValue();
 	}
 	
 	public static void setHiVel(boolean b, boolean fromServer)
@@ -453,7 +481,7 @@ public class UltracraftClient implements ClientModInitializer
 		if(player == null)
 			return;
 		IWingDataComponent wings = UltraComponents.WING_DATA.get(player);
-		wings.setVisible(b);
+		wings.setActive(b);
 		if(!fromServer)
 		{
 			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
@@ -462,7 +490,7 @@ public class UltracraftClient implements ClientModInitializer
 		}
 	}
 	
-	public static Ultraconfig getConfig()
+	public static ClientConfig getConfig()
 	{
 		return config.get();
 	}
@@ -472,57 +500,83 @@ public class UltracraftClient implements ClientModInitializer
 		config.save();
 	}
 	
-	public static void syncGameRule(byte data, int value)
+	public static void syncConfigEntry(String configID, String rule, int value)
 	{
-		switch (data)
+		Config config = Config.getFromID(configID);
+		if(config == null)
 		{
-			case 0 -> onExternalRuleUpdate(GameruleRegistry.PROJ_BOOST, (projBoost = GameruleRegistry.ProjectileBoostSetting.values()[value]).name());
-			case 1 ->
-			{
-				onExternalRuleUpdate(GameruleRegistry.HIVEL_MODE, (HiVelOption = GameruleRegistry.Setting.values()[value]).name());
-				if(HiVelOption != GameruleRegistry.Setting.FREE)
-					forcedHivel = Optional.of(HiVelOption == GameruleRegistry.Setting.FORCE_ON);
-				else
-					forcedHivel = Optional.empty();
-			}
-			case 2 -> onExternalRuleUpdate(GameruleRegistry.TIME_STOP, (TimeFreezeOption = GameruleRegistry.Setting.values()[value]).name());
-			case 3 -> onExternalRuleUpdate(GameruleRegistry.DISABLE_HANDSWAP, disableHandswap = value == 1);
-			case 4 -> onExternalRuleUpdate(GameruleRegistry.HIVEL_JUMP_BOOST, jumpBoost = value);
-			case 5 -> onExternalRuleUpdate(GameruleRegistry.SLAM_STORAGE, slamStorage = value == 1);
-			case 6 -> onExternalRuleUpdate(GameruleRegistry.HIVEL_FALLDAMAGE, fallDamage = value == 1);
-			case 7 -> onExternalRuleUpdate(GameruleRegistry.HIVEL_DROWNING, drowning = value == 1);
-			case 8 -> onExternalRuleUpdate(GameruleRegistry.BLOODHEAL, (bloodRegen = GameruleRegistry.RegenSetting.values()[value]).name());
-			case 9 -> onExternalRuleUpdate(GameruleRegistry.HIVEL_SPEED, speed = value);
-			case 10 -> onExternalRuleUpdate(GameruleRegistry.HIVEL_SLOWFALL, gravityReduction = value);
-			case 11 -> onExternalRuleUpdate(GameruleRegistry.EFFECTIVELY_VIOLENT, effectivelyViolent = value == 1);
-			case 12 -> onExternalRuleUpdate(GameruleRegistry.EXPLOSION_DAMAGE, value == 1);
-			case 13 -> onExternalRuleUpdate(GameruleRegistry.SM_SAFE_LEDGES, value == 1);
-			case 14 -> onExternalRuleUpdate(GameruleRegistry.PARRY_CHAINING, parryChaining = value == 1);
-			case 15 -> onExternalRuleUpdate(GameruleRegistry.TNT_PRIMING, value == 1);
-			case 16 -> onExternalRuleUpdate(GameruleRegistry.REVOLVER_DAMAGE, value);
-			case 17 -> onExternalRuleUpdate(GameruleRegistry.INVINCIBILITY, value);
-			case 18 -> onExternalRuleUpdate(GameruleRegistry.TERMINAL_PROT, terminalProt = value == 1);
-			case 19 -> onExternalRuleUpdate(GameruleRegistry.GRAFFITI, (GraffitiOption = GameruleRegistry.GraffitiSetting.values()[value]).name());
-			case 20 -> onExternalRuleUpdate(GameruleRegistry.FLAMETHROWER_GRIEF, value == 1);
-			case 21 -> onExternalRuleUpdate(GameruleRegistry.SHOTGUN_DAMAGE, value);
-			case 22 -> onExternalRuleUpdate(GameruleRegistry.NAILGUN_DAMAGE, value);
-			case 23 -> onExternalRuleUpdate(GameruleRegistry.HELL_OBSERVER_INTERVAL, value);
-			case 24 -> onExternalRuleUpdate(GameruleRegistry.START_WITH_PIERCER, value == 1);
-			case 25 -> onExternalRuleUpdate(GameruleRegistry.BLOOD_SATURATION, value == 1);
-			case 127 -> gameRuleSyncFinished();
-			default -> Ultracraft.LOGGER.error("Received invalid Packet data: [rule_syncB] -> " + data);
+			Ultracraft.LOGGER.error(String.format("no config with id '%s' found", configID));
+			return;
 		}
+		ConfigEntry<?> entry = config.getEntry(rule);
+		if(entry instanceof EnumEntry<?> enumEntry)
+			onExternalRuleUpdate(enumEntry.setValue(value), value);
+		else
+			onExternalRuleUpdate(config.set(rule, value), value);
+		if(config instanceof ServerConfig serverConfig && rule.equals(serverConfig.hivel.getId()))
+		{
+			Setting hivel = Setting.values()[value];
+			if(hivel != Setting.FREE)
+				forcedHivel = Optional.of(hivel == Setting.FORCE_ON);
+			else
+				forcedHivel = Optional.empty();
+		}
+		if(config instanceof HivelConfig hivelConfig && rule.equals(hivelConfig.speed.getId()))
+			((WingedPlayerEntity)MinecraftClient.getInstance().player).updateSpeedConfig();
 	}
 	
-	public static void gameRuleSyncFinished()
+	public static void syncConfigEntry(String configID, String id, float value)
 	{
-		if(joinInfoPending)
-			sendJoinInfo(MinecraftClient.getInstance(), false);
-		joinInfoPending = false;
+		Config config = Config.getFromID(configID);
+		if(config == null)
+		{
+			Ultracraft.LOGGER.error(String.format("no config with id '%s' found", configID));
+			return;
+		}
+		config.set(id, value);
 	}
 	
-	static <V, T extends GameRules.Key<?>> void onExternalRuleUpdate(T rule, V value)
+	public static void syncConfigEntry(String configID, String id, boolean value)
 	{
+		Config config = Config.getFromID(configID);
+		if(config == null)
+		{
+			Ultracraft.LOGGER.error(String.format("no config with id '%s' found", configID));
+			return;
+		}
+		config.set(id, value);
+	}
+	
+	public static void finishSyncingConfig(String configID)
+	{
+		Config config = Config.getFromID(configID);
+		if(config == null)
+		{
+			Ultracraft.LOGGER.error(String.format("no config with id '%s' found", configID));
+			return;
+		}
+		if(config instanceof ServerConfig)
+			serverSyncFinished();
+		if(config instanceof HivelConfig hivel && MinecraftClient.getInstance().player instanceof WingedPlayerEntity winged)
+			winged.initMovementConfig(hivel);
+	}
+	
+	public static void serverSyncFinished()
+	{
+		if(joinInfoPending && sendJoinInfo(MinecraftClient.getInstance(), false))
+			joinInfoPending = false;
+	}
+	
+	static <V, T extends ConfigEntry<V>> void onExternalRuleUpdate(T rule, V value)
+	{
+		ServerConfig.INSTANCE.set(rule, value);
+		if(ServerConfigScreen.INSTANCE != null)
+			ServerConfigScreen.INSTANCE.onExternalRuleUpdate(rule, value.toString());
+	}
+	
+	static void onExternalRuleUpdate(EnumEntry<?> rule, int value)
+	{
+		ServerConfig.INSTANCE.set(rule, value);
 		if(ServerConfigScreen.INSTANCE != null)
 			ServerConfigScreen.INSTANCE.onExternalRuleUpdate(rule, String.valueOf(value));
 	}
@@ -590,7 +644,10 @@ public class UltracraftClient implements ClientModInitializer
 	
 	public static void freezeVFX(int ticks)
 	{
-		visualFreezeTicks += ticks;
+		if(ticks == -1)
+			visualFreezeTicks = 0;
+		else
+			visualFreezeTicks += ticks;
 	}
 	
 	public static boolean isParryVisualsActive()
@@ -607,7 +664,7 @@ public class UltracraftClient implements ClientModInitializer
 	{
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		ClientPlayNetworking.send(PacketRegistry.REQUEST_GRAFFITI_WHITELIST_PACKET_ID, buf);
-		return switch(GraffitiOption)
+		return switch(ServerConfig.INSTANCE.graffiti.getValue())
 		{
 			case ALLOW_ALL -> GRAFFITI_WHITELISTED;
 			case ONLY_ADMINS -> ((WingedPlayerEntity)MinecraftClient.getInstance().player).isOpped() && GRAFFITI_WHITELISTED;
@@ -617,6 +674,16 @@ public class UltracraftClient implements ClientModInitializer
 	
 	public static boolean isTerminalProtEnabled()
 	{
-		return terminalProt;
+		return ServerConfig.INSTANCE.terminalProtection.getValue();
+	}
+	
+	public static boolean isTravelling()
+	{
+		return travelling;
+	}
+	
+	public static void setTravelling(boolean travelling)
+	{
+		UltracraftClient.travelling = travelling;
 	}
 }

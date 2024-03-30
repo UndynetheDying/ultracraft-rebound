@@ -1,0 +1,34 @@
+{
+  "builtin": true,
+  "title": "level.ultracraft.1-2",
+  "author": "yaya",
+  "structure": "ultracraft:level/limbo2",
+  "thumbnail": "ultracraft:textures/level/1_2.png",
+  "ranking": {
+    "time": [
+    "5:30:00",
+    "6:00:00",
+    "7:00:00",
+    "10:00:00"
+  ],
+    "kills": [
+      81,
+      75,
+      60,
+      35
+    ],
+    "style": [
+      3750,
+      3000,
+      2250,
+      1000
+    ]
+  },
+  "spawn-offset":{
+    "x": 3,
+    "y": 48,
+    "z": 76
+  },
+  "spawn-rot": -90,
+  "version": 1
+}

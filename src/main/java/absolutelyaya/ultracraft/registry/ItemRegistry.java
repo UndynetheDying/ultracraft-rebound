@@ -62,7 +62,7 @@ public class ItemRegistry
 			new Identifier(Ultracraft.MOD_ID, "killerfish"), new KillerFishItem(new FabricItemSettings()));
 	public static final Item BLOOD_RAY = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "bloodray"), new Item(new FabricItemSettings()
-						.food(new FoodComponent.Builder().hunger(4)
+						.food(new FoodComponent.Builder().hunger(4).alwaysEdible()
 							  .statusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 500, 0), 1f).build())));
 	public static final DroneMaskItem DRONE_MASK = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "drone_mask"), new DroneMaskItem(new FabricItemSettings()));
@@ -71,12 +71,14 @@ public class ItemRegistry
 						.food(new FoodComponent.Builder().hunger(12).saturationModifier(6f).build()))
 								.putLore(new String[] { "item.ultracraft.mincedmeat.lore" }, new String[] { "item.ultracraft.mincedmeat.hiddenlore" }));
 	public static final Item KNUCKLEBLASTER = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "knuckleblaster"), new Item(new FabricItemSettings()));
+			new Identifier(Ultracraft.MOD_ID, "knuckleblaster"), new ProgressionUnlockItem(new FabricItemSettings(), new Identifier(Ultracraft.MOD_ID, "knuckleblaster")));
 	public static final Item HELL_MASS = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "hell_mass"), new Item(new FabricItemSettings()));
 	public static final Item PLACEHOLDER = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "placeholder"),
 			new Item(new FabricItemSettings().food(new FoodComponent.Builder().alwaysEdible().hunger(-1).build())));
+	public static final LumpFishItem LUMPFISH = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "lumpfish"), new LumpFishItem(new FabricItemSettings()));
 	
 	//Weapons
 	public static final PierceRevolverItem PIERCE_REVOLVER = Registry.register(Registries.ITEM,
@@ -103,6 +105,14 @@ public class ItemRegistry
 			new Identifier(Ultracraft.MOD_ID, "soap"), new SoapItem(new FabricItemSettings().maxCount(4).rarity(Rarity.EPIC)));
 	public static final AttractorNailgunItem ATTRACTOR_NAILGUN = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "attractor_nailgun"), new AttractorNailgunItem(new FabricItemSettings().maxCount(1)));
+	public static final OverheatNailgunItem OVERHEAT_NAILGUN = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "overheat_nailgun"), new OverheatNailgunItem(new FabricItemSettings().maxCount(1)));
+	public static final AlternatePiercerItem ALTERNATE_PIERCER = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "alternate_piercer"), new AlternatePiercerItem(new FabricItemSettings().maxCount(1)));
+	public static final AlternateMarksmanItem ALTERNATE_MARKSMAN = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "alternate_marksman"), new AlternateMarksmanItem(new FabricItemSettings().maxCount(1)));
+	public static final AlternateSharpshooterItem ALTERNATE_SHARPSHOOTER = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "alternate_sharpshooter"), new AlternateSharpshooterItem(new FabricItemSettings().maxCount(1)));
 	
 	//Spawn Eggs
 	public static final SpawnEggItem FILTH_SPAWN_EGG = Registry.register(Registries.ITEM,
@@ -147,6 +157,9 @@ public class ItemRegistry
 	public static final SpawnEggItem RODENT_SPAWN_EGG = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "rodent_spawn_egg"),
 			new SpawnEggItem(EntityRegistry.RODENT, 0xb6d53c, 0x71aa34, new FabricItemSettings()));
+	public static final SpawnEggItem GREATERFILTH_SPAWN_EGG = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "greaterfilth_spawn_egg"),
+			new SpawnEggItem(EntityRegistry.GREATER_FILTH, 0x4c5820, 0x91a25e, new FabricItemSettings()));
 	
 	//Plushies
 	public static final PlushieItem PLUSHIE = Registry.register(Registries.ITEM,
@@ -161,6 +174,8 @@ public class ItemRegistry
 			new Identifier(Ultracraft.MOD_ID, "talon"), new TalonItem(new FabricItemSettings()));
 	public static final V2Item V2 = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "v2"), new V2Item(new FabricItemSettings()));
+	public static final AnthroPlushieItem ASHEN = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "ashenwulf"), new AnthroPlushieItem(new FabricItemSettings()));
 	
 	//Special
 	public static final TerminalItem TERMINAL = Registry.register(Registries.ITEM,
@@ -168,7 +183,7 @@ public class ItemRegistry
 			new TerminalItem(BlockRegistry.TERMINAL, new FabricItemSettings()));
 	public static final MusicDiscItem CLAIR_DE_LUNE_DISK = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "clair_de_lune"),
-			new MusicDiscItem(15, SoundRegistry.CLAIR_DE_LUNE.value(), new FabricItemSettings(), 231));
+			new MusicDiscItem(15, SoundRegistry.CLAIR_DE_LUNE.value(), new FabricItemSettings().maxCount(1), 231));
 	public static final FlorpItem FLORP = (FlorpItem)Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "florp"), new FlorpItem(new FabricItemSettings().rarity(Rarity.EPIC).maxCount(1))
 																.putLore(true, new String[] { "item.ultracraft.florp.hiddenlore" }));
@@ -194,6 +209,7 @@ public class ItemRegistry
 			new Identifier(Ultracraft.MOD_ID, "fake_hell_spawner"), new Item(new FabricItemSettings().maxCount(0)));
 	
 	public static final RegistryKey<ItemGroup> ULTRACRAFT_TAB = RegistryKey.of(RegistryKeys.ITEM_GROUP, new Identifier(Ultracraft.MOD_ID, "item"));
+	public static final RegistryKey<ItemGroup> EDIT_MODE_TAB = RegistryKey.of(RegistryKeys.ITEM_GROUP, new Identifier(Ultracraft.MOD_ID, "edit"));
 	
 	public static void register()
 	{
@@ -204,6 +220,7 @@ public class ItemRegistry
 			content.add(RED_SKULL);
 			content.add(HELL_BULLET);
 			content.add(CERBERUS_BALL);
+			content.add(CANCER_BULLET);
 			content.add(BlockRegistry.ELEVATOR.asItem());
 			content.add(BlockRegistry.ELEVATOR_WALL.asItem());
 			content.add(BlockRegistry.ELEVATOR_FLOOR.asItem());
@@ -216,29 +233,58 @@ public class ItemRegistry
 			content.add(BlockRegistry.FLESH.asItem());
 			content.add(BlockRegistry.RUSTY_PIPE.asItem());
 			content.add(BlockRegistry.RUSTY_MESH.asItem());
+			content.add(BlockRegistry.MESH.asItem());
 			content.add(BlockRegistry.CRACKED_STONE.asItem());
 			content.add(BlockRegistry.VENT_COVER.asItem());
+			content.add(BlockRegistry.VENT.asItem());
 			content.add(BlockRegistry.MAUERWERK1.asItem());
 			content.add(BlockRegistry.MAUERWERK2.asItem());
 			content.add(BlockRegistry.ORNATE_WAINSCOT.asItem());
 			content.add(BlockRegistry.ADORNED_RAILING.asItem());
 			content.add(StainedGlassWindowItem.getStack(false));
 			content.add(StainedGlassWindowItem.getStack(true));
+			content.add(BlockRegistry.SLAB_BLOCK.asItem());
+			content.add(BlockRegistry.CARPET.asItem());
+			content.add(BlockRegistry.FLOWERBED.asItem());
+			content.add(BlockRegistry.SHEETMETAL.asItem());
+			content.add(BlockRegistry.SHEETMETAL_SHEET.asItem());
+			content.add(BlockRegistry.SHEETMETAL_SHEET_STAIRS.asItem());
+			content.add(BlockRegistry.SHEETMETAL_SHEET_SLAB.asItem());
+			content.add(BlockRegistry.COLUMN1.asItem());
+			content.add(BlockRegistry.COLUMN1_STAIRS.asItem());
+			content.add(BlockRegistry.COLUMN2.asItem());
+			content.add(BlockRegistry.COLUMN2_STAIRS.asItem());
+			content.add(BlockRegistry.BRIGHT_PANEL.asItem());
+			content.add(BlockRegistry.BRIGHT_PANEL_STAIRS.asItem());
+			content.add(BlockRegistry.FRAMED.asItem());
+			content.add(BlockRegistry.CIRCUITY.asItem());
+			content.add(BlockRegistry.ZOOTYCOONCHAINLINKFENCE.asItem());
+			content.add(BlockRegistry.CONCRETE_SMOOTH.asItem());
+			content.add(BlockRegistry.CONCRETE_SMOOTH_STAIRS.asItem());
+			content.add(BlockRegistry.CONCRETE_SMOOTH_SLAB.asItem());
+			content.add(BlockRegistry.CONCRETE_TILE.asItem());
+			content.add(BlockRegistry.CONCRETE_TILE_STAIRS.asItem());
+			content.add(BlockRegistry.CONCRETE_TILE_SLAB.asItem());
 			content.add(BLOOD_BUCKET);
 			content.add(PIERCE_REVOLVER);
 			content.add(MARKSMAN_REVOLVER);
 			content.add(MARKSMAN_REVOLVER.getStackedMarksman());
 			content.add(SHARPSHOOTER_REVOLVER);
 			content.add(SHARPSHOOTER_REVOLVER.getStackedSharpshooter());
+			content.add(ALTERNATE_PIERCER);
+			content.add(ALTERNATE_MARKSMAN);
+			content.add(ALTERNATE_SHARPSHOOTER);
 			content.add(CORE_SHOTGUN);
 			content.add(PUMP_SHOTGUN);
 			content.add(ATTRACTOR_NAILGUN);
+			content.add(OVERHEAT_NAILGUN);
 			content.add(MACHINE_SWORD.getDefaultStack(MachineSwordItem.Type.NORMAL));
 			content.add(MACHINE_SWORD.getDefaultStack(MachineSwordItem.Type.TUNDRA));
 			content.add(MACHINE_SWORD.getDefaultStack(MachineSwordItem.Type.AGONY));
 			content.add(FLAMETHROWER);
 			content.add(HARPOON);
 			content.add(HARPOON_GUN);
+			content.add(KNUCKLEBLASTER);
 			content.add(SOAP);
 			content.add(FILTH_SPAWN_EGG);
 			content.add(STRAY_SPAWN_EGG);
@@ -256,18 +302,19 @@ public class ItemRegistry
 			content.add(HIDEOUS_SPAWN_EGG.getDefaultBossStack("item.ultracraft.hideous_spawn_egg.unremarkable", false));
 			content.add(V2_SPAWN_EGG);
 			content.add(RODENT_SPAWN_EGG);
+			content.add(GREATERFILTH_SPAWN_EGG);
 			content.add(SOUL_ORB);
 			content.add(BLOOD_ORB);
 			content.add(PLUSHIE.getDefaultStack("yaya"));
+			content.add(TALON.getDefaultStack("talon"));
+			content.add(ASHEN.getDefaultStack("ashenwulf"));
 			content.add(PLUSHIE.getDefaultStack("hakita"));
 			content.add(PITR.getDefaultStack("pitr"));
-			content.add(PITR_POIN.getDefaultStack("pitrpoin"));
 			content.add(PLUSHIE.getDefaultStack("v1"));
-			content.add(TALON.getDefaultStack("talon"));
+			content.add(V2.getDefaultStack("v2"));
 			content.add(SWORDSMACHINE.getDefaultStack("swordsmachine"));
 			content.add(SWORDSMACHINE.getDefaultStack("tundra"));
 			content.add(SWORDSMACHINE.getDefaultStack("agony"));
-			content.add(V2.getDefaultStack("v2"));
 			content.add(DRONE_MASK);
 			content.add(CLAIR_DE_LUNE_DISK);
 			for (TerminalBlockEntity.Base b : TerminalBlockEntity.Base.values())
@@ -279,6 +326,7 @@ public class ItemRegistry
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.DAY));
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.EVENING));
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.NIGHT));
+			content.add(BlockRegistry.PORTAL.asItem());
 		});
 		//Dispenser Behaviors
 		DispenserBlock.registerBehavior(HELL_BULLET, new ProjectileDispenserBehavior(){
@@ -341,6 +389,32 @@ public class ItemRegistry
 					stack.decrement(1);
 				return stack;
 			}
+		});
+		Registry.register(Registries.ITEM_GROUP, EDIT_MODE_TAB,
+				FabricItemGroup.builder().displayName(Text.translatable("itemGroup.ultracraft.edit")).icon(() -> new ItemStack(BlockRegistry.MAP_TRIGGER)).build());
+		ItemGroupEvents.modifyEntriesEvent(EDIT_MODE_TAB).register(content -> {
+			content.add(BlockRegistry.MAP_ROOM);
+			content.add(BlockRegistry.MAP_TRIGGER);
+			content.add(BlockRegistry.MAP_ENEMY_TRIGGER);
+			content.add(BlockRegistry.MAP_CHECKPOINT);
+			content.add(BlockRegistry.MAP_PROGRESSION);
+			content.add(BlockRegistry.MAP_TIMER);
+			content.add(BlockRegistry.MAP_TRAVEL);
+			content.add(BlockRegistry.MAP_TITLE);
+			content.add(BlockRegistry.MAP_TITLE_LISTENER);
+			content.add(BlockRegistry.MAP_DAMAGE);
+			content.add(BlockRegistry.MAP_REDSTONE);
+			content.add(BlockRegistry.MAP_RECEIVER);
+			content.add(BlockRegistry.MAP_DOOR);
+			content.add(BlockRegistry.MAP_SPAWNER);
+			content.add(BlockRegistry.MAP_SOUND);
+			content.add(BlockRegistry.MAP_EXPLOSION);
+			content.add(BlockRegistry.MAP_LEVEL);
+			content.add(BlockRegistry.MAP_CYBERGRIND);
+			content.add(BlockRegistry.MAP_LIGHT);
+			content.add(BlockRegistry.MAP_GLOBAL_REDSTONE);
+			content.add(BlockRegistry.MAP_GLOBAL_RECEIVER);
+			content.add(BlockRegistry.MAP_GLOBAL_TITLE);
 		});
 	}
 }

@@ -7,6 +7,8 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 
+import java.util.Locale;
+
 public class SkyBlockItem extends BlockItem
 {
 	public SkyBlockItem(Settings settings)
@@ -18,7 +20,7 @@ public class SkyBlockItem extends BlockItem
 	{
 		ItemStack stack = new ItemStack(ItemRegistry.SKY);
 		NbtCompound nbt = stack.getOrCreateNbt();
-		nbt.putString("type", type.toString().toLowerCase());
+		nbt.putString("type", type.toString().toLowerCase(Locale.ROOT));
 		nbt.putInt("CustomModelData", type.ordinal() + 1);
 		stack.setNbt(nbt);
 		return stack;

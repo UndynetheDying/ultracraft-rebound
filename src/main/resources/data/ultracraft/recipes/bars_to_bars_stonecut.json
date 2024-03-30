@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "tag": "c:iron_bars"
+  },
+  "result": "minecraft:iron_bars",
+  "count": 1
+}

@@ -1,11 +1,12 @@
 package absolutelyaya.ultracraft.client.rendering;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
-import absolutelyaya.ultracraft.client.Ultraconfig;
+import absolutelyaya.ultracraft.client.ClientConfig;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
+import absolutelyaya.ultracraft.components.player.IStyleComponent;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
 import absolutelyaya.ultracraft.item.*;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
@@ -25,10 +26,12 @@ import net.minecraft.item.BannerItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec2f;
@@ -40,21 +43,18 @@ import java.util.Random;
 @SuppressWarnings("SameParameterValue")
 public class UltraHudRenderer
 {
-	private static final Ultraconfig config = UltracraftClient.getConfig();
+	private static final Vector3f[] STYLE_OFFSETS = new Vector3f[] { new Vector3f(-43, -5, 40), new Vector3f(-2, -5, 20), new Vector3f(2, 0, 0) };
+	private static final ClientConfig config = UltracraftClient.getConfig();
 	final Identifier GUI_TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/ultrahud.png");
+	final Identifier STYLE_TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/style.png");
 	final Identifier WEAPONS_TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/weapon_icons.png");
 	final Identifier CROSSHAIR_TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/crosshair_stats.png");
 	float healthPercent, staminaPercent, absorptionPercent, yOffset;
-	static float fishTimer, coinTimer, coinRot = 0, coinRotDest = 0, wingHintDisplayTimer, whitelistHintDisplayTimer;
+	static float fishTimer, coinTimer, coinRot = 0, coinRotDest = 0, wingHintDisplayTimer, whitelistHintDisplayTimer, styleTimer;
 	static ItemStack lastCatch;
 	static int coinCombo;
 	final String[] fishMania = new String[] {"message.ultracraft.fish.mania1", "message.ultracraft.fish.mania2", "message.ultracraft.fish.mania3", "message.ultracraft.fish.mania4"};
 	final Random rand = new Random();
-	
-	public UltraHudRenderer()
-	{
-		super();
-	}
 	
 	public void render(float delta, Camera cam)
 	{
@@ -83,7 +83,7 @@ public class UltraHudRenderer
 		RenderSystem.enableBlend();
 		
 		healthPercent = MathHelper.lerp(delta, healthPercent, player.getHealth() / player.getMaxHealth());
-		staminaPercent = MathHelper.lerp(delta, staminaPercent, UltraComponents.WINGED_ENTITY.get(player).getStamina() / 90f);
+		staminaPercent = MathHelper.lerp(delta, staminaPercent, UltraComponents.HIVEL.get(player).getStamina() / 90f);
 		absorptionPercent = MathHelper.lerp(delta, absorptionPercent, Math.min(player.getAbsorptionAmount() / 20f, 1f));
 		//Crosshair
 		if(config.ultraHudCrosshair)
@@ -99,6 +99,17 @@ public class UltraHudRenderer
 			matrices.pop();
 		}
 		
+		if(wings.isActive() && config.showStylePanel)
+			renderStyle(matrices, client, player, Math.max(delta, 0f), MathHelper.clamp(styleTimer, 0f, 1f));
+		renderHotbar(matrices, client, cam, player, wingsActive, delta);
+		
+		if(whitelistHintDisplayTimer > 0.001f)
+			whitelistHintDisplayTimer -= delta / 20f;
+	}
+	
+	public void renderHotbar(MatrixStack matrices, MinecraftClient client, Camera cam, ClientPlayerEntity player, boolean wingsActive, float delta)
+	{
+		matrices.push();
 		matrices.push();
 		boolean flip = player.getMainArm().equals(Arm.LEFT) ^ config.switchSides;
 		if(!UltracraftClient.getConfig().ultraHudFixed)
@@ -123,7 +134,7 @@ public class UltraHudRenderer
 		matrices.push();
 		RenderSystem.setShaderTexture(0, GUI_TEXTURE);
 		matrices.translate(-24, -36, 0f);
-		int guiScale = client.options.getGuiScale().getValue();
+		int guiScale = Math.min(client.options.getGuiScale().getValue(), 4);
 		if(guiScale == 0)
 			guiScale = 3;
 		float scale = guiScale * 0.2f;
@@ -212,10 +223,116 @@ public class UltraHudRenderer
 					flip ? -150 : -50, 14, MathHelper.clamp(wingHintDisplayTimer, 0.05f, 1f), false);
 			wingHintDisplayTimer -= delta / 20f;
 		}
-		if(whitelistHintDisplayTimer > 0.001f)
+		matrices.pop();
+	}
+	
+	public void renderStyle(MatrixStack matrices, MinecraftClient client, ClientPlayerEntity player, float delta, float alpha)
+	{
+		RenderSystem.disableDepthTest();
+		matrices.push();
+		boolean flip = player.getMainArm().equals(Arm.LEFT) == config.switchSides;
+		if(!UltracraftClient.getConfig().ultraHudFixed)
 		{
-			whitelistHintDisplayTimer -= delta / 20f;
+			float h = MathHelper.lerp(delta, player.lastRenderPitch, player.renderPitch);
+			float i = MathHelper.lerp(delta, player.lastRenderYaw, player.renderYaw);
+			matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees((player.getPitch(delta) - h) * 0.15f));
+			matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((player.getYaw(delta) - i) * 0.05f));
 		}
+		matrices.translate(flip ? 60 : -48, 32, -50);
+		matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(flip ? -10 : 10));
+		
+		matrices.push();
+		RenderSystem.setShaderTexture(0, STYLE_TEXTURE);
+		matrices.translate(-24, -36, 0f);
+		int guiScale = client.options.getGuiScale().getValue();
+		if(guiScale == 0)
+			guiScale = 3;
+		float scale = Math.min(guiScale, 3) * 0.2f;
+		matrices.scale(scale, scale, scale);
+		//main box
+		Matrix4f textureMatrix = new Matrix4f(matrices.peek().getPositionMatrix());
+		IStyleComponent style = UltraComponents.STYLE.get(player);
+		if(alpha > 0f)
+		{
+			RenderingUtil.drawTexture(textureMatrix, new Vector4f(0f, 0f, 64f, 76f), 0f,
+					new Vec2f(128f, 128f), new Vector4f(0f, 0f, 64f, 76f), alpha * 0.75f);
+			RenderingUtil.drawTexture(textureMatrix, new Vector4f(2f, 76f - 10f, 60f, 8f), 0f,
+					new Vec2f(128f, 128f), new Vector4f(65f, 21f + style.getRank() * 9f, 60f, 8f), alpha);
+			//progressBar
+			RenderingUtil.drawTexture(textureMatrix, new Vector4f(1f, 76f - 16f, 62f, 4f), 0f,
+					new Vec2f(128f, 128f), new Vector4f(1f, 112f, 62f, 4f), alpha);
+			float progress = style.getRankProgress();
+			RenderingUtil.drawTexture(textureMatrix, new Vector4f(1f, 76f - 16f, 62f * progress, 4f), 0f,
+					new Vec2f(128f, 128f), new Vector4f(1f, 108f, 62f * progress, 4f), alpha);
+			if(player.getMainHandStack().getItem() instanceof AbstractWeaponItem)
+			{
+				//stalenessBar
+				RenderingUtil.drawTexture(textureMatrix, new Vector4f(3f, 2f, 58f, 8f), 0f,
+						new Vec2f(128f, 128f), new Vector4f(3f, 100f, 58f, 8f), alpha);
+				int staleness = 150 - style.getStaleness(Registries.ITEM.getId(player.getMainHandStack().getItem()));
+				float stalePercent = MathHelper.clamp(staleness / 50f, 0f, 1f);
+				RenderingUtil.drawTexture(textureMatrix, new Vector4f(3f, 2f, 58f * stalePercent, 8f), 0f,
+						new Vec2f(128f, 128f), new Vector4f(3f, 92f, 58f * stalePercent, 8f), alpha);
+				float usedPercent = MathHelper.clamp(staleness / 50f - 1f, 0f, 1f);
+				RenderingUtil.drawTexture(textureMatrix, new Vector4f(3f, 2f, 58f * usedPercent, 8f), 0f,
+						new Vec2f(128f, 128f), new Vector4f(3f, 84f, 58f * usedPercent, 8f), alpha);
+				float freshPercent = MathHelper.clamp(staleness / 50f - 2f, 0f, 1f);
+				RenderingUtil.drawTexture(textureMatrix, new Vector4f(3f, 2f, 58f * freshPercent, 8f), 0f,
+						new Vec2f(128f, 128f), new Vector4f(3f, 76f, 58f * freshPercent, 8f), alpha);
+				
+				if(staleness > 100)
+					RenderingUtil.drawTexture(textureMatrix, new Vector4f(6f, 4f, 34f, 4f), 0f,
+							new Vec2f(128f, 128f), new Vector4f(65f, 1f, 34f, 4f), alpha);
+				else if(staleness > 50)
+					RenderingUtil.drawTexture(textureMatrix, new Vector4f(6f, 4f, 34f, 4f), 0f,
+							new Vec2f(128f, 128f), new Vector4f(65f, 6f, 34f, 4f), alpha);
+				else if(staleness > 0)
+					RenderingUtil.drawTexture(textureMatrix, new Vector4f(6f, 4f, 34f, 4f), 0f,
+							new Vec2f(128f, 128f), new Vector4f(65f, 11f, 34f, 4f), alpha);
+				else
+					RenderingUtil.drawTexture(textureMatrix, new Vector4f(6f, 4f, 34f, 4f), 0f,
+							new Vec2f(128f, 128f), new Vector4f(65f, 16f, 34f, 4f), alpha);
+			}
+		}
+		
+		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+		int count = Math.min(style.getBonusQueue().size(), 6);
+		matrices.push();
+		matrices.scale(0.5f, -0.5f, -1f);
+		Vector3f offset = STYLE_OFFSETS[MathHelper.clamp(guiScale - 1, 0, STYLE_OFFSETS.length - 1)];
+		matrices.translate((flip ? 124 : 144) + offset.x, -100 + offset.y, 10 + offset.z);
+		if(alpha > 0f)
+		{
+			matrices.push();
+			float f = style.getMovementMultiplier() / 3f;
+			float shake = Math.max(f - 0.5f, 0f) * 3;
+			matrices.translate((rand.nextFloat() - 0.5f) * shake, (rand.nextFloat() - 0.5f) * shake, 0f);
+			drawTextNoBG(matrices, Text.translatable("stylebonus.ultracraft.movement-multiplier",
+					String.format(java.util.Locale.US,"%.2f", style.getMovementMultiplier())), flip ? -150 : -50, 70, alpha, false);
+			matrices.pop();
+		}
+		if(style.getBonusQueue() != null && count > 0)
+		{
+			if(alpha > 0f)
+			{
+				int i = count;
+				for (Pair<String, Long> p : style.getBonusQueue())
+				{
+					if(p == null || i <= 0)
+						break;
+					Text t = Text.translatable(p.getLeft());
+					drawTextNoBG(matrices, t, flip ? -150 : -50, 5 + (i - 1) * 10, alpha, false);
+					i--;
+				}
+			}
+		}
+		matrices.pop();
+		if(style.getChain() > 0 || style.getBonusQueue().size() > 0)
+			styleTimer = 1f;
+		else if(styleTimer > 0f)
+			styleTimer -= delta / 2f;
+		matrices.pop();
+		matrices.pop();
 	}
 	
 	public void renderExtras(float tickDelta)
@@ -270,7 +387,7 @@ public class UltraHudRenderer
 			drawItem(matrices, new Matrix4f(matrices.peek().getPositionMatrix()), client, immediate, lastCatch, false);
 			immediate.draw();
 			matrices.pop();
-			fishTimer -= tickDelta / 20;
+			fishTimer -= MinecraftClient.getInstance().getLastFrameDuration() / 15f;
 			matrices.pop();
 		}
 		
@@ -337,7 +454,7 @@ public class UltraHudRenderer
 				uv = new Vector2i(3, 3);
 			RenderSystem.setShaderTexture(0, WEAPONS_TEXTURE);
 			RenderingUtil.drawTexture(textureMatrix, new Vector4f(0, 16, 48, 32f), 0f,
-					new Vec2f(192, 192), new Vector4f(uv.x * 48f, uv.y * 32f, 48f, 32f), 0.75f);
+					new Vec2f(384, 384), new Vector4f(uv.x * 48f, uv.y * 32f, 48f, 32f), 0.75f);
 			RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		}
 		else
@@ -381,6 +498,23 @@ public class UltraHudRenderer
 			client.textRenderer.draw(Text.of(lines[i]), x1, y1, Color.ofRGBA(1f, 1f, 1f, alpha).getColor(), false,
 					matrix, immediate, TextRenderer.TextLayerType.NORMAL, Color.ofRGBA(0f, 0f, 0f, 0.5f * alpha).getColor(), 15728880);
 			matrix.translate(0f, 0f, -0.1f);
+			client.textRenderer.draw(Text.of(lines[i]), x1, y1, Color.ofRGBA(1f, 1f, 1f, alpha).getColor(), false,
+					matrix, immediate, TextRenderer.TextLayerType.NORMAL, 0, 15728880);
+		}
+	}
+	
+	void drawTextNoBG(MatrixStack matrices, Text text, float x, float y, float alpha, boolean centered)
+	{
+		if(text == null)
+			return;
+		MinecraftClient client = MinecraftClient.getInstance();
+		VertexConsumerProvider.Immediate immediate = client.getBufferBuilders().getEntityVertexConsumers();
+		String[] lines = text.getString().split("\n");
+		for (int i = 0; i < lines.length; i++)
+		{
+			Matrix4f matrix = matrices.peek().getPositionMatrix();
+			float x1 = x - (centered ? client.textRenderer.getWidth(lines[i]) / 2f : 0);
+			float y1 = y + (client.textRenderer.fontHeight + 2) * i;
 			client.textRenderer.draw(Text.of(lines[i]), x1, y1, Color.ofRGBA(1f, 1f, 1f, alpha).getColor(), false,
 					matrix, immediate, TextRenderer.TextLayerType.NORMAL, 0, 15728880);
 		}

@@ -1,0 +1,38 @@
+{
+  "title": "level.ultracraft.example.title",
+  "description": "level.ultracraft.example.description",
+  "author": "yaya",
+  "author-link": "https://absolutelyaya.neocities.org/",
+  "structure": "ultracraft:level/tutorial",
+  "thumbnail": "ultracraft:textures/level/placeholder.png",
+  "ranking": {
+    "time": [
+      "1:00:00",
+      "2:00:00",
+      "3:00:00",
+      "4:00:00"
+    ],
+    "kills": [
+      3,
+      2,
+      1,
+      1
+    ],
+    "style": [
+      400,
+      300,
+      200,
+      100
+    ]
+  },
+  "spawn-offset":{
+    "x": 16,
+    "y": 8,
+    "z": 9
+  },
+  "music": {
+    "calm": "minecraft:music_disc.cat",
+    "combat": "minecraft:music_disc.ward"
+  },
+  "version": 1
+}

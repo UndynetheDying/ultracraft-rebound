@@ -1,24 +1,29 @@
 package absolutelyaya.ultracraft.mixin.client;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
+import absolutelyaya.ultracraft.client.ClientConfig;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.screen.TerminalScreen;
 import absolutelyaya.ultracraft.client.gui.screen.WingCustomizationScreen;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
+import absolutelyaya.ultracraft.components.player.IHivelComponent;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
-import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.config.HivelConfig;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
+import absolutelyaya.ultracraft.registry.KeybindRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.StatusEffectRegistry;
 import absolutelyaya.ultracraft.registry.TagRegistry;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.FluidBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -30,10 +35,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -47,13 +49,11 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity implements WingedPlayerEntity
@@ -63,15 +63,11 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		super(world, profile);
 	}
 	
-	@Shadow public abstract boolean isSneaking();
-	
 	@Shadow private double lastX;
 	
 	@Shadow private double lastZ;
 	
 	@Shadow public abstract float getPitch(float tickDelta);
-	
-	@Shadow private boolean lastSneaking;
 	
 	@Shadow @Final public ClientPlayNetworkHandler networkHandler;
 	@Shadow private double lastBaseY;
@@ -81,14 +77,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	@Shadow private boolean autoJumpEnabled;
 	@Shadow @Final protected MinecraftClient client;
 	
-	@Shadow protected abstract void sendSprintingPacket();
-	
-	@Shadow private boolean lastSprinting;
 	@Shadow public Input input;
-	
-	@Shadow public abstract boolean isSubmergedInWater();
-	
-	@Shadow public abstract void playSound(SoundEvent event, SoundCategory category, float volume, float pitch);
 	
 	@Shadow public abstract boolean damage(DamageSource source, float amount);
 	
@@ -98,289 +87,294 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	
 	@Shadow public abstract boolean isMainPlayer();
 	
+	@Shadow public abstract boolean isSneaking();
+	
+	@Shadow public abstract void sendMessage(Text message, boolean overlay);
+	
+	@Shadow protected abstract boolean isCamera();
+	
+	@Shadow public abstract void dismountVehicle();
+	
 	Vec3d dashDir = Vec3d.ZERO;
 	Vec3d slideDir = Vec3d.ZERO;
-	boolean slamming, lastSlamming, strongGroundPound, lastJumping, lastSprintPressed, lastTouchedWater, wasHiVel, slamStored,
-			slideStartedSideways;
-	int slamTicks, slamCooldown, slamJumpTimer = -1, slideTicks, wallJumps = 3, coyote, disableJumpTicks, jumpTicks, slidePreservationTicks;
-	float slideVelocity = 0.33f;
-	final float baseJumpVel = 0.42f;
+	boolean grounded, dashPressed, wasDashPressed, slidePressed, wasSlidePressed, slamming, wasSlamming, strongSlam, slamStored, wasJumping,
+			wasHivel, slideStartedSideways;
+	int slamTicks, curSlamCooldown, slamJumpTimer, coyote, curSlidePreservationTicks, slideTicks, curWallJumps, disableJumpTicks;
+	int slamCooldown = 5, slamJumpWindow = 4, coyoteThreshold = 4, slidePreservationTicks = 5, slideSlowdownTicks = 20, wallJumps = 3,
+			slamDisableJumpTicks = 8;
+	float screenshake = 0f, slideVelocity;
+	float hivelSpeed, slamVelocity = 2f, baseSlideVelocity = 0.35f, baseJumpVelocity = 0.42f, dashVelocity = 1f, skeweredDashVelocity = 0.05f,
+			dashSlipAndSlideThreshold = 0.6f, dashSlipAndSlideReduction = 0.5f, dashAirStopVelocityMultiplier = 0.3f,
+			skeweredDashAirStopVelocityMultiplier = 0.03f, slideJumpSpeedBonus = 0.025f, slideSpeedSoftCap = 0.99f, slideSlowdownMultiplier = 0.95f,
+			slamJumpVelocityMultiplier = 1.5f, slamDiveVelocity = 1.5f, slamStoreJumpVelocityMultiplier = 4.5f, slamStoreDiveVelocity = 2.5f,
+			slamTickVelocityBonus = 0.05f, slamSlideVelocity = 0.66f, slamStoreSlideVelocity = 1f, skimUpwardsVelocityMultiplier = 0.75f,
+			wallSlideVelocity = 0.2f, wallJumpHorizontalVelocity = 0.33f, wallJumpVerticalVelocityMultiplier = 0.8f, groundCheckDistance = 0.1f,
+			dashGroundStopVelocityMultiplier = 0.05f, slideStartGroundTolerance = 0.5f,
+			slamDiveVerticalVelocityMultiplier = 0.6f, dashJumpVerticalVelocityMultiplier = 0.5f, slideJumpVerticalVelocityMultiplier = 0.55f;
 	TerminalBlockEntity focusedTerminal;
+	
+	@Override
+	public void initMovementConfig(HivelConfig config)
+	{
+		slamCooldown = config.slamCooldown.getValue();
+		slamJumpWindow = config.slamJumpWindow.getValue();
+		coyoteThreshold = config.coyoteThreshold.getValue();
+		slidePreservationTicks = config.slidePreservationTicks.getValue();
+		slideSlowdownTicks = config.slideSlowdownTicks.getValue();
+		wallJumps = config.wallJumps.getValue();
+		slamDisableJumpTicks = config.slamDisableJumpTicks.getValue();
+		hivelSpeed = config.speed.getValue();
+		slamVelocity = config.slamVelocity.getValue();
+		baseSlideVelocity = config.baseSlideVelocity.getValue();
+		baseJumpVelocity = config.baseJumpVelocity.getValue();
+		dashVelocity = config.dashVelocity.getValue();
+		skeweredDashVelocity = config.skeweredDashVelocity.getValue();
+		dashSlipAndSlideThreshold = config.dashSlipAndSlideThreshold.getValue();
+		dashSlipAndSlideReduction = config.dashSlipAndSlideReduction.getValue();
+		dashAirStopVelocityMultiplier = config.dashAirStopVelocityMultiplier.getValue();
+		skeweredDashAirStopVelocityMultiplier = config.skeweredDashAirStopVelocityMultiplier.getValue();
+		slideJumpSpeedBonus = config.slideJumpSpeedBonus.getValue();
+		slideSpeedSoftCap = config.slideSpeedSoftCap.getValue();
+		slideSlowdownMultiplier = config.slideSlowdownMultiplier.getValue();
+		slamJumpVelocityMultiplier = config.slamJumpVelocityMultiplier.getValue();
+		slamDiveVelocity = config.slamDiveVelocity.getValue();
+		slamStoreJumpVelocityMultiplier = config.slamStoreJumpVelocityMultiplier.getValue();
+		slamStoreDiveVelocity = config.slamStoreDiveVelocity.getValue();
+		slamTickVelocityBonus = config.slamTickVelocityBonus.getValue();
+		slamSlideVelocity = config.slamSlideVelocity.getValue();
+		slamStoreSlideVelocity = config.slamStoreSlideVelocity.getValue();
+		skimUpwardsVelocityMultiplier = config.skimUpwardsVelocityMultiplier.getValue();
+		wallSlideVelocity = config.wallSlideVelocity.getValue();
+		wallJumpHorizontalVelocity = config.wallJumpHorizontalVelocity.getValue();
+		wallJumpVerticalVelocityMultiplier = config.wallJumpVerticalVelocityMultiplier.getValue();
+		groundCheckDistance = config.groundCheckDistance.getValue();
+		dashGroundStopVelocityMultiplier = config.dashGroundStopVelocityMultiplier.getValue();
+		slideStartGroundTolerance = config.slideStartGroundTolerance.getValue();
+		slamDiveVerticalVelocityMultiplier = config.slamDiveVerticalVelocityMultiplier.getValue();
+		dashJumpVerticalVelocityMultiplier = config.dashJumpVerticalVelocityMultiplier.getValue();
+		slideJumpVerticalVelocityMultiplier = config.slideJumpVerticalVelocityMultiplier.getValue();
+		Ultracraft.LOGGER.info("initialized Hivel Movement");
+	}
 	
 	void tryDash()
 	{
 		IWingDataComponent wings = UltraComponents.WING_DATA.get(this);
 		if(wings.isActive() && !getAbilities().flying && wouldPoseNotCollide(EntityPose.STANDING))
 		{
-			if(isSneaking() && !lastSneaking)
+			IHivelComponent hivel = UltraComponents.HIVEL.get(this);
+			if(!hivel.consumeStamina())
+				return;
+			if(slamming)
+				setSlammingClient(false);
+			if(slamStored)
+				slamStored = false;
+			Vec3d dir = new Vec3d(input.movementSideways, 0f, input.movementForward).rotateY(-(float)Math.toRadians(getYaw())).normalize();
+			if(dir.lengthSquared() < 0.9f)
+				dir = Vec3d.fromPolar(0f, getYaw()).normalize();
+			
+			if(isMainPlayer())
 			{
-				IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(this);
-				if(!winged.consumeStamina())
-					return;
-				if(slamming)
-					slamming = false;
-				if(slamStored)
-					slamStored = false;
-				Vec3d dir = new Vec3d(input.movementSideways, 0f, input.movementForward).rotateY(-(float)Math.toRadians(getYaw())).normalize();
-				if(dir.lengthSquared() < 0.9f)
-					dir = Vec3d.fromPolar(0f, getYaw()).normalize();
-				
-				if(isMainPlayer())
-				{
-					PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-					buf.writeDouble(dir.x);
-					buf.writeDouble(dir.y);
-					buf.writeDouble(dir.z);
-					ClientPlayNetworking.send(PacketRegistry.DASH_C2S_PACKET_ID, buf);
-					PlayerAnimator.playAnimation(client.player, forwardSpeed >= 0 ? PlayerAnimator.DASH_FORWARD : PlayerAnimator.DASH_BACK, 5, false);
-				}
-				setVelocity(dir);
-				dashDir = dir;
-				winged.onDash();
-				if(isSprinting())
-					setSliding(false, true);
+				PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+				buf.writeDouble(dir.x);
+				buf.writeDouble(dir.y);
+				buf.writeDouble(dir.z);
+				ClientPlayNetworking.send(PacketRegistry.DASH_C2S_PACKET_ID, buf);
+				PlayerAnimator.playAnimation(client.player, forwardSpeed >= 0 ? PlayerAnimator.DASH_FORWARD : PlayerAnimator.DASH_BACK, 5, false);
 			}
+			setVelocity(dir);
+			dashDir = dir;
+			hivel.onDash();
+			if(isSliding())
+				setSliding(false, true);
 		}
 	}
 	
 	@Inject(method = "sendMovementPackets", at = @At(value = "HEAD"), cancellable = true)
 	public void onSendMovementPackets(CallbackInfo ci)
 	{
-		if(getFocusedTerminal() != null)
-		{
-			if(!lastSneaking && isSneaking())
-				setFocusedTerminal(null); //exit focused Terminal
-		}
-		
-		IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(this);
+		IHivelComponent hivel = UltraComponents.HIVEL.get(this);
 		IWingDataComponent wings = UltraComponents.WING_DATA.get(this);
+		
 		if(wings.isActive() && !getAbilities().flying && !isSpectator())
 		{
-			boolean grounded = isGrounded(0.1f);
-			if(slamCooldown > 0)
+			dashPressed = KeybindRegistry.DASH.isPressed();
+			slidePressed = KeybindRegistry.SLIDE.isPressed();
+			
+			//ground check
+			boolean newGrounded = isGrounded(groundCheckDistance);
+			if(!grounded && newGrounded) //landing
 			{
-				slamCooldown--;
-				if(slamCooldown == 0 && !isSprinting())
-					slideVelocity = 0.33f;
+				coyote = 0;
+				curWallJumps = wallJumps;
+				curSlidePreservationTicks = slidePreservationTicks;
 			}
-			if(wasHiVel != wings.isActive() && lastSprintPressed)
-				setSliding(true, false); //when switching into HiVelMode while sprinting, reinitiate sliding
-			if(slamJumpTimer > -1 && slamJumpTimer < 4)
-				slamJumpTimer++;
-			//start slide or groundpound
-			if(client.options.sprintKey.isPressed() && !lastSprintPressed && !slamming)
+			//coyote ticker
+			if(!grounded && coyote <= coyoteThreshold)
+				coyote++;
+			
+			//dash
+			if(!hivel.isDashing() && dashPressed && !wasDashPressed)
+				tryDash();
+			//dash velocity
+			boolean isSkewered = hasStatusEffect(StatusEffectRegistry.IMPALED);
+			if(hivel.isDashing())
+				setVelocity(dashDir.multiply(isSkewered ? skeweredDashVelocity : dashVelocity));
+			//dash jump
+			if(hivel.wasDashing() && canJump() && jumping && !wasJumping)
 			{
-				//start ground pound
-				if(isUnSolid(posToBlock(getPos().subtract(0f, 0.99f, 0f))) && !verticalCollision && slamCooldown == 0)
+				hivel.onDashJump();
+				if(!hivel.consumeStamina())
+					setVelocity(dashDir.multiply(0.3));
+				addVelocity(0f, getJumpVelocity() * dashJumpVerticalVelocityMultiplier, 0f);
+				hivel.setIgnoreSlowdown(true);
+				slideVelocity = dashVelocity;
+				if(isMainPlayer())
+					PlayerAnimator.playAnimation(client.player, forwardSpeed >= 0 ? PlayerAnimator.DASH_FORWARD : PlayerAnimator.DASH_BACK, 5, false);
+			}
+			//dash end velocity
+			if(hivel.wasDashing() && !hivel.isDashing())
+			{
+				float slipAndSlide = getSteppingBlockState().getBlock().getSlipperiness();
+				if(!grounded)
+					setVelocity(dashDir.multiply(isSkewered ? skeweredDashAirStopVelocityMultiplier : dashAirStopVelocityMultiplier));
+				else if(slipAndSlide > dashSlipAndSlideThreshold)
+					setVelocity(dashDir.multiply(Math.min(slipAndSlide - dashSlipAndSlideReduction, dashSlipAndSlideThreshold)));
+				else
+					setVelocity(dashDir.multiply(dashGroundStopVelocityMultiplier));
+			}
+			
+			//slide
+			if(slidePressed && !wasSlidePressed && !slamming)
+			{
+				if(!isGrounded(slideStartGroundTolerance) && !verticalCollision && curSlamCooldown == 0) //start slam
 				{
-					winged.cancelDash();
+					hivel.cancelDash();
 					slamTicks = 0;
-					slamming = true;
-					strongGroundPound = true;
-					setSprinting(false);
+					setSlammingClient(true);
+					strongSlam = true;
+					setSlidingClient(false);
+					hivel.setIgnoreSlowdown(false);
+					hivel.setAirControlIncreased(false);
 					if(isMainPlayer())
 						PlayerAnimator.playAnimation(client.player, PlayerAnimator.SLAM_LOOP, 5, false);
 				}
-				//start slide
-				else if(!horizontalCollision && !jumping && !winged.isDashing() && !winged.wasDashing(2))
+				else if(!jumping && !hivel.isDashing() && !isSliding()) //start slide if possible
 				{
 					BlockPos pos = posToBlock(getPos().add(Vec3d.fromPolar(0f, getYaw()).normalize()));
-					setSliding((isGrounded(0.79f) || verticalCollision) &&
-										 !getWorld().getBlockState(pos).isSolidBlock(getWorld(), pos), lastSprintPressed);
+					setSliding((isGrounded(slideStartGroundTolerance) || verticalCollision) && isUnSolid(pos), isSliding());
 				}
-				//cancel slide because it shouldn't be possible rn anyways
-				else if(isSprinting())
-					setSprinting(false);
-				ci.cancel();
+				else if(isSliding()) //cancel slide cause it's not even possible rn
+					setSlidingClient(false);
 			}
-			//cancel strong groundpound if key is let go during it
-			if(strongGroundPound && !client.options.sprintKey.isPressed())
-				strongGroundPound = false;
-			//stop sliding once conditions aren't met anymore
-			else if(isSprinting())
+			//cancel strong slam
+			if(strongSlam && !slidePressed)
+				strongSlam = false;
+			//slam jump
+			if(slamJumpTimer > 0 && jumping && !wasJumping)
 			{
-				if(jumping && (grounded || coyote > 0))
+				slamJumpTimer = -1;
+				if(slidePressed && !strongSlam) //Dive // Ultradive
 				{
-					setVelocity(slideDir.multiply(1f + 0.05 * UltracraftClient.speed).multiply(slideVelocity * 1.25));
-					addVelocity(0, baseJumpVel, 0);
-					winged.setIgnoreSlowdown(true); //don't slow down from air friction during movement tech
+					setVelocity(Vec3d.fromPolar(0, getYaw()).multiply(slamStored ? slamStoreDiveVelocity : slamDiveVelocity)
+										.add(0, getJumpVelocity() * slamDiveVerticalVelocityMultiplier, 0));
+					hivel.setIgnoreSlowdown(true);
+					setSlidingClient(false);
+					if(isMainPlayer())
+						PlayerAnimator.playAnimation(client.player,
+								slamStored ? PlayerAnimator.SLAMSTORE_DIVE : PlayerAnimator.SLAM_DIVE, 0, false);
 				}
-				boolean moved = new Vec3d(lastX, lastBaseY, lastZ).distanceTo(getPos()) > slideVelocity / 2f || Ultracraft.isTimeFrozen() || slideTicks < 1;
-				setSprinting(client.options.sprintKey.isPressed() && !slamming && moved && !jumping);
-				slideTicks++;
-				if(!grounded)
-					slideTicks = 0;
-				ci.cancel();
+				else
+				{
+					setVelocity(0f, getJumpVelocity() * (slamStored ? slamStoreJumpVelocityMultiplier : slamJumpVelocityMultiplier) +
+							slamTicks * slamTickVelocityBonus, 0f);
+					if(isMainPlayer())
+						PlayerAnimator.playAnimation(client.player, PlayerAnimator.SLAM_JUMP, 0, false);
+				}
+				slamStored = false;
+				slamTicks = 0;
 			}
-			//slide velocity
-			if(isSprinting())
+			if(slamming && verticalCollision && getVelocity().y < 0f) //slam impact
 			{
-				if(isSprinting() != lastSprinting)
-					sendSprintingPacket();
-				setVelocity(slideDir.multiply(1f + 0.2 * UltracraftClient.speed).multiply(slideVelocity / 1.2f).add(0f, getVelocity().y, 0f));
-				ci.cancel();
+				setSlammingClient(false);
+				slamJumpTimer = slamJumpWindow;
+				curSlamCooldown = slamCooldown;
+				slideVelocity = slamStored ? slamStoreSlideVelocity : slamSlideVelocity;
+				if(isMainPlayer())
+					PlayerAnimator.playAnimation(client.player, PlayerAnimator.SLAM_IMPACT, 0, false);
 			}
-			//skim on liquids
-			BlockPos belowPos = posToBlock(getPos().subtract(0f, 0.1f, 0f));
-			FluidState fluidBelow = getWorld().getBlockState(belowPos).getFluidState();
-			if(isSprinting() && !fluidBelow.getFluid().equals(Fluids.EMPTY) && !fluidBelow.isIn(TagRegistry.UNSKIMMABLE_FLUIDS)
-					   && getWorld().getFluidState(belowPos.up()).getFluid().equals(Fluids.EMPTY))
-			{
-				Vec3d vel = getVelocity();
-				setVelocity(new Vec3d(vel.x, Math.max(baseJumpVel / 2f, vel.y * -0.75), vel.z));
-				PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-				buf.writeVector3f(getPos().toVector3f());
-				ClientPlayNetworking.send(PacketRegistry.SKIM_C2S_PACKET_ID, buf);
-			}
-			//ground pound velocity
+			//slam velocity
 			if(slamming)
 			{
 				slamTicks++;
 				if(!slamStored)
-					setVelocity(0, -2, 0);
-				//landing
-				if(verticalCollision && getVelocity().y < 0f)
-				{
-					slamming = false;
-					slamJumpTimer = 0;
-					slamCooldown = 5;
-					slideVelocity = slamStored ? 1f : 0.66f;
-					if(isMainPlayer())
-						PlayerAnimator.playAnimation(client.player, PlayerAnimator.SLAM_IMPACT, 0, false);
-				}
-				if(jumping && lastJumping)
-					disableJumpTicks = 8;
-				ci.cancel();
-			}
-			//high jump after ground pound
-			if(jumping && !lastJumping)
-			{
-				if(slamJumpTimer > -1 && slamJumpTimer < 4)
-				{
-					slamJumpTimer = -1;
-					if(client.options.sprintKey.isPressed() && !strongGroundPound) //Dive / Ultradive
-					{
-						winged.setIgnoreSlowdown(true);
-						setVelocity(Vec3d.fromPolar(0, getYaw()).multiply(slamStored ? 4f : 1.5f).add(0, getJumpVelocity(), 0));
-						if(isMainPlayer())
-							PlayerAnimator.playAnimation(client.player,
-									slamStored ? PlayerAnimator.SLAMSTORE_DIVE : PlayerAnimator.SLAM_DIVE, 0, false);
-					}
-					else
-					{
-						setVelocity(0, slamTicks / 20f + getJumpVelocity() * 1.5f + (slamStored ? 3f : 0f), 0);
-						if(isMainPlayer())
-							PlayerAnimator.playAnimation(client.player, PlayerAnimator.SLAM_JUMP, 0, false);
-					}
-					if(slamStored)
-						jumpTicks = 0;
+					setVelocity(0f, -slamVelocity, 0f);
+				else if(grounded)
 					slamStored = false;
-					slamTicks = 0;
-					ci.cancel();
+				if(jumping && wasJumping) //prevent slam spam by holding down space
+					disableJumpTicks = slamDisableJumpTicks;
+			}
+			//slide tick
+			if(isSliding())
+			{
+				if(jumping && !wasJumping && canJump()) //slide jump
+				{
+					setVelocity(slideDir.multiply(Math.min(slideVelocity + slideJumpSpeedBonus, slideSpeedSoftCap)));
+					addVelocity(0, getJumpVelocity() * slideJumpVerticalVelocityMultiplier, 0);
+					hivel.setIgnoreSlowdown(true);
+					curSlidePreservationTicks = -1;
 				}
-				slamStored = false;
-			}
-			//start dash
-			if(isSneaking() && !lastSneaking)
-			{
-				tryDash();
-				ci.cancel();
-			}
-			//dash velocity
-			if(winged.isDashing())
-			{
-				float f = hasStatusEffect(StatusEffectRegistry.IMPALED) ? 0.05f : 1f;
-				setVelocity(dashDir.multiply(f + 0.2 * UltracraftClient.speed));
-				ci.cancel();
-			}
-			//dash jump (preserves velocity)
-			if(winged.wasDashing() && input.jumping && !lastJumping && (isGrounded(0.49f) || coyote > 0))
-			{
-				winged.onDashJump();
-				if(!winged.consumeStamina())
-					setVelocity(dashDir.multiply(0.3));
-				addVelocity(0f, baseJumpVel, 0f);
-				winged.setIgnoreSlowdown(true); //don't slow down from air friction during movement tech
-				if(isMainPlayer())
-					PlayerAnimator.playAnimation(client.player, forwardSpeed >= 0 ? PlayerAnimator.DASH_FORWARD : PlayerAnimator.DASH_BACK, 5, false);
-			}
-			//stop dashing
-			if(winged.wasDashing() && !winged.isDashing())
-			{
-				float slipandslide = getSteppingBlockState().getBlock().getSlipperiness();
+				else //slide velocity
+					setVelocity(slideDir.multiply(slideVelocity).add(0f, getVelocity().y, 0f));
+				boolean moved = new Vec3d(lastX, lastBaseY, lastZ).distanceTo(getPos()) > slideVelocity / 2f || Ultracraft.isTimeFrozen() || slideTicks < 1;
+				slideTicks++;
+				if(!(slidePressed && !slamming && moved && !jumping))
+				{
+					setSliding(false, isSliding()); //stop slide
+					if(!jumping)
+						curSlidePreservationTicks = slidePreservationTicks;
+				}
 				if(!grounded)
-					setVelocity(dashDir.multiply(hasStatusEffect(StatusEffectRegistry.IMPALED) ? 0.03 : 0.3));
-				else if(slipandslide > 0.6)
-					setVelocity(dashDir.multiply(Math.min(slipandslide - 0.5, 0.6)));
-				else
-					setVelocity(Vec3d.ZERO);
-				ci.cancel();
+					slideTicks = 0;
 			}
-			//stop ignoring slowdown when not sliding/dashing and on ground
-			if((verticalCollision && grounded) &&
-					   !isSprinting() && winged.shouldIgnoreSlowdown() && !winged.isDashing())
-				winged.setIgnoreSlowdown(false);
-			//reset walljumps upon landing
-			if(!lastOnGround && isOnGround())
-			{
-				if(grounded)
-					coyote = 4;
-				wallJumps = 3;
-				winged.setAirControlIncreased(false);
-				if(slamming)
-					slamming = false;
-				slidePreservationTicks = 5;
-			}
-			if((!isOnGround() || !grounded) && coyote > 0)
-				coyote--;
-			//wall sliding / fall slow-down
-			Iterable<VoxelShape> temp = getWorld().getBlockCollisions(this, getBoundingBox().expand(0.1f, 0, 0f));
-			ArrayList<VoxelShape> touchingWalls = new ArrayList<>(StreamSupport.stream(temp.spliterator(), false).toList());
-			temp = getWorld().getBlockCollisions(this, getBoundingBox().expand(0f, 0, 0.1f));
-			touchingWalls.addAll(StreamSupport.stream(temp.spliterator(), false).toList());
-			if(!slamming && !isSprinting() && touchingWalls.size() > 0 && !grounded)
+			
+			//skim on liquids
+			BlockPos belowPos = posToBlock(getPos().subtract(0f, 0.1f, 0f));
+			FluidState fluidBelow = getWorld().getBlockState(belowPos).getFluidState();
+			if(isSliding() && !fluidBelow.getFluid().equals(Fluids.EMPTY) && !fluidBelow.isIn(TagRegistry.UNSKIMMABLE_FLUIDS) &&
+					   getWorld().getFluidState(posToBlock(getPos().add(0f, 0.1f, 0f))).getFluid().equals(Fluids.EMPTY))
 			{
 				Vec3d vel = getVelocity();
-				setVelocity(new Vec3d(vel.x, Math.max(vel.y, -0.2), vel.z));
-				ci.cancel();
+				setVelocity(new Vec3d(vel.x, Math.max(baseJumpVelocity / 2f, vel.y * -skimUpwardsVelocityMultiplier), vel.z));
+				PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+				buf.writeVector3f(getPos().toVector3f());
+				ClientPlayNetworking.send(PacketRegistry.SKIM_C2S_PACKET_ID, buf);
+			}
+			
+			//wall sliding
+			ArrayList<VoxelShape> touchingWalls = new ArrayList<>();
+			//x and z axis are checked seperately because we don't want diagonal false-positives
+			getWorld().getBlockCollisions(this, getBoundingBox().expand(0.1f, 0, 0f)).forEach(touchingWalls::add); //x-axis wall check
+			getWorld().getBlockCollisions(this, getBoundingBox().expand(0f, 0, 0.1f)).forEach(touchingWalls::add); //z-axis wall check
+			boolean isTouchingWall = touchingWalls.size() > 0;
+			if(!slamming && !isSliding() && isTouchingWall && !grounded)
+			{
+				Vec3d vel = getVelocity();
+				setVelocity(new Vec3d(vel.x, Math.max(vel.y, -wallSlideVelocity), vel.z));
 			}
 			//wall jump
-			if(wallJumps > 0 && !isGrounded(0.5f) &&
-					   jumping && !lastJumping && !lastOnGround && touchingWalls.size() > 0 && (UltracraftClient.isSlamStorageEnabled() || !slamming) &&
-					   !isSprinting())
+			if(curWallJumps > 0 && !isGrounded(0.5f) && jumping && !wasJumping && !lastOnGround && isTouchingWall &&
+					   (UltracraftClient.isSlamStorageEnabled() || !slamming) && !isSliding())
+				wallJump(touchingWalls, hivel);
+			
+			//stop ignoring slowdown and increasing slowdown
+			if((verticalCollision && grounded) && !hivel.isDashing())
 			{
-				Vec3d vel = new Vec3d(0, 0, 0);
-				Optional<Integer> X = Optional.empty();
-				Optional<Integer> Z = Optional.empty();
-				for (VoxelShape shape : touchingWalls)
-				{
-					Optional<Vec3d> opos = shape.getClosestPointTo(getPos());
-					if(opos.isEmpty())
-						continue;
-					Vec3d v = unhorizontalize(getPos().multiply(1, 0, 1).subtract(opos.get().multiply(1, 0, 1)).normalize());
-					if(X.isPresent() && v.z != 0 && Math.abs(X.get() - opos.get().x) < 1f)
-						continue;
-					if(Z.isPresent() && v.x != 0 && Math.abs(Z.get() - opos.get().z) < 1f)
-						continue;
-					if(v.x != 0)
-						Z = Optional.of((int)opos.get().z);
-					else
-						X = Optional.of((int)opos.get().x);
-					vel = vel.add(v);
-				}
-				vel = new Vec3d(MathHelper.clamp(vel.x, -1f, 1f), 0, MathHelper.clamp(vel.z, -1f, 1f));
-				setVelocity(vel.normalize().multiply(0.33));
-				addVelocity(0f, getJumpVelocity(), 0f);
-				if(slamming && UltracraftClient.isSlamStorageEnabled())
-					slamStored = true;
-				if(!isCreative())
-					wallJumps--;
-				winged.setIgnoreSlowdown(false);
-				winged.setAirControlIncreased(true);
-				ci.cancel();
+				hivel.setAirControlIncreased(false);
+				hivel.setIgnoreSlowdown(false);
 			}
+			
 			//update movement data
-			if(ci.isCancelled())
+			if(true)
 			{
 				networkHandler.sendPacket(new PlayerMoveC2SPacket.Full(getX(), getY(), getZ(), getYaw(), getPitch(), isOnGround()));
 				lastX = getX();
@@ -389,56 +383,98 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 				ticksSinceLastPositionPacketSent = 0;
 				lastYaw = getYaw();
 				autoJumpEnabled = client.options.getAutoJump().getValue();
-				lastTouchedWater = getWorld().getBlockState(posToBlock(getPos().subtract(0f, 0.1, 0f))).getBlock() instanceof FluidBlock;
-				if(lastSlamming != slamming)
+				//slam impact
+				if(wasSlamming != slamming)
 				{
-					boolean strong = strongGroundPound && !slamming && winged.consumeStamina();
+					boolean strong = strongSlam && !slamming && hivel.consumeStamina();
 					PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 					buf.writeBoolean(slamming);
 					buf.writeBoolean(strong);
-					ClientPlayNetworking.send(PacketRegistry.GROUND_POUND_C2S_PACKET_ID, buf);
+					ClientPlayNetworking.send(PacketRegistry.SLAM_C2S_PACKET_ID, buf);
 					if(slamming)
 						startSlam();
 					else
 						endSlam(strong);
 				}
-				lastSlamming = slamming;
+				wasSlamming = slamming;
 			}
-			if(isSprinting() && slideVelocity > 0.33f && slideTicks > 50)
-				slideVelocity = Math.max(0.33f, slideVelocity * 0.995f);
-			lastSprintPressed = client.options.sprintKey.isPressed() && !winged.isDashing() && !winged.wasDashing(2);
-			lastJumping = jumping;
+			if(isSliding() && slideVelocity > baseSlideVelocity && slideTicks > slideSlowdownTicks)
+				slideVelocity = Math.max(baseSlideVelocity, slideVelocity * slideSlowdownMultiplier);
+			wasJumping = jumping;
 			lastOnGround = isOnGround();
-			if(lastSneaking != isSneaking())
-				networkHandler.sendPacket(new ClientCommandC2SPacket(this,
-						isSneaking() ? ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY : ClientCommandC2SPacket.Mode.RELEASE_SHIFT_KEY));
-			lastSneaking = isSneaking();
+			wasDashPressed = dashPressed;
+			wasSlidePressed = slidePressed;
+			grounded = newGrounded;
+			if(curSlidePreservationTicks > 0 && !isSliding())
+			{
+				curSlidePreservationTicks--;
+				if(curSlidePreservationTicks == 0)
+					slideVelocity = baseSlideVelocity;
+			}
+			setSprinting(false);
+			ci.cancel();
 		}
 		else
 		{
-			if (winged.shouldIgnoreSlowdown())
-				winged.setIgnoreSlowdown(false);
-			if((!wasHiVel || getAbilities().flying || isSpectator()) && wings.isActive() && isSprinting())
+			if (hivel.shouldIgnoreSlowdown())
+				hivel.setIgnoreSlowdown(false);
+			if((!wasHivel || getAbilities().flying || isSpectator()) && isSliding())
 				setSliding(false, true);
 			if(slamming)
-				cancelGroundPound();
+				cancelSlam();
 		}
-		wasHiVel = wings.isActive();
+		wasHivel = wings.isActive();
+	}
+	
+	boolean canJump()
+	{
+		return disableJumpTicks == 0 && (grounded || coyote < coyoteThreshold);
+	}
+	
+	void wallJump(ArrayList<VoxelShape> touchingWalls, IHivelComponent hivel)
+	{
+		Vec3d vel = new Vec3d(0, 0, 0);
+		Optional<Integer> X = Optional.empty();
+		Optional<Integer> Z = Optional.empty();
+		for (VoxelShape shape : touchingWalls)
+		{
+			Optional<Vec3d> opos = shape.getClosestPointTo(getPos());
+			if(opos.isEmpty())
+				continue;
+			Vec3d v = getMainAxisDir(getPos().multiply(1, 0, 1).subtract(opos.get().multiply(1, 0, 1)).normalize());
+			if(X.isPresent() && v.z != 0 && Math.abs(X.get() - opos.get().x) < 1f)
+				continue;
+			if(Z.isPresent() && v.x != 0 && Math.abs(Z.get() - opos.get().z) < 1f)
+				continue;
+			if(v.x != 0)
+				Z = Optional.of((int)opos.get().z);
+			else
+				X = Optional.of((int)opos.get().x);
+			vel = vel.add(v);
+		}
+		vel = new Vec3d(MathHelper.clamp(vel.x, -1f, 1f), 0, MathHelper.clamp(vel.z, -1f, 1f));
+		setVelocity(vel.normalize().multiply(wallJumpHorizontalVelocity));
+		addVelocity(0f, getJumpVelocity() * wallJumpVerticalVelocityMultiplier, 0f);
+		if(slamming && UltracraftClient.isSlamStorageEnabled())
+			slamStored = true;
+		if(!isCreative())
+			curWallJumps--;
+		hivel.setIgnoreSlowdown(true);
+		hivel.setAirControlIncreased(true);
 	}
 	
 	@Inject(method = "tickNewAi", at = @At("RETURN"))
 	void onTickAI(CallbackInfo ci)
 	{
-		jumping = jumping && disableJumpTicks == 0;
-		if(disableJumpTicks > 0)
-			disableJumpTicks--;
-		if(jumpTicks > 0)
-			jumpTicks--;
-		if(slidePreservationTicks > 0)
+		if(isCamera())
 		{
-			slidePreservationTicks--;
-			if(slidePreservationTicks == 0)
-				slideVelocity = 0.33f;
+			jumping = jumping && disableJumpTicks == 0;
+			if(disableJumpTicks > 0)
+				disableJumpTicks--;
+			if(curSlamCooldown > 0)
+				curSlamCooldown--;
+			if(slamJumpTimer > 0)
+				slamJumpTimer--;
 		}
 	}
 	
@@ -449,24 +485,28 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			WingCustomizationScreen.Instance.close();
 	}
 	
-	Vec3d unhorizontalize(Vec3d in)
+	Vec3d getMainAxisDir(Vec3d in)
 	{
+		//turns a relative position into a normalized direction on a single axis
 		return Math.abs(in.x) > Math.abs(in.z) ? new Vec3d(in.x > 0f ? 1f : -1f, 0f, 0f) : new Vec3d(0f, 0f, in.z > 0f ? 1f : -1f);
 	}
 	
-	void cancelGroundPound()
+	void cancelSlam()
 	{
-		slamming = lastSlamming = false;
+		setSlammingClient(wasSlamming = false);
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeBoolean(slamming);
 		buf.writeBoolean(false);
-		ClientPlayNetworking.send(PacketRegistry.GROUND_POUND_C2S_PACKET_ID, buf);
+		ClientPlayNetworking.send(PacketRegistry.SLAM_C2S_PACKET_ID, buf);
 		endSlam(false);
 	}
 	
 	void setSliding(boolean sliding, boolean last)
 	{
-		this.setFlag(3, sliding); //sprinting flag
+		if(sliding == last)
+			return;
+		IHivelComponent hivel = UltraComponents.HIVEL.get(this);
+		setSlidingClient(sliding);
 		if(sliding && !last)
 		{
 			Vec2f movementDir = input.getMovementInput();
@@ -479,13 +519,17 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 				PlayerAnimator.playAnimation(client.player, PlayerAnimator.START_SLIDE, 0, false);
 		}
 		else if(!sliding && last && isMainPlayer())
+		{
+			slideVelocity = Math.max(baseSlideVelocity, slideVelocity * 0.8f);
 			PlayerAnimator.playAnimation(client.player, PlayerAnimator.STOP_SLIDE, 0, false);
-		if(!UltraComponents.WINGED_ENTITY.get(this).wasDashing())
-			slideVelocity = Math.max(0.33f, Math.max((float)getVelocity().multiply(1f, 0f, 1f).length(), last ? 0f : slideVelocity * 0.75f));
+		}
+		if(!hivel.wasDashing())
+			slideVelocity = Math.max(baseSlideVelocity, Math.max((float)getVelocity().multiply(1f, 0f, 1f).length(), last ? 0f : slideVelocity));
 		else
-			slideVelocity = 0.33f;
+			slideVelocity = baseSlideVelocity;
 		slideTicks = 0;
-		slidePreservationTicks = -1;
+		if(sliding)
+			curSlidePreservationTicks = -1;
 	}
 	
 	boolean isUnSolid(BlockPos pos)
@@ -520,49 +564,39 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		return hit != null && hit.getType().equals(HitResult.Type.BLOCK);
 	}
 	
-	@Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/input/Input;hasForwardMovement()Z"))
-	boolean onTickMovement(Input instance)
+	@WrapOperation(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/input/Input;hasForwardMovement()Z"))
+	boolean onTickMovement(Input instance, Operation<Boolean> original)
 	{
 		IWingDataComponent wings = UltraComponents.WING_DATA.get(this);
 		if(wings.isActive())
 			return true;
-		else
-			return input.hasForwardMovement();
+		return original.call(instance);
 	}
 	
-	@Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;setSprinting(Z)V"))
-	void onTickMovement(ClientPlayerEntity instance, boolean sprinting)
+	@WrapOperation(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;setSprinting(Z)V"))
+	void onTickMovement(ClientPlayerEntity instance, boolean sprinting, Operation<Void> original)
 	{
 		IWingDataComponent wings = UltraComponents.WING_DATA.get(this);
 		//cancel normal sprint triggers when in HiVelMode
-		if(!wings.isActive())
-			setSprinting(sprinting);
+		if(!wings.isActive() || isSpectator() || getAbilities().flying)
+			original.call(instance, sprinting);
 	}
 	
-	@Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isUsingItem()Z"))
-	boolean redirectIsUsingItem(ClientPlayerEntity instance)
+	@WrapOperation(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isUsingItem()Z"))
+	boolean redirectIsUsingItem(ClientPlayerEntity instance, Operation<Boolean> original)
 	{
 		if(activeHand != null && getStackInHand(activeHand).getItem() instanceof AbstractWeaponItem)
 			return false;
-		return isUsingItem();
+		return original.call(instance);
 	}
 	
-	@Override
-	public void setSprinting(boolean sprinting)
+	@ModifyReturnValue(method = "isSneaking", at = @At("RETURN"))
+	boolean onIsSneaking(boolean original)
 	{
 		IWingDataComponent wings = UltraComponents.WING_DATA.get(this);
-		if(wings.isActive() && isSprinting() != sprinting)
-			setSliding(sprinting, lastSprinting);
-		super.setSprinting(sprinting);
-	}
-	
-	@Inject(method = "canSprint", at = @At(value = "HEAD"), cancellable = true)
-	void onCanSprint(CallbackInfoReturnable<Boolean> cir)
-	{
-		IWingDataComponent wings = UltraComponents.WING_DATA.get(this);
-		IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(this);
-		if((wings.isActive() && !isSprinting() && !isOnGround()) || winged.isDashing())
-			cir.setReturnValue(false);
+		if(wings.isActive() && !(isSpectator() || getAbilities().flying))
+			return false;
+		return original;
 	}
 	
 	@Override
@@ -574,19 +608,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	BlockPos posToBlock(Vec3d vec)
 	{
 		return new BlockPos(new Vec3i((int)Math.floor(vec.x), (int)Math.floor(vec.y), (int)Math.floor(vec.z)));
-	}
-	
-	@Override
-	public void jump()
-	{
-		jumpTicks = 20;
-		super.jump();
-	}
-	
-	@Override
-	public boolean hasJustJumped()
-	{
-		return jumpTicks > 0;
 	}
 	
 	@Override
@@ -617,5 +638,35 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 				client.setScreen(null);
 		}
 		this.focusedTerminal = terminal;
+	}
+	
+	@Override
+	public float getScreenShake()
+	{
+		return screenshake;
+	}
+	
+	@Override
+	public void addScreenshake(float val)
+	{
+		ClientConfig config = UltracraftClient.getConfig();
+		if(config.screenshake)
+			screenshake += config.safeVFX ? Math.min(val / 5f, 1f) : val;
+	}
+	
+	public void setSlidingClient(boolean v)
+	{
+		setSliding(v);
+		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeBoolean(v);
+		ClientPlayNetworking.send(PacketRegistry.SLIDE_STATE_PACKET_ID, buf);
+	}
+	
+	public void setSlammingClient(boolean v)
+	{
+		slamming = v;
+		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeBoolean(v);
+		ClientPlayNetworking.send(PacketRegistry.SLAM_STATE_PACKET_ID, buf);
 	}
 }

@@ -4,13 +4,13 @@ import absolutelyaya.ultracraft.ExplosionHandler;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.Interruptable;
 import absolutelyaya.ultracraft.damage.DamageSources;
+import absolutelyaya.ultracraft.entity.goal.TargetPlayerGoal;
 import absolutelyaya.ultracraft.entity.other.InterruptableCharge;
 import absolutelyaya.ultracraft.entity.projectile.HellBulletEntity;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.TargetPredicate;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -23,7 +23,6 @@ import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import mod.azure.azurelib.animatable.GeoEntity;
@@ -43,6 +42,7 @@ public class StrayEntity extends AbstractHuskEntity implements GeoEntity, Interr
 	private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
 	private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
 	private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenLoop("attack");
+	private static final RawAnimation FALL_ANIM = RawAnimation.begin().thenPlay("fallStart").thenLoop("fall");
 	private final AnimatableInstanceCache cache = AzureLibUtil.createInstanceCache(this);
 	private static final byte ANIMATION_IDLE = 0;
 	private static final byte ANIMATION_ATTACK = 1;
@@ -68,7 +68,7 @@ public class StrayEntity extends AbstractHuskEntity implements GeoEntity, Interr
 		goalSelector.add(1, new ThrowAttackGoal(this));
 		goalSelector.add(2, new GetIntoSightGoal(this));
 		
-		targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+		targetSelector.add(1, new TargetPlayerGoal(this));
 	}
 	
 	@Override
@@ -98,8 +98,16 @@ public class StrayEntity extends AbstractHuskEntity implements GeoEntity, Interr
 		{
 			case ANIMATION_IDLE ->
 			{
-				controller.setAnimationSpeed(getVelocity().horizontalLengthSquared() > 0.03 ? 2f : 1f);
-				controller.setAnimation(event.isMoving() ? WALK_ANIM : IDLE_ANIM);
+				if(isOnGround())
+				{
+					controller.setAnimationSpeed(getVelocity().horizontalLengthSquared() > 0.03 ? 2f : 1f);
+					controller.setAnimation(event.isMoving() ? WALK_ANIM : IDLE_ANIM);
+				}
+				else
+				{
+					controller.setAnimationSpeed(2f);
+					controller.setAnimation(FALL_ANIM);
+				}
 			}
 			case ANIMATION_ATTACK -> controller.setAnimation(ATTACK_ANIM);
 		}
@@ -168,7 +176,7 @@ public class StrayEntity extends AbstractHuskEntity implements GeoEntity, Interr
 	@Override
 	public Vec3d getChargeOffset()
 	{
-		return new Vec3d(-0.4, 2.25, 0.5).rotateY((float)Math.toRadians(-bodyYaw));
+		return new Vec3d(-0.4, 2.75, 0.5).rotateY((float)Math.toRadians(-bodyYaw));
 	}
 	
 	static class GetOutOfMyPersonalSpaceGoal extends Goal

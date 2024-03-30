@@ -3,6 +3,7 @@ package absolutelyaya.ultracraft.client.rendering.item;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.item.PierceRevolverItem;
+import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
@@ -23,6 +24,11 @@ public class PierceRevolverRenderer extends GeoItemRenderer<PierceRevolverItem>
 	public PierceRevolverRenderer()
 	{
 		super(new DefaultedItemGeoModel<>(new Identifier(Ultracraft.MOD_ID, "revolver")));
+	}
+	
+	public PierceRevolverRenderer(GeoModel<PierceRevolverItem> model)
+	{
+		super(model);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.1-SNAPSHOT'
+    id 'fabric-loom' version '1.5-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -37,15 +37,14 @@ repositories {
     // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
     // See https://docs.gradle.org/current/userguide/declaring_repositories.html
     // for more information about repositories.
-    maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
     maven { url 'https://jitpack.io' }
     maven { url "https://maven.shedaniel.me/" }
     maven { url "https://maven.terraformersmc.com/releases/" }
     maven { url "https://cursemaven.com" }
     maven { url 'https://maven.kosmx.dev/' }
     maven { url 'https://api.modrinth.com/maven' }
-    maven { url 'https://maven.ladysnake.org/releases'}
-    maven {url 'https://libs.azuredoom.com:4443/mods'}
+    maven { url 'https://maven.ladysnake.org/releases' }
+    maven { url 'https://libs.azuredoom.com:4443/mods' }
 }
 
 configurations {
@@ -91,9 +90,10 @@ dependencies {
     include modApi("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cardinal_components_version}")
     include modApi("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cardinal_components_version}")
     include modApi("dev.onyxstudios.cardinal-components-api:cardinal-components-level:${project.cardinal_components_version}")
+    include modApi("dev.onyxstudios.cardinal-components-api:cardinal-components-world:${project.cardinal_components_version}")
 
     //GOOP
-    modImplementation(include 'com.github.absolutelyaya:goop:fabric-1.20.1-v0.2')
+    modImplementation(include 'com.github.absolutelyaya:goop:fabric-1.20.x-v0.3')
 }
 
 processResources {

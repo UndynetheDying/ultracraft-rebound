@@ -18,7 +18,7 @@ import java.util.List;
 
 public class IntroOverlay extends Overlay
 {
-	float alpha = 2;
+	float alpha = 2.5f;
 	
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta)
@@ -31,18 +31,26 @@ public class IntroOverlay extends Overlay
 		matrices.translate(0f, 0f, 500f);
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
-		RenderSystem.setShaderColor(1f, 1f, 1f, MathHelper.clamp(alpha, 0f, 1f));
+		RenderSystem.setShaderColor(1f, 1f, 1f, MathHelper.clamp(alpha - 1f, 0f, 1f));
 		renderBackground(width, height);
 		context.fillGradient(0, 0, width, height / 3,
 				new Color(0, 0, 0, 150).getRGB(), new Color(0, 0, 0, 0).getRGB());
 		context.fillGradient(0, height - height / 3, width, height,
 				new Color(0, 0, 0, 0).getRGB(), new Color(0, 0, 0, 150).getRGB());
 		TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+		
 		List<OrderedText> lines = textRenderer.wrapLines(
 				StringVisitable.plain(Text.translatable("intro.ultracraft.status",
 						MinecraftClient.getInstance().getSession().getUsername()).getString()), width);
 		for (int i = 0; i < lines.size(); i++)
 			context.drawTextWithShadow(textRenderer, lines.get(i), 32, 32 + i * (textRenderer.fontHeight + 2),
+					new Color(1f, 1f, 1f, MathHelper.clamp(alpha, 0.05f, 1f)).getRGB());
+		RenderSystem.setShaderColor(1f, 1f, 1f, MathHelper.clamp(alpha, 0f, 1f));
+		List<OrderedText> catchphrase =  textRenderer.wrapLines(
+				StringVisitable.plain(Text.translatable("intro.ultracraft.catchphrase",
+						MinecraftClient.getInstance().getSession().getUsername()).getString()), width);
+		for (int i = 0; i < catchphrase.size(); i++)
+			context.drawTextWithShadow(textRenderer, catchphrase.get(i), 32, 32 + (i + lines.size()) * (textRenderer.fontHeight + 2),
 					new Color(1f, 1f, 1f, MathHelper.clamp(alpha, 0.05f, 1f)).getRGB());
 		alpha -= 1f / 120f;
 		if(alpha <= -0.1f)

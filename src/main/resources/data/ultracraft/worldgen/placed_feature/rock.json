@@ -1,0 +1,23 @@
+{
+  "feature": {
+    "type": "minecraft:forest_rock",
+    "config": {
+      "state": {
+        "Name": "minecraft:stone"
+      }
+    }
+  },
+  "placement": [
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:rarity_filter",
+      "chance": 16
+    },
+    {
+      "type": "minecraft:heightmap",
+      "heightmap": "WORLD_SURFACE"
+    }
+  ]
+}

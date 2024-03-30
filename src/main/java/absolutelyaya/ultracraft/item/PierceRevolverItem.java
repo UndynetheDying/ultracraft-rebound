@@ -1,12 +1,13 @@
 package absolutelyaya.ultracraft.item;
 
 import absolutelyaya.ultracraft.ServerHitscanHandler;
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.rendering.item.PierceRevolverRenderer;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.Entity;
@@ -15,11 +16,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 import mod.azure.azurelib.animatable.GeoItem;
 import mod.azure.azurelib.animatable.SingletonGeoAnimatable;
@@ -30,6 +32,7 @@ import mod.azure.azurelib.core.animation.AnimationController;
 import mod.azure.azurelib.core.object.PlayState;
 import mod.azure.azurelib.util.AzureLibUtil;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -60,6 +63,7 @@ public class PierceRevolverItem extends AbstractRevolverItem
 	public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected)
 	{
 		super.inventoryTick(stack, world, entity, slot, selected);
+		selected = isMainHandstack(stack, entity);
 		if(stack.hasNbt() && stack.getNbt().contains("charging"))
 		{
 			if(!selected)
@@ -99,7 +103,7 @@ public class PierceRevolverItem extends AbstractRevolverItem
 	@Override
 	public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(user).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(user).getGunCooldownManager();
 		if(remainingUseTicks <= 0)
 		{
 			if(user instanceof PlayerEntity player)
@@ -111,11 +115,27 @@ public class PierceRevolverItem extends AbstractRevolverItem
 					world.playSound(null, user.getBlockPos(), SoundRegistry.PIERCER_FIRE, SoundCategory.PLAYERS, 1f,
 							0.85f + (user.getRandom().nextFloat() - 0.5f) * 0.2f);
 				}
-				player.getItemCooldownManager().set(this, 50);
+				player.getItemCooldownManager().set(this, isAlternate() ? 100 : 50);
 				onAltFire(world, player);
+				if(isAlternate())
+				{
+					setNbt(stack, getHammerId(), 0);
+					cdm.setCooldown(this, 20, GunCooldownManager.PRIMARY);
+				}
 			}
 			if(!world.isClient)
-				ServerHitscanHandler.performHitscan(user, ServerHitscanHandler.REVOLVER_PIERCE, 2, 3, true, DamageSources.PIERCER);
+			{
+				if(isAlternate())
+					ServerHitscanHandler.makeBasicHitscan(user, ServerHitscanHandler.REVOLVER_PIERCE, 6 * 2.5f, DamageSources.PIERCER)
+							.semiPierce(4, 2.5f)
+							.explosion(new ServerHitscanHandler.HitscanExplosionData(2f, 0f, 0f, true))
+							.charged().perform();
+				else
+					ServerHitscanHandler.makeBasicHitscan(user, ServerHitscanHandler.REVOLVER_PIERCE, 2, DamageSources.PIERCER)
+							.maxHits(3)
+							.explosion(new ServerHitscanHandler.HitscanExplosionData(2f, 0f, 0f, true))
+							.charged().perform();
+			}
 		}
 		else if(!world.isClient && user instanceof PlayerEntity)
 			triggerAnim(user, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), "stop");
@@ -148,12 +168,16 @@ public class PierceRevolverItem extends AbstractRevolverItem
 	@Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar)
 	{
-		controllerRegistrar.add(new AnimationController<>(this, getControllerName(), 1, state -> PlayState.STOP)
+		controllerRegistrar.add(new AnimationController<>(this, getControllerName(), 0, state -> PlayState.STOP)
 										.triggerableAnim("charging", AnimationCharge)
 										.triggerableAnim("discharge", AnimationDischarge)
 										.triggerableAnim("shot", AnimationShot)
 										.triggerableAnim("shot2", AnimationShot2) //this animation purely exists to cancel shot animations.
-										.triggerableAnim("stop", AnimationStop));
+										.triggerableAnim("stop", AnimationStop)
+										.triggerableAnim("slabshot", AnimationSlabShot)
+										.triggerableAnim("hammerpull", AnimationHammerPull)
+										.triggerableAnim("hammerpull2", AnimationHammerPull2)
+										.setSoundKeyframeHandler(this::handleAnimSound));
 	}
 	
 	@Override
@@ -190,9 +214,18 @@ public class PierceRevolverItem extends AbstractRevolverItem
 	}
 	
 	@Override
-	protected void onSwitch(PlayerEntity user, World world)
+	public void onSwitch(World world, PlayerEntity user, int newSlot)
 	{
-		super.onSwitch(user, world);
+		super.onSwitch(world, user, newSlot);
 		approxUseTime = -1;
+	}
+	
+	@Override
+	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
+	{
+		super.appendTooltip(stack, world, tooltip, context);
+		tooltip.add(Text.translatable("item.ultracraft.pierce_revolver.lore1"));
+		if(isAlternate())
+			tooltip.add(Text.translatable("item.ultracraft.pierce_revolver.lore.alternate"));
 	}
 }

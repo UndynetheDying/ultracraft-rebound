@@ -4,11 +4,11 @@ import absolutelyaya.ultracraft.ExplosionHandler;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.entity.EnemySoundType;
+import absolutelyaya.ultracraft.entity.goal.TargetPlayerGoal;
 import absolutelyaya.ultracraft.entity.other.BackTank;
-import absolutelyaya.ultracraft.entity.projectile.EjectedCoreEntity;
 import absolutelyaya.ultracraft.entity.projectile.FlameProjectileEntity;
-import absolutelyaya.ultracraft.entity.projectile.ShotgunPelletEntity;
 import absolutelyaya.ultracraft.particle.ParryIndicatorParticleEffect;
+import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -16,7 +16,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.control.LookControl;
 import net.minecraft.entity.ai.control.MoveControl;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -27,10 +26,8 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.DamageTypeTags;
-import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
@@ -76,7 +73,6 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 		super(entityType, world);
 		lookControl = new StreetCleanerLookControl(this);
 		moveControl = new StreetCleanerMoveControl(this);
-		tank = BackTank.spawn(world, this);
 	}
 	
 	public static DefaultAttributeContainer.Builder getDefaultAttributes()
@@ -107,13 +103,15 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 	{
 		goalSelector.add(0, new StreetCleanerChaseGoal(this));
 		
-		targetSelector.add(0, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+		targetSelector.add(0, new TargetPlayerGoal(this));
 	}
 	
 	@Override
 	public void tick()
 	{
 		super.tick();
+		if(tank == null && !isRemoved())
+			tank = BackTank.spawn(getWorld(), this);
 		if(dataTracker.get(ROTATION_DELAY) > 0)
 			dataTracker.set(ROTATION_DELAY, dataTracker.get(ROTATION_DELAY) - 1);
 		if(dataTracker.get(ROTATION_DELAY_COOLDOWN) > 0)
@@ -166,12 +164,12 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 			damage(DamageSources.get(getWorld(), DamageSources.SHORT_CIRCUIT), 999f);
 		if(isCanCounter())
 		{
-			List<EjectedCoreEntity> counterCandidates = getWorld().getEntitiesByType(TypeFilter.instanceOf(EjectedCoreEntity.class),
-					getBoundingBox(), (e) -> true);
+			List<Entity> counterCandidates = getWorld().getOtherEntities(this, getBoundingBox().expand(5f),
+					(e) -> e.getType().isIn(EntityRegistry.STREETCLEANER_COUNTER));
 			if(counterCandidates.size() > 0)
 			{
-				EjectedCoreEntity target = counterCandidates.get(0);
-				target.setVelocity(getRotationVector().rotateY(-90).add(0, 0.1, 0));
+				Entity target = counterCandidates.get(0);
+				target.setVelocity(getRotationVector().rotateY((float)Math.toRadians(-90)).add(0, 0.1, 0));
 				dataTracker.set(ANIMATION, ANIMATION_COUNTER);
 				dataTracker.set(ANIM_TIME, 0);
 				dataTracker.set(COUNTER_COOLDOWN, 100);
@@ -179,13 +177,13 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 		}
 		if(isCanDodge())
 		{
-			List<ShotgunPelletEntity> dodgeCandidates = getWorld().getEntitiesByType(TypeFilter.instanceOf(ShotgunPelletEntity.class),
-					getBoundingBox().expand(5f), (e) -> true);
+			List<Entity> dodgeCandidates = getWorld().getOtherEntities(this, getBoundingBox().expand(5f),
+					(e) -> e.getType().isIn(EntityRegistry.STREETCLEANER_DODGE));
 			if(dodgeCandidates.size() > 0)
 			{
 				Entity target = dodgeCandidates.get(0);
 				boolean b = random.nextBoolean();
-				Vec3d dir = target.getVelocity().normalize().multiply(3f).rotateY(b ? 75 : -75);
+				Vec3d dir = target.getVelocity().multiply(1, 0, 1).normalize().multiply(3f).rotateY((float)Math.toDegrees(b ? 75f : -75f));
 				setVelocity(dir);
 				dataTracker.set(ANIMATION, ANIMATION_DODGE);
 				dataTracker.set(ANIM_TIME, 0);
@@ -200,8 +198,16 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 		if(source.isOf(DamageSources.FLAMETHROWER))
 			return false;
 		if(source.isOf(DamageTypes.FALL) && getHealth() - amount <= 0)
-			ExplosionHandler.explosion(this, getWorld(), getPos(), DamageSources.get(getWorld(), DamageTypes.EXPLOSION, this, this), 6, 4, 3, true);
+			ExplosionHandler.explosion(this, getWorld(), getPos(), DamageSources.get(getWorld(), DamageTypes.EXPLOSION, this, this), 10, 4, 3, true);
 		return super.damage(source, source.isIn(DamageTypeTags.IS_EXPLOSION) ? amount * 0.5f : amount);
+	}
+	
+	@Override
+	public boolean canBeHitByProjectile()
+	{
+		if(getAnimation() == ANIMATION_DODGE && dataTracker.get(ANIM_TIME) < 30)
+			return false;
+		return super.canBeHitByProjectile();
 	}
 	
 	@Override
@@ -268,6 +274,14 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 		return dataTracker.get(COUNTER_COOLDOWN) <= 0;
 	}
 	
+	@Override
+	public void remove(RemovalReason reason)
+	{
+		super.remove(reason);
+		if(tank != null)
+			tank.remove(reason);
+	}
+	
 	static class StreetCleanerLookControl extends LookControl
 	{
 		public StreetCleanerLookControl(MobEntity entity)
@@ -278,7 +292,9 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 		@Override
 		public void tick()
 		{
-			if(entity.getDataTracker().get(ROTATION_DELAY) == 0 && entity.getTarget() != null)
+			if(!entity.getDataTracker().get(ATTACKING))
+				super.tick();
+			else if(entity.getDataTracker().get(ROTATION_DELAY) == 0 && entity.getTarget() != null)
 			{
 				double e = entity.getTarget().getX() - entity.getX();
 				double f = entity.getTarget().getZ() - entity.getZ();
@@ -308,8 +324,10 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 		@Override
 		public void tick()
 		{
-			 if (this.state == MoveControl.State.MOVE_TO)
-			 {
+			if(!entity.getDataTracker().get(ATTACKING))
+				super.tick();
+			else if (this.state == MoveControl.State.MOVE_TO)
+			{
 				this.state = MoveControl.State.WAIT;
 				double dx = targetX - entity.getX();
 				double dz = targetZ - entity.getZ();
@@ -320,7 +338,7 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 					entity.setForwardSpeed(0.0F);
 					return;
 				}
-				
+			
 				entity.setMovementSpeed((float)(speed * entity.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED)));
 				BlockPos blockPos = entity.getBlockPos();
 				BlockState blockState = entity.getWorld().getBlockState(blockPos);
@@ -332,14 +350,14 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 					entity.getJumpControl().setActive();
 					state = MoveControl.State.JUMPING;
 				}
-			 }
-			 else if (state == MoveControl.State.JUMPING)
-			 {
+			}
+			else if (state == MoveControl.State.JUMPING)
+			{
 				entity.setMovementSpeed((float)(speed * entity.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED)));
 				if (entity.isOnGround())
 					state = MoveControl.State.WAIT;
-			 }
-			 else
+			}
+			else
 				entity.setForwardSpeed(0.0F);
 		}
 	}
@@ -381,7 +399,7 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 		@Override
 		public void tick()
 		{
-			float distance = cleaner.distanceTo(target);
+			float distance = cleaner.distanceTo(target) + (float)Math.abs(cleaner.getY() - target.getY()) * 5f;
 			if(cleaner.dataTracker.get(ROTATION_DELAY) == 0 && distance > 5f)
 				cleaner.navigation.startMovingTo(target, distance < 6f ? 1f : 1.25f);
 			

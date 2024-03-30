@@ -69,10 +69,10 @@ public class BackTank extends Entity
 	public void tick()
 	{
 		super.tick();
-		if(owner != null && owner.isAlive())
+		if(owner != null && owner.isAlive() && !owner.isRemoved())
 			positionSelf(owner);
 		else if(!isRemoved())
-			kill();
+			remove(RemovalReason.DISCARDED);
 		if(owner instanceof PlayerEntity player && !player.getMainHandStack().isOf(ItemRegistry.FLAMETHROWER))
 		{
 			kill();
@@ -100,7 +100,7 @@ public class BackTank extends Entity
 		{
 			owner.damage(DamageSources.get(getWorld(), DamageSources.BACK_TANK, this, source.getAttacker()), 999);
 			ExplosionHandler.explosion(owner, getWorld(), getPos(), DamageSources.get(getWorld(), DamageTypes.EXPLOSION, this, source.getAttacker()),
-					8, 5, 3f, true);
+					10, 5, 3f, true);
 			if(source.getAttacker() instanceof ServerPlayerEntity player)
 				Ultracraft.freeze(player, 6);
 			kill();
@@ -113,6 +113,12 @@ public class BackTank extends Entity
 	{
 		this.owner = owner;
 		dataTracker.set(OWNER, owner.getId());
+	}
+	
+	@Override
+	public boolean canBeHitByProjectile()
+	{
+		return false;
 	}
 	
 	@Override

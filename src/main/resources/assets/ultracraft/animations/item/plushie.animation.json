@@ -581,7 +581,7 @@
 		},
 		"bow": {
 			"loop": true,
-			"animation_length": 5,
+			"animation_length": 7,
 			"loop_delay": "200",
 			"bones": {
 				"root": {

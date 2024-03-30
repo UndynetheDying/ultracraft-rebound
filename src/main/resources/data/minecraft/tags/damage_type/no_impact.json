@@ -3,6 +3,7 @@
   "values": [
     "minecraft:on_fire",
     "minecraft:in_fire",
-    "ultracraft:gun"
+    "ultracraft:gun",
+    "ultracraft:nail"
   ]
 }

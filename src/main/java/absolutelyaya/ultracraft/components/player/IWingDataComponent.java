@@ -10,6 +10,6 @@ public interface IWingDataComponent extends ComponentV3
 	String getPattern();
 	void setPattern(String id);
 	boolean isActive();
-	void setVisible(boolean b);
+	void setActive(boolean b);
 	void sync();
 }

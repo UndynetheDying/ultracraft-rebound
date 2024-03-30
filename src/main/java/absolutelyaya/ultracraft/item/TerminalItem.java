@@ -23,6 +23,7 @@ import mod.azure.azurelib.core.animatable.instance.SingletonAnimatableInstanceCa
 import mod.azure.azurelib.core.animation.AnimatableManager;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -109,7 +110,7 @@ public class TerminalItem extends BlockItem implements GeoItem
 		tooltip.add(Text.translatable("item.ultracraft.terminal.color", Text.translatable(getBase(stack).translationKey())));
 		if(context.isAdvanced())
 			tooltip.add(Text.translatable("item.ultracraft.terminal.flavor",
-					Text.translatable("item.ultracraft.terminal.flavor." + getBase(stack).name().toLowerCase()))
+					Text.translatable("item.ultracraft.terminal.flavor." + getBase(stack).name().toLowerCase(Locale.ROOT)))
 								.fillStyle(Style.EMPTY.withColor(Formatting.GRAY)));
 	}
 }

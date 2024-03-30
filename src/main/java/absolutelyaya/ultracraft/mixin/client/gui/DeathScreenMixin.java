@@ -39,12 +39,11 @@ public abstract class DeathScreenMixin extends Screen
 	@Inject(method = "init", at = @At("TAIL"))
 	void onInit(CallbackInfo ci)
 	{
+		client.gameRenderer.setRenderHand(true);
 		if(!UltracraftClient.getConfig().deathScreen)
 			return;
 		for (ButtonWidget button : buttons)
-		{
 			button.setPosition(button.getX(), button.getY() + 85);
-		}
 	}
 	
 	@Inject(method = "render", at = @At("HEAD"), cancellable = true)

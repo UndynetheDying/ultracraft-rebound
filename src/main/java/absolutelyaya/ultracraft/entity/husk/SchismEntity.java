@@ -4,12 +4,12 @@ import absolutelyaya.ultracraft.ExplosionHandler;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.Interruptable;
 import absolutelyaya.ultracraft.damage.DamageSources;
+import absolutelyaya.ultracraft.entity.goal.TargetPlayerGoal;
 import absolutelyaya.ultracraft.entity.other.InterruptableCharge;
 import absolutelyaya.ultracraft.entity.projectile.HellBulletEntity;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -21,7 +21,6 @@ import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
@@ -41,6 +40,7 @@ public class SchismEntity extends AbstractHuskEntity implements GeoEntity, Inter
 	private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
 	private static final RawAnimation ATTACK_VERTICAL_ANIM = RawAnimation.begin().thenLoop("attackVert");
 	private static final RawAnimation ATTACK_HORIZONTAL_ANIM = RawAnimation.begin().thenLoop("attackHor");
+	private static final RawAnimation FALL_ANIM = RawAnimation.begin().thenPlay("fallStart").thenLoop("fall");
 	private final AnimatableInstanceCache cache = AzureLibUtil.createInstanceCache(this);
 	private static final byte ANIMATION_IDLE = 0;
 	private static final byte ANIMATION_ATTACK_VERTICAL = 1;
@@ -66,7 +66,7 @@ public class SchismEntity extends AbstractHuskEntity implements GeoEntity, Inter
 		targetSelector.add(0, new GetIntoSightGoal(this));
 		targetSelector.add(1, new AttackGoal(this));
 		
-		targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+		targetSelector.add(1, new TargetPlayerGoal(this));
 	}
 	
 	@Override
@@ -81,9 +81,18 @@ public class SchismEntity extends AbstractHuskEntity implements GeoEntity, Inter
 		byte anim = dataTracker.get(ANIMATION);
 		AnimationController<?> controller = event.getController();
 		
+		controller.setAnimationSpeed(1f);
 		switch (anim)
 		{
-			case ANIMATION_IDLE -> controller.setAnimation(event.isMoving() ? WALK_ANIM : IDLE_ANIM);
+			case ANIMATION_IDLE -> {
+				if(isOnGround())
+					controller.setAnimation(event.isMoving() ? WALK_ANIM : IDLE_ANIM);
+				else
+				{
+					controller.setAnimationSpeed(2f);
+					controller.setAnimation(FALL_ANIM);
+				}
+			}
 			case ANIMATION_ATTACK_VERTICAL -> controller.setAnimation(ATTACK_VERTICAL_ANIM);
 			case ANIMATION_ATTACK_HORIZONTAL -> controller.setAnimation(ATTACK_HORIZONTAL_ANIM);
 		}
@@ -156,7 +165,7 @@ public class SchismEntity extends AbstractHuskEntity implements GeoEntity, Inter
 	@Override
 	public Vec3d getChargeOffset()
 	{
-		return (dataTracker.get(ANIMATION).equals(ANIMATION_ATTACK_VERTICAL) ? new Vec3d(-0.4f, 2.4f, 0.5f) : new Vec3d(-1f, 1.65f, 0.5f))
+		return (dataTracker.get(ANIMATION).equals(ANIMATION_ATTACK_VERTICAL) ? new Vec3d(-0.35f, 2.9f, 0.5f) : new Vec3d(-1.5f, 1.65f, 0.5f))
 					   .rotateY((float)Math.toRadians(-bodyYaw));
 	}
 	

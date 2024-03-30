@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.client.rendering.entity.feature;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.HideWingsSetting;
 import absolutelyaya.ultracraft.client.RenderLayers;
@@ -43,6 +43,8 @@ public class WingsFeature<T extends PlayerEntity, M extends PlayerEntityModel<T>
 	@Override
 	public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch)
 	{
+		if(entity.isInvisible())
+			return;
 		HideWingsSetting hideWings = UltracraftClient.getConfig().hideWings;
 		switch(hideWings)
 		{
@@ -59,7 +61,7 @@ public class WingsFeature<T extends PlayerEntity, M extends PlayerEntityModel<T>
 			}
 			case NONE -> {}
 		}
-		IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(entity);
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(entity);
 		IWingDataComponent wings = UltraComponents.WING_DATA.get(entity);
 		VertexConsumer vertexConsumer;
 		if(wings.isActive() || (entity.isMainPlayer() && WingCustomizationScreen.MenuOpen))

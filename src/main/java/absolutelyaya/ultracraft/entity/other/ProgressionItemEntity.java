@@ -1,9 +1,15 @@
 package absolutelyaya.ultracraft.entity.other;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.components.player.ILoadoutComponent;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
+import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
+import absolutelyaya.ultracraft.registry.PacketRegistry;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.data.DataTracker;
@@ -13,6 +19,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
@@ -53,10 +60,12 @@ public class ProgressionItemEntity extends ItemEntity
 	{
 		if(getWorld().isClient)
 		{
-			IProgressionComponent progression = UltraComponents.PROGRESSION.get(MinecraftClient.getInstance().player);
-			if(progression.isOwned(Identifier.tryParse(getProgressionEntry())))
+			PlayerEntity player = MinecraftClient.getInstance().player;
+			IProgressionComponent progression = UltraComponents.PROGRESSION.get(player);
+			ILoadoutComponent loadout = UltraComponents.LOADOUT.get(player);
+			if(progression.isOwned(Identifier.tryParse(getProgressionEntry())) && isAlreadyHeld(loadout))
 			{
-				discard();
+				MinecraftClient.getInstance().world.removeEntity(getId(), Entity.RemovalReason.DISCARDED);
 				return;
 			}
 		}
@@ -66,15 +75,27 @@ public class ProgressionItemEntity extends ItemEntity
 	@Override
 	public void onPlayerCollision(PlayerEntity player)
 	{
+		if(getWorld().isClient && player.isMainPlayer())
+		{
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			buf.writeInt(getId());
+			ClientPlayNetworking.send(PacketRegistry.PICKUP_PROGRESSION_ITEM_ID, buf);
+			return;
+		}
 		IProgressionComponent progression = UltraComponents.PROGRESSION.get(player);
-		if(progression.isOwned(Identifier.tryParse(getProgressionEntry())) || (dataTracker.get(PICKUP) && !player.getInventory().insertStack(getStack().copy())))
+		ILoadoutComponent loadout = UltraComponents.LOADOUT.get(player);
+		if(isAlreadyHeld(loadout) || (dataTracker.get(PICKUP) && !player.getInventory().insertStack(getStack().copy())))
 			return;
 		int count = getStack().getCount();
-		player.sendPickup(this, count);
 		progression.obtain(Identifier.tryParse(getProgressionEntry()));
 		progression.sync();
 		player.increaseStat(Stats.PICKED_UP.getOrCreateStat(getStack().getItem()), count);
 		player.triggerItemPickedUpByEntityCriteria(this);
+	}
+	
+	boolean isAlreadyHeld(ILoadoutComponent loadout)
+	{
+		return getStack().getItem() instanceof AbstractWeaponItem weapon && loadout.isWeaponTypeHeld(weapon.getWeaponType());
 	}
 	
 	public String getProgressionEntry()

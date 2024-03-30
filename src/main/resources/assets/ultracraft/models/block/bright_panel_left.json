@@ -1,0 +1,23 @@
+{
+	"credit": "Made by Absolutelyaya",
+	"parent": "ultracraft:block/elevator_floor_left",
+	"textures": {
+		"1": "ultracraft:block/bright_panel_end",
+		"particle": "ultracraft:block/bright_panel",
+		"all": "ultracraft:block/bright_panel"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [16, 16, 16],
+			"faces": {
+				"north": {"uv": [16, 0, 0, 16], "texture": "#all", "cullface": "north"},
+				"east": {"uv": [0, 0, 16, 16], "texture": "#1", "cullface": "east"},
+				"south": {"uv": [0, 0, 16, 16], "texture": "#all", "cullface": "south"},
+				"west": {"uv": [0, 0, 16, 16], "texture": "#1", "cullface": "west"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "#all", "cullface": "up"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#all", "cullface": "down"}
+			}
+		}
+	]
+}

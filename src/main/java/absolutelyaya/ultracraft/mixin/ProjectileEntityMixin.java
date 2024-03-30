@@ -2,14 +2,17 @@ package absolutelyaya.ultracraft.mixin;
 
 import absolutelyaya.ultracraft.ExplosionHandler;
 import absolutelyaya.ultracraft.ServerHitscanHandler;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.ChainParryAccessor;
 import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
+import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.entity.other.StainedGlassWindow;
 import absolutelyaya.ultracraft.entity.projectile.ShotgunPelletEntity;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
-import absolutelyaya.ultracraft.registry.GameruleRegistry;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;
@@ -17,6 +20,9 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -44,8 +50,8 @@ public abstract class ProjectileEntityMixin extends Entity implements Projectile
 	@Shadow protected abstract void onCollision(HitResult hitResult);
 	
 	private static final TrackedData<Integer> PARRIES = DataTracker.registerData(ProjectileEntity.class, TrackedDataHandlerRegistry.INTEGER);
-	protected PlayerEntity parrier;
-	boolean frozen;
+	protected PlayerEntity parrier, knockbackExplosionCauser;
+	boolean frozen, boosted;
 	Vec3d preFreezeVel;
 	Consumer<Integer> onParried;
 	Supplier<Boolean> isParriable = () -> true;
@@ -116,6 +122,25 @@ public abstract class ProjectileEntityMixin extends Entity implements Projectile
 			ci.cancel();
 	}
 	
+	@ModifyReturnValue(method = "canHit", at = @At("RETURN"))
+	boolean onCanHit(boolean original, Entity entity)
+	{
+		return original && !this.equals(entity); //A projectile cannot hit itself after all
+	}
+	
+	@Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
+	void onWriteNBT(NbtCompound nbt, CallbackInfo ci)
+	{
+		nbt.putInt("parries", getParryCount());
+	}
+	
+	@Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
+	void onReadNBT(NbtCompound nbt, CallbackInfo ci)
+	{
+		if(nbt.contains("parries", NbtElement.INT_TYPE))
+			setParryCount(nbt.getInt("parries"));
+	}
+	
 	@Override
 	public void setVelocity(Vec3d velocity)
 	{
@@ -143,15 +168,17 @@ public abstract class ProjectileEntityMixin extends Entity implements Projectile
 		float damageMult = 1f + parries * 0.35f;
 		float rangeMult = 1f + parries * 0.15f;
 		Vec3d pos = hitResult.getPos();
+		Entity hit = null;
+		if(hitResult.getType().equals(HitResult.Type.ENTITY))
+			hit = ((EntityHitResult)hitResult).getEntity();
+		if(boosted && hit != null && parrier instanceof PlayerEntity)
+			UltraComponents.STYLE.get(parrier).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "projboost")));
 		if(owner == null)
 		{
 			ExplosionHandler.explosion(null, getWorld(), pos, DamageSources.get(getWorld(), DamageSources.PARRYAOE, parrier),
 					5f * damageMult, 1f, 3f * rangeMult, true);
 			return;
 		}
-		Entity hit = null;
-		if(hitResult.getType().equals(HitResult.Type.ENTITY))
-			hit = ((EntityHitResult)hitResult).getEntity();
 		if(owner.equals(hit))
 			owner.damage(DamageSources.get(getWorld(), DamageSources.PARRY, parrier), 10 * damageMult);
 		ExplosionHandler.explosion(owner.equals(hit) ? hit : null, getWorld(), pos, DamageSources.get(getWorld(), DamageSources.PARRYAOE, parrier),
@@ -162,6 +189,8 @@ public abstract class ProjectileEntityMixin extends Entity implements Projectile
 	public void setParried(boolean val, PlayerEntity parrier)
 	{
 		dataTracker.set(PARRIES, dataTracker.get(PARRIES) + 1);
+		if(isBoostable() && this.parrier == null)
+			boosted = true;
 		this.parrier = parrier;
 		age = 0;
 		if(onParried != null)
@@ -188,7 +217,7 @@ public abstract class ProjectileEntityMixin extends Entity implements Projectile
 	@Override
 	public boolean isBoostable()
 	{
-		return switch(getWorld().getGameRules().get(GameruleRegistry.PROJ_BOOST).get())
+		return switch(ServerConfig.INSTANCE.projboost.getValue())
 		{
 			case ALLOW_ALL -> true;
 			case ENTITY_TAG -> getType().isIn(EntityRegistry.PROJBOOSTABLE);
@@ -225,5 +254,12 @@ public abstract class ProjectileEntityMixin extends Entity implements Projectile
 	public void setIsParriable(Supplier<Boolean> supplier)
 	{
 		isParriable = supplier;
+	}
+	
+	@Override
+	public void onKnockedBackbyExplosion(Entity exploder)
+	{
+		if(exploder instanceof PlayerEntity player)
+			knockbackExplosionCauser = player;
 	}
 }

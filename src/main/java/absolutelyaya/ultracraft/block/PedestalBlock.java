@@ -103,7 +103,7 @@ public class PedestalBlock extends BlockWithEntity implements IPunchableBlock, B
 		if(state.getBlock() != newState.getBlock())
 		{
 			BlockEntity entity = world.getBlockEntity(pos);
-			if(entity instanceof PedestalBlockEntity pedestal && world.getGameRules().getBoolean(GameRules.DO_TILE_DROPS))
+			if(entity instanceof PedestalBlockEntity pedestal && world.getGameRules().getBoolean(GameRules.DO_TILE_DROPS) && !pedestal.decorative)
 				ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), pedestal.getHeld());
 			super.onStateReplaced(state, world, pos, newState, moved);
 		}
@@ -160,6 +160,8 @@ public class PedestalBlock extends BlockWithEntity implements IPunchableBlock, B
 	@Override
 	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit)
 	{
+		if(world.getBlockEntity(pos) instanceof PedestalBlockEntity pedestal && pedestal.decorative)
+			return ActionResult.FAIL;
 		ItemStack stack = player.getStackInHand(hand);
 		if(stack.isOf(Items.BLUE_DYE) && !state.get(TYPE).equals(Type.BLUE))
 		{

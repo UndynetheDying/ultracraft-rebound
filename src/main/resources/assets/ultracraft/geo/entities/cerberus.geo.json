@@ -6,7 +6,7 @@
 				"identifier": "geometry.cerberus",
 				"texture_width": 64,
 				"texture_height": 64,
-				"visible_bounds_width": 2,
+				"visible_bounds_width": 3,
 				"visible_bounds_height": 3.5,
 				"visible_bounds_offset": [0, 1.25, 0]
 			},
@@ -44,7 +44,7 @@
 					"parent": "right_arm",
 					"pivot": [-6, 18, 2],
 					"cubes": [
-						{"origin": [-8, 12, -2], "size": [4, 6, 4], "uv": [48, 10], "mirror": true}
+						{"origin": [-8, 12, -2], "size": [4, 6, 4], "inflate": 0.001, "uv": [48, 10], "mirror": true}
 					]
 				},
 				{
@@ -52,7 +52,8 @@
 					"parent": "right_arm_lower",
 					"pivot": [-6, 12.5, -2],
 					"cubes": [
-						{"origin": [-7.5, 11, -5], "size": [3, 3, 3], "uv": [24, 20]}
+						{"origin": [-7.5, 11, -5], "size": [3, 3, 3], "uv": [24, 20]},
+						{"origin": [-7.5, 11, -5], "size": [3, 3, 3], "inflate": 0.25, "uv": [36, 20]}
 					]
 				},
 				{
@@ -68,7 +69,7 @@
 					"parent": "left_arm",
 					"pivot": [6, 18, 2],
 					"cubes": [
-						{"origin": [4, 12, -2], "size": [4, 6, 4], "uv": [48, 10]}
+						{"origin": [4, 12, -2], "size": [4, 6, 4], "inflate": 0.001, "uv": [48, 10]}
 					]
 				},
 				{
@@ -84,7 +85,7 @@
 					"parent": "left_leg",
 					"pivot": [-2, 6, -2],
 					"cubes": [
-						{"origin": [-4, 0, -2], "size": [4, 6, 4], "uv": [32, 10]}
+						{"origin": [-4, 0, -2], "size": [4, 6, 4], "inflate": 0.001, "uv": [32, 10]}
 					]
 				},
 				{
@@ -100,7 +101,7 @@
 					"parent": "right_leg",
 					"pivot": [2, 6, -2],
 					"cubes": [
-						{"origin": [0, 0, -2], "size": [4, 6, 4], "uv": [32, 10], "mirror": true}
+						{"origin": [0, 0, -2], "size": [4, 6, 4], "inflate": 0.001, "uv": [32, 10], "mirror": true}
 					]
 				}
 			]

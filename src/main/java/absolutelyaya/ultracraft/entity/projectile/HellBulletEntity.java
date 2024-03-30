@@ -5,10 +5,10 @@ import absolutelyaya.ultracraft.ServerHitscanHandler;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.ChainParryAccessor;
 import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
-import absolutelyaya.ultracraft.registry.GameruleRegistry;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import dev.lambdaurora.lambdynlights.DynamicLightSource;
 import dev.lambdaurora.lambdynlights.LambDynLights;
@@ -17,6 +17,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
@@ -38,6 +39,7 @@ public class HellBulletEntity extends ThrownItemEntity implements ProjectileEnti
 	Class<? extends LivingEntity> ignore;
 	private boolean shot;
 	protected boolean difficultySpeed;
+	protected DamageSource damageSource = getDamageSources().thrown(this, this.getOwner());
 	
 	public HellBulletEntity(EntityType<? extends ThrownItemEntity> entityType, World world)
 	{
@@ -80,7 +82,7 @@ public class HellBulletEntity extends ThrownItemEntity implements ProjectileEnti
 		if(entity instanceof AbstractUltraHostileEntity)
 			amount *= 0.25f;
 		if(!entity.getClass().equals(ignore) && !((ProjectileEntityAccessor)this).isParried())
-			entity.damage(getDamageSources().thrown(this, this.getOwner()), amount);
+			entity.damage(damageSource, amount);
 	}
 	
 	@Override
@@ -95,6 +97,8 @@ public class HellBulletEntity extends ThrownItemEntity implements ProjectileEnti
 	@Override
 	protected void onCollision(HitResult hitResult)
 	{
+		if(hitResult instanceof EntityHitResult eHit && !eHit.getEntity().canBeHitByProjectile())
+			return;
 		if (!getWorld().isClient && !isRemoved())
 		{
 			getWorld().sendEntityStatus(this, (byte)3);
@@ -175,11 +179,19 @@ public class HellBulletEntity extends ThrownItemEntity implements ProjectileEnti
 		if(!entity.canHit() && !entity.canBeHitByProjectile())
 			return false;
 		boolean parried = isParried();
-		if(entity.getClass().equals(ignore) && !parried)
+		if(entity.getClass().equals(ignore) && !parried && getKnockbackExplosionCauser() == null)
 			return false;
 		boolean val = super.canHit(entity);
-		return val || (isOwner(entity) && parried && !entity.equals(getParrier())) ||
-					   (!isOwner(entity) && !(entity instanceof ProjectileEntity));
+		if(val)
+			return val;
+		if(isOwner(entity))
+		{
+			if(getKnockbackExplosionCauser() != null)
+				return true;
+			else if(parried && !entity.equals(getParrier()))
+				return true;
+		}
+		return !isOwner(entity) && !(entity instanceof ProjectileEntity);
 	}
 	
 	@Override
@@ -250,12 +262,19 @@ public class HellBulletEntity extends ThrownItemEntity implements ProjectileEnti
 	@Override
 	public boolean isBoostable()
 	{
-		return switch(getWorld().getGameRules().get(GameruleRegistry.PROJ_BOOST).get())
+		return switch(ServerConfig.INSTANCE.projboost.getValue())
 		{
 			case ALLOW_ALL -> true;
 			case ENTITY_TAG -> getType().isIn(EntityRegistry.PROJBOOSTABLE);
 			case LIMITED -> this instanceof ShotgunPelletEntity;
 			case DISALLOW -> false;
 		} && age < 4;
+	}
+	
+	@Override
+	public void onKnockedBackbyExplosion(Entity exploder)
+	{
+		ProjectileEntityAccessor.super.onKnockedBackbyExplosion(exploder);
+		setIgnored(null);
 	}
 }

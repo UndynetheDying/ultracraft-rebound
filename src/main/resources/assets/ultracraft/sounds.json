@@ -118,9 +118,19 @@
     ]
   },
 
-  "entity.hideous_mass.unhide": {
+  "entity.hideous_mass.emerge_step": {
     "sounds": [
-      {"name":"ultracraft:placeholder","type":"event"}
+      {"name":"minecraft:block.calcite.break","type":"event","pitch": 0.5}
+    ]
+  },
+  "entity.hideous_mass.turn": {
+    "sounds": [
+      {"name":"minecraft:entity.spider.step","type":"event","pitch": 0.75}
+    ]
+  },
+  "entity.hideous_mass.mortar": {
+    "sounds": [
+      {"name":"minecraft:entity.arrow.shoot","type":"event","pitch": 0.05}
     ]
   },
   "entity.hideous_mass.tell.stomp": {
@@ -197,6 +207,21 @@
       {"name":"entity.firework_rocket.blast","type":"event"}
     ]
   },
+  "item.alt_revolver.fire": {
+    "sounds": [
+      {"name":"entity.firework_rocket.large_blast_far","type":"event"}
+    ]
+  },
+  "item.alt_revolver.fire_ding": {
+    "sounds": [
+      {"name":"item.trident.return","type":"event","pitch": 0.85}
+    ]
+  },
+  "item.alt_revolver.click": {
+    "sounds": [
+      {"name":"block.iron_trapdoor.open","type":"event","pitch": 1.3}
+    ]
+  },
   "item.revolver.alt_charge": {
     "sounds": [
       {"name":"block.note_block.pling","type":"event"}
@@ -250,7 +275,7 @@
   },
   "item.shotgun.pump": {
     "sounds": [
-      {"name":"block.piston.contract","type":"event"}
+      {"name":"block.piston.contract","type":"event","volume":0.5}
     ]
   },
   "item.shotgun.overpump_beep": {
@@ -261,6 +286,21 @@
   "item.shotgun.core_charge": {
     "sounds": [
       {"name":"ultracraft:placeholder","type":"event"}
+    ]
+  },
+  "item.shotgun.hiss": {
+    "sounds": [
+      {"name": "entity.generic.extinguish_fire","type":"event","volume":0.75}
+    ]
+  },
+  "item.shotgun.open": {
+    "sounds": [
+      {"name":"block.iron_trapdoor.open","type":"event","pitch": 0.9}
+    ]
+  },
+  "item.shotgun.close": {
+    "sounds": [
+      {"name":"block.iron_trapdoor.close","type":"event","pitch": 0.9}
     ]
   },
 
@@ -350,6 +390,21 @@
       {"name": "block.glass.break", "type": "event"}
     ]
   },
+  "blocks.checkpoint.get": {
+    "sounds": [
+      {"name": "block.bell.resonate", "type": "event", "pitch": 2}
+    ]
+  },
+  "blocks.slab_block.activate": {
+    "sounds": [
+      {"name": "block.beacon.power_select", "type": "event", "pitch": 1.25}
+    ]
+  },
+  "blocks.slab_block.deactivate": {
+    "sounds": [
+      {"name": "block.redstone_torch.burnout", "type": "event"}
+    ]
+  },
 
 
   "misc.elevator_fall": {
@@ -380,6 +435,21 @@
   "item.killerfish.use": {
     "sounds": [
       "ultracraft:item/killer_fish1"
+    ]
+  },
+  "item.lumpfish.select": {
+    "sounds": [
+      "ultracraft:item/lumpfish1"
+    ]
+  },
+  "item.lumpfish.unselect": {
+    "sounds": [
+      "ultracraft:item/lumpfish2"
+    ]
+  },
+  "item.lumpfish.use": {
+    "sounds": [
+      "ultracraft:item/lumpfish3"
     ]
   },
   "entity.orb.ambient": {
@@ -429,7 +499,7 @@
   },
   "misc.water_skim": {
     "sounds": [
-      {"name": "entity.salmon.ambient", "type": "event"}
+      {"name": "entity.salmon.flop", "type": "event"}
     ]
   },
   "misc.laugh": {
@@ -437,8 +507,24 @@
       {"name": "ultracraft:placeholder", "type": "event"}
     ]
   },
+  "misc.box-title": {
+    "sounds": [
+      {"name": "ultracraft:placeholder", "type": "event"}
+    ]
+  },
+  "misc.husk_scream": {
+    "sounds": [
+      "ultracraft:misc/husk_scream_seemless"
+    ]
+  },
+  "misc.spin": {
+    "sounds": [
+      "ultracraft:misc/spin"
+    ]
+  },
   "placeholder": {
     "sounds": [
+      "ultracraft:placeholder"
     ]
   },
 

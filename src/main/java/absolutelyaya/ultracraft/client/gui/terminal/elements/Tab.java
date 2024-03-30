@@ -29,6 +29,7 @@ public class Tab
 	public static final String BASE_SELECT_ID = "base-select";
 	public static final String EDIT_SCREENSAVER_ID = "edit-screensaver";
 	public static final String GRAFFITI_ID = "graffiti";
+	public static final String LOADOUT_ID = "loadout";
 	public static final Button DEFAULT_RETURN_BUTTON;
 	
 	static final List<String> defaultTabs = new ArrayList<>() {
@@ -41,6 +42,7 @@ public class Tab
 			add(BASE_SELECT_ID);
 			add(EDIT_SCREENSAVER_ID);
 			add(GRAFFITI_ID);
+			add(LOADOUT_ID);
 		}
 	};
 	
@@ -74,7 +76,7 @@ public class Tab
 	
 	public final void render(MatrixStack matrices, TerminalBlockEntity terminal, VertexConsumerProvider buffers)
 	{
-		time += MinecraftClient.getInstance().getTickDelta() / 20f;
+		time += MinecraftClient.getInstance().getLastFrameDuration() / 30f;
 		drawCustomTab(matrices, terminal, buffers);
 	}
 	

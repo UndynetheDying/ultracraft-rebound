@@ -825,7 +825,7 @@ public class TerminalBlockEntity extends BlockEntity implements GeoBlockEntity
 		
 		public Identifier getTexture()
 		{
-			return new Identifier(Ultracraft.MOD_ID, String.format("textures/block/terminal/%s.png", name().toLowerCase()));
+			return new Identifier(Ultracraft.MOD_ID, String.format("textures/block/terminal/%s.png", name().toLowerCase(Locale.ROOT)));
 		}
 		
 		public int getColor()
@@ -835,7 +835,7 @@ public class TerminalBlockEntity extends BlockEntity implements GeoBlockEntity
 		
 		public String translationKey()
 		{
-			return "color.minecraft." + name().toLowerCase();
+			return "color.minecraft." + name().toLowerCase(Locale.ROOT);
 		}
 	}
 }

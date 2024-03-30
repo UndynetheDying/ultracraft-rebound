@@ -8,3 +8,8 @@ accessible class net/minecraft/client/render/BackgroundRenderer$StatusEffectFogM
 accessible class net/minecraft/client/render/BackgroundRenderer$FogData
 accessible field net/minecraft/entity/projectile/ProjectileEntity owner Lnet/minecraft/entity/Entity;
 accessible class net/minecraft/client/texture/ResourceTexture$TextureData
+accessible field net/minecraft/client/option/KeyBinding boundKey Lnet/minecraft/client/util/InputUtil$Key;
+accessible method net/minecraft/client/MinecraftClient doItemUse ()V
+accessible method net/minecraft/client/gui/tooltip/Tooltip <init> (Lnet/minecraft/text/Text;Lnet/minecraft/text/Text;)V
+
+extendable method net/minecraft/entity/LivingEntity getMaxHealth ()F

@@ -1,5 +1,11 @@
 package absolutelyaya.ultracraft.entity;
 
+import absolutelyaya.ultracraft.api.HeavyEntities;
+import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.components.player.ILevelStatsComponent;
+import absolutelyaya.ultracraft.cybergrind.CybergrindGame;
+import absolutelyaya.ultracraft.cybergrind.CybergrindManager;
+import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.particle.ParryIndicatorParticleEffect;
 import absolutelyaya.ultracraft.particle.TeleportParticleEffect;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
@@ -15,6 +21,7 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
@@ -25,16 +32,21 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.TypeFilter;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.LocalDifficulty;
-import net.minecraft.world.ServerWorldAccess;
-import net.minecraft.world.World;
+import net.minecraft.world.*;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector4i;
 
 public abstract class AbstractUltraHostileEntity extends HostileEntity
 {
 	protected static final TrackedData<Byte> ANIMATION = DataTracker.registerData(AbstractUltraHostileEntity.class, TrackedDataHandlerRegistry.BYTE);
 	protected static final TrackedData<Boolean> BOSS = DataTracker.registerData(AbstractUltraHostileEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+	protected static final TrackedData<Boolean> CYBERGRIND = DataTracker.registerData(AbstractUltraHostileEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	
 	protected ServerBossBar bossBar;
 	boolean wasBossbarVisible;
@@ -55,6 +67,7 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 		super.initDataTracker();
 		dataTracker.startTracking(ANIMATION, (byte)0);
 		dataTracker.startTracking(BOSS, getBossDefault());
+		dataTracker.startTracking(CYBERGRIND, false);
 	}
 	
 	@Nullable
@@ -70,6 +83,8 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 		super.readCustomDataFromNbt(nbt);
 		if(nbt.contains("boss", NbtElement.BYTE_TYPE))
 			dataTracker.set(BOSS, nbt.getBoolean("boss"));
+		if(nbt.contains("cybergrind", NbtElement.BYTE_TYPE))
+			dataTracker.set(CYBERGRIND, nbt.getBoolean("cybergrind"));
 	}
 	
 	@Override
@@ -77,6 +92,7 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 	{
 		super.writeCustomDataToNbt(nbt);
 		nbt.putBoolean("boss", dataTracker.get(BOSS));
+		nbt.putBoolean("cybergrind", dataTracker.get(CYBERGRIND));
 	}
 	
 	@Override
@@ -84,7 +100,8 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 	{
 		super.onSpawnPacket(packet);
 		getWorld().addParticle(new TeleportParticleEffect(getTeleportParticleSize()), packet.getX(), packet.getY(), packet.getZ(), 0f, 0f, 0f);
-		getWorld().playSound(getX(), getY(), getZ(), SoundRegistry.GENERIC_SPAWN, SoundCategory.HOSTILE, 0.75f, 1.3f + random.nextFloat() * 0.15f, false);
+		float pitch = HeavyEntities.isHeavy(getType()) ? 0.65f : 1.3f;
+		getWorld().playSound(getX(), getY(), getZ(), SoundRegistry.GENERIC_SPAWN, SoundCategory.HOSTILE, 0.75f,  pitch+ random.nextFloat() * 0.15f, false);
 	}
 	
 	protected ServerBossBar initBossBar()
@@ -126,6 +143,17 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 		return super.computeFallDamage(fallDistance - 3, damageMultiplier);
 	}
 	
+	public boolean shouldScream()
+	{
+		if(isOnGround())
+			return false;
+		BlockHitResult hit = getWorld().raycast(new RaycastContext(getPos(), getPos().add(0, -32, 0),
+				RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, this));
+		boolean miss = hit.getType().equals(HitResult.Type.MISS);
+		return isAlive() && miss ||
+					   (!miss && computeFallDamage((float)(fallDistance + Math.abs(getPos().getY() - (float)hit.getPos().y)), 1f) - 2f >= getHealth());
+	}
+	
 	@Override
 	public void setCustomName(@Nullable Text name)
 	{
@@ -162,10 +190,35 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 			bossBar.clearPlayers();
 		else if(!wasBossbarVisible && isBossBarVisible())
 		{
-			getWorld().getPlayers(TargetPredicate.DEFAULT, this, getBoundingBox().expand(64))
+			getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(64), p -> true)
 					.forEach(p -> bossBar.addPlayer((ServerPlayerEntity)p));
 		}
 		wasBossbarVisible = isBossBarVisible();
+	}
+	
+	@Override
+	public void tickMovement()
+	{
+		super.tickMovement();
+		
+		if(!getWorld().isClient)
+		{
+			CybergrindGame cybergrind = CybergrindManager.Instance.getActiveGame();
+			if(cybergrind != null && cybergrind.getCenter() != null)
+			{
+				Vector4i bounds = cybergrind.getArenaBounds();
+				if(getX() < bounds.x || getX() > bounds.z || getZ() < bounds.y || getZ() > bounds.w)
+				{
+					BlockPos pos = cybergrind.getCenter();
+					navigation.startMovingTo(pos.getX(), pos.getY(), pos.getZ(), 1f);
+				}
+			}
+			return;
+		}
+		if(!isOnGround() && getVelocity().y < 0f)
+			fallDistance -= getVelocity().y;
+		else
+			fallDistance = 0f;
 	}
 	
 	@Override
@@ -192,7 +245,7 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 	
 	public boolean isBossBarVisible()
 	{
-		return true;
+		return bossBar != null;
 	}
 	
 	protected EnemySoundType getSoundType()
@@ -223,5 +276,40 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 	protected void playFireSound()
 	{
 		playSound(SoundRegistry.GENERIC_FIRE, 1, 1);
+	}
+	
+	public void markCybergrind()
+	{
+		dataTracker.set(BOSS, false);
+		dataTracker.set(CYBERGRIND, true);
+		if(bossBar != null)
+			bossBar.clearPlayers();
+	}
+	
+	public boolean isCybergrind()
+	{
+		return dataTracker.get(CYBERGRIND);
+	}
+	
+	@Override
+	protected Identifier getLootTableId()
+	{
+		if(isCybergrind())
+			return super.getLootTableId().withPrefixedPath("_cg");
+		return super.getLootTableId();
+	}
+	
+	@Override
+	public void onDeath(DamageSource damageSource)
+	{
+		super.onDeath(damageSource);
+		if(getWorld().getRegistryKey().equals(LevelManager.WORLD_KEY) && !getWorld().isClient)
+		{
+			getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(192f), p -> true).forEach(p -> {
+				ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(p);
+				if(levelStats.getCurrentLevelInstance() != null)
+					LevelManager.Instance.getInstance(levelStats.getCurrentLevelInstance()).onKill();
+			});
+		}
 	}
 }

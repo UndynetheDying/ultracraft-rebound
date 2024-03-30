@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
+import absolutelyaya.ultracraft.registry.ParticleRegistry;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
@@ -95,6 +96,18 @@ public class ThrownSoapEntity extends ThrownItemEntity
 			Vec3d pos = getPos().addRandom(random, 0.1f);
 			Vec3d vel = getVelocity().addRandom(random, 1f);
 			getWorld().addParticle(new ItemStackParticleEffect(ParticleTypes.ITEM, getStack()), pos.x, pos.y, pos.z, vel.x, vel.y, vel.z);
+		}
+	}
+	
+	@Override
+	public void tick()
+	{
+		super.tick();
+		if(getWorld().isClient && random.nextFloat() < 0.66f)
+		{
+			Vec3d pos = getPos().addRandom(random, getWidth() * 2);
+			Vec3d vel = Vec3d.ZERO.addRandom(random, 0.05f);
+			getWorld().addParticle(ParticleRegistry.SOAP_BUBBLE, pos.x, pos.y, pos.z, vel.x, vel.y, vel.z);
 		}
 	}
 }

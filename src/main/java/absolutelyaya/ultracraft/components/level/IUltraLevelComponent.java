@@ -2,7 +2,9 @@ package absolutelyaya.ultracraft.components.level;
 
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Identifier;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -23,4 +25,20 @@ public interface IUltraLevelComponent extends ComponentV3
 	Map<UUID, String> getGraffitiWhitelist();
 	
 	boolean isPlayerAllowedToGraffiti(PlayerEntity player);
+	
+	boolean isDestinationUnlocked(Identifier id);
+	
+	boolean isAnyLimboDestinationUnlocked();
+	
+	boolean unlockDestination(Identifier id);
+	
+	void unlockAllDestinations();
+	
+	void lockDestination(Identifier id);
+	
+	void setDestinations(List<Identifier> ids);
+	
+	List<Identifier> getUnlockedDestinationList();
+	
+	void resetGlobalProgression();
 }

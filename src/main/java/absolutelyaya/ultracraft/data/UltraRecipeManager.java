@@ -79,10 +79,7 @@ public class UltraRecipeManager extends JsonDataLoader
 	public static void sync(ServerPlayerEntity player)
 	{
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-		List<Pair<Identifier, UltraRecipe>> list = new ArrayList<>();
-		for (Map.Entry<Identifier, UltraRecipe> entry : recipes.entrySet())
-			list.add(new Pair<>(entry.getKey(), entry.getValue()));
-		buf.writeCollection(list, UltraRecipe::serialize);
+		buf.writeCollection(recipes.entrySet(), UltraRecipe::serialize);
 		ServerPlayNetworking.send(player, PacketRegistry.ULTRA_RECIPE_PACKET_ID, buf);
 	}
 }

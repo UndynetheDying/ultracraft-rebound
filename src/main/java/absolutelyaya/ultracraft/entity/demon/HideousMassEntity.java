@@ -2,11 +2,15 @@ package absolutelyaya.ultracraft.entity.demon;
 
 import absolutelyaya.goop.api.WaterHandling;
 import absolutelyaya.goop.particles.GoopDropParticleEffect;
+import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.Enrageable;
 import absolutelyaya.ultracraft.accessor.IAnimatedEnemy;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.damage.DamageSources;
+import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
+import absolutelyaya.ultracraft.entity.goal.TargetPlayerGoal;
 import absolutelyaya.ultracraft.entity.goal.TimedAttackGoal;
 import absolutelyaya.ultracraft.entity.other.ShockwaveEntity;
 import absolutelyaya.ultracraft.entity.other.VerticalShockwaveEntity;
@@ -23,13 +27,13 @@ import mod.azure.azurelib.core.animation.AnimatableManager;
 import mod.azure.azurelib.core.animation.AnimationController;
 import mod.azure.azurelib.core.animation.AnimationState;
 import mod.azure.azurelib.core.animation.RawAnimation;
+import mod.azure.azurelib.core.keyframe.event.SoundKeyframeEvent;
 import mod.azure.azurelib.core.object.PlayState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityStatuses;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.control.LookControl;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -45,6 +49,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
@@ -55,6 +63,7 @@ import java.util.List;
 
 public class HideousMassEntity extends AbstractUltraHostileEntity implements GeoEntity, IAnimatedEnemy, Enrageable
 {
+	protected static final float BOSS_HEALTH = 250f, REGULAR_HEALTH = 120f;
 	protected static final TrackedData<Integer> ATTACK_COOLDOWN = DataTracker.registerData(HideousMassEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Integer> MORTAR_COUNTER = DataTracker.registerData(HideousMassEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Integer> SLAM_COUNTER = DataTracker.registerData(HideousMassEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -132,7 +141,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 	public static DefaultAttributeContainer.Builder getDefaultAttributes()
 	{
 		return HostileEntity.createMobAttributes()
-					   .add(EntityAttributes.GENERIC_MAX_HEALTH, 175.0d)
+					   .add(EntityAttributes.GENERIC_MAX_HEALTH, BOSS_HEALTH)
 					   .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3d)
 					   .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 1.0d)
 					   .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 64.0d);
@@ -161,11 +170,29 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		goalSelector.add(1, new StandupGoal(this));
 		goalSelector.add(2, new MortarAttackGoal(this));
 		goalSelector.add(3, new ClapAttackGoal(this));
-		goalSelector.add(4, new HarpoonAttackGoal(this));
-		goalSelector.add(5, new SlamAttackGoal(this, true));
-		goalSelector.add(5, new SlamAttackGoal(this, false));
+		goalSelector.add(3, new HarpoonAttackGoal(this));
+		goalSelector.add(4, new SlamAttackGoal(this, true));
+		goalSelector.add(4, new SlamAttackGoal(this, false));
 		
-		targetSelector.add(0, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+		targetSelector.add(1, new TargetPlayerGoal(this));
+	}
+	
+	public static HideousMassEntity spawn(World world, Vec3d pos, boolean hidden)
+	{
+		HideousMassEntity mass = new HideousMassEntity(EntityRegistry.HIDEOUS_MASS, world);
+		mass.setPosition(pos);
+		mass.dataTracker.set(HIDDEN, hidden);
+		world.spawnEntity(mass);
+		return mass;
+	}
+	
+	public static HideousMassEntity spawnAsNonBoss(World world, Vec3d pos)
+	{
+		HideousMassEntity mass = new HideousMassEntity(EntityRegistry.HIDEOUS_MASS, world);
+		mass.setPosition(pos);
+		mass.dataTracker.set(BOSS, false);
+		world.spawnEntity(mass);
+		return mass;
 	}
 	
 	@Override
@@ -179,15 +206,29 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 	@Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar)
 	{
-		controllerRegistrar.add(new AnimationController<>(this, "main", this::predicate),
+		controllerRegistrar.add(new AnimationController<>(this, "main", this::predicate).setSoundKeyframeHandler(this::handleSoundKeyFrames),
 								new AnimationController<>(this, "turn", this::turnPredicate));
+	}
+	
+	private void handleSoundKeyFrames(SoundKeyframeEvent<GeoAnimatable> event)
+	{
+		if(!getWorld().isClient)
+			return;
+		SoundEvent sound = switch(event.getKeyframeData().getSound())
+		{
+			case "mortar" -> SoundRegistry.HIDEOUS_MASS_MORTAR;
+			case "emerge" -> SoundRegistry.HIDEOUS_MASS_EMERGE;
+			default -> SoundRegistry.PLACEHOLDER;
+		};
+		getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(16f), p -> true)
+				.forEach(p -> getWorld().playSound(p, getBlockPos(), sound, SoundCategory.HOSTILE, 1f, 0.95f + random.nextFloat()));
 	}
 	
 	@Override
 	public void onTrackedDataSet(TrackedData<?> data)
 	{
 		super.onTrackedDataSet(data);
-		if(data.equals(DEATH) && dataTracker.get(DEATH) >= 100)
+		if(data.equals(DEATH) && dataTracker.get(DEATH) >= 100 && !isDead())
 		{
 			if(getWorld().isClient)
 			{
@@ -204,7 +245,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		}
 		if(data.equals(BOSS))
 		{
-			float health = isBoss() ? 175f : 75f;
+			float health = getTrueMaxHealth();
 			if(getHealth() > health)
 				setHealth(health);
 		}
@@ -224,6 +265,9 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		if(data.equals(ENRAGED))
 		{
 			left_arm.enabled = right_arm.enabled = mask.enabled = body3.enabled = false;
+			if(!getWorld().isClient)
+				getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(32), i -> true)
+						.forEach(p -> UltraComponents.STYLE.get(p).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "enrage"))));
 		}
 		if(data.equals(HIDDEN) && !dataTracker.get(HIDDEN))
 			setAllMainPartsEnabled(true);
@@ -290,6 +334,11 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 			dataTracker.set(ENRAGED, nbt.getBoolean("enraged"));
 		if(!nbt.contains("boss", NbtElement.BYTE_TYPE))
 			dataTracker.set(BOSS, true);
+	}
+	
+	float getTrueMaxHealth()
+	{
+		return isBoss() ? BOSS_HEALTH : REGULAR_HEALTH;
 	}
 	
 	void setAllMainPartsEnabled(boolean b)
@@ -374,7 +423,8 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 			partPositions[i] = partPositions[i].lerp(dest[i], 1f / 5f);
 			positionPart(parts[i], partPositions[i]);
 		}
-		
+		if(!getWorld().isClient && prevYaw != getYaw() && age % 8 == 0 && random.nextFloat() <= 0.75f)
+			playSound(SoundRegistry.HIDEOUS_MASS_TURN, 0.3f, 1f);
 		setBodyYaw(headYaw);
 	}
 	
@@ -457,7 +507,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 	private void shockwave()
 	{
 		ShockwaveEntity shockwave = new ShockwaveEntity(EntityRegistry.SHOCKWAVE, getWorld());
-		shockwave.setDamage(3f);
+		shockwave.setDamage(6f);
 		shockwave.setGrowRate(0.6f);
 		shockwave.setAffectOnly(PlayerEntity.class);
 		shockwave.setPosition(getPos().add(0f, 0.5f, 0f));
@@ -468,7 +518,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 	private void clap()
 	{
 		VerticalShockwaveEntity shockwave = new VerticalShockwaveEntity(EntityRegistry.VERICAL_SHOCKWAVE, getWorld());
-		shockwave.setDamage(2f);
+		shockwave.setDamage(4f);
 		shockwave.setYaw(getYaw());
 		shockwave.setGrowRate(0.6f);
 		shockwave.setAffectOnly(PlayerEntity.class);
@@ -668,7 +718,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		@Override
 		public boolean canStart()
 		{
-			if(mob.isDying() || mob.isDead())
+			if(mob.isDying() || mob.isDead() || mob.isHidden())
 				return false;
 			return super.canStart() && !mob.dataTracker.get(LAYING) && mob.random.nextFloat() > 0.5;
 		}
@@ -705,7 +755,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		@Override
 		public boolean canStart()
 		{
-			if(mob.isDying() || mob.isDead())
+			if(mob.isDying() || mob.isDead() || mob.isHidden())
 				return false;
 			return super.canStart() && ((standing && !mob.dataTracker.get(LAYING) && mob.dataTracker.get(MORTAR_COUNTER) > 0 && mob.random.nextFloat() > 0.5f) ||
 												(!standing && mob.dataTracker.get(LAYING)));
@@ -746,7 +796,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		@Override
 		public boolean canStart()
 		{
-			if(mob.isDying() || mob.isDead())
+			if(mob.isDying() || mob.isDead() || mob.isHidden())
 				return false;
 			return super.canStart() && mob.dataTracker.get(LAYING) && mob.dataTracker.get(SLAM_COUNTER) > 0 && mob.random.nextFloat() < 0.3f;
 		}
@@ -777,7 +827,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		@Override
 		public boolean canStart()
 		{
-			if(mob.isDying() || mob.isDead())
+			if(mob.isDying() || mob.isDead() || mob.isHidden())
 				return false;
 			return super.canStart() && mob.isHasHarpoon() && mob.dataTracker.get(LAYING) && mob.dataTracker.get(SLAM_COUNTER) > 0 && mob.random.nextFloat() < 0.5f;
 		}
@@ -810,7 +860,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		@Override
 		public boolean canStart()
 		{
-			if(mob.isDying() || mob.isDead())
+			if(mob.isDying() || mob.isDead() || mob.isHidden())
 				return false;
 			return super.canStart() && mob.getHealth() < 50f || (mob.isHasHarpoon() && mob.dataTracker.get(LAYING) && mob.dataTracker.get(SLAM_COUNTER) > 2);
 		}
@@ -836,7 +886,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		@Override
 		public boolean canStart()
 		{
-			if(mob.isDying() || mob.isDead())
+			if(mob.isDying() || mob.isDead() || mob.isHidden())
 				return false;
 			if(mob.getCooldown() > 0 || mob.getAnimation() != ANIMATION_IDLE)
 				return false;
@@ -870,7 +920,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 				return false;
 			if(mob.getAnimation() != ANIMATION_IDLE)
 				return false;
-			List<PlayerEntity> nearby = mob.getWorld().getPlayers(TargetPredicate.DEFAULT.setPredicate(e -> e.distanceTo(mob) < 24f), mob,
+			List<PlayerEntity> nearby = mob.getWorld().getPlayers(TargetPredicate.DEFAULT.setPredicate(e -> e.distanceTo(mob) < 10f), mob,
 					mob.getBoundingBox().expand(64));
 			return mob.getTarget() != null && mob.isHidden() && nearby.size() > 0;
 		}
@@ -879,7 +929,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		public void start()
 		{
 			super.start();
-			mob.playSound(SoundRegistry.HIDEOUS_MASS_UNHIDE, 1f, 1f);
+			mob.playSound(SoundRegistry.HIDEOUS_MASS_EMERGE, 1f, 1f);
 		}
 		
 		@Override

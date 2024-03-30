@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.accessor.IAnimatedEnemy;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.DamageTypeTags;
+import absolutelyaya.ultracraft.entity.goal.TargetPlayerGoal;
 import absolutelyaya.ultracraft.entity.goal.TimedAttackGoal;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import mod.azure.azurelib.animatable.GeoEntity;
@@ -20,7 +21,6 @@ import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.RevengeGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -109,7 +109,7 @@ public class GreaterFilthEntity extends AbstractHuskEntity implements GeoEntity,
 		goalSelector.add(0, new ComboAttackGoal(this));
 		goalSelector.add(1, new ApproachTargetGoal(this));
 		
-		targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+		targetSelector.add(1, new TargetPlayerGoal(this));
 		targetSelector.add(2, new RevengeGoal(this));
 	}
 	
@@ -177,7 +177,7 @@ public class GreaterFilthEntity extends AbstractHuskEntity implements GeoEntity,
 			dataTracker.set(DODGE_TICKS, dataTracker.get(DODGE_TICKS) - 1);
 		if(dataTracker.get(ENRAGE_TICKS) > 0)
 			dataTracker.set(ENRAGE_TICKS, dataTracker.get(ENRAGE_TICKS) - 1);
-		if(!isEnraged())
+		if(!isEnraged() && getTarget() != null)
 			dataTracker.set(FRUSTRATION_TICKS, dataTracker.get(FRUSTRATION_TICKS) + 1);
 		if(dataTracker.get(FRUSTRATION_TICKS) > 400 && !isEnraged())
 			enrage();

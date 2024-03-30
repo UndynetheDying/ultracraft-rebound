@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.mixin.client.gui;
 
 import absolutelyaya.ultracraft.accessor.WidgetAccessor;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import org.joml.Vector2i;
 import org.spongepowered.asm.mixin.Mixin;
@@ -39,16 +40,16 @@ public class ClickableWidgetMixin implements WidgetAccessor
 	//							   mouseY < (double)(y + height + offsetY));
 	//}
 	
-	@Inject(method = "getX", at = @At("HEAD"), cancellable = true)
-	void onGetX(CallbackInfoReturnable<Integer> cir)
+	@ModifyReturnValue(method = "getX", at = @At("RETURN"))
+	int onGetX(int original)
 	{
-		cir.setReturnValue(x + offsetX);
+		return original + offsetX;
 	}
 	
-	@Inject(method = "getY", at = @At("HEAD"), cancellable = true)
-	void onGetY(CallbackInfoReturnable<Integer> cir)
+	@ModifyReturnValue(method = "getY", at = @At("RETURN"))
+	int onGetY(int original)
 	{
-		cir.setReturnValue(y + offsetY);
+		return original + offsetY;
 	}
 	
 	@Override

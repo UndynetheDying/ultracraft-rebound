@@ -1,41 +1,321 @@
 ## Major Changes
-- Switched from Geckolib to Aurelib. **Geckolib is no longer required to run the mod**.
-- Fixed ultra-speed gamerule not affecting walk speed
-- Hell Observers now detect *ALL* Hostile entities and not just those added by ultracraft.
-- Fixed ultra-Hivel Gamerule
-- Fixed ultra-speed Gamerule
-- Added Core Eject Damage Type
-- Added Piercer Alt-Fire Damage Type
-- Terminal improvements
-  - Terminals are now automatically unfocused when out of reach
-  - Graffiti cursor is now more accurate
-  - Graffiti now spans the entire back of Terminals
-    - This also means Graffitis texture size has been increased (32x32 -> 40x40)
-    - Old Graffitis are resized automatically
-  - Added Random initial Screensavers
-    - Custom ones can be added using datapacks
-  - Made Terminal Item NBT less volatile
-  - Base Color can now be set to any Hex Color
-  - Fixed Crash that occurs when opening the Weapons Tab without the Piercer recipe unlocked
-- Fixed issue with Soap visually disappearing after picking it up
-- Fixed Recipe Syncing from Server to Client
-- Added Functionality to Sky Blocks
-- Drones no longer wander off into the stratosphere if left unattended
-- A lot more Sounds are now customizable
-## Settings & Gamerules
+- Added Prelude Structure to Overworld
+  - Complete this Dungeon to obtain a Teleporter that can be used to travel to other Layers
+- Added Cybergrind
+  - Wave-Based survival mini-game; face off against hordes of enemies
+  - Endless Cybergrind along with its own dimension and a morphing arena is planned to be added in the future as well
+- Revolver, Shotgun and Nailgun Recipes are no longer unlocked per default (see point below)
+- Added Playable Levels
+  - These Levels are only themed around the different Layers; they're by no means recreations of the Original Levels
+  - Throughout the Levels, Players are taught the new mechanics, enemies and will unlock new Weapons
+    - You will obtain the Piercer Revolver at the beginning of the first Prelude Level for Instance
+  - At the end of a Level, your performance will be ranked in 3 Categories; Time, Kills and Style
+  - If you beat a level without dying and have an S-Rank in all 3 Ctagories, you can put your run in the ultracraft Discords P-Rank Forum channel! (Each level has its own post in which you'd comment your best times)
+  - Using a datapack, you can make and add Custom Levels of your own! If you publish one, we'd love to put it in the ultracraft Discord to make it easy to discover for other Players
+- Added Overheat Nailgun
+  - Primary fire of all Nailgun variants now builds up "heat"
+  - The higher the heat, the slower the fire rate (this one only applies to the Overheat Nailgun)
+  - Alt fire uses a "heatsink", firing 5 nails and consuming 5 "heat" per tick until heat is used up.
+- Added Slab Revolvers
+  - An Alternate Version for each revolver
+  - Slower, but does more damage and pierces up to 1 weak enemy
+  - Have a Hammer that has to be pulled back before firing; if the variant is switched before this happens, it'll be pulled back when you switch back to that weapon.
+  - Piercer pierces more
+  - Marksman coin splits reset all Hammers and hit a single target multiple times instead of multiple
+  - Sharpshooter has only 1 Charge, but spins at full speed instantly
+- Added Limbo Dimension
+  - Custom Worldgen inspired by Limbo
+  - Pre-placed Structures with Scripted Events and Progression
+    - Activate all 4 Slab Blocks to obtain the Slab Revolver
+  - Other Random Limbo Themed Structures
+  - Instead of random mob spawning, every night there's a chance for a Cybergrind to start
+    - The Amount of Waves that need to be beaten (and the amount // strength of enemies) depends on your worlds difficulty and number of Participants
+    - Cybergrind can be configured using a config file
+    - "Why no random mob spawning??" trust me, it's *really* not fun.
+- Removed cooldown caused by stopping to use the Flamethrower
+- Added Slab Blocks
+  - Right click // Punch to toggle; alternatively, use a redstone signal of level 15
+  - Emits redstone Signal equal to it's displayed number when active
+  - Power with a redstone signal of <=10 to change its displayed number
+- Malicious Face can now be summoned as a non-decaying corpse using `{decorative: 1b}`
+- Added Screenshake
+  - Can be turned off in the Client Settings
+- Fixed Keybind conflicts making only one action mapped to that key execute
+  - Not even my fault, like I'm fixing an issue on Mojangs end here
+- Rewrote Hivel Movement
+  - no more hard coded values; you can customize everything in detail using a config file.
+- Greater Filth will not enrage anymore without a Target
+- Added Fancy Carpet Block
+  - Connects to other fancy carpet blocks directly next to it
+- Added Flowerbed Block
+  - Placed like snow layers, each layer having different flowers
+  - If an entity falls more than 0.5 Blocks, they fall through Flowerbeds; this can be used to hide secrets or as a parcour gimmick
+- Added Customizeable Loadouts
+  - Check the Weapons Tab on Terminals for a new Button in the bottom left
+- Improved Sounds for Shotguns by using Sound Keyframes in their animations
+- Added a new Fish
+- Added new Weapon Info HUD element when holding Nailguns
+- Added Minecart Parries
+- Fucked around with Coin Physics a lot; they're probably as good as they'll get now
+- Fixed Tundra//Agony Spawn Egg crashing Servers when used in Hell Spawners
+- Remodeled Schism
+  - the old model was trash and I knew I could do better
+- Visually Improved Cerberus
+  - Ball//Apple now has an aura and is emissive
+  - Changed colors to be closer to the Vanilla Stone palette
+- Fixed Streetcleaners dodging upwards when shot from below
+- Fixed Backtanks eating projectiles
+- Added "Edit Mode"
+  - A Component Based System to basically make working Ultrakill levels
+  - Being in edit mode allows you to fly with noClip, but still place blocks. It's much faster than normal creative flight and can be further adjusted.
+  - Edit mode lets you see known mapping blocks; to search for them, use `/edit ping`. 
+  - Mapping Blocks themselves have no rendering (with the only exception being checkpoints) and aren't interactable outside of edit mode.
+  - Each Component is its own Block and has an Area (with some exceptions)
+  - This System is not exactly designed for accessibility; I will make a tutorial on it in the near future, but I won't teach it to people individually.
+  - Flags
+    - There's "Local" and "Global" Flags
+    - **Local** Flags are stored in a room and can only be true or false
+    - **Global** Flags are stored in a world and can be any 16-bit integer
+  - Room Blocks
+    - Levels are divided into rooms
+    - these blocks can be seen as the root, with all other components being children of a Room
+    - Only when a Player is in the Rooms Area, the child blocks will tick
+    - Resets all **local** Flags and Child Blocks when empty of Players for a certain duration or the last player in the room dies and respawns at a Child Checkpoint Block
+    - Can be set to suppress Block breaking//placing within its area (actually, that's enabled by default)
+  - Trigger Blocks
+    - Their Area detects Entities and sets a bound **local** Flag to true or false depending on if something of the right type is in them
+    - There are Normal//Player Triggers and Enemy Triggers
+    - Triggers can be set to not deactivate automatically, making them activate only once until the room resets
+    - Triggers can be set to have an activation period, requiring something to stay in the trigger for a certain amount of time to actually set the bound **local** Flag; same for deactivating
+    - Progression Triggers grant a progression entry and optionally give an item as well once entered by a player; if the progression entry is already unlocked//obtained, it won't give an item
+    - Redstone Receivers set a **local** Flag when their redstone power state changes
+    - Timer Triggers start or stop a Players Timer; only works inside Levels
+    - Force Travel Triggers open the Travel Screen for a Player that enters it; the close button is removed though, forcing them to travel
+    - Title Triggers display a title for Players that move into it; if a **local** flag is bound, it'll only display a title if the flag is enabled
+    - Damage Triggers damage entities that enter them for a given amount using a given damage type
+    - Global Redstone Receivers set a **global** Flag (stored in world) to one of two values, depending on whether it is powered by redstone or not
+  - Listener Blocks
+    - Listen for the state of the bound **local** Flag being changed and performs an action based on its type
+    - All Listeners can have a set delay for their action; if the bound **local** flag is deactivated again before the activation cooldown is run out, it'll be cancelled
+    - Door Listeners fill their area with a chosen Block Type when activated; Same for deactivating. When the door closes, it will only fill blocks of the "open" block-type in it's area, opening works the opposite way; this means doorframes and stuff stay unaffected as long as they're not of either of the door block's block types
+    - Spawn Listeners spawn a chosen mob when activated and if it's still alive when deactivated, despawns it again
+    - Redstone Listeners give off a redstone Signal of a chosen duration when activated
+    - Explosion Listeners perform an explosion of chosen radius and damage when activated. These do not Break blocks, but could be used in conjunction with a Door Block to get the same effect
+    - Sound Listeners play a sound when activated
+    - Level Unlock Listeners unlock a Level globally (for the entire Server)
+    - Cybergrind Listeners trigger a Cybergrind once the bound **local** flag is enabled; It sets a separate **local** Flag upon finishing the Cybergrind (if it is won)
+    - Light Listeners give off a set light level when the bound **local** flag is enabled
+    - Title Listeners display a title for every Player in the parent Rooms Area when the bound **local** flag is enabled.
+    - Global Redstone Listeners listen for a **global** Flag (stored in world); otherwise the same as normal Redstone Listeners
+    - Global Title Listeners display a title for every Player in that world when a **global** Flag is set to a specific value
+  - Checkpoints
+    - Checkpoints tick regardless of if the room is ative; placing their Block and Area outside the Rooms is recommended to make room resets work properly
+    - Checkpoints set the Spawnpoint of a player that enters its area to the position of the Block itself.
+    - If a player dies and respawns at a Checkpoint, the parent Room will check if it's empty of Players; if it is, it'll force reset
+    - The Spawnpoint Text will be oriented depending on which side of the area is longer
+  - I'd love to expand on this System in the future; some ideas I already have will take longer to make than I'm willing to further delay this update though
+- Made Flesh Blocks break faster using Hoes
+- Shotgun Pellets are now Parriable
+- Added Large Animated Titles
+- Added Text Box Titles
+- Punching//Blasting a Player that is using a Shield with a Knuckleblaster, will now disable their Shield and give the `+ GUARD BREAK` style bonus
+- Streetcleaners now actually pathfind to their target
+- Fixed a Bug that made hugging swordsmachine plushies not work properly; you can now hug them again by putting them in your offhand :D
+- Charged shots no longer split from coins
+- Hitscans now actually get reflected off of Hideous Mass' Shielded Parts
+- Added a fuck ton of Prelude Blocks
+- Added separate keybinds for punching with each arm
+- Added Credits Screen
+- Only selected Projectiles will now be knocked back by explosions (See Entity Type Tag `#ultracraft:explosion_affected_projectiles`)
+- Hell Bullets knocked back by explosions can now actually hit entities of their owners type
+- Fixed Malicious Faces Beam attack being **visually** offset as if it was a hitscan from a Player
+- Fixed Exploding Hitscans not actually exploding if they hit an Entity and not a Block
+- Filth Attacks are now interrupted if they leave the ground
+- Made it impossible to Maurice yourself; 
+  - while it was funi, since the mauricing radius was increased (see tweaks section) it became too easy and thus annoying
+  - You can still Maurice other Players tho ofc
+- Slightly Changed how parrying works yet again
+- The Punch animation triggered by throwing coins using a marksman can now be interrupted, making coin punching less clunky
+- Filths and Drones no longer randomly wander around
+- All Enemies now ignore Visibility when targeting Players
+- Shooting Core Ejects with a Hitscan now actually increases the damage of the caused explosion
+- Swordsmachines different melee Attacks now actually do different damage amounts
+- Changed how Progression Item Entities work
+  - They work like client side Item Entities. Every Player can pick them up individually, as long as it exists on the Server
+  - They can be set to either only give a progression entry, or also the item itself
+  - If the progression Entry not yet obtained but any Weapon of the unlocked Weapons Type is held, it'll unlock the progression entry but will not give an Item
+  - If the progression Entry is already obtained AND any Weapon of the unlocked Weapons Type is already held, the item entity will disappear for that Client
+  - Previously these would disappear from the client if they just had the set progression entry already; This Behavior could soft-lock Players in Prelude2, and potentially other future levels
+  - Additionally, the item pickup animation works correctly for these now as well
+- Added Unlock Logic to Progression System
+  - **obtaining** a progression entry that would **unlock** other progression entries, will now automatically do so
+  - for example, **obtaining** a Piercer Revolver through any method (crafting, commands, progression triggers, whatever) will unlock the recipes for the Marksman and Sharpshooter Revolvers
+- Added initial attack cooldown to Cancerous Rodent
+- Cancerous Rodent is now immune to Cancer and Fire Damage
+- Fixed Cerberus Distance//Attack Priorities being flipped
+## Settings & Config
+- Removed all gamerules
+- Added Option to disable Screenshake
+- Added new Config System
+  - `/ultracraft config` still works, but all hivel related entries have been moved.
+    - for now Hivel Config has to be done via the config file named `hivel.properties`; edit at your own risk (I mean, have fun ig; not like anything terrible could happen. If you fuck something up, delete the file and the defaults will be restored)
+  - Config files are found under `saves/<world>/ultracraft/`
+- Added Config to allow for the overpump self-damage being dodgeable (default: `false`)
+- Added Config for how much damage the Feedbacker and Knuckleblaster do
+- Added Config for Parry and Coin Punch range (I'll make icons for these 2 later, this is kind of a last minute thing lmao)
 ## Commands
-- Added `ultrabossbar <bossbar-id>` subcommand to `/ultracraft`
-  - changes a chosen bossbars style to the ultracraft one
-    - why are the bossbar styles hard coded into the `/bossbar` command Mojang, even if you're not planning on it, for the pure possibility that you (OR SOMEONE ELSE \*WINKS\*) ever want to add another style, they can without much trouble. Like,, bruh
+- `/ultrawhitelist` can now be used by non-players
+- Fixed time unfreeze command not clearing the time freeze VFX on Clients
+- Added Command to trigger Style Bonuses `/ultracraft style`
+- Added Command to trigger large and box titles `/ultracraft title`
+- Added `/edit` to perform most edit mode interactions
+- Added `level` list to progression command; this list is effective globally//server-wide!
+- Added Debug Commands for level instancing//destructing level instances
+  - DO NOT USE THESE!!!
+  - I mean, you could if you want to, but they could crash servers.
+- Added Debug Commands to reset best level completion times//ranks
+- fixed all Skewer Type Projectiles dealing a magnets impact damage on top of their normal damage
+- Magnets no longer deal damage on impact at all
 ## Tweaks
+- Buffed overpump damage towards others (10 Dmg -> 15 Dmg)
+- Hitscans don't cause Thorn Damage from Guardians anymore
+  - Player Armor Thorns still do damage though to stay consistent with Minecrafts inconsistent logic
+- Reduced Filths Health (2 -> 1)
+- Tweaked parry area yet again
+- Successful Parries now do full heals
+- Successful Parries now make you unhittable for projectiles for a few ticks
+- Increased Blood Heal Radius (2 -> 4 Blocks)
+- Decreased Nail Blood Heal Amount (x0.25)
+- Increased Mauricing Radius (+0.5)
+- Buffed Strength of Knockback Projectiles get from Mod Explosions (x1.1)
+- Buffed Sharpshooter Projectile Explosion Radius (5.0 -> 7.5)
+- Malicious Face Buff
+  - Beam Attack is now much Quicker to be more accurate to the original timing (100 -> 70 ticks)
+  - Slightly Buffed movement Speed (0.4 -> 0.5)
+- Increased Parry Range (0.9 -> 3.0)
+- Increased Coin Punch Range (0.9 -> 4.0)
+- Players are now exempt from damage boost (mod damage is multiplied by 2.5 towards non-mod entities, with some exceptions)
+- Nerfed Cerberus to be closer to the Original
+  - Nerfed Ram Damage (8 -> 5)
+  - Nerfed Ball Damage (8 -> 7)
+  - Nerfed Boss Health (180 -> 160)
+  - Buffed Shockwave Growth Rate, ironically making it easier to dodge (0.25 -> 0.35)
+- Tweaked Hideous Mass to be closer to the Original
+  - Slam Shockwave Damage (3 -> 6)
+  - Clap Shockwave Damage (2 -> 4)
+  - Harpoon Damage (3.5 -> 5) **(effective for Hideous Skewer as well)**
+  - Mortar Damage (15 -> 12)
+  - Mortar Damage Falloff (4 -> 6)
+  - Mortar Explosion Radius (4 -> 2.5)
+  - Reduced un-hide radius (16 -> 10)
+- Tweaked Swordsmachine to be closer to the Original
+  - Boss Health (125 -> 250)
+  - Shotgun Pellet Count (16 -> 10)
+  - Combo Slash Damage (8 -> 5)
+  - Spin (8 -> 6)
+- Tweaked Agony//Tundra to be closer to the Original
+  - Health (90 -> 100)
+- Tweaked Drone to be closer to the Original
+  - Health (2 -> 4)
+  - Explosion Damage (6 -> 7)
+- Tweaked Streetcleaner to be closer to the Original
+  - Eplosion Damage (8 -> 10)
+- Tweaked a bunch of weapons to account for the Enemy Health Scaling (can't believe I forgor to do that)
+  - Revolvers
+    - Primary (1 -> 2)
+    - Sharpshooter alt (3 -> 2)
+  - All Shotguns
+    - Proj-Boost Explosion Damage (3.5 -> 7)
+    - Proj-Boost Explosion Falloff (2.3 -> 4.6)
+  - Core Eject Shotgun
+    - Core Eject Explosion Damage (10 -> 7)
+    - Core Eject Explosion Damage Falloff (4 -> 4.6)
+    - Core Eject Snipe Explosion Damage (10 -> 14)
+    - Core Eject Snipe Explosion Damage Falloff (4 -> 9.2)
+  - Pump Shotgun
+    - 1 Pump Pellets (15 -> 16)
+    - 2 Pump Pellets (20 -> 24)
+    - Overpump Explosion Damage (15 -> 20)
+    - Overpump Explosion Damage Falloff (0 -> 16.6)
+    - Pumps now actually decrease accuracy
+- Made sharpshooter cheaper
+- Reduced Core Eject alt fire charge time (30 -> 20 ticks // 1.5 -> 1 second)
+- Reduced Marksman Coin recharge time (200 -> 100 ticks // 10 -> 5 seconds)
 ## Minor Changes
-- Fixed logic error in auto aiming
-  - Pets also don't get targetted by coins or sharpshooter shots anymore
-- Fixed absorption not being displayed in ultraHUD anymore
-- Malicious Face now takes actual `interrupt` type damage when interrupted (previously generic entity damage)
-- Added Trails to Coins
-- Added Flowers and Tall Flowers to fragile Block Tag
-  - Nothing pure is allowed to exist in this cruel world :pensive:
-- Fixed Machinesword Attack sounds for `Better Combat` not playing
+- Fixed water skimming not playing sounds
+- Removed the "vents" MOTD from the non-essential resources
+- Skyblocks no longer allow mobs to spawn on them naturally
+- Stained Glass Windows can now be set to not drop an item when destroyed by giving them the NBT tag `{noDrop:1b}`
+- Fixed World Join Message not displaying
+- Improved display of rapidly changing weapon overlays
+- The cancerous Rodent glows now with LambDynamicLights installed
+- Added decorated pots to `#ultracraft:fragile` blocktag
+- Fixed Hell Spawner Spawn Egg Rendering
+- Finally fixed the half pixel offset on animated wing pattern shaders
+- Changed Revolver Textures to be closer to the original
+- Updated Carpet texture in Limbo Main Menu BG
+- Fixed Blood Fluid not being masked by Boats
+- Fixed Mixin Conflict with Origins Classes addon mod
+- The Sharpshooter now spins in the right direction
+- Shotguns are now a bit more Satisfying
+- Fixed Attractor Nailgun Magnet recharge cooldown starting at the wrong time
+- Fixed a rare nullref involving the Sharpshooter and Tundra//Agony
+- Added Block Tag `#ultracraft:cannot_connect`
+  - allows to designate Blocks that fences and walls cannot connect to; because for some reason base Minecraft doesn't do that and checks block states indiviually in an `or` chain
+- Added Block Tag `#ultracraft:knuckle_blast_breakable`
+- Added Proper Spawn Restrictions to all basic Enemies
+- Fixed the first person Arm staying hidden when dying while focused on a Terminal
+- Bloodheal noise can no longer be triggered multiple times on the same tick
+- Fixed an issue that would crash the game upon trying to render white terminals while using specific System locales
+- Added Cap to UltraHUD scale
+- Added many Entity Tags for map//datapack makers
+  - `#ultracraft:living`
+  - `#ultracraft:non-living` (Caution: `#ultracraft:projectiles` is included in this tag)
+  - `#ultracraft:projectiles`
+  - `#ultracraft:husks`
+  - `#ultracraft:demons`
+  - `#ultracraft:machines`
+  - `#ultracraft:angels` (empty for now obv)
+  - `#ultracraft:funis` (the joke entities)
+  - `#ultracraft:streetcleaner_dodge` (entities streetcleaners will try to dodge)
+  - `#ultracraft:streetcleaner_counter` (entities streetcleaners will try to counter)
+  - `#ultracraft:explosion_affected_projectiles` (only listed projectiles get thrown away by mod explosions)
+- Added Damage type tag `#ultracraft:reduced_knockback`
+  - Nails use this for example
+- Added `{parries:<count>}` NBT tag to all Projectiles
+  - The value would only naturally go above 1 if parry-chaining is enabled
+- You can now Right Click with the Knuckleblaster Item to grant yourself the Progression Entry
+- Husks now scream when falling from a lethal height
+- Added AshenWulf Plushie
+  - Model, Texture & Pose were made by AshenWulf
+  - Please don't ask to get a Plushie (unless you're an ultrakill dev, then it's fine)
+- Decided to hide PitrPoin Plushie since it's too much of a niche reference to be featured so prominently
+- Added Cancerous Status Effect
+- Fixed a bug that caused the scrolling in Wing Pattern-//Preset-Lists to get more abrupt the more options there were.
+- Fixed Hideous Mass still Attacking when in its Hidden State
+- Fixed some firstperson offhand weirdness
+- Added Feedback to hitting a Shielded Part of Hideous Mass (a little *tching* kinda sound)
+- Drones now immediately explode if damaged for 3x their max health or more
+- Finally fixed the issue with the wrong Hideous Mass shaking while one is dying if multiple are present
+- Updated Goop to v0.3
+- Fixed Malicious Face sometimes starting to charge a beam attack while still performing a salvo
+- Fixed a small logic error that resulted in the intro not being repeated when setting both "repeatIntro" and "neverIntro" to true
+  - "neverIntro" is just intended to suppress showing the intro again after switching versions
+- The catchphrase in the intro now fades later than the rest
+- Made Bloodrays always edible
+- Hopefully improved Skewer-Type Projectile Jittering
+- Potentially fixed Skewered Status Effect 
+- Improved Magnet Attraction Position
+- Fixed the offset between mouse and terminal cursor while focused
+- Added Lava Ambience to Limbo Main Menu BG
+- Added Lore to all Weapons explaining what they do
 ## Resource Changes
+- Continued Adding Sounds
+- Shotgun Animations now have a few sound keyframes
+- Hideous Mass Mortar and Emerge Animations now have a few sound keyframes
+- The `discharge` animation on Revolvers now also animates the Hammer of Alt Revolvers
+- The catchphrase is now separated into its own translation key (formerly part of `intro.ultracraft.status`)
+- Updated Intro Sequence Content Text (`message.ultracraft.content`)
+- Added LOLCAT localization provided by Doggochleb (doesn't contain new 2.1.0 lines)
+  - Community translations//localizations are always welcome! (I won't give out unreleased versions language file tho; updated localizations will have to follow in minor patches)
 ## API Changes

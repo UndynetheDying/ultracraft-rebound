@@ -3,12 +3,15 @@ package absolutelyaya.ultracraft.mixin.client.render;
 import absolutelyaya.ultracraft.entity.demon.HideousMassEntity;
 import absolutelyaya.ultracraft.entity.demon.HideousPart;
 import absolutelyaya.ultracraft.entity.machine.SwordsmachineEntity;
+import absolutelyaya.ultracraft.registry.StatusEffectRegistry;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import org.joml.Vector4f;
@@ -51,4 +54,11 @@ public class EntityRenderDispatcherMixin
 			}
 		}
 	}
+	
+	//@Inject(method = "render", at = @At("HEAD"))
+	//<E extends Entity> void onRender(E entity, double x, double y, double z, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci)
+	//{
+	//	if(entity instanceof LivingEntity living && living.hasStatusEffect(StatusEffectRegistry.CANCEROUS))
+	//		RenderSystem.setShaderColor(0.2f, 1f, 0.3f, 1f);
+	//}
 }

@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.components.player;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.UltracraftClient;
@@ -55,13 +55,14 @@ public class WingDataComponent implements IWingDataComponent, AutoSyncedComponen
 	}
 	
 	@Override
-	public void setVisible(boolean b)
+	public void setActive(boolean b)
 	{
 		visible = b;
 		if(provider.isMainPlayer())
 			UltraHudRenderer.onUpdateWingsActive();
 		if(provider instanceof WingedPlayerEntity winged)
-			winged.updateSpeedGamerule(b);
+			winged.updateSpeedConfig(b);
+		//provider.setSprinting(false);
 	}
 	
 	public void sync()

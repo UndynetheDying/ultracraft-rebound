@@ -1,0 +1,21 @@
+package absolutelyaya.ultracraft.block.mapping;
+
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.Nullable;
+
+public class TimerBlock extends AbstractMappingBlock
+{
+	public TimerBlock(Settings settings)
+	{
+		super(settings);
+	}
+	
+	@Nullable
+	@Override
+	public BlockEntity createBlockEntity(BlockPos pos, BlockState state)
+	{
+		return new TimerBlockEntity(pos, state);
+	}
+}

@@ -2,13 +2,16 @@ package absolutelyaya.ultracraft;
 
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
+import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
-import absolutelyaya.ultracraft.registry.GameruleRegistry;
+import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.TagRegistry;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.TntBlock;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -16,13 +19,13 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.TntEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -84,16 +87,24 @@ public class ExplosionHandler
 		Box box = new Box(pos.subtract(radius, radius, radius), pos.add(radius, radius, radius));
 		if(damage > 0f)
 		{
-			world.getOtherEntities(null, box, e -> e.isLiving() || e instanceof ProjectileEntityAccessor).forEach(e -> {
+			//Projectile Knockback (double radius)
+			world.getOtherEntities(null, box.expand(radius), e -> e instanceof ProjectileEntityAccessor).forEach(p -> {
+				if((p.getType().isIn(EntityRegistry.EXPLOSION_AFFECTED_PROJECTILES) && p instanceof ProjectileEntityAccessor proj && !source.isOf(DamageSources.PROJBOOST)))
+				{
+					float normalizedDistance = (float)p.getPos().distanceTo(pos) / radius;
+					float vel = (float)(Math.min(radius * 0.75, 1.75f) * (normalizedDistance == 0f ? 0.75f : Math.min(1.5f - normalizedDistance, 1f)));
+					Vec3d vec = p.getPos().subtract(pos).normalize().multiply(Math.max(vel * 1.25f, Math.min(1f, p.getVelocity().length())));
+					p.setVelocity(vec);
+					proj.onKnockedBackbyExplosion(source.getSource());
+				}
+			});
+			//Living Entity Knockback
+			world.getOtherEntities(null, box, Entity::isLiving).forEach(e -> {
 				float normalizedDistance = (float)e.getPos().distanceTo(pos) / radius;
-				if((e instanceof LivingEntityAccessor living && (applyKnockbackToIgnored || !e.equals(ignored)) && living.takePunchKnockback()) ||
-						   (e instanceof ProjectileEntityAccessor && !source.isOf(DamageSources.PROJBOOST)))
+				if((e instanceof LivingEntityAccessor living && (applyKnockbackToIgnored || !e.equals(ignored)) && living.takePunchKnockback()))
 				{
 					float vel = (float)(Math.min(radius * 0.75, 1.75f) * (normalizedDistance == 0f ? 0.75f : Math.min(1.5f - normalizedDistance, 1f)));
-					if(e instanceof ProjectileEntity proj)
-						e.setVelocity(e.getPos().subtract(pos).normalize().multiply(Math.max(vel, Math.min(1f, proj.getVelocity().length()))));
-					else
-						e.addVelocity(e.getPos().subtract(pos).add(0.0, 1f - normalizedDistance, 0.0).normalize().multiply(vel));
+					e.addVelocity(e.getPos().subtract(pos).add(0.0, 1f - normalizedDistance, 0.0).normalize().multiply(vel));
 				}
 				if(e != ignored)
 				{
@@ -104,11 +115,13 @@ public class ExplosionHandler
 				}
 			});
 		}
-		Entity exploder = source.getSource();
-		GameRules rules = world.getGameRules();
-		if(breakBlocks && rules.getBoolean(GameruleRegistry.EXPLOSION_DAMAGE) && (exploder instanceof PlayerEntity || rules.getBoolean(GameRules.DO_MOB_GRIEFING)))
+		emitScreenshake(world, pos, radius * 2f, damage, damage * 0.8f);
+		Entity exploder = source.getAttacker();
+		if(source.getSource() instanceof PlayerEntity p)
+			exploder = p;
+		if(breakBlocks && canBreakBlocks(world, exploder))
 		{
-			boolean tntPriming = rules.getBoolean(GameruleRegistry.TNT_PRIMING);
+			boolean tntPriming = ServerConfig.INSTANCE.tntPriming.getValue();
 			BlockPos center = new BlockPos((int)Math.floor(pos.x), (int)Math.floor(pos.y), (int)Math.floor(pos.z));
 			for (int y = (int)(-radius); y <= radius; y++)
 			{
@@ -121,9 +134,10 @@ public class ExplosionHandler
 						BlockPos pos1 = new BlockPos(center.getX() + x, center.getY() + y, center.getZ() + z);
 						//explosions with 0 damage can only break fragile blocks, as they don't actually count as explosions
 						//and are used for misc block breaking like the piercer revolvers alt fire
-						if(!exploder.canModifyAt(world, pos1))
+						if(exploder == null)
 							continue;
-						if (tntPriming && world.getBlockState(pos1).getBlock() instanceof TntBlock)
+						BlockState state = world.getBlockState(pos1);
+						if (tntPriming && state.getBlock() instanceof TntBlock)
 						{
 							TntEntity tntEntity = new TntEntity(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5,
 									source.getSource() instanceof LivingEntity living ? living : null);
@@ -131,11 +145,35 @@ public class ExplosionHandler
 							world.spawnEntity(tntEntity);
 							world.breakBlock(pos1, false, exploder);
 						}
-						else if(world.getBlockState(pos1).isIn(damage > 0f ? TagRegistry.EXPLOSION_BREAKABLE : TagRegistry.FRAGILE))
+						else if(source.isOf(DamageSources.KNUCKLE_BLAST))
+						{
+							//not using && intentionally
+							if(state.isIn(TagRegistry.KNUCKLE_BLAST_BREAKABLE))
+								world.breakBlock(pos1, true, exploder);
+						}
+						else if(state.isIn(damage > 0f ? TagRegistry.EXPLOSION_BREAKABLE : TagRegistry.FRAGILE))
 							world.breakBlock(pos1, true, exploder);
 					}
 				}
 			}
 		}
+	}
+	
+	static boolean canBreakBlocks(World world, Entity exploder)
+	{
+		if(world.getRegistryKey().equals(LevelManager.WORLD_KEY))
+			return true;
+		GameRules rules = world.getGameRules();
+		return ServerConfig.INSTANCE.explosionBlockBreaking.getValue() && (exploder instanceof PlayerEntity || rules.getBoolean(GameRules.DO_MOB_GRIEFING));
+	}
+	
+	public static void emitScreenshake(World world, Vec3d pos, float radius, float strength, float falloff)
+	{
+		Box box = new Box(pos.subtract(radius, radius, radius), pos.add(radius, radius, radius));
+		world.getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), box, e -> true).forEach(e -> {
+			float dist = (float)pos.distanceTo(e.getPos()) / radius;
+			float str = Math.max(strength - dist * falloff, 0f);
+			Ultracraft.screenshake(e, str);
+		});
 	}
 }

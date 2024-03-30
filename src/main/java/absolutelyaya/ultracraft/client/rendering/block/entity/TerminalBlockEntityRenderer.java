@@ -57,23 +57,24 @@ public class TerminalBlockEntityRenderer extends GeoBlockRenderer<TerminalBlockE
 	@Override
 	public void postRender(MatrixStack matrices, TerminalBlockEntity animatable, BakedGeoModel model, VertexConsumerProvider bufferSource, VertexConsumer buffer, boolean isReRender, float tickDelta, int packedLight, int packedOverlay, float red, float green, float blue, float alpha)
 	{
-		animatable.setCaretTimer((animatable.getCaretTimer() + tickDelta / 20f) % 2f);
+		float deltaTime = MinecraftClient.getInstance().getLastFrameDuration();
+		animatable.setCaretTimer((animatable.getCaretTimer() + deltaTime / 10f) % 2f);
 		//Draw interface
 		GUI.setCurrentTerminal(animatable);
 		float playerDist = (float) MinecraftClient.getInstance().player.getPos().distanceTo(animatable.getPos().toCenterPos());
 		float displayVisibility = animatable.getDisplayVisibility();
 		if(playerDist < 4f && displayVisibility < 1f)
-			displayVisibility += tickDelta / 5f;
+			displayVisibility += deltaTime / 5f;
 		else if(playerDist > 4f && displayVisibility > 0f)
-			displayVisibility -= tickDelta / 3f;
+			displayVisibility -= deltaTime / 3f;
 		animatable.setDisplayVisibility(displayVisibility);
 		if(displayVisibility > 0f)
 		{
-			animatable.setInactivity(animatable.getInactivity() + tickDelta / 20f);
+			animatable.setInactivity(animatable.getInactivity() + deltaTime / 20f);
 			if(animatable.getSizeOverride() != null)
-				animatable.setCurWindowSize(animatable.getCurWindowSize().lerp(animatable.getSizeOverride(), tickDelta / 5f));
+				animatable.setCurWindowSize(animatable.getCurWindowSize().lerp(animatable.getSizeOverride(), deltaTime / 5f));
 			else
-				animatable.setCurWindowSize(animatable.getCurWindowSize().lerp(animatable.getNormalWindowSize(), tickDelta / 5f));
+				animatable.setCurWindowSize(animatable.getCurWindowSize().lerp(animatable.getNormalWindowSize(), deltaTime / 5f));
 		}
 		else if(animatable.getInactivity() < 600f)
 			animatable.setInactivity(600f);

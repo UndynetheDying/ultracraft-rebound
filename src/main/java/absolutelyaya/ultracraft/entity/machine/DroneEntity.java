@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.ExplosionHandler;
 import absolutelyaya.ultracraft.accessor.MeleeInterruptable;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.entity.AbstractUltraFlyingEntity;
+import absolutelyaya.ultracraft.entity.goal.TargetPlayerGoal;
 import absolutelyaya.ultracraft.entity.projectile.HellBulletEntity;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.registry.ParticleRegistry;
@@ -12,7 +13,6 @@ import mod.azure.azurelib.core.animation.AnimationState;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.control.MoveControl;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -28,7 +28,6 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.Heightmap;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.joml.Vector3f;
@@ -85,15 +84,15 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 	protected void initGoals()
 	{
 		goalSelector.add(1, new DroneAttackGoal(this));
-		goalSelector.add(0, new DroneRandomMovementGoal(this));
+		//goalSelector.add(0, new DroneRandomMovementGoal(this));
 		
-		targetSelector.add(0, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+		targetSelector.add(1, new TargetPlayerGoal(this));
 	}
 	
 	public static DefaultAttributeContainer getDefaultAttributes()
 	{
 		return HostileEntity.createMobAttributes()
-					   .add(EntityAttributes.GENERIC_MAX_HEALTH, 2.0d)
+					   .add(EntityAttributes.GENERIC_MAX_HEALTH, 4.0d)
 					   .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.5d)
 					   .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 8.0d)
 					   .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 64.0d).build();
@@ -104,6 +103,8 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 	{
 		if(getWorld().isClient)
 			return true;
+		if(amount >= getMaxHealth() * 3) //obliterated!!
+			explode(source);
 		if(isFalling() && !source.isOf(DamageSources.INTERRUPT))
 		{
 			explode(source);
@@ -219,8 +220,8 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 			return;
 		dead = true;
 		ExplosionHandler.explosion(this, getWorld(), getPos(),
-				DamageSources.get(getWorld(), DamageTypes.EXPLOSION, this, source != null ? source.getAttacker() : null),
-				6, 2, 2f, true);
+				DamageSources.get(getWorld(), DamageTypes.EXPLOSION, this, source != null ? source.getAttacker() : this),
+				7, 2, 2f, true);
 		if(!getWorld().isClient)
 			drop(source);
 		discard();

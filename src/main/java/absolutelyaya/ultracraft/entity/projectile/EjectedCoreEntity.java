@@ -4,12 +4,13 @@ import absolutelyaya.ultracraft.ExplosionHandler;
 import absolutelyaya.ultracraft.accessor.EntityAccessor;
 import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
 import absolutelyaya.ultracraft.client.UltracraftClient;
+import absolutelyaya.ultracraft.config.ProjectileBoostSetting;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.DamageTypeTags;
 import absolutelyaya.ultracraft.entity.demon.MaliciousFaceEntity;
 import absolutelyaya.ultracraft.entity.machine.StreetCleanerEntity;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
-import absolutelyaya.ultracraft.registry.GameruleRegistry;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.registry.ParticleRegistry;
 import net.minecraft.entity.Entity;
@@ -88,7 +89,7 @@ public class EjectedCoreEntity extends ThrownItemEntity implements ProjectileEnt
 	public boolean damage(DamageSource source, float amount)
 	{
 		if(source.isIn(DamageTypeTags.HITSCAN))
-			explode(source.getAttacker());
+			explodeSniped(source.getAttacker());
 		return super.damage(source, amount);
 	}
 	
@@ -128,7 +129,7 @@ public class EjectedCoreEntity extends ThrownItemEntity implements ProjectileEnt
 	@Override
 	public boolean isBoostable()
 	{
-		return switch(getWorld().getGameRules().get(GameruleRegistry.PROJ_BOOST).get())
+		return switch((ProjectileBoostSetting)ServerConfig.INSTANCE.projboost.getValue())
 		{
 			case ALLOW_ALL -> true;
 			case ENTITY_TAG -> getType().isIn(EntityRegistry.PROJBOOSTABLE);
@@ -170,7 +171,15 @@ public class EjectedCoreEntity extends ThrownItemEntity implements ProjectileEnt
 	void explode(Entity exploder)
 	{
 		ExplosionHandler.explosion(null, getWorld(), getPos(), DamageSources.get(getWorld(), DamageSources.CORE_EJECT, this, exploder),
-				10f, 4f, 3f, true);
+				7f, 4.6f, 3f, true);
+		getWorld().sendEntityStatus(this, (byte)3);
+		kill();
+	}
+	
+	void explodeSniped(Entity exploder)
+	{
+		ExplosionHandler.explosion(null, getWorld(), getPos(), DamageSources.get(getWorld(), DamageSources.CORE_EJECT, this, exploder),
+				14f, 9.2f, 3f, true);
 		getWorld().sendEntityStatus(this, (byte)3);
 		kill();
 	}

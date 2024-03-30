@@ -1,8 +1,9 @@
 package absolutelyaya.ultracraft.mixin.client.gui;
 
 import absolutelyaya.ultracraft.Ultracraft;
-import absolutelyaya.ultracraft.client.Ultraconfig;
+import absolutelyaya.ultracraft.client.ClientConfig;
 import absolutelyaya.ultracraft.client.UltracraftClient;
+import absolutelyaya.ultracraft.client.gui.screen.CreditsScreen;
 import absolutelyaya.ultracraft.client.gui.screen.IntroScreen;
 import absolutelyaya.ultracraft.client.gui.widget.TitleBGButton;
 import absolutelyaya.ultracraft.client.rendering.TitleBGRenderer;
@@ -15,9 +16,11 @@ import net.minecraft.client.gui.RotatingCubeMapRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SplashTextRenderer;
 import net.minecraft.client.gui.screen.TitleScreen;
+import net.minecraft.client.gui.widget.PressableTextWidget;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.SoundManager;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
@@ -40,11 +43,11 @@ public abstract class TitleScreenMixin extends Screen
     @Shadow public abstract boolean mouseClicked(double mouseX, double mouseY, int button);
     
     @Shadow private @Nullable SplashTextRenderer splashText;
-    private static final Ultraconfig config = UltracraftClient.getConfig();
+    private static final ClientConfig config = UltracraftClient.getConfig();
     private static final Identifier BG_ICON_TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/misc/bg_icons.png");
     RotatingCubeMapRenderer ultraBG, defaultBG, limboBG;
-    SoundInstance wind;
-    int windTicks;
+    SoundInstance ambience;
+    int ambienceTicks;
     
     protected TitleScreenMixin(Text title)
     {
@@ -70,22 +73,29 @@ public abstract class TitleScreenMixin extends Screen
     @Inject(method = "tick", at = @At("HEAD"))
     void onTick(CallbackInfo ci)
     {
-        if((!IntroScreen.SEQUENCE_FINISHED && !config.lastVersion.equals(Ultracraft.VERSION) || config.repeatIntro) && !config.neverIntro)
+        if((!IntroScreen.SEQUENCE_FINISHED && !config.lastVersion.equals(Ultracraft.VERSION) && !config.neverIntro) || config.repeatIntro)
         {
             client.setScreen(new IntroScreen());
-            MinecraftClient.getInstance().getSoundManager().stop(wind);
+            MinecraftClient.getInstance().getSoundManager().stop(ambience);
         }
         
-        if(wind == null)
-            wind = PositionedSoundInstance.ambient(SoundRegistry.ELEVATOR_FALL, 1f, 0.75f);
-        else if (wind.canPlay() && windTicks <= 0 && backgroundRenderer.equals(ultraBG))
+        if(ambience == null)
         {
-            if (wind.getSound() != SoundManager.MISSING_SOUND)
-                MinecraftClient.getInstance().getSoundManager().play(wind);
-            windTicks += 190;
+            switch (config.BGID)
+            {
+                case "limbo" -> ambience = PositionedSoundInstance.ambient(SoundEvents.BLOCK_LAVA_AMBIENT, 1f, 0.25f);
+                case "ultracraft" -> ambience = PositionedSoundInstance.ambient(SoundRegistry.ELEVATOR_FALL, 1f, 0.75f);
+                default -> ambience = null;
+            }
         }
-        if(windTicks > 0)
-            windTicks--;
+        else if (ambience.canPlay() && ambienceTicks <= 0)
+        {
+            if (ambience.getSound() != SoundManager.MISSING_SOUND)
+                MinecraftClient.getInstance().getSoundManager().play(ambience);
+            ambienceTicks += 190;
+        }
+        if(ambienceTicks > 0)
+            ambienceTicks--;
     }
     
     @Inject(method = "init", at = @At("TAIL"))
@@ -106,6 +116,9 @@ public abstract class TitleScreenMixin extends Screen
             case "ultracraft" -> ultracraft.onPress();
             default -> vanilla.onPress();
         }
+        Text t = Text.translatable("screen.ultracraft.credits.title");
+        addDrawableChild(new PressableTextWidget(2, height - 33, textRenderer.getWidth(t), 10, t,
+                button -> client.setScreen(new CreditsScreen(this)), textRenderer));
     }
     
     @Inject(method = "render", at = @At("TAIL"))
@@ -120,8 +133,9 @@ public abstract class TitleScreenMixin extends Screen
     
     void setBG(String bg)
     {
-        MinecraftClient.getInstance().getSoundManager().stop(wind);
-        windTicks = 0;
+        MinecraftClient.getInstance().getSoundManager().stop(ambience);
+        ambience = null;
+        ambienceTicks = 0;
         backgroundRenderer = switch(bg)
         {
             case "limbo" -> limboBG;

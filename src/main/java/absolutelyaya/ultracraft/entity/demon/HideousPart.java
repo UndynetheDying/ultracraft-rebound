@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec2f;
@@ -54,6 +55,8 @@ public class HideousPart extends Entity
 	
 	public boolean damage(DamageSource source, float amount)
 	{
+		if(deflect)
+			playSound(SoundEvents.ENTITY_BLAZE_HURT, 0.4f, 1.9f);
 		if(!deflect && enabled || source.isOf(DamageSources.SOAP))
 			return owner.damagePart(this, source, amount);
 		return false;
@@ -127,5 +130,10 @@ public class HideousPart extends Entity
 	public ItemStack getPickBlockStack()
 	{
 		return owner.getPickBlockStack();
+	}
+	
+	public boolean isDeflective()
+	{
+		return deflect;
 	}
 }

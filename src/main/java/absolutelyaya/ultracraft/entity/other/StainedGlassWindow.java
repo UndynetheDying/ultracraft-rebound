@@ -16,19 +16,21 @@ import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class StainedGlassWindow extends AbstractDecorationEntity implements IIgnoreSharpshooter
 {
 	protected static final TrackedData<Boolean> REINFORCED = DataTracker.registerData(StainedGlassWindow.class, TrackedDataHandlerRegistry.BOOLEAN);
+	protected static final TrackedData<Boolean> NO_DROP = DataTracker.registerData(StainedGlassWindow.class, TrackedDataHandlerRegistry.BOOLEAN);
 	
 	public StainedGlassWindow(EntityType<? extends AbstractDecorationEntity> entityType, World world)
 	{
@@ -45,6 +47,7 @@ public class StainedGlassWindow extends AbstractDecorationEntity implements IIgn
 	{
 		super.initDataTracker();
 		dataTracker.startTracking(REINFORCED, false);
+		dataTracker.startTracking(NO_DROP, false);
 	}
 	
 	public static StainedGlassWindow place(World world, BlockPos pos, Direction facing)
@@ -80,7 +83,8 @@ public class StainedGlassWindow extends AbstractDecorationEntity implements IIgn
 	public void onBreak(@Nullable Entity entity)
 	{
 		playSound(SoundRegistry.STAINED_GLASS_WINDOW_BREAK, 1.0f, 1.0f);
-		if(entity instanceof PlayerEntity player && player.isCreative())
+		if((entity instanceof PlayerEntity player && player.isCreative()) || !getWorld().getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS) ||
+				   dataTracker.get(NO_DROP))
 			return;
 		dropStack(StainedGlassWindowItem.getStack(dataTracker.get(REINFORCED)));
 	}
@@ -133,14 +137,19 @@ public class StainedGlassWindow extends AbstractDecorationEntity implements IIgn
 	public void readNbt(NbtCompound nbt)
 	{
 		super.readNbt(nbt);
-		dataTracker.set(REINFORCED, nbt.getBoolean("reinforced"));
-		setFacing(Direction.fromHorizontal(nbt.getByte("facing")));
+		if(nbt.contains("reinforced", NbtElement.BYTE_TYPE))
+			dataTracker.set(REINFORCED, nbt.getBoolean("reinforced"));
+		if(nbt.contains("noDrop", NbtElement.BYTE_TYPE))
+			dataTracker.set(NO_DROP, nbt.getBoolean("noDrop"));
+		if(nbt.contains("facing", NbtElement.BYTE_TYPE))
+			setFacing(Direction.fromHorizontal(nbt.getByte("facing")));
 	}
 	
 	@Override
 	public NbtCompound writeNbt(NbtCompound nbt)
 	{
 		nbt.putBoolean("reinforced", dataTracker.get(REINFORCED));
+		nbt.putBoolean("noDrop", dataTracker.get(NO_DROP));
 		nbt.putByte("facing", (byte)facing.getHorizontal());
 		return super.writeNbt(nbt);
 	}

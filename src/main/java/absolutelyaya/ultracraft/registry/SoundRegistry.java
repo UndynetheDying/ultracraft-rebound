@@ -38,7 +38,9 @@ public class SoundRegistry
 	
 	public static final SoundEvent STREET_CLEANER_BREATHE = register("entity.street_cleaner.breathe");
 	
-	public static final SoundEvent HIDEOUS_MASS_UNHIDE = register("entity.hideous_mass.unhide");
+	public static final SoundEvent HIDEOUS_MASS_EMERGE = register("entity.hideous_mass.emerge_step");
+	public static final SoundEvent HIDEOUS_MASS_TURN = register("entity.hideous_mass.turn");
+	public static final SoundEvent HIDEOUS_MASS_MORTAR = register("entity.hideous_mass.mortar");
 	public static final SoundEvent HIDEOUS_MASS_SLAM_TELL = register("entity.hideous_mass.tell.stomp");
 	public static final SoundEvent HIDEOUS_MASS_CLAP_TELL = register("entity.hideous_mass.tell.clap");
 	public static final SoundEvent HIDEOUS_MASS_HARPOON_TELL = register("entity.hideous_mass.tell.harpoon");
@@ -53,6 +55,9 @@ public class SoundRegistry
 	
 	//WEAPONS
 	public static final SoundEvent REVOLVER_FIRE = register("item.revolver.fire");
+	public static final SoundEvent SLAB_REVOLVER_FIRE = register("item.alt_revolver.fire");
+	public static final SoundEvent SLAB_REVOLVER_FIRE_DING = register("item.alt_revolver.fire_ding");
+	public static final SoundEvent SLAB_REVOLVER_CLICK = register("item.alt_revolver.click");
 	public static final SoundEvent REVOLVER_ALT_CHARGE = register("item.revolver.alt_charge");
 	public static final SoundEvent PIERCER_CHARGE = register("item.piercer.charge");
 	public static final SoundEvent PIERCER_FIRE = register("item.piercer.fire");
@@ -67,6 +72,9 @@ public class SoundRegistry
 	public static final SoundEvent SHOTGUN_PUMP = register("item.shotgun.pump");
 	public static final SoundEvent SHOTGUN_OVERPUMP_BEEP = register("item.shotgun.overpump_beep");
 	public static final SoundEvent SHOTGUN_CORE_CHARGE = register("item.shotgun.core_charge");
+	public static final SoundEvent SHOTGUN_OPEN = register("item.shotgun.open");
+	public static final SoundEvent SHOTGUN_CLOSE = register("item.shotgun.close");
+	public static final SoundEvent SHOTGUN_HISS = register("item.shotgun.hiss");
 	
 	public static final SoundEvent MACHINESWORD_ATTACK = register("item.machinesword.attack");
 	
@@ -94,6 +102,9 @@ public class SoundRegistry
 	//BLOCKS
 	public static final SoundEvent STAINED_GLASS_WINDOW_PLACE = register("blocks.stained_glass_window.place");
 	public static final SoundEvent STAINED_GLASS_WINDOW_BREAK = register("blocks.stained_glass_window.break");
+	public static final SoundEvent CHECKPOINT_GET = register("blocks.checkpoint.get");
+	public static final SoundEvent SLAB_ACTIVATE = register("blocks.slab_block.activate");
+	public static final SoundEvent SLAB_DEACTIVATE = register("blocks.slab_block.deactivate");
 	
 	//MISC
 	public static final SoundEvent ELEVATOR_FALL = register("misc.elevator_fall");
@@ -102,6 +113,9 @@ public class SoundRegistry
 	public static final SoundEvent MACHINESWORD_LOOP = register("entity.machinesword_loop");
 	public static final SoundEvent KILLERFISH_SELECT = register("item.killerfish.select");
 	public static final SoundEvent KILLERFISH_USE = register("item.killerfish.use");
+	public static final SoundEvent LUMPFISH_SELECT = register("item.lumpfish.select");
+	public static final SoundEvent LUMPFISH_UNSELECT = register("item.lumpfish.unselect");
+	public static final SoundEvent LUMPFISH_USE = register("item.lumpfish.use");
 	public static final SoundEvent ORB_AMBIENT = register("entity.orb.ambient");
 	public static final SoundEvent BARRIER_BREAK = register("entity.barrier_break");
 	public static final SoundEvent BLOOD_HEAL = register("entity.blood_heal");
@@ -113,6 +127,9 @@ public class SoundRegistry
 	public static final SoundEvent PARRY = register("misc.parry");
 	public static final SoundEvent WATER_SKIM = register("misc.water_skim");
 	public static final SoundEvent LAUGH = register("misc.laugh");
+	public static final SoundEvent RECEIVE_BOX_TITLE = register("misc.box-title");
+	public static final SoundEvent HUSK_SCREAM_LOOP = register("misc.husk_scream");
+	public static final SoundEvent SPIN = register("misc.spin");
 	public static final SoundEvent PLACEHOLDER = register("placeholder");
 	
 	//MUSIC

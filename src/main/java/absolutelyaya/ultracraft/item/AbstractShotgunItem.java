@@ -1,23 +1,23 @@
 package absolutelyaya.ultracraft.item;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.Weapon;
 import absolutelyaya.ultracraft.accessor.MeleeInterruptable;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.entity.demon.MaliciousFaceEntity;
 import absolutelyaya.ultracraft.entity.projectile.ShotgunPelletEntity;
 import absolutelyaya.ultracraft.particle.ParryIndicatorParticleEffect;
-import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.Arm;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -26,6 +26,9 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import mod.azure.azurelib.animatable.GeoItem;
 import mod.azure.azurelib.core.animation.RawAnimation;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public abstract class AbstractShotgunItem extends AbstractWeaponItem implements GeoItem
 {
@@ -40,7 +43,7 @@ public abstract class AbstractShotgunItem extends AbstractWeaponItem implements 
 	@Override
 	public boolean onPrimaryFire(World world, PlayerEntity user, Vec3d userVelocity)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(user).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(user).getGunCooldownManager();
 		Vec3d dir = new Vec3d(0f, 0f, 1f);
 		dir = dir.rotateX((float)Math.toRadians(-user.getPitch()));
 		dir = dir.rotateY((float)Math.toRadians(-user.getHeadYaw()));
@@ -67,11 +70,12 @@ public abstract class AbstractShotgunItem extends AbstractWeaponItem implements 
 					getShotAnimationName() + (b ? "2" : ""));
 			cdm.setCooldown(this, getPrimaryCooldown(), GunCooldownManager.PRIMARY);
 			b = !b;
-			for (int i = 0; i < getPelletCount(user.getMainHandStack()); i++)
+			ItemStack stack = user.getMainHandStack();
+			for (int i = 0; i < getPelletCount(stack); i++)
 			{
 				//guarantees that the first bullet goes straight and only that one is actually boostable (if this isn't a shotgun parry)
 				ShotgunPelletEntity bullet = ShotgunPelletEntity.spawn(user, world, i == 0 && !parry);
-				bullet.setVelocity(dir.x, dir.y, dir.z, i == 0 ? 1f : 1.5f, i == 0 && !parry ? 1f : 15f);
+				bullet.setVelocity(dir.x, dir.y, dir.z, i == 0 ? 1f : 1.5f, i == 0 && !parry ? 1f : getDivergence(stack));
 				if(parry && i == 0)
 					bullet.increaseDamage(2f);
 				bullet.addVelocity(userVelocity);
@@ -107,13 +111,7 @@ public abstract class AbstractShotgunItem extends AbstractWeaponItem implements 
 	}
 	
 	@Override
-	Item[] getVariants()
-	{
-		return new Item[] {ItemRegistry.CORE_SHOTGUN, ItemRegistry.PUMP_SHOTGUN};
-	}
-	
-	@Override
-	int getSwitchCooldown()
+	int getSwitchCooldown(ItemStack stack)
 	{
 		return 8;
 	}
@@ -134,12 +132,31 @@ public abstract class AbstractShotgunItem extends AbstractWeaponItem implements 
 	}
 	
 	@Override
-	protected void onSwitch(PlayerEntity user, World world)
+	public void onSwitch(World world, PlayerEntity user, int newSlot)
 	{
 		if(!world.isClient)
 		{
 			triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(), "switch" + (b ? "2" : ""));
 			b = !b;
 		}
+	}
+	
+	protected float getDivergence(ItemStack stack)
+	{
+		return 15f;
+	}
+	
+	@Override
+	public Weapon getWeaponType()
+	{
+		return Weapon.SHOTGUN;
+	}
+	
+	@Override
+	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
+	{
+		super.appendTooltip(stack, world, tooltip, context);
+		tooltip.add(Text.translatable("item.ultracraft.shotgun.lore1"));
+		tooltip.add(Text.translatable(getTranslationKey() + ".lore1"));
 	}
 }

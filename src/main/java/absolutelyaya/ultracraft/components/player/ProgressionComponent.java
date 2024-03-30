@@ -1,10 +1,10 @@
 package absolutelyaya.ultracraft.components.player;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.gui.terminal.WeaponsTab;
-import absolutelyaya.ultracraft.registry.GameruleRegistry;
+import absolutelyaya.ultracraft.registry.ItemRegistry;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -12,24 +12,43 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProgressionComponent implements IProgressionComponent, AutoSyncedComponent
 {
 	static final List<Identifier> ENTRIES = new ArrayList<>() {
 		{
-			add(new Identifier(Ultracraft.MOD_ID, "pierce_revolver"));
-			add(new Identifier(Ultracraft.MOD_ID, "marksman_revolver"));
-			add(new Identifier(Ultracraft.MOD_ID, "sharpshooter_revolver"));
-			add(new Identifier(Ultracraft.MOD_ID, "core_shotgun"));
-			add(new Identifier(Ultracraft.MOD_ID, "pump_shotgun"));
-			add(new Identifier(Ultracraft.MOD_ID, "attractor_nailgun"));
+			add(Registries.ITEM.getId(ItemRegistry.PIERCE_REVOLVER));
+			add(Registries.ITEM.getId(ItemRegistry.MARKSMAN_REVOLVER));
+			add(Registries.ITEM.getId(ItemRegistry.SHARPSHOOTER_REVOLVER));
+			add(Registries.ITEM.getId(ItemRegistry.CORE_SHOTGUN));
+			add(Registries.ITEM.getId(ItemRegistry.PUMP_SHOTGUN));
+			add(Registries.ITEM.getId(ItemRegistry.ATTRACTOR_NAILGUN));
+			add(Registries.ITEM.getId(ItemRegistry.OVERHEAT_NAILGUN));
 			add(new Identifier(Ultracraft.MOD_ID, "feedbacker"));
 			add(new Identifier(Ultracraft.MOD_ID, "knuckleblaster"));
+			add(new Identifier(Ultracraft.MOD_ID, "slab"));
+		}
+	};
+	static final Map<Identifier, Identifier[]> UNLOCK_LOGIC = new HashMap<>() {
+		{
+			put(Registries.ITEM.getId(ItemRegistry.PIERCE_REVOLVER), new Identifier[]{
+					Registries.ITEM.getId(ItemRegistry.MARKSMAN_REVOLVER),
+					Registries.ITEM.getId(ItemRegistry.SHARPSHOOTER_REVOLVER)
+			});
+			put(Registries.ITEM.getId(ItemRegistry.CORE_SHOTGUN), new Identifier[]{
+					Registries.ITEM.getId(ItemRegistry.PUMP_SHOTGUN)
+			});
+			put(Registries.ITEM.getId(ItemRegistry.ATTRACTOR_NAILGUN), new Identifier[]{
+					Registries.ITEM.getId(ItemRegistry.OVERHEAT_NAILGUN)
+			});
 		}
 	};
 	
@@ -40,18 +59,8 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 	public ProgressionComponent(PlayerEntity provider)
 	{
 		this.provider = provider;
-		unlocked.add(new Identifier(Ultracraft.MOD_ID, "pierce_revolver"));
-		if(provider.getWorld().getGameRules().getBoolean(GameruleRegistry.START_WITH_PIERCER))
-		{
-			owned.add(new Identifier(Ultracraft.MOD_ID, "pierce_revolver"));
-			unlocked.add(new Identifier(Ultracraft.MOD_ID, "marksman_revolver"));
-			unlocked.add(new Identifier(Ultracraft.MOD_ID, "sharpshooter_revolver"));
-		}
 		unlocked.add(new Identifier(Ultracraft.MOD_ID, "feedbacker"));
 		owned.add(new Identifier(Ultracraft.MOD_ID, "feedbacker"));
-		//TODO: remove once enemies spawn in the world and weapon recipe unlocks get obtainable through them
-		unlocked.add(new Identifier(Ultracraft.MOD_ID, "core_shotgun"));
-		unlocked.add(new Identifier(Ultracraft.MOD_ID, "attractor_nailgun"));
 	}
 	
 	@Override
@@ -99,6 +108,9 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 	{
 		if(!owned.contains(id))
 			owned.add(id);
+		if(UNLOCK_LOGIC.containsKey(id))
+			for (Identifier unlock : UNLOCK_LOGIC.get(id))
+				unlock(unlock);
 	}
 	
 	@Override
@@ -126,18 +138,14 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 		unlocked = new ArrayList<>();
 		owned = new ArrayList<>();
 		
-		if(provider.getWorld().getGameRules().getBoolean(GameruleRegistry.START_WITH_PIERCER))
-		{
-			owned.add(new Identifier(Ultracraft.MOD_ID, "pierce_revolver"));
-			unlocked.add(new Identifier(Ultracraft.MOD_ID, "marksman_revolver"));
-			unlocked.add(new Identifier(Ultracraft.MOD_ID, "sharpshooter_revolver"));
-		}
-		else
-			unlocked.add(new Identifier(Ultracraft.MOD_ID, "pierce_revolver"));
-		unlocked.add(new Identifier(Ultracraft.MOD_ID, "core_shotgun"));
-		unlocked.add(new Identifier(Ultracraft.MOD_ID, "attractor_nailgun"));
 		unlocked.add(new Identifier(Ultracraft.MOD_ID, "feedbacker"));
 		owned.add(new Identifier(Ultracraft.MOD_ID, "feedbacker"));
+	}
+	
+	@Override
+	public List<Identifier> getAllGearEntries()
+	{
+		return ENTRIES;
 	}
 	
 	public void sync()

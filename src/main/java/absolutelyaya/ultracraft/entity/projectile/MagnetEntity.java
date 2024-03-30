@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.entity.projectile;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.damage.DamageSources;
@@ -20,6 +20,7 @@ import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import mod.azure.azurelib.animatable.GeoEntity;
@@ -84,13 +85,13 @@ public class MagnetEntity extends AbstractSkewerEntity implements GeoEntity, IIg
 			return;
 		List<NailEntity> nails = getWorld().getEntitiesByType(TypeFilter.instanceOf(NailEntity.class), getBoundingBox().expand(8), n -> true);
 		List<MagnetEntity> magnets = getWorld().getEntitiesByType(TypeFilter.instanceOf(MagnetEntity.class), getBoundingBox().expand(8),
-				m -> m.isInGround() || m.victim != null);
-		Vec3d pos = getPos();
+				m -> (m.isInGround() || m.victim != null) && m != this);
+		Vec3d pos = getPos().add(getAttractOffset());
 		for (MagnetEntity magnet : magnets)
-			pos = pos.add(magnet.getPos());
+			pos = pos.add(magnet.getPos().add(magnet.getAttractOffset()));
 		pos = pos.multiply(1f / (magnets.size() + 1));
 		for (NailEntity nail : nails)
-			nail.setVelocity(nail.getVelocity().lerp(pos.add(0, 1, 0).subtract(nail.getPos()).normalize(),
+			nail.setVelocity(nail.getVelocity().lerp(pos.subtract(nail.getPos()).normalize(),
 					Math.max(1f - nail.distanceTo(this) / 6f, 0)));
 		if(isInGround() || victim != null)
 		{
@@ -106,6 +107,14 @@ public class MagnetEntity extends AbstractSkewerEntity implements GeoEntity, IIg
 		}
 	}
 	
+	public Vec3d getAttractOffset()
+	{
+		if(getVictim() != null)
+			return Vec3d.ZERO;
+		float f = MathHelper.RADIANS_PER_DEGREE;
+		return new Vec3d(0f, 0.2f, -1.5f).rotateX(getPitch() * f).rotateY(getYaw() * f);
+	}
+	
 	protected void despawn()
 	{
 		if(!getWorld().isClient())
@@ -116,7 +125,7 @@ public class MagnetEntity extends AbstractSkewerEntity implements GeoEntity, IIg
 					 .forEach(n -> n.setVelocity(Vec3d.ZERO.addRandom(random, 1f).normalize().multiply((float)n.getVelocity().length())));
 			if(getOwner() instanceof PlayerEntity player)
 			{
-				IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(player);
+				IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
 				winged.setMagnets(Math.max(winged.getMagnets() - 1, 0));
 				GunCooldownManager gcdm = winged.getGunCooldownManager();
 				if(gcdm.isUsable(ItemRegistry.ATTRACTOR_NAILGUN, GunCooldownManager.SECONDARY))
@@ -131,8 +140,8 @@ public class MagnetEntity extends AbstractSkewerEntity implements GeoEntity, IIg
 	{
 		if(victim != null)
 			return;
-		if(entityHitResult.getEntity() instanceof LivingEntity living)
-			living.damage(DamageSources.get(getWorld(), DamageSources.MAGNET, this, getOwner()), 3.5f);
+		//if(entityHitResult.getEntity() instanceof LivingEntity living)
+		//	living.damage(DamageSources.get(getWorld(), DamageSources.MAGNET, this, getOwner()), 3.5f);
 		super.onEntityHit(entityHitResult);
 	}
 	

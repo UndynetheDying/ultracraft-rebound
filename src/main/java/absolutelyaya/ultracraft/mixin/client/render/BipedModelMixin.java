@@ -70,8 +70,13 @@ public abstract class BipedModelMixin<T extends LivingEntity> extends AnimalMode
 	@Inject(method = "setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/BipedEntityModel;animateArms(Lnet/minecraft/entity/LivingEntity;F)V"))
 	void onSetArmAngle(T living, float f, float g, float h, float headYaw, float headPitch, CallbackInfo ci)
 	{
+		MinecraftClient client = MinecraftClient.getInstance();
+		if(living.equals(client.player) && !client.gameRenderer.getCamera().isThirdPerson())
+		{
+			return;
+		}
 		Item heldItem = living.getMainHandStack().getItem();
-		if(heldItem instanceof SwordsmachinePlushieItem)
+		if(living.getOffHandStack().getItem() instanceof SwordsmachinePlushieItem)
 		{
 			Vector3f angles;
 			boolean rightHanded = living.getMainArm().equals(Arm.RIGHT);
@@ -81,7 +86,7 @@ public abstract class BipedModelMixin<T extends LivingEntity> extends AnimalMode
 				angles = new Vector3f(-55, 45, 0).mul(MathHelper.RADIANS_PER_DEGREE);
 				leftArm.setAngles(angles.x, angles.y, angles.z);
 			}
-			if(living.getMainHandStack().isEmpty())
+			if(!rightHanded || (rightHanded && living.getMainHandStack().isEmpty()))
 			{
 				rightArm.resetTransform();
 				angles = new Vector3f(-45, -30, 0).mul(MathHelper.RADIANS_PER_DEGREE);

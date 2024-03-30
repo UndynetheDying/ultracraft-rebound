@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.item;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.rendering.item.CoreEjectShotgunRenderer;
@@ -61,7 +61,7 @@ public class CoreEjectShotgunItem extends AbstractShotgunItem
 		ItemStack itemStack = user.getStackInHand(hand);
 		if(hand.equals(Hand.OFF_HAND))
 			return TypedActionResult.fail(itemStack);
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(user).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(user).getGunCooldownManager();
 		if(!cdm.isUsable(this, 0))
 			return TypedActionResult.fail(itemStack);
 		user.setCurrentHand(hand);
@@ -74,6 +74,7 @@ public class CoreEjectShotgunItem extends AbstractShotgunItem
 	public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected)
 	{
 		super.inventoryTick(stack, world, entity, slot, selected);
+		selected = isMainHandstack(stack, entity);
 		if(!selected && stack.hasNbt() && stack.getNbt().contains("charging"))
 		{
 			stack.getNbt().remove("charging");
@@ -130,7 +131,7 @@ public class CoreEjectShotgunItem extends AbstractShotgunItem
 	@Override
 	public int getMaxUseTime(ItemStack stack)
 	{
-		return 30;
+		return 20;
 	}
 	
 	@Override
@@ -147,7 +148,8 @@ public class CoreEjectShotgunItem extends AbstractShotgunItem
 										.triggerableAnim("switch2", AnimationSwitch2)
 										.triggerableAnim("shot_core", AnimationShot)
 										.triggerableAnim("shot_core2", AnimationShot2)
-										.triggerableAnim("altShot", AnimationAltShot));
+										.triggerableAnim("altShot", AnimationAltShot)
+										.setSoundKeyframeHandler(this::handleAnimSound));
 	}
 	
 	public int getApproxUseTime()
@@ -196,9 +198,9 @@ public class CoreEjectShotgunItem extends AbstractShotgunItem
 	}
 	
 	@Override
-	protected void onSwitch(PlayerEntity user, World world)
+	public void onSwitch(World world, PlayerEntity user, int newSlot)
 	{
-		super.onSwitch(user, world);
+		super.onSwitch(world, user, newSlot);
 		approxUseTime = -1;
 	}
 }

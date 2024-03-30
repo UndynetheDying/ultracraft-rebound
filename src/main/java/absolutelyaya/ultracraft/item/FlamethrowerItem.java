@@ -1,16 +1,16 @@
 package absolutelyaya.ultracraft.item;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.rendering.item.FlamethrowerRenderer;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.entity.projectile.FlameProjectileEntity;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
@@ -18,6 +18,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 import mod.azure.azurelib.animatable.GeoItem;
 import mod.azure.azurelib.animatable.SingletonGeoAnimatable;
@@ -29,6 +30,7 @@ import mod.azure.azurelib.core.animation.RawAnimation;
 import mod.azure.azurelib.core.object.PlayState;
 import mod.azure.azurelib.util.AzureLibUtil;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -63,7 +65,7 @@ public class FlamethrowerItem extends AbstractWeaponItem implements GeoItem
 	{
 		if(!(user instanceof WingedPlayerEntity winged))
 			return false;
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(winged).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(winged).getGunCooldownManager();
 		if(!cdm.isUsable(this, GunCooldownManager.PRIMARY))
 			return false;
 		ItemStack stack = user.getMainHandStack();
@@ -110,29 +112,28 @@ public class FlamethrowerItem extends AbstractWeaponItem implements GeoItem
 	public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected)
 	{
 		super.inventoryTick(stack, world, entity, slot, selected);
+		if(world.isClient)
+			return;
 		int heat = getNbt(stack, "heat");
-		IWingedPlayerComponent winged = UltraComponents.WINGED_ENTITY.get(entity);
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(entity);
 		if(heat > 0 && entity.age % 2 == 0 && (!winged.isPrimaryFiring() || winged.getGunCooldownManager().getCooldown(this, GunCooldownManager.PRIMARY) > 5))
 			setNbt(stack, "heat", heat - 1);
 	}
 	
 	@Override
-	public void onPrimaryFireStart(World world, PlayerEntity user)
+	public void onPrimaryFireStart(World world, PlayerEntity user, int slot)
 	{
-		super.onPrimaryFireStart(world, user);
+		super.onPrimaryFireStart(world, user, slot);
 		world.playSound(null, user.getBlockPos(), SoundRegistry.FLAMETHROWER_START, SoundCategory.PLAYERS, 1f, 1f);
 	}
 	
 	@Override
-	public void onPrimaryFireStop(World world, PlayerEntity user)
+	public void onPrimaryFireStop(World world, PlayerEntity user, int slot)
 	{
 		if(!(user instanceof WingedPlayerEntity))
 			return;
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(user).getGunCooldownManager();
-		if(cdm.getCooldown(this, GunCooldownManager.PRIMARY) < 5)
-			cdm.setCooldown(this, getNbt(user.getMainHandStack(), "heat") > 200 ? 25 : 50, GunCooldownManager.PRIMARY);
 		if(!world.isClient)
-			triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(), "stop");
+			triggerAnim(user, GeoItem.getOrAssignId(user.getInventory().getStack(slot), (ServerWorld)world), getControllerName(), "stop");
 		world.playSound(null, user.getBlockPos(), SoundRegistry.FLAMETHROWER_STOP, SoundCategory.PLAYERS, 1f, 1f);
 	}
 	
@@ -180,13 +181,7 @@ public class FlamethrowerItem extends AbstractWeaponItem implements GeoItem
 	}
 	
 	@Override
-	Item[] getVariants()
-	{
-		return new Item[0];
-	}
-	
-	@Override
-	int getSwitchCooldown()
+	int getSwitchCooldown(ItemStack stack)
 	{
 		return 0;
 	}
@@ -214,5 +209,14 @@ public class FlamethrowerItem extends AbstractWeaponItem implements GeoItem
 	public int getNbtDefault(String nbt)
 	{
 		return 0;
+	}
+	
+	@Override
+	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
+	{
+		super.appendTooltip(stack, world, tooltip, context);
+		tooltip.add(Text.translatable("item.ultracraft.flamethrower.lore1"));
+		tooltip.add(Text.translatable("item.ultracraft.flamethrower.lore2"));
+		tooltip.add(Text.translatable("item.ultracraft.flamethrower.lore3"));
 	}
 }

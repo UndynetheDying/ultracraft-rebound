@@ -1,28 +1,41 @@
 package absolutelyaya.ultracraft.components.player;
 
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
+import absolutelyaya.ultracraft.cybergrind.CybergrindData;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
-import absolutelyaya.ultracraft.registry.SoundRegistry;
-import absolutelyaya.ultracraft.registry.StatusEffectRegistry;
+import absolutelyaya.ultracraft.registry.PacketRegistry;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
-import net.minecraft.entity.effect.StatusEffectInstance;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSyncedComponent
 {
 	PlayerEntity provider;
 	GunCooldownManager gunCDM;
-	boolean slamming, ignoreSlowdown, primaryFiring, airControlIncreased;
+	boolean primaryFiring, justPlayedBloodhealNoise;
 	byte wingState, lastState;
-	int dashingTicks = -2, slamDamageCooldown, bloodHealCooldown, sharpshooterCooldown, magnets;
-	float stamina, lastStamina;
+	int bloodHealCooldown, sharpshooterCooldown, magnets;
 	AbstractWeaponItem lastPrimaryWeapon;
+	BlockPos lastCheckpoint;
+	RegistryKey<World> checkpointDimension;
+	float checkpointRot;
+	CybergrindData cybergrindData;
 	
 	public WingedPlayerComponent(PlayerEntity provider)
 	{
@@ -43,11 +56,14 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	@Override
 	public void updateWingState()
 	{
-		if(isDashing())
+		IHivelComponent hivel = UltraComponents.HIVEL.get(provider);
+		if(!(provider instanceof WingedPlayerEntity winged))
+			return;
+		if(hivel.isDashing())
 			setWingState((byte)0);
-		else if (provider.isSprinting())
+		if (winged.isSliding())
 			setWingState((byte)2);
-		else if ((wingState == 0 && provider.isOnGround()) || (wingState == 2 && !provider.isSprinting()))
+		else if ((wingState == 0 && provider.isOnGround()) || (wingState == 2 && !winged.isSliding()))
 			setWingState((byte)1);
 	}
 	
@@ -58,135 +74,17 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	}
 	
 	@Override
-	public void onDash()
-	{
-		dashingTicks = 3;
-		provider.getWorld().playSound(null, provider.getBlockPos(), SoundRegistry.DASH, SoundCategory.PLAYERS, 0.75f, 1.6f);
-	}
-	
-	@Override
-	public void cancelDash()
-	{
-		dashingTicks = -2;
-	}
-	
-	@Override
-	public void onDashJump()
-	{
-		dashingTicks = -2;
-		provider.getWorld().playSound(null, provider.getBlockPos(), SoundRegistry.DASH_JUMP, SoundCategory.PLAYERS, 0.75f, 1.6f);
-	}
-	
-	@Override
-	public boolean isDashing()
-	{
-		return dashingTicks > 0;
-	}
-	
-	@Override
-	public boolean wasDashing()
-	{
-		return dashingTicks + 1 >= 0;
-	}
-	
-	@Override
-	public boolean wasDashing(int i)
-	{
-		return dashingTicks + i >= 0;
-	}
-	
-	@Override
-	public int getDashingTicks()
-	{
-		return dashingTicks;
-	}
-	
-	@Override
-	public float getStamina()
-	{
-		return stamina;
-	}
-	
-	@Override
-	public boolean consumeStamina()
-	{
-		if(provider.isCreative())
-			return true;
-		if(stamina >= 30)
-		{
-			stamina = Math.max(stamina - 30, 0);
-			return true;
-		}
-		else
-			provider.playSound(SoundRegistry.NO_STAMINA, 0.5f, 1.8f);
-		return false;
-	}
-	
-	@Override
-	public void replenishStamina(int i)
-	{
-		stamina = Math.min(stamina + 30 * i, 90);
-	}
-	
-	@Override
-	public void setSlamming(boolean b)
-	{
-		slamming = b;
-	}
-	
-	@Override
-	public boolean isSlamming()
-	{
-		return slamming;
-	}
-	
-	@Override
-	public boolean shouldIgnoreSlowdown()
-	{
-		return ignoreSlowdown;
-	}
-	
-	@Override
-	public void setIgnoreSlowdown(boolean b)
-	{
-		ignoreSlowdown = b;
-	}
-	
-	@Override
-	public void setSlideDir(Vec3d dir)
-	{
-	
-	}
-	
-	@Override
-	public Vec3d getSlideDir()
-	{
-		return null;
-	}
-	
-	@Override
 	public void bloodHeal(float val)
 	{
 		if(bloodHealCooldown == 0)
 			provider.heal(val);
+		justPlayedBloodhealNoise = true;
 	}
 	
 	@Override
 	public void setBloodHealCooldown(int ticks)
 	{
 		bloodHealCooldown = ticks;
-	}
-	
-	@Override
-	public void setAirControlIncreased(boolean b)
-	{
-		airControlIncreased = b;
-	}
-	
-	@Override
-	public boolean isAirControlIncreased()
-	{
-		return airControlIncreased;
 	}
 	
 	@Override
@@ -212,14 +110,30 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			{
 				lastPrimaryWeapon = w;
 				if(!last)
-					w.onPrimaryFireStart(provider.getWorld(), provider);
+					w.onPrimaryFireStart(provider.getWorld(), provider, provider.getInventory().selectedSlot);
 			}
 		}
 		else
 		{
 			if(lastPrimaryWeapon != null)
-				lastPrimaryWeapon.onPrimaryFireStop(provider.getWorld(), provider);
+				lastPrimaryWeapon.onPrimaryFireStop(provider.getWorld(), provider, provider.getInventory().selectedSlot);
 			lastPrimaryWeapon = null;
+		}
+	}
+	
+	@Override
+	public void onUpdateActiveSlot(int lastSlot, int newValue)
+	{
+		if(lastPrimaryWeapon != null)
+			lastPrimaryWeapon.onBeforeSwitch(provider.getWorld(), provider, provider.getInventory().selectedSlot);
+		if(provider.getInventory().main.get(newValue).getItem() instanceof AbstractWeaponItem w)
+			w.onSwitch(provider.getWorld(), provider, newValue);
+		if(provider.getWorld().isClient)
+		{
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			buf.writeByte(lastSlot);
+			buf.writeByte(newValue);
+			ClientPlayNetworking.send(PacketRegistry.SWITCH_SLOT_PACKET_ID, buf);
 		}
 	}
 	
@@ -230,27 +144,9 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	}
 	
 	@Override
-	public AbstractWeaponItem getLastPrimaryWeapon()
-	{
-		return lastPrimaryWeapon;
-	}
-	
-	@Override
 	public @NotNull GunCooldownManager getGunCooldownManager()
 	{
 		return gunCDM;
-	}
-	
-	@Override
-	public float getSlamDamageCooldown()
-	{
-		return slamDamageCooldown;
-	}
-	
-	@Override
-	public void setSlamDamageCooldown(int i)
-	{
-		slamDamageCooldown = i;
 	}
 	
 	public void setMagnets(int i)
@@ -264,15 +160,134 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	}
 	
 	@Override
+	public boolean isJustPlayedBloodhealNoise()
+	{
+		return justPlayedBloodhealNoise;
+	}
+	
+	@Override
+	public void setJustPlayedBloodhealNoise()
+	{
+		justPlayedBloodhealNoise = true;
+	}
+	
+	@Override
+	public BlockPos getLastCheckpoint()
+	{
+		return lastCheckpoint;
+	}
+	
+	@Override
+	public boolean setLastCheckpoint(BlockPos pos, World dimension)
+	{
+		boolean changed = lastCheckpoint == null || !lastCheckpoint.equals(pos);
+		lastCheckpoint = pos;
+		checkpointRot = provider.getYaw();
+		if(dimension != null)
+			checkpointDimension = dimension.getRegistryKey();
+		else
+			checkpointDimension = null;
+		return changed;
+	}
+	
+	@Override
+	public RegistryKey<World> getCheckpointDimension()
+	{
+		return checkpointDimension;
+	}
+	
+	@Override
+	public float getCheckpointRotation()
+	{
+		return checkpointRot;
+	}
+	
+	public void sendBigTitle(Text text, float delay)
+	{
+		if(!provider.getWorld().isClient)
+		{
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			buf.writeBoolean(true);
+			buf.writeText(text);
+			buf.writeFloat(delay);
+			ServerPlayNetworking.send((ServerPlayerEntity)provider, PacketRegistry.TITLE_PACKET_ID, buf);
+		}
+	}
+	
+	public void sendBigTitle(Text text)
+	{
+		sendBigTitle(text, 0f);
+	}
+	
+	public void sendBoxTitle(Text text, float duration)
+	{
+		if(!provider.getWorld().isClient)
+		{
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			buf.writeBoolean(false);
+			buf.writeText(text);
+			buf.writeFloat(duration);
+			ServerPlayNetworking.send((ServerPlayerEntity)provider, PacketRegistry.TITLE_PACKET_ID, buf);
+		}
+	}
+	
+	public void sendBoxTitle(Text text)
+	{
+		sendBoxTitle(text, 20f);
+	}
+	
+	@Override
+	public void setCybergrindData(CybergrindData v)
+	{
+		cybergrindData = v;
+		if(!provider.getWorld().isClient && provider instanceof ServerPlayerEntity serverPlayer)
+		{
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			if(v == null)
+				buf.writeByte(CybergrindData.DESTROY_SYNC);
+			else
+			{
+				buf.writeByte(CybergrindData.FULL_SYNC);
+				buf.writeNbt(v.serialize());
+			}
+			ServerPlayNetworking.send(serverPlayer, PacketRegistry.SYNC_CYBERGRIND_ID, buf);
+		}
+	}
+	
+	@Override
+	public CybergrindData getCybergrindData()
+	{
+		return cybergrindData;
+	}
+	
+	@Override
 	public void readFromNbt(NbtCompound tag)
 	{
-	
+		if(tag.contains("checkpoint", NbtElement.COMPOUND_TYPE))
+		{
+			NbtCompound checkpoint = tag.getCompound("checkpoint");
+			NbtCompound pos = checkpoint.getCompound("pos");
+			lastCheckpoint = new BlockPos(pos.getInt("x"), pos.getInt("y"), pos.getInt("z"));
+			checkpointRot = checkpoint.getFloat("rot");
+			checkpointDimension = RegistryKey.of(RegistryKeys.WORLD, Identifier.tryParse(checkpoint.getString("dimension")));
+		}
 	}
 	
 	@Override
 	public void writeToNbt(NbtCompound tag)
 	{
-	
+		if(lastCheckpoint != null)
+		{
+			NbtCompound checkpoint = new NbtCompound();
+			NbtCompound pos = new NbtCompound();
+			pos.putInt("x", lastCheckpoint.getX());
+			pos.putInt("y", lastCheckpoint.getY());
+			pos.putInt("z", lastCheckpoint.getZ());
+			checkpoint.put("pos", pos);
+			checkpoint.putFloat("rot", checkpointRot);
+			checkpoint.putString("dimension", getCheckpointDimension().getValue().toString());
+			tag.put("checkpoint", checkpoint);
+		}
 	}
 	
 	@Override
@@ -280,22 +295,12 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	{
 		if(!Ultracraft.isTimeFrozen())
 			gunCDM.tickCooldowns();
-		if(dashingTicks > -60)
-			dashingTicks--;
-		if(slamDamageCooldown > 0)
-			slamDamageCooldown--;
 		if(bloodHealCooldown > 0)
 			bloodHealCooldown--;
 		if(sharpshooterCooldown > 0)
 			sharpshooterCooldown--;
+		if(justPlayedBloodhealNoise)
+			justPlayedBloodhealNoise = false;
 		updateWingState();
-		StatusEffectInstance chilled = provider.getStatusEffect(StatusEffectRegistry.CHILLED);
-		if(stamina < 90 && !provider.isSprinting() && !(chilled != null && provider.age % (chilled.getAmplifier() + 1) != 0))
-		{
-			lastStamina = stamina;
-			stamina += 1.5f; // TODO: make this configurable
-			if(lastStamina % 30f > stamina % 30f)
-				provider.playSound(SoundRegistry.STAMINA_REGEN, 0.2f, 1f + stamina / 30f * 0.1f);
-		}
 	}
 }

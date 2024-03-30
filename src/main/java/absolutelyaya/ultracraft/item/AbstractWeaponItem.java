@@ -1,14 +1,19 @@
 package absolutelyaya.ultracraft.item;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.Weapon;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
+import absolutelyaya.ultracraft.components.player.ILoadoutComponent;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import io.netty.buffer.Unpooled;
+import mod.azure.azurelib.core.keyframe.event.SoundKeyframeEvent;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -17,7 +22,10 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.joml.Vector2i;
@@ -35,22 +43,23 @@ public abstract class AbstractWeaponItem extends Item
 	
 	protected boolean isCanFirePrimary(PlayerEntity user)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(user).getGunCooldownManager();
+		GunCooldownManager cdm = UltraComponents.WINGED.get(user).getGunCooldownManager();
 		return (user instanceof WingedPlayerEntity && cdm.isUsable(this, GunCooldownManager.PRIMARY)) && user.isAlive();
 	}
 	
 	public boolean onPrimaryFire(World world, PlayerEntity user, Vec3d userVelocity)
 	{
 		((LivingEntityAccessor)user).addRecoil(recoil);
+		Ultracraft.screenshake(user, recoil / 135f);
 		return true;
 	}
 	
-	public void onPrimaryFireStart(World world, PlayerEntity user)
+	public void onPrimaryFireStart(World world, PlayerEntity user, int slot)
 	{
 	
 	}
 	
-	public void onPrimaryFireStop(World world, PlayerEntity user)
+	public void onPrimaryFireStop(World world, PlayerEntity user, int slot)
 	{
 	
 	}
@@ -58,13 +67,21 @@ public abstract class AbstractWeaponItem extends Item
 	public void onAltFire(World world, PlayerEntity user)
 	{
 		((LivingEntityAccessor)user).addRecoil(altRecoil);
+		Ultracraft.screenshake(user, altRecoil / 135f);
+	}
+	
+	protected boolean isMainHandstack(ItemStack stack, Entity entity)
+	{
+		if(entity instanceof PlayerEntity player)
+			return stack.equals(player.getMainHandStack());
+		return true;
 	}
 	
 	@Override
 	public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected)
 	{
 		super.inventoryTick(stack, world, entity, slot, selected);
-		if(world.isClient && UltraComponents.WINGED_ENTITY.get(entity).isPrimaryFiring() && selected &&
+		if(world.isClient && UltraComponents.WINGED.get(entity).isPrimaryFiring() && selected &&
 				   onPrimaryFire(world, (PlayerEntity)entity, entity.getVelocity()))
 		{
 			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
@@ -89,14 +106,24 @@ public abstract class AbstractWeaponItem extends Item
 	@Override
 	public boolean isItemBarVisible(ItemStack stack)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		return !Ultracraft.SERVER_SIDE && shouldShowCooldown(stack);
+	}
+	
+	protected boolean shouldShowCooldown(ItemStack stack)
+	{
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		return !cdm.isUsable(getCooldownClass(stack), GunCooldownManager.PRIMARY);
 	}
 	
 	@Override
 	public int getItemBarStep(ItemStack stack)
 	{
-		GunCooldownManager cdm = UltraComponents.WINGED_ENTITY.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		return Ultracraft.SERVER_SIDE ? 14 : getWeaponCooldownStep(stack);
+	}
+	
+	protected int getWeaponCooldownStep(ItemStack stack)
+	{
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		return (int)(cdm.getCooldownPercent(getCooldownClass(stack), GunCooldownManager.PRIMARY) * 14);
 	}
 	
@@ -129,15 +156,21 @@ public abstract class AbstractWeaponItem extends Item
 		return true;
 	}
 	
-	abstract Item[] getVariants();
+	abstract int getSwitchCooldown(ItemStack stack);
 	
-	abstract int getSwitchCooldown();
-	
-	static Item getNextVariant(ItemStack stack, IProgressionComponent progression)
+	static Item getNextVariant(ItemStack stack, IProgressionComponent progression, ILoadoutComponent loadout)
 	{
 		if(!(stack.getItem() instanceof AbstractWeaponItem weapon))
 			return null;
-		Item[] variants = weapon.getVariants();
+		Identifier[] ids = loadout.getLoadoutForWeapon(weapon.getWeaponType());
+		Item[] variants = new Item[ids.length];
+		for (int i = 0; i < ids.length; i++)
+		{
+			Item item = Registries.ITEM.get(ids[i]);
+			if(item == null)
+				continue;
+			variants[i] = item;
+		}
 		int start = -1;
 		for (int i = 0; i < variants.length; i++)
 		{
@@ -150,7 +183,8 @@ public abstract class AbstractWeaponItem extends Item
 		for (int i = 1; i < variants.length; i++)
 		{
 			Item item = variants[(start + i) % (variants.length)];
-			if(!item.equals(stack.getItem()) && progression.isOwned(Registries.ITEM.getId(item)))
+			if(!item.equals(stack.getItem()) && item instanceof AbstractWeaponItem w && progression.isOwned(w.getProgressionEntry()) &&
+					   (!w.isAlternate() || w.getWeaponType().altId == null || progression.isOwned(w.getWeaponType().altId)))
 				return item;
 		}
 		return null;
@@ -165,25 +199,33 @@ public abstract class AbstractWeaponItem extends Item
 			return;
 		}
 		ItemStack stack = player.getMainHandStack();
-		if(!(stack.getItem() instanceof AbstractWeaponItem))
+		ILoadoutComponent loadout = UltraComponents.LOADOUT.get(player);
+		if(!(stack.getItem() instanceof AbstractWeaponItem lastWeapon && loadout.isInLoadout(lastWeapon)))
 			return;
-		IProgressionComponent progression = UltraComponents.PROGRESSION.get(player);
-		Item nextItem = getNextVariant(stack, progression);
-		if(nextItem == null)
-			return;
+		lastWeapon.onBeforeSwitch(player.getWorld(), player, player.getInventory().selectedSlot);
 		stack.getItem().onStoppedUsing(stack, player.getWorld(), player, 999);
-		ItemStack nextStack = new ItemStack(nextItem);
+		IProgressionComponent progression = UltraComponents.PROGRESSION.get(player);
+		Item nextItem = getNextVariant(stack, progression, loadout);
+		ItemStack nextStack = replaceVariant(stack, player, player.getInventory().selectedSlot, nextItem);
+		if(nextItem instanceof AbstractWeaponItem weapon)
+		{
+			UltraComponents.WINGED.get(player).getGunCooldownManager().setCooldown(weapon, weapon.getSwitchCooldown(nextStack), GunCooldownManager.PRIMARY);
+			weapon.onSwitch(player.getWorld(), player, player.getInventory().selectedSlot);
+		}
+	}
+	
+	public static ItemStack replaceVariant(ItemStack stack, PlayerEntity player, int slot, Item replacement)
+	{
+		if(replacement == null)
+			return null;
+		ItemStack nextStack = new ItemStack(replacement);
 		if(stack.hasNbt())
 		{
 			NbtCompound nbt = stack.getOrCreateNbt();
 			nextStack.setNbt(nbt);
 		}
-		player.getInventory().main.set(player.getInventory().selectedSlot, nextStack);
-		if(nextItem instanceof AbstractWeaponItem weapon)
-		{
-			UltraComponents.WINGED_ENTITY.get(player).getGunCooldownManager().setCooldown(weapon, weapon.getSwitchCooldown(), GunCooldownManager.PRIMARY);
-			weapon.onSwitch(player, player.getWorld());
-		}
+		player.getInventory().main.set(slot, nextStack);
+		return nextStack;
 	}
 	
 	public Class<? extends AbstractWeaponItem> getCooldownClass()
@@ -215,5 +257,38 @@ public abstract class AbstractWeaponItem extends Item
 		return 0;
 	}
 	
-	protected void onSwitch(PlayerEntity user, World world) {}
+	public void onBeforeSwitch(World world, PlayerEntity user, int newSlot) {}
+	
+	public void onSwitch(World world, PlayerEntity user, int newSlot) {}
+	
+	protected void handleAnimSound(SoundKeyframeEvent<? extends AbstractWeaponItem> keyframe)
+	{
+		SoundEvent event = Registries.SOUND_EVENT.get(new Identifier(Ultracraft.MOD_ID, keyframe.getKeyframeData().getSound()));
+		ClientPlayerEntity player = MinecraftClient.getInstance().player;
+		if(player.getMainHandStack().getItem().equals(keyframe.getAnimatable()))
+			player.playSound(event, SoundCategory.PLAYERS, 1f, 1f + (player.getRandom().nextFloat() - 0.5f) * 0.1f);
+	}
+	
+	/**
+	 * whether the use-key can be held down to repeatedly perform the alt fire action
+	 */
+	public boolean canHoldUse()
+	{
+		return true;
+	}
+	
+	public Weapon getWeaponType()
+	{
+		return Weapon.UNIQUE;
+	}
+	
+	public Identifier getProgressionEntry()
+	{
+		return Registries.ITEM.getId(this);
+	}
+	
+	protected boolean isAlternate()
+	{
+		return false;
+	}
 }

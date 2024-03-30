@@ -6,9 +6,9 @@
 				"identifier": "geometry.cerberus_block",
 				"texture_width": 64,
 				"texture_height": 64,
-				"visible_bounds_width": 3,
-				"visible_bounds_height": 3.5,
-				"visible_bounds_offset": [0, 1.25, 0]
+				"visible_bounds_width": 4,
+				"visible_bounds_height": 5.5,
+				"visible_bounds_offset": [0, 2.25, 0]
 			},
 			"bones": [
 				{
@@ -61,7 +61,8 @@
 					"parent": "right_arm_lower",
 					"pivot": [-6, 12.5, -16],
 					"cubes": [
-						{"origin": [-7.5, 11, -19], "size": [3, 3, 3], "uv": [24, 20]}
+						{"origin": [-7.5, 11, -19], "size": [3, 3, 3], "uv": [24, 20]},
+						{"origin": [-7.5, 11, -19], "size": [3, 3, 3], "inflate": 0.25, "uv": [36, 20]}
 					]
 				},
 				{

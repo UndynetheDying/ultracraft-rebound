@@ -1,25 +1,28 @@
 package absolutelyaya.ultracraft.entity.demon;
 
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
+import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
+import absolutelyaya.ultracraft.entity.goal.TargetPlayerGoal;
 import absolutelyaya.ultracraft.entity.projectile.CancerBulletEntity;
+import absolutelyaya.ultracraft.registry.EntityRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import mod.azure.azurelib.animatable.GeoEntity;
 import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
@@ -52,7 +55,7 @@ public class RodentEntity extends AbstractUltraHostileEntity implements GeoEntit
 	{
 		goalSelector.add(0, new RodentAttackGoal(this));
 		
-		targetSelector.add(0, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+		targetSelector.add(0, new TargetPlayerGoal(this));
 	}
 	
 	@Override
@@ -60,7 +63,7 @@ public class RodentEntity extends AbstractUltraHostileEntity implements GeoEntit
 	{
 		super.initDataTracker();
 		dataTracker.startTracking(SIZE, 0);
-		dataTracker.startTracking(ATTACK_COOLDOWN, 0);
+		dataTracker.startTracking(ATTACK_COOLDOWN, 50);
 	}
 	
 	@Override
@@ -69,6 +72,15 @@ public class RodentEntity extends AbstractUltraHostileEntity implements GeoEntit
 		super.onTrackedDataSet(data);
 		if (data.equals(SIZE))
 			calculateDimensions();
+	}
+	
+	public static RodentEntity spawn(World world, Vec3d pos, int size)
+	{
+		RodentEntity rodent = new RodentEntity(EntityRegistry.RODENT, world);
+		rodent.setPosition(pos);
+		rodent.setSize(size);
+		world.spawnEntity(rodent);
+		return rodent;
 	}
 	
 	@Override
@@ -193,6 +205,20 @@ public class RodentEntity extends AbstractUltraHostileEntity implements GeoEntit
 	{
 		if(getSize() == 0)
 			super.takeKnockback(strength, x, z);
+	}
+	
+	@Override
+	public boolean damage(DamageSource source, float amount)
+	{
+		if(source.isOf(DamageSources.CANCER))
+			return false;
+		return super.damage(source, amount);
+	}
+	
+	@Override
+	public boolean isFireImmune()
+	{
+		return true;
 	}
 	
 	static class RodentAttackGoal extends Goal

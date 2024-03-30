@@ -1,32 +1,26 @@
 package absolutelyaya.ultracraft.client.gui.terminal;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.Weapon;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
 import absolutelyaya.ultracraft.client.gui.terminal.elements.Button;
 import absolutelyaya.ultracraft.client.gui.terminal.elements.Sprite;
 import absolutelyaya.ultracraft.client.gui.terminal.elements.SpriteListElement;
 import absolutelyaya.ultracraft.client.gui.terminal.elements.Tab;
+import absolutelyaya.ultracraft.components.player.ILoadoutComponent;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
 import absolutelyaya.ultracraft.data.UltraRecipeManager;
 import absolutelyaya.ultracraft.recipe.UltraRecipe;
-import absolutelyaya.ultracraft.registry.PacketRegistry;
-import absolutelyaya.ultracraft.util.InventoryUtil;
-import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
-import net.minecraft.util.collection.DefaultedList;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
@@ -37,33 +31,22 @@ import java.util.Map;
 public class WeaponsTab extends Tab
 {
 	static final Identifier TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/weapon_icons.png");
-	static final Identifier[] REVOLVERS = new Identifier[]{
-			new Identifier(Ultracraft.MOD_ID, "pierce_revolver"),
-			new Identifier(Ultracraft.MOD_ID, "marksman_revolver"),
-			new Identifier(Ultracraft.MOD_ID, "sharpshooter_revolver")
-	};
-	static final Identifier[] SHOTGUNS = new Identifier[]{
-			new Identifier(Ultracraft.MOD_ID, "core_shotgun"),
-			new Identifier(Ultracraft.MOD_ID, "pump_shotgun")
-	};
-	static final Identifier[] NAILGUNS = new Identifier[]{
-			new Identifier(Ultracraft.MOD_ID, "attractor_nailgun")
-	};
+	static final Vector2i TEXTURE_SIZE = new Vector2i(384, 384);
 	
 	Button returnButton = new Button(Button.RETURN_LABEL,
 			new Vector2i(-6 - textRenderer.getWidth(Text.translatable(Button.RETURN_LABEL).getString()), 96 - textRenderer.fontHeight),
 			"mainmenu", 0, false);
 	Button craftButton = new Button("terminal.craft", new Vector2i(150, 96 - textRenderer.fontHeight), "craft", 0, true);
-	final String[] weaponCategories = new String[] { "revolver", "shotgun", "nailgun", "railcannon", "rocket_launcher" };
-	Button blueWeapon = new Button(new Sprite(TEXTURE, new Vector2i(0, 0), 0.001f, new Vector2i(48, 32), new Vector2i(0, 0), new Vector2i(192, 192)),
+	Button blueWeapon = new Button(new Sprite(TEXTURE, new Vector2i(0, 0), 0.001f, new Vector2i(48, 32), new Vector2i(0, 0), TEXTURE_SIZE),
 			new Vector2i(50, 23), "weapon", 0, true);
-	Button greenWeapon = new Button(new Sprite(TEXTURE, new Vector2i(0, 0), 0.001f, new Vector2i(48, 32), new Vector2i(48, 0), new Vector2i(192, 192)),
+	Button greenWeapon = new Button(new Sprite(TEXTURE, new Vector2i(0, 0), 0.001f, new Vector2i(48, 32), new Vector2i(48, 0), TEXTURE_SIZE),
 			new Vector2i(26, 58), "weapon", 1, true);
-	Button redWeapon = new Button(new Sprite(TEXTURE, new Vector2i(0, 0), 0.001f, new Vector2i(48, 32), new Vector2i(96, 0), new Vector2i(192, 192)),
+	Button redWeapon = new Button(new Sprite(TEXTURE, new Vector2i(0, 0), 0.001f, new Vector2i(48, 32), new Vector2i(96, 0), TEXTURE_SIZE),
 			new Vector2i(75, 58), "weapon", 2, true);
+	Button loadoutButton = new Button("terminal.loadout", new Vector2i(-98, 96 - textRenderer.fontHeight), "loadout", 2, false);
 	List<Button> weaponCategoryButtons = new ArrayList<>();
-	int selectedCategory = -1;
-	Identifier selectedWeapon;
+	Weapon selectedCategory = null;
+	int selectedWeapon;
 	UltraRecipe selectedRecipe;
 	SpriteListElement ingredientList = new SpriteListElement(94, 4, 16);
 	
@@ -76,6 +59,7 @@ public class WeaponsTab extends Tab
 	public void init(TerminalBlockEntity terminal)
 	{
 		super.init(terminal);
+		Weapon[] weaponCategories = Weapon.values();
 		for (int i = 0; i < weaponCategories.length; i++)
 		{
 			String t = "terminal.weapon." + weaponCategories[i];
@@ -92,21 +76,15 @@ public class WeaponsTab extends Tab
 		buttons.add(blueWeapon);
 		buttons.add(greenWeapon);
 		buttons.add(redWeapon);
+		buttons.add(loadoutButton);
 		ingredientList.setSelectable(false);
 		
 		onButtonClicked("select", 0);
 	}
 	
-	boolean unlockedAny(String type)
+	boolean unlockedAny(Weapon type)
 	{
-		IProgressionComponent progression = UltraComponents.PROGRESSION.get(MinecraftClient.getInstance().player);
-		return switch (type)
-		{
-			case "revolver" -> progression.isUnlocked(REVOLVERS[0]) || progression.isUnlocked(REVOLVERS[1]) || progression.isUnlocked(REVOLVERS[2]);
-			case "shotgun" -> progression.isUnlocked(SHOTGUNS[0]) || progression.isUnlocked(SHOTGUNS[1]);
-			case "nailgun" -> progression.isUnlocked(NAILGUNS[0]);
-			default -> false;
-		};
+		return type.isAnyUnlocked(MinecraftClient.getInstance().player);
 	}
 	
 	@Override
@@ -117,8 +95,8 @@ public class WeaponsTab extends Tab
 		GUI.drawBox(buffers, matrices, 101, 0, 1, 100, 0xffffffff, 0.0005f);
 		drawButtons(matrices, terminal, buffers);
 		//the two arrows
-		GUI.drawSprite(buffers, matrices, TEXTURE, new Vector2i(11, 36), 0.002f, new Vector2i(0, 139), new Vector2i(13, 20), new Vector2i(192, 192), terminal.getTextColor());
-		GUI.drawSprite(buffers, matrices, TEXTURE, new Vector2i(76, 36), 0.002f, new Vector2i(14, 139), new Vector2i(13, 20), new Vector2i(192, 192), terminal.getTextColor());
+		GUI.drawSprite(buffers, matrices, TEXTURE, new Vector2i(11, 36), 0.002f, new Vector2i(0, 139), new Vector2i(13, 20), TEXTURE_SIZE, terminal.getTextColor());
+		GUI.drawSprite(buffers, matrices, TEXTURE, new Vector2i(76, 36), 0.002f, new Vector2i(14, 139), new Vector2i(13, 20), TEXTURE_SIZE, terminal.getTextColor());
 		//ingredients
 		if(selectedRecipe != null)
 			GUI.drawSpriteList(buffers, matrices, 104, 2, ingredientList);
@@ -132,30 +110,18 @@ public class WeaponsTab extends Tab
 		}
 	}
 	
-	Identifier[] getWeaponListForType(int idx)
-	{
-		if(idx < 0 || idx > weaponCategories.length)
-			return new Identifier[]{};
-		return switch(weaponCategories[idx])
-		{
-			case "revolver" -> REVOLVERS;
-			case "shotgun" -> SHOTGUNS;
-			case "nailgun" -> NAILGUNS;
-			default -> new Identifier[]{};
-		};
-	}
-	
 	@Override
 	public boolean onButtonClicked(String action, int value)
 	{
 		IProgressionComponent progression = UltraComponents.PROGRESSION.get(MinecraftClient.getInstance().player);
+		ILoadoutComponent loadout = UltraComponents.LOADOUT.get(MinecraftClient.getInstance().player);
 		if(action.equals("select"))
 		{
 			updateTab(value, progression);
 			return true;
 		}
 		
-		Identifier[] selectedWeaponTypeIds = getWeaponListForType(selectedCategory);
+		Identifier[] selectedWeaponTypeIds = selectedCategory.ids;
 		switch(action)
 		{
 			case "weapon" -> {
@@ -167,19 +133,17 @@ public class WeaponsTab extends Tab
 					craftButton.setClickable(false);
 					return true;
 				}
-				PlayerEntity player = MinecraftClient.getInstance().player;
-				if(progression.isOwned(selectedWeapon) && !isResultTypeHeld())
+				Identifier itemID = selectedCategory.ids[selectedWeapon];
+				if(progression.isOwned(itemID))
+					loadout.tryDispenseWeapon(selectedCategory, itemID);
+				else
 				{
-					PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-					buf.writeIdentifier(selectedWeapon);
-					ClientPlayNetworking.send(PacketRegistry.TERMINAL_WEAPON_DISPENSE_PACKET_ID, buf);
-					player.giveItemStack(Registries.ITEM.get(selectedWeapon).getDefaultStack());
-					refreshTab();
-					return true;
+					PlayerEntity player = MinecraftClient.getInstance().player;
+					if(selectedRecipe.canCraft(player) <= 1)
+						return true;
+					selectedRecipe.craft(player);
 				}
-				if(selectedRecipe.canCraft(player) <= 1)
-					return true;
-				selectedRecipe.craft(player);
+				refreshTab();
 				return true;
 			}
 			default -> {
@@ -188,48 +152,39 @@ public class WeaponsTab extends Tab
 		}
 	}
 	
-	boolean isResultTypeHeld()
+	boolean isResultItemInLoadout(ILoadoutComponent loadout)
 	{
-		for (Identifier weapon : getWeaponListForType(selectedCategory))
-		{
-			PlayerEntity player = MinecraftClient.getInstance().player;
-			PlayerInventory inv = player.getInventory();
-			Item outputItem = Registries.ITEM.get(weapon);
-			if(inv.offHand.get(0).isOf(outputItem))
-				return true;
-			DefaultedList<ItemStack> invList = inv.main;
-			if(outputItem != null && InventoryUtil.containsItem(invList, outputItem, 1))
-				return true;
-		}
-		return false;
+		Identifier id = selectedCategory.ids[selectedWeapon];
+		return loadout.isInLoadout(selectedCategory, id) || loadout.isAltInLoadout(selectedCategory, id);
 	}
 	
 	public void updateTab(int tab, IProgressionComponent progression)
 	{
-		if(selectedCategory >= 0)
-			weaponCategoryButtons.get(selectedCategory).getPos().add(5, 0);
+		if(selectedCategory != null)
+			weaponCategoryButtons.get(selectedCategory.ordinal()).getPos().add(5, 0);
 		weaponCategoryButtons.get(tab).getPos().sub(5, 0);
-		selectedCategory = tab;
+		selectedCategory = Weapon.values()[tab];
 		
 		blueWeapon.getSprite().setUv(new Vector2i(0, 32 * tab));
 		greenWeapon.getSprite().setUv(new Vector2i(48, 32 * tab));
 		redWeapon.getSprite().setUv(new Vector2i(96, 32 * tab));
 		
-		Identifier[] selectedWeaponTypeIds = getWeaponListForType(tab);
-		updateWeaponButton(blueWeapon, 0, selectedWeaponTypeIds, progression);
-		updateWeaponButton(greenWeapon, 1, selectedWeaponTypeIds, progression);
-		updateWeaponButton(redWeapon, 2, selectedWeaponTypeIds, progression);
+		Identifier[] selectedWeaponTypeIds = selectedCategory.ids;
+		updateWeaponButton(blueWeapon, 0, progression);
+		updateWeaponButton(greenWeapon, 1, progression);
+		updateWeaponButton(redWeapon, 2, progression);
 		updateSelectedWeapon(selectedWeaponTypeIds, 0, progression);
 	}
 	
 	public void refreshTab()
 	{
-		updateTab(selectedCategory, UltraComponents.PROGRESSION.get(MinecraftClient.getInstance().player));
+		updateTab(selectedCategory.ordinal(), UltraComponents.PROGRESSION.get(MinecraftClient.getInstance().player));
 	}
 	
-	void updateWeaponButton(Button button, int idx, Identifier[] selectedWeaponTypeIds, IProgressionComponent progression)
+	void updateWeaponButton(Button button, int idx, IProgressionComponent progression)
 	{
-		if(selectedWeaponTypeIds.length < (idx + 1) || !progression.isUnlocked(selectedWeaponTypeIds[idx]))
+		Identifier[] ids = selectedCategory.ids;
+		if(ids.length <= idx || !progression.isUnlocked(ids[idx]))
 		{
 			button.getSprite().setUv(new Vector2i(144, 160));
 			button.setClickable(false).setColor(0xff888888);
@@ -240,42 +195,48 @@ public class WeaponsTab extends Tab
 	
 	boolean updateSelectedWeapon(Identifier[] selectedWeaponTypeIds, int idx, IProgressionComponent progression)
 	{
-		if(selectedWeaponTypeIds.length < idx + 1)
+		if (selectedWeaponTypeIds.length < idx + 1)
 			return true;
+		ILoadoutComponent loadout = UltraComponents.LOADOUT.get(MinecraftClient.getInstance().player);
 		List<Pair<Sprite, String>> ingredients = ingredientList.getElements();
 		ingredients.clear();
-		if(idx == -1)
+		Identifier weaponId = null;
+		if (idx == -1)
 		{
-			selectedWeapon = null;
+			selectedWeapon = -1;
 			selectedRecipe = null;
 		}
 		else
 		{
-			if(!progression.isUnlocked(selectedWeaponTypeIds[idx]))
+			if (!progression.isUnlocked(selectedWeaponTypeIds[idx]))
 			{
-				if(!selectedWeaponTypeIds[idx].equals(REVOLVERS[0]))
+				if (!selectedWeaponTypeIds[idx].equals(Weapon.REVOLVER.ids[0]))
 					refreshTab();
 				craftButton.setClickable(selectedRecipe != null);
 				return true;
 			}
-			selectedWeapon = selectedWeaponTypeIds[idx];
-			selectedRecipe = UltraRecipeManager.getRecipe(selectedWeapon);
-			if(selectedRecipe != null)
+			weaponId = selectedWeaponTypeIds[idx];
+			selectedWeapon = selectedCategory.getIdxForId(weaponId);
+			selectedRecipe = UltraRecipeManager.getRecipe(weaponId);
+			if (selectedRecipe != null)
 			{
 				Map<Item, Integer> materials = selectedRecipe.getMaterials();
-				materials.forEach((item, amount) -> {
+				materials.forEach((item, amount) ->
+				{
 					Identifier id = Registries.ITEM.getId(item);
 					ingredients.add(new Pair<>(new Sprite(new Identifier(id.getNamespace(), "textures/item/" + id.getPath() + ".png"),
 							new Vector2i(0, 0), 0.001f, new Vector2i(16, 16), new Vector2i(0, 0), new Vector2i(16, 16)),
 							amount + " " + Text.translatable(item.getTranslationKey()).getString() + (amount > 0 ? "s" : "")));
 				});
-				if(isResultTypeHeld() && progression.isOwned(selectedWeapon))
+				if (loadout.isWeaponTypeHeld(selectedCategory) && progression.isOwned(weaponId))
 					craftButton.setLabel(Text.translatable("terminal.held").getString());
+				else if (!isResultItemInLoadout(loadout))
+					craftButton.setLabel(Text.translatable("terminal.not-equipped").getString());
 				else
-					craftButton.setLabel(Text.translatable("terminal." + (progression.isOwned(selectedWeapon) ? "dispense" : "craft")).getString());
+					craftButton.setLabel(Text.translatable("terminal." + (progression.isOwned(weaponId) ? "dispense" : "craft")).getString());
 			}
 		}
-		boolean clickable = selectedRecipe != null && !(isResultTypeHeld() && progression.isOwned(selectedWeapon));
+		boolean clickable = selectedRecipe != null && !(loadout.isWeaponTypeHeld(selectedCategory) && progression.isOwned(weaponId)) && isResultItemInLoadout(loadout);
 		craftButton.setClickable(clickable).setColor(clickable ? 0xffffffff : 0xff888888);
 		return true;
 	}

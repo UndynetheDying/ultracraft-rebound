@@ -5,11 +5,12 @@
   "name": "Ultracraft",
   "description": "modmenu.descriptionTranslation.ultracraft",
   "authors": [
-    "Absolutelyaya", "SFX Help: 8BitBunnie"
+    "Absolutelyaya", "Structure Help: AshenWulf", "SFX Help: 8BitBunnie"
   ],
   "contact": {
     "issues": "https://github.com/absolutelyaya/ultracraft/issues",
-    "sources": "https://github.com/absolutelyaya/ultracraft"
+    "sources": "https://github.com/absolutelyaya/ultracraft",
+    "homepage": "https://absolutelyaya.neocities.org/"
   },
   "license": "MIT",
   "icon": "assets/ultracraft/icon.png",
@@ -37,22 +38,29 @@
       "absolutelyaya.ultracraft.compat.REIClientPlugin"
     ],
     "cardinal-components-entity": [
-      "absolutelyaya.ultracraft.UltraComponents"
+      "absolutelyaya.ultracraft.components.UltraComponents"
     ],
     "cardinal-components-level": [
-      "absolutelyaya.ultracraft.UltraComponents"
+      "absolutelyaya.ultracraft.components.UltraComponents"
+    ],
+    "cardinal-components-world": [
+      "absolutelyaya.ultracraft.components.UltraComponents"
+    ],
+    "cybergrind": [
+      "absolutelyaya.ultracraft.api.CoreCybergrindInitializer"
     ]
   },
   "mixins": [
     "ultracraft.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.14.14",
+    "fabricloader": ">=0.15.6",
     "fabric": "*",
     "minecraft": "1.20.1"
   },
   "recommends": {
-    "lambdynlights": "*"
+    "lambdynlights": "*",
+    "modmenu": "*"
   },
   "custom": {
     "modmenu": {
@@ -67,7 +75,14 @@
       "ultracraft:progression",
       "ultracraft:easter",
       "ultracraft:arms",
-      "ultracraft:global_data"
+      "ultracraft:style",
+      "ultracraft:hivel",
+      "ultracraft:loadout",
+      "ultracraft:editor",
+      "ultracraft:level",
+      "ultracraft:global_data",
+      "ultracraft:dimension_data",
+      "ultracraft:living"
     ]
   },
   "accessWidener": "ultracraft.accesswidener"

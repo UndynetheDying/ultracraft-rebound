@@ -1,21 +1,24 @@
 package absolutelyaya.ultracraft.entity.projectile;
 
 import absolutelyaya.ultracraft.ExplosionHandler;
+import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
 import absolutelyaya.ultracraft.client.UltracraftClient;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
+import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
-import absolutelyaya.ultracraft.registry.GameruleRegistry;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
@@ -92,9 +95,9 @@ public class ShotgunPelletEntity extends HellBulletEntity implements ProjectileE
 	{
 		Entity entity = entityHitResult.getEntity();
 		boolean parried = ((ProjectileEntityAccessor)this).isParried();
-		if(!entity.getClass().equals(ignore))
+		if(!entity.getClass().equals(ignore) && !isOwner(entity))
 			entity.damage(DamageSources.get(getWorld(), DamageSources.SHOTGUN, getOwner()),
-					damage * getWorld().getGameRules().getInt(GameruleRegistry.SHOTGUN_DAMAGE));
+					damage * ServerConfig.INSTANCE.shotgunDamage.getValue());
 		if(parried)
 			onParriedCollision(entityHitResult);
 	}
@@ -120,7 +123,9 @@ public class ShotgunPelletEntity extends HellBulletEntity implements ProjectileE
 	public void onParriedCollision(HitResult hitResult)
 	{
 		Vec3d pos = hitResult.getPos();
-		ExplosionHandler.explosion(null, getWorld(), pos, DamageSources.get(getWorld(), DamageSources.PROJBOOST, parrier), 3.5f, 2.3f, 3f, true);
+		ExplosionHandler.explosion(null, getWorld(), pos, DamageSources.get(getWorld(), DamageSources.PROJBOOST, parrier), 7f, 4.6f, 3f, true);
+		if(hitResult.getType().equals(HitResult.Type.ENTITY) && isParried())
+			UltraComponents.STYLE.get(parrier).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "projboost")));
 	}
 	
 	@Override
@@ -148,15 +153,8 @@ public class ShotgunPelletEntity extends HellBulletEntity implements ProjectileE
 	}
 	
 	@Override
-	public void setParried(boolean val, PlayerEntity parrier)
+	public void onKnockedBackbyExplosion(Entity exploder)
 	{
-		if(parrier == getOwner())
-			super.setParried(val, parrier);
-	}
 	
-	@Override
-	public boolean isParriable()
-	{
-		return age < 4;
 	}
 }

@@ -1,16 +1,17 @@
 package absolutelyaya.ultracraft.mixin.client;
 
-import absolutelyaya.ultracraft.UltraComponents;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.block.HellObserverBlockEntity;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.screen.HellObserverScreen;
 import absolutelyaya.ultracraft.client.gui.screen.WingCustomizationScreen;
-import absolutelyaya.ultracraft.components.player.IWingDataComponent;
+import com.chocohead.mm.api.ClassTinkerers;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.client.render.Camera;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Arm;
 import net.minecraft.util.hit.HitResult;
@@ -24,6 +25,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Camera.class)
@@ -53,8 +55,10 @@ public abstract class CameraMixin
 	@Shadow private BlockView area;
 	@Shadow private Entity focusedEntity;
 	@Shadow private boolean thirdPerson;
+	@Shadow private float pitch;
+	
 	Vec3d curOffset;
-	float curYaw, baseYaw, curPitch;
+	float curYaw, baseYaw, curPitch, shakeTime;
 	boolean wasWingCustomizationOpen, wasFocusedOnTerminal;
 	
 	@Inject(method = "update", at = @At("HEAD"), cancellable = true)
@@ -119,16 +123,37 @@ public abstract class CameraMixin
 		if(thirdPerson && f > 0f)
 		{
 			boolean flip = player.getMainArm().equals(Arm.LEFT);
-			IWingDataComponent winged = UltraComponents.WING_DATA.get(player);
-			if(winged.isActive() && player.isSprinting())
+			if(player instanceof WingedPlayerEntity winged && winged.isSliding())
 			{
 				Vec3d offset = rotationize(new Vec3d(1.5f * f, f, -1.5f * f * (flip ? -1 : 1)));
 				HitResult hitResult = area.raycast(new RaycastContext(getPos(), getPos().add(offset), RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, focusedEntity));
 				if(!hitResult.getType().equals(HitResult.Type.MISS))
-					offset = hitResult.getPos().subtract(getPos()).add(rotationize(new Vec3d(0f, 0f, 0.2f * (flip ? -1 : 1))));
+					offset = hitResult.getPos().subtract(getPos()).add(rotationize(new Vec3d(0f, -0.2f, 0.2f * (flip ? -1 : 1))));
 				setPos(new Vec3d(pos.x + offset.x, pos.y + offset.y, pos.z + offset.z));
 			}
 		}
+		if(!(focusedEntity instanceof OtherClientPlayerEntity) && focusedEntity instanceof WingedPlayerEntity winged)
+		{
+			if(winged.getScreenShake() > 0.001f)
+			{
+				if(shakeTime == 0)
+					shakeTime = focusedEntity.getWorld().getRandom().nextFloat() * 6f;
+				applyScreenShake(tickDelta, winged.getScreenShake());
+				winged.addScreenshake(-tickDelta * winged.getScreenShake() / 5f);
+			}
+			else
+				shakeTime = 0f;
+		}
+	}
+	
+	@ModifyArg(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/Camera;setPos(DDD)V"), index = 1)
+	double modifyUpdateDeltaTime(double y)
+	{
+		EntityPose slide = ClassTinkerers.getEnum(EntityPose.class, "SLIDE");
+		if(!(focusedEntity instanceof PlayerEntity player) || !player.getPose().equals(slide))
+			return y;
+		float tickDelta = MinecraftClient.getInstance().getTickDelta();
+		return MathHelper.lerp(tickDelta, focusedEntity.prevY, focusedEntity.getY()) + focusedEntity.getEyeHeight(slide);
 	}
 	
 	Vec3d rotationize(Vec3d vec) //aka apply rotation
@@ -212,5 +237,17 @@ public abstract class CameraMixin
 			curOffset = curOffset.lerp(offset, tickDelta / 4f);
 			setPos(curOffset);
 		}
+	}
+	
+	void applyScreenShake(float tickDelta, float strength)
+	{
+		float delta = MinecraftClient.getInstance().getLastFrameDuration();
+		shakeTime += delta + strength * 0.65f;
+		setRotation(yaw + MathHelper.lerpAngleDegrees(delta * 4f, 0,
+						(float)Math.sin(shakeTime + strength * 2.13f) * strength),
+				pitch + MathHelper.lerpAngleDegrees(delta * 2f, 0,
+						(float)Math.sin(shakeTime + 1.43f + strength * 1.71f) * strength));
+		Vec3d dir = new Vec3d(0f, 0f, -1).rotateX((float)Math.toRadians(-pitch)).rotateY((float)Math.toRadians(-yaw));
+		setPos(pos.add(dir.multiply(strength / 4f)));
 	}
 }

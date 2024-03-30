@@ -4,9 +4,9 @@ import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.DamageTypeTags;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityStatuses;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
@@ -28,7 +28,7 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 	protected static final TrackedData<Integer> HEALTH = DataTracker.registerData(AbstractSkewerEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Integer> SHAKE = DataTracker.registerData(AbstractSkewerEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	
-	protected LivingEntity victim;
+	protected Entity victim;
 	protected int unmovingTicks;
 	
 	protected AbstractSkewerEntity(EntityType<? extends PersistentProjectileEntity> entityType, World world)
@@ -45,7 +45,7 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 		dataTracker.startTracking(GROUND_TIME, 0f);
 		dataTracker.startTracking(IMPACT_YAW, 0f);
 		dataTracker.startTracking(IMPACT_PITCH, 0f);
-		dataTracker.startTracking(HEALTH, 3);
+		dataTracker.startTracking(HEALTH, 2);
 		dataTracker.startTracking(SHAKE, 0);
 	}
 	
@@ -69,9 +69,9 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 				return;
 			}
 			setVelocity(Vec3d.ZERO);
-			prevX = getX();
-			prevY = getY();
-			prevZ = getZ();
+			lastRenderX = prevX = getX();
+			lastRenderY = prevY = getY();
+			lastRenderZ = prevZ = getZ();
 			setPosition(victim.getPos().add(0f, victim.getHeight() / 2, 0f));
 			setYaw(prevYaw = dataTracker.get(IMPACT_YAW));
 			setPitch(prevPitch = dataTracker.get(IMPACT_PITCH));
@@ -111,7 +111,7 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 		return super.getYaw();
 	}
 	
-	public LivingEntity getVictim()
+	public Entity getVictim()
 	{
 		return victim;
 	}
@@ -141,15 +141,14 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 	{
 		if(victim != null)
 			return;
-		if(entityHitResult.getEntity() instanceof LivingEntity living)
-		{
-			victim = living;
-			dataTracker.set(IMPACT_YAW, getYaw());
-			dataTracker.set(IMPACT_PITCH, getPitch());
-			living.damage(DamageSources.get(getWorld(), DamageSources.MAGNET, this, getOwner()), 3.5f);
-			if(this instanceof ProjectileEntityAccessor proj && proj.isParried())
-				proj.onParriedCollision(entityHitResult);
-		}
+		Entity entity = entityHitResult.getEntity();
+		if(entity.isPartOf(owner))
+			return;
+		victim = entity;
+		dataTracker.set(IMPACT_YAW, getYaw());
+		dataTracker.set(IMPACT_PITCH, getPitch());
+		if(this instanceof ProjectileEntityAccessor proj && proj.isParried())
+			proj.onParriedCollision(entityHitResult);
 	}
 	
 	@Override
@@ -165,7 +164,7 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 	{
 		float mult = source.isOf(DamageSources.KNUCKLE_PUNCH) ? 2f : 1f;
 		dataTracker.set(SHAKE, dataTracker.get(SHAKE) + (int)(10 * mult));
-		if((isInGround() || victim != null) && source.isIn(DamageTypeTags.MELEE))
+		if((isInGround() || victim != null) && (source.isIn(DamageTypeTags.MELEE) || source.isIn(DamageTypeTags.PUNCH)))
 		{
 			dataTracker.set(HEALTH, dataTracker.get(HEALTH) - (int)(1 * mult));
 			if(dataTracker.get(HEALTH) <= 0)

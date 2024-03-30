@@ -41,6 +41,7 @@
     "#minecraft:flowers",
     "#minecraft:tall_flowers",
     "minecraft:grass",
-    "ultracraft:vent_cover"
+    "ultracraft:vent_cover",
+    "minecraft:decorated_pot"
   ]
 }

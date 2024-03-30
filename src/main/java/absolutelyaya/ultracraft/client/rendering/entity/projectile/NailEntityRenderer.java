@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.entity.projectile.NailEntity;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
@@ -20,6 +21,7 @@ import org.joml.Quaternionf;
 public class NailEntityRenderer extends EntityRenderer<NailEntity>
 {
 	static final Identifier TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/item/nail.png");
+	static final Identifier TEXTURE_HOT = new Identifier(Ultracraft.MOD_ID, "textures/item/nail_hot.png");
 	
 	public NailEntityRenderer(EntityRendererFactory.Context context)
 	{
@@ -29,7 +31,7 @@ public class NailEntityRenderer extends EntityRenderer<NailEntity>
 	@Override
 	public Identifier getTexture(NailEntity entity)
 	{
-		return TEXTURE;
+		return entity.isHot() ? TEXTURE_HOT : TEXTURE;
 	}
 	
 	@Override
@@ -42,8 +44,11 @@ public class NailEntityRenderer extends EntityRenderer<NailEntity>
 		MinecraftClient client = MinecraftClient.getInstance();
 		ItemRenderer renderer = client.getItemRenderer();
 		ItemStack stack = ItemRegistry.NAIL.getDefaultStack();
+		if(nail.isHot())
+			stack.getOrCreateNbt().putInt("CustomModelData", 1);
 		renderer.renderItem(stack, ModelTransformationMode.THIRD_PERSON_LEFT_HAND, false, matrices, vertexConsumerProvider,
-				getLight(nail, delta), OverlayTexture.DEFAULT_UV, renderer.getModel(stack, nail.getWorld(), null, 0));
+				nail.isHot() ? LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE : getLight(nail, delta), OverlayTexture.DEFAULT_UV,
+				renderer.getModel(stack, nail.getWorld(), null, 0));
 		matrices.pop();
 	}
 }

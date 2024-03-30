@@ -1,10 +1,12 @@
 package absolutelyaya.ultracraft.entity.machine;
 
 import absolutelyaya.ultracraft.ServerHitscanHandler;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.Enrageable;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
-import absolutelyaya.ultracraft.damage.DamageSources;
+import absolutelyaya.ultracraft.damage.DamageTypeTags;
+import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.entity.IAntiCheeseBoss;
 import absolutelyaya.ultracraft.entity.goal.AntiCheeseProximityTargetGoal;
@@ -40,6 +42,8 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.*;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -434,6 +438,8 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 	{
 		dataTracker.set(ENRAGED, true);
 		playSound(SoundRegistry.GENERIC_ENRAGE, 10f, 1f);
+		getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(32), i -> true)
+				.forEach(p -> UltraComponents.STYLE.get(p).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "enrage"))));
 	}
 	
 	void setMovementMode(int i)
@@ -540,7 +546,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 	@Override
 	public boolean damage(DamageSource source, float amount)
 	{
-		if(isPlayingIntro() && !source.isOf(DamageSources.COIN_PUNCH))
+		if(isPlayingIntro() && !source.isIn(DamageTypeTags.V2_BYPASS_INTRO))
 			return false;
 		if(source.isOf(DamageTypes.FALL))
 			return false;
@@ -553,7 +559,8 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 				dataTracker.set(ENRAGED, false);
 				dataTracker.set(WEAPON, ItemStack.EMPTY);
 				setHealth(1f);
-				bossBar.setPercent(0f);
+				if(bossBar != null)
+					bossBar.setPercent(0f);
 				if(source.getAttacker() instanceof LivingEntity living)
 					setAttacker(living);
 				LivingEntity adversary = getPrimeAdversary();

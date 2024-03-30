@@ -4,6 +4,8 @@ import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.effects.RetaliationFogMultiplier;
 import absolutelyaya.ultracraft.registry.BlockRegistry;
 import absolutelyaya.ultracraft.registry.StatusEffectRegistry;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BackgroundRenderer;
@@ -38,10 +40,11 @@ public class BackgroundRendererMixin
 			UltracraftClient.clearBlood();
 	}
 	
-	@Inject(method = "getFogModifier", at = @At("HEAD"), cancellable = true)
-	private static void onGetFogMultiplier(Entity entity, float tickDelta, CallbackInfoReturnable<BackgroundRenderer.StatusEffectFogModifier> cir)
+	@ModifyReturnValue(method = "getFogModifier", at = @At("RETURN"))
+	private static BackgroundRenderer.StatusEffectFogModifier onGetFogMultiplier(BackgroundRenderer.StatusEffectFogModifier original, @Local Entity entity)
 	{
 		if (entity instanceof LivingEntity living && living.hasStatusEffect(StatusEffectRegistry.RETALIATION))
-			cir.setReturnValue(RETALIATION_FOG_MULTIPLIER);
+			return RETALIATION_FOG_MULTIPLIER;
+		return original;
 	}
 }

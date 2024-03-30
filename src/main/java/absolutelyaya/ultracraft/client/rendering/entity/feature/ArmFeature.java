@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.client.rendering.entity.feature;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -31,6 +31,8 @@ public class ArmFeature<T extends PlayerEntity, M extends PlayerEntityModel<T>> 
 	@Override
 	public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch)
 	{
+		if(entity.isInvisible())
+			return;
 		IArmComponent arms = UltraComponents.ARMS.get(entity);
 		byte activeArm = arms.getActiveArm();
 		PlayerEntityModel<T> model = getContextModel();

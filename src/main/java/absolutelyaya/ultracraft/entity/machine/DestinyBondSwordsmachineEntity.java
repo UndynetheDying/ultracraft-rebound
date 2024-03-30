@@ -71,7 +71,7 @@ public class DestinyBondSwordsmachineEntity extends SwordsmachineEntity implemen
 	public static DefaultAttributeContainer.Builder getDefaultAttributes()
 	{
 		return HostileEntity.createMobAttributes()
-					   .add(EntityAttributes.GENERIC_MAX_HEALTH, 90.0d)
+					   .add(EntityAttributes.GENERIC_MAX_HEALTH, 100.0d)
 					   .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3d)
 					   .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 8.0d)
 					   .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 64.0d)
@@ -235,15 +235,14 @@ public class DestinyBondSwordsmachineEntity extends SwordsmachineEntity implemen
 		super.tick();
 		if(dataTracker.get(HEALING) > 0)
 		{
-			bossBar.setPercent(MathHelper.lerp((10 - dataTracker.get(HEALING)) / 10f, 0f, getHealth() / getMaxHealth()));
+			if(bossBar != null)
+				bossBar.setPercent(MathHelper.lerp((10 - dataTracker.get(HEALING)) / 10f, 0f, getHealth() / getMaxHealth()));
 			dataTracker.set(HEALING, dataTracker.get(HEALING) - 1);
 		}
 		if(dataTracker.get(ANIMATION) == ANIMATION_STUN_STOP)
 			dataTracker.set(UN_STUN_TICKS, dataTracker.get(UN_STUN_TICKS) + 1);
 		if(!initalized && getWorld().isChunkLoaded(getChunkPos().x, getChunkPos().z))
-		{
 			bondShip();
-		}
 	}
 	
 	@Override
@@ -343,7 +342,8 @@ public class DestinyBondSwordsmachineEntity extends SwordsmachineEntity implemen
 	public void setCustomName(@Nullable Text name)
 	{
 		super.setCustomName(name);
-		bossBar.setName(name);
+		if(bossBar != null)
+			bossBar.setName(name);
 	}
 	
 	public int getVariant()

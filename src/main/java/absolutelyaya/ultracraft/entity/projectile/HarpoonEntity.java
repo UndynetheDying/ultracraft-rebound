@@ -99,7 +99,7 @@ public class HarpoonEntity extends AbstractSkewerEntity implements IIgnoreSharps
 				despawn();
 			}
 		}
-		if(victim != null && !dataTracker.get(RETURNING))
+		if(victim != null && !dataTracker.get(RETURNING) && !isRemoved())
 		{
 			if(!victim.isAlive())
 			{
@@ -107,7 +107,8 @@ public class HarpoonEntity extends AbstractSkewerEntity implements IIgnoreSharps
 				setReturning(true);
 				return;
 			}
-			victim.addStatusEffect(new StatusEffectInstance(StatusEffectRegistry.IMPALED, 10, 1), this);
+			if(victim instanceof LivingEntity living)
+				living.addStatusEffect(new StatusEffectInstance(StatusEffectRegistry.IMPALED, 10, 1), this);
 		}
 	}
 	
@@ -133,7 +134,8 @@ public class HarpoonEntity extends AbstractSkewerEntity implements IIgnoreSharps
 	public Vec3d getLeashPos(float delta)
 	{
 		float f = MathHelper.RADIANS_PER_DEGREE;
-		return getLerpedPos(delta).add(new Vec3d(0f, 0.2f, -1.5f).rotateX(getPitch() * f).rotateY(getYaw() * f));
+		Vec3d pos = isInGround() ? getPos() : getLerpedPos(delta);
+		return pos.add(new Vec3d(0f, 0.2f, -1.5f).rotateX(getPitch() * f).rotateY(getYaw() * f));
 	}
 	
 	public Vector3f getStartPosition()
@@ -149,7 +151,7 @@ public class HarpoonEntity extends AbstractSkewerEntity implements IIgnoreSharps
 		if(dataTracker.get(RETURNING) || victim != null)
 			return;
 		if(entityHitResult.getEntity() instanceof LivingEntity living)
-			living.damage(DamageSources.get(getWorld(), DamageSources.HARPOON, this, getOwner()), 3.5f);
+			living.damage(DamageSources.get(getWorld(), DamageSources.HARPOON, this, getOwner()), 5f);
 		super.onEntityHit(entityHitResult);
 	}
 	

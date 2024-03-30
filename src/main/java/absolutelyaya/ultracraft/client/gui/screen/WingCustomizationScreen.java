@@ -1,9 +1,9 @@
 package absolutelyaya.ultracraft.client.gui.screen;
 
-import absolutelyaya.ultracraft.UltraComponents;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WidgetAccessor;
-import absolutelyaya.ultracraft.client.Ultraconfig;
+import absolutelyaya.ultracraft.client.ClientConfig;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.widget.WingColorSelectionWidget;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
@@ -185,9 +185,9 @@ public class WingCustomizationScreen extends Screen
 		
 		if(tab == Tab.PRESETS || tab == Tab.PATTERNS)
 		{
+			curpreviewButtonscroll = MathHelper.lerp(delta, curpreviewButtonscroll, targetScroll);
 			previewButtons.forEach(pb -> {
 				WidgetAccessor widget = ((WidgetAccessor)pb);
-				curpreviewButtonscroll = MathHelper.lerp(delta / 10, curpreviewButtonscroll, targetScroll);
 				widget.setOffset(new Vector2i(0, Math.round(WingCustomizationScreen.this.curpreviewButtonscroll)));
 				int y = pb.getY();
 				pb.setAlphaCap(Math.min((y - 22) / 20f, 1f) - MathHelper.clamp(Math.max(y - height + 105, 0) / 20f, 0f, 1f));
@@ -324,7 +324,7 @@ public class WingCustomizationScreen extends Screen
 		if(client.player != null)
 			client.player.setPitch(prevPitch);
 		MenuOpen = false;
-		Ultraconfig config = UltracraftClient.getConfig();
+		ClientConfig config = UltracraftClient.getConfig();
 		config.wingColors[0] = new Vec3d(UltracraftClient.getWingColors()[0]);
 		config.wingColors[1] = new Vec3d(UltracraftClient.getWingColors()[1]);
 		config.wingPreset = UltracraftClient.wingPreset;
@@ -335,7 +335,6 @@ public class WingCustomizationScreen extends Screen
 		
 		IWingDataComponent wings = UltraComponents.WING_DATA.get(client.player);
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-		buf.writeBoolean(wings.isActive());
 		buf.writeVector3f(wings.getColors()[0]);
 		buf.writeVector3f(wings.getColors()[1]);
 		buf.writeString(wings.getPattern());

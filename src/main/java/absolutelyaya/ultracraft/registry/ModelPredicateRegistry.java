@@ -30,5 +30,23 @@ public class ModelPredicateRegistry
 					}
 					return 0;
 				});
+		ModelPredicateProviderRegistry.register(BlockRegistry.SLAB_BLOCK.asItem(), new Identifier(Ultracraft.MOD_ID, "number"),
+				(stack, world, entity, seed) -> {
+					if(!stack.hasNbt())
+						return 0;
+					NbtCompound state = null;
+					if(stack.getNbt().contains("BlockStateTag", NbtElement.COMPOUND_TYPE))
+						state = stack.getNbt().getCompound("BlockStateTag");
+					if(state == null || !state.contains("number", NbtElement.STRING_TYPE))
+						return 0;
+					try
+					{
+						return Integer.parseInt(state.getString("number")) / 10f;
+					}
+					catch (NumberFormatException e)
+					{
+						return 0;
+					}
+				});
 	}
 }

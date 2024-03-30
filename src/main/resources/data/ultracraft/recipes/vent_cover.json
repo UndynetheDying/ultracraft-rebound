@@ -6,11 +6,11 @@
   ],
   "key": {
     "#": {
-      "item": "minecraft:iron_bars"
+      "tag": "c:iron_bars"
     }
   },
   "result": {
     "item": "ultracraft:vent_cover",
-    "count": 1
+    "count": 4
   }
 }

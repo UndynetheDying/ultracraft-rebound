@@ -1,0 +1,37 @@
+{
+  "variants": {
+    "type=0": {
+      "model": "ultracraft:block/bright_panel_single"
+    },
+    "facing=north,type=1": {
+      "model": "ultracraft:block/bright_panel_left"
+    },
+    "facing=north,type=2": {
+      "model": "ultracraft:block/bright_panel_right"
+    },
+    "facing=east,type=1": {
+      "model": "ultracraft:block/bright_panel_left",
+      "y": 90
+    },
+    "facing=east,type=2": {
+      "model": "ultracraft:block/bright_panel_right",
+      "y": 90
+    },
+    "facing=south,type=1": {
+      "model": "ultracraft:block/bright_panel_left",
+      "y": 180
+    },
+    "facing=south,type=2": {
+      "model": "ultracraft:block/bright_panel_right",
+      "y": 180
+    },
+    "facing=west,type=1": {
+      "model": "ultracraft:block/bright_panel_left",
+      "y": 270
+    },
+    "facing=west,type=2": {
+      "model": "ultracraft:block/bright_panel_right",
+      "y": 270
+    }
+  }
+}

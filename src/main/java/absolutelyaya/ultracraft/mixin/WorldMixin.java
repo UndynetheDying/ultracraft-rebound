@@ -1,10 +1,18 @@
 package absolutelyaya.ultracraft.mixin;
 
+import absolutelyaya.ultracraft.block.mapping.RoomBlockEntity;
+import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.components.world.IDimensionDataComponent;
 import absolutelyaya.ultracraft.entity.demon.HideousMassEntity;
 import absolutelyaya.ultracraft.entity.demon.HideousPart;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.function.LazyIterationConsumer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.minecraft.world.entity.EntityLookup;
@@ -14,7 +22,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -24,24 +31,19 @@ public abstract class WorldMixin
 {
 	@Shadow protected abstract EntityLookup<Entity> getEntityLookup();
 	
-	@Inject(method = "getOtherEntities", at = @At(value = "RETURN"), cancellable = true)
-	void onGetOtherEntities(@Nullable Entity except, Box box, Predicate<? super Entity> predicate, CallbackInfoReturnable<List<Entity>> cir)
+	@ModifyReturnValue(method = "getOtherEntities", at = @At(value = "RETURN"))
+	List<Entity> onGetOtherEntities(List<Entity> original, @Local @Nullable Entity except, @Local Box box, @Local Predicate<? super Entity> predicate)
 	{
-		List<Entity> list = cir.getReturnValue();
 		getEntityLookup().forEachIntersects(box, (entity) -> {
 			if(entity instanceof HideousMassEntity mass)
-			{
 				for (HideousPart part : mass.getParts())
-				{
 					if(part.getBoundingBox().intersects(box) && entity != except && predicate.test(part))
-						list.add(part);
-				}
-			}
+						original.add(part);
 		});
-		cir.setReturnValue(list);
+		return original;
 	}
 	
-	@Inject(method = "collectEntitiesByType(Lnet/minecraft/util/TypeFilter;Lnet/minecraft/util/math/Box;Ljava/util/function/Predicate;Ljava/util/List;I)V", at = @At("RETURN"), cancellable = true)
+	@Inject(method = "collectEntitiesByType(Lnet/minecraft/util/TypeFilter;Lnet/minecraft/util/math/Box;Ljava/util/function/Predicate;Ljava/util/List;I)V", at = @At("RETURN"))
 	<T extends Entity> void onGetEntitiesByType(TypeFilter<Entity, T> filter, Box box, Predicate<? super T> predicate, List<? super T> result, int limit, CallbackInfo ci)
 	{
 		getEntityLookup().forEachIntersects(filter, box, (entity) -> {
@@ -58,5 +60,29 @@ public abstract class WorldMixin
 			}
 			return LazyIterationConsumer.NextIteration.CONTINUE;
 		});
+	}
+	
+	@ModifyReturnValue(method = "canPlayerModifyAt", at = @At("RETURN"))
+	boolean onCanPlayerModify(boolean original, @Local PlayerEntity player, @Local BlockPos pos)
+	{
+		World world = (World)(Object)this;
+		IDimensionDataComponent data = UltraComponents.DIMENSION_DATA.get(this);
+		for (BlockPos roomPos : data.getAllMappingRooms())
+		{
+			if(!world.isChunkLoaded(roomPos))
+				continue;
+			if(!(world.getBlockEntity(roomPos) instanceof RoomBlockEntity room))
+			{
+				data.markRoomInvalid(pos);
+				continue;
+			}
+			if(room.isSuppressModifications() && room.getAreaBox().contains(pos.toCenterPos()))
+			{
+				player.sendMessage(Text.translatable("message.limbo.structure.modify-fail"), true);
+				return false;
+			}
+		}
+		data.clearInvalidRooms();
+		return original;
 	}
 }

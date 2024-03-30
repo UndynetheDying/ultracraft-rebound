@@ -3,6 +3,8 @@ package absolutelyaya.ultracraft.entity.husk;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.MeleeInterruptable;
 import absolutelyaya.ultracraft.damage.DamageSources;
+import absolutelyaya.ultracraft.entity.goal.TargetPlayerGoal;
+import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.Entity;
@@ -19,6 +21,7 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.joml.Vector2i;
@@ -41,6 +44,7 @@ public class FilthEntity extends AbstractHuskEntity implements GeoEntity, MeleeI
 	private static final RawAnimation ATTACK_LUNGE_ANIM = RawAnimation.begin().thenLoop("lunge");
 	private static final RawAnimation ATTACK_MOVING_ANIM = RawAnimation.begin().thenLoop("attackMoving");
 	private static final RawAnimation ATTACK_STATIONARY_ANIM = RawAnimation.begin().thenLoop("attackStationary");
+	private static final RawAnimation FALL_ANIM = RawAnimation.begin().thenPlay("fallStart").thenLoop("fall");
 	private final AnimatableInstanceCache cache = AzureLibUtil.createInstanceCache(this);
 	protected static final TrackedData<Boolean> RARE = DataTracker.registerData(FilthEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	protected static final TrackedData<Integer> ATTACK_COOLDOWN = DataTracker.registerData(FilthEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -71,21 +75,27 @@ public class FilthEntity extends AbstractHuskEntity implements GeoEntity, MeleeI
 		goalSelector.add(0, new FilthLungeAttackGoal(this, 1.5f));
 		goalSelector.add(0, new FilthMovingAttackGoal(this, 1.25f));
 		goalSelector.add(0, new FilthStationaryAttackGoal(this, 1f));
-		goalSelector.add(1, new WanderAroundGoal(this, 1.0));
-		goalSelector.add(2, new LookAtEntityGoal(this, LivingEntity.class, 5));
-		goalSelector.add(3, new LookAroundGoal(this));
-		goalSelector.add(4, new WanderAroundFarGoal(this, 1.0));
 		
-		targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+		targetSelector.add(1, new TargetPlayerGoal(this));
+	}
+	
+	public static FilthEntity spawnWithoutAI(World world, Vec3d pos)
+	{
+		FilthEntity filth = new FilthEntity(EntityRegistry.FILTH, world);
+		filth.setPosition(pos);
+		filth.setAiDisabled(true);
+		filth.setOnGround(true);
+		world.spawnEntity(filth);
+		return filth;
 	}
 	
 	public static DefaultAttributeContainer.Builder getDefaultAttributes()
 	{
 		return HostileEntity.createMobAttributes()
-					   .add(EntityAttributes.GENERIC_MAX_HEALTH, 2d)
+					   .add(EntityAttributes.GENERIC_MAX_HEALTH, 1.0d)
 					   .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.4d)
 					   .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6.0d)
-					   .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 64.0d);
+					   .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0d);
 	}
 	
 	private <E extends GeoEntity> PlayState predicate(AnimationState<E> event)
@@ -98,8 +108,16 @@ public class FilthEntity extends AbstractHuskEntity implements GeoEntity, MeleeI
 		{
 			case ANIMATION_IDLE ->
 			{
-				controller.setAnimationSpeed(getVelocity().horizontalLengthSquared() > 0.03 ? 2f : 1f);
-				controller.setAnimation(event.isMoving() ? RUN_ANIM : IDLE_ANIM);
+				if(isOnGround())
+				{
+					controller.setAnimationSpeed(getVelocity().horizontalLengthSquared() > 0.03 ? 2f : 1f);
+					controller.setAnimation(event.isMoving() ? RUN_ANIM : IDLE_ANIM);
+				}
+				else
+				{
+					controller.setAnimationSpeed(2f);
+					controller.setAnimation(FALL_ANIM);
+				}
 			}
 			case ANIMATION_ATTACK_LUNGE -> controller.setAnimation(ATTACK_LUNGE_ANIM);
 			case ANIMATION_ATTACK_MOVING -> controller.setAnimation(ATTACK_MOVING_ANIM);
@@ -141,14 +159,14 @@ public class FilthEntity extends AbstractHuskEntity implements GeoEntity, MeleeI
 	@Override
 	protected void pushAway(Entity entity)
 	{
-		if(!isInAttackAnimation())
+		if(isNotInAttackAnimation())
 			super.pushAway(entity);
 	}
 	
 	@Override
 	public void pushAwayFrom(Entity entity)
 	{
-		if(!isInAttackAnimation())
+		if(isNotInAttackAnimation())
 			super.pushAwayFrom(entity);
 	}
 	
@@ -199,10 +217,10 @@ public class FilthEntity extends AbstractHuskEntity implements GeoEntity, MeleeI
 		return super.cannotDespawn() || isRare();
 	}
 	
-	public boolean isInAttackAnimation()
+	public boolean isNotInAttackAnimation()
 	{
 		byte anim = getAnimation();
-		return anim == ANIMATION_ATTACK_LUNGE || anim == ANIMATION_ATTACK_MOVING || anim == ANIMATION_ATTACK_STATIONARY;
+		return anim != ANIMATION_ATTACK_LUNGE && anim != ANIMATION_ATTACK_MOVING && anim != ANIMATION_ATTACK_STATIONARY;
 	}
 	
 	void delayNearby() //prevent insta-death through Filth Swarms
@@ -214,7 +232,7 @@ public class FilthEntity extends AbstractHuskEntity implements GeoEntity, MeleeI
 		});
 	}
 	
-	static class FilthAttackGoal extends Goal
+	static abstract class FilthAttackGoal extends Goal
 	{
 		final protected FilthEntity mob;
 		final protected float velocity;
@@ -224,6 +242,7 @@ public class FilthEntity extends AbstractHuskEntity implements GeoEntity, MeleeI
 		LivingEntity target;
 		int time;
 		boolean didDamage;
+		double distance;
 		
 		public FilthAttackGoal(FilthEntity mob, float velocity, byte animationID, boolean hop, boolean stopMoving, Vector2i interruptPeriod, Vector2i damagePeriod)
 		{
@@ -234,6 +253,7 @@ public class FilthEntity extends AbstractHuskEntity implements GeoEntity, MeleeI
 			this.stopMoving = stopMoving;
 			this.interruptPeriod = interruptPeriod;
 			this.damagePeriod = damagePeriod;
+			distance = mob.getAttributeBaseValue(EntityAttributes.GENERIC_FOLLOW_RANGE);
 			setControls(EnumSet.of(Control.LOOK, Control.MOVE));
 		}
 		
@@ -244,20 +264,14 @@ public class FilthEntity extends AbstractHuskEntity implements GeoEntity, MeleeI
 			if (target == null || mob.dataTracker.get(ATTACK_COOLDOWN) > 0)
 				return false;
 			double d = mob.squaredDistanceTo(target);
-			if (d > 16.0 * 16.0)
+			if (d > distance * distance)
 				return false;
-			return mob.isOnGround() && !mob.isInAttackAnimation();
+			return mob.isOnGround() && mob.isNotInAttackAnimation();
 		}
 		
-		protected int getApplyVelocityFrame()
-		{
-			return -1;
-		}
+		abstract int getApplyVelocityFrame();
 		
-		protected int getAnimLength()
-		{
-			return 0;
-		}
+		abstract int getAnimLength();
 		
 		@Override
 		public void start()
@@ -310,7 +324,10 @@ public class FilthEntity extends AbstractHuskEntity implements GeoEntity, MeleeI
 		@Override
 		public boolean shouldContinue()
 		{
-			return time < getAnimLength() && mob.squaredDistanceTo(target) < 24.0 * 24.0;
+			if(mob.getWorld().getBlockState(BlockPos.ofFloored(mob.getPos().subtract(0, 0.1f, 0))).isAir() &&
+					   (!hop || time < getApplyVelocityFrame()))
+				return false; //interrupt attacsk in air
+			return time < getAnimLength() && mob.squaredDistanceTo(target) < distance * distance;
 		}
 		
 		@Override
@@ -333,7 +350,7 @@ public class FilthEntity extends AbstractHuskEntity implements GeoEntity, MeleeI
 	{
 		public FilthStationaryAttackGoal(FilthEntity entity, float velocity)
 		{
-			super(entity, velocity, ANIMATION_ATTACK_STATIONARY, false, true, new Vector2i(8, 15), new Vector2i(15, 25));
+			super(entity, velocity, ANIMATION_ATTACK_STATIONARY, false, true, new Vector2i(8, 15), new Vector2i(13, 25));
 		}
 		
 		@Override
@@ -359,7 +376,7 @@ public class FilthEntity extends AbstractHuskEntity implements GeoEntity, MeleeI
 	{
 		public FilthMovingAttackGoal(FilthEntity entity, float velocity)
 		{
-			super(entity, velocity, ANIMATION_ATTACK_MOVING, false, true, new Vector2i(5, 12), new Vector2i(10, 20));
+			super(entity, velocity, ANIMATION_ATTACK_MOVING, false, true, new Vector2i(5, 12), new Vector2i(8, 20));
 		}
 		
 		@Override
@@ -385,7 +402,7 @@ public class FilthEntity extends AbstractHuskEntity implements GeoEntity, MeleeI
 	{
 		public FilthLungeAttackGoal(FilthEntity entity, float velocity)
 		{
-			super(entity, velocity, ANIMATION_ATTACK_LUNGE, true, true, new Vector2i(8, 16), new Vector2i(15, 25));
+			super(entity, velocity, ANIMATION_ATTACK_LUNGE, true, true, new Vector2i(8, 16), new Vector2i(12, 25));
 		}
 		
 		@Override

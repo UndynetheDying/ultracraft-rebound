@@ -12,11 +12,14 @@ import absolutelyaya.ultracraft.entity.projectile.*;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.SpawnRestriction;
+import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.Heightmap;
 
 public class EntityRegistry
 {
@@ -153,6 +156,17 @@ public class EntityRegistry
 					.maxTrackingRange(5).build("progression_item"));
 	
 	public static final TagKey<EntityType<?>> PROJBOOSTABLE = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "projboostable"));
+	public static final TagKey<EntityType<?>> LIVING = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "living"));
+	public static final TagKey<EntityType<?>> NON_LIVING = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "non-living"));
+	public static final TagKey<EntityType<?>> PROJECTILES = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "projectile"));
+	public static final TagKey<EntityType<?>> HUSKS = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "husks"));
+	public static final TagKey<EntityType<?>> MACHINES = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "machines"));
+	public static final TagKey<EntityType<?>> DEMONS = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "demons"));
+	public static final TagKey<EntityType<?>> ANGELS = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "angels"));
+	public static final TagKey<EntityType<?>> BIG_FUNIS = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "funis"));
+	public static final TagKey<EntityType<?>> STREETCLEANER_DODGE = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "streetcleaner_dodge"));
+	public static final TagKey<EntityType<?>> STREETCLEANER_COUNTER = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "streetcleaner_counter"));
+	public static final TagKey<EntityType<?>> EXPLOSION_AFFECTED_PROJECTILES = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "explosion_affected_projectiles"));
 	
 	public static void register()
 	{
@@ -170,5 +184,15 @@ public class EntityRegistry
 		FabricDefaultAttributeRegistry.register(V2, V2Entity.getDefaultAttributes());
 		FabricDefaultAttributeRegistry.register(RODENT, RodentEntity.getDefaultAttributes());
 		FabricDefaultAttributeRegistry.register(GREATER_FILTH, GreaterFilthEntity.getDefaultAttributes());
+		
+		SpawnRestriction.register(FILTH, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
+		SpawnRestriction.register(STRAY, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
+		SpawnRestriction.register(SCHISM, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
+		SpawnRestriction.register(MALICIOUS_FACE, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
+		SpawnRestriction.register(CERBERUS, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
+		SpawnRestriction.register(HIDEOUS_MASS, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
+		SpawnRestriction.register(SWORDSMACHINE, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
+		SpawnRestriction.register(DRONE, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
+		SpawnRestriction.register(STREET_CLEANER, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
 	}
 }

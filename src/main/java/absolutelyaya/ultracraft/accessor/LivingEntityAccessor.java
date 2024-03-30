@@ -9,6 +9,8 @@ public interface LivingEntityAccessor
 {
 	boolean punch();
 	
+	void fakePunch();
+	
 	float getPunchProgress(float tickDelta);
 	
 	boolean IsPunching();
@@ -31,7 +33,7 @@ public interface LivingEntityAccessor
 	
 	float getRecoil();
 	
-	int getGravityReduction();
+	float getGravityModifier();
 	
 	boolean isRicochetHittable();
 	

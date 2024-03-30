@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.mixin;
 
 import absolutelyaya.ultracraft.accessor.ServerWorldAccessor;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
 import net.minecraft.server.world.ServerWorld;
@@ -16,10 +17,11 @@ public class PlayerInteractEntityC2SPacketMixin
 {
 	@Shadow @Final private int entityId;
 	
-	@Inject(method = "getEntity", at = @At("RETURN"), cancellable = true)
-	void onGetEntity(ServerWorld world, CallbackInfoReturnable<Entity> cir)
+	@ModifyReturnValue(method = "getEntity", at = @At("RETURN"))
+	Entity onGetEntity(Entity original, ServerWorld world)
 	{
-		if(cir.getReturnValue() == null)
-			cir.setReturnValue(((ServerWorldAccessor)world).getHideousParts().get(entityId));
+		if(original == null)
+			return ((ServerWorldAccessor)world).getHideousParts().get(entityId);
+		return original;
 	}
 }
