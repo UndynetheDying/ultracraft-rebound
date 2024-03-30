@@ -45,7 +45,7 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 		dataTracker.startTracking(GROUND_TIME, 0f);
 		dataTracker.startTracking(IMPACT_YAW, 0f);
 		dataTracker.startTracking(IMPACT_PITCH, 0f);
-		dataTracker.startTracking(HEALTH, 3);
+		dataTracker.startTracking(HEALTH, 2);
 		dataTracker.startTracking(SHAKE, 0);
 	}
 	
