@@ -75,7 +75,7 @@ public class GameRendererMixin
 			lastFovBonus = 5;
 			return original + 5;
 		}
-		else if(lastFovBonus > 0f)
+		else if(lastFovBonus > 0.001f)
 		{
 			lastFovBonus = MathHelper.lerp(tickDelta / 4f, lastFovBonus, 0f);
 			return original + lastFovBonus;
