@@ -1,6 +1,7 @@
 ## Major Changes
 - Fixed Overheat Nailgun being uncraftable
 - Fixed rare client crash caused by style bonus nullref
+- fixed the last target of a piercing shot not actually taking the damage of all remaining pierces due to I-Frames
 ## Settings & Config
 ## Commands
 ## Tweaks

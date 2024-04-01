@@ -371,8 +371,7 @@ public class ServerHitscanHandler
 				else
 				{
 					//hit the last pierced enemy with up to 10 of the remaining pierce shots. A Pierce revolver shot that hits just one enemy, will damage it 3 times.
-					for (int j = 0; j < Math.min(10, i == entities.size() - 1 && maxHits < 16 ? maxHits + 1 : 1); j++)
-						e.damage(damageSource, damage * getDamageMultipier(type));
+					e.damage(damageSource, damage * getDamageMultipier(type) * Math.min(10, i == entities.size() - 1 && maxHits < 16 ? maxHits + 1 : 1));
 				}
 				if(explodeProjectile && e instanceof ProjectileEntity proj && !(e instanceof IIgnoreSharpshooter || e instanceof ThrownCoinEntity))
 				{
