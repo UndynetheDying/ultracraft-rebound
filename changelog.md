@@ -1,5 +1,6 @@
 ## Major Changes
 - Fixed Overheat Nailgun being uncraftable
+- Fixed rare client crash caused by style bonus nullref
 ## Settings & Config
 ## Commands
 ## Tweaks

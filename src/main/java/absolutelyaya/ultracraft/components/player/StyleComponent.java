@@ -62,6 +62,8 @@ public class StyleComponent implements IStyleComponent
 	@Override
 	public void styleBonusGet(StyleBonus bonus)
 	{
+		if(bonus == null)
+			return;
 		bonusQueue.add(new Pair<>(bonus.getTranslationKey(), provider.getWorld().getTime()));
 		float score = bonus.getScore();
 		if(bonus.isUseStaleness())
