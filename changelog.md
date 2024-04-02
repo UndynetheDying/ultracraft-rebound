@@ -3,6 +3,7 @@
 - Fixed rare client crash caused by style bonus nullref
 - Fixed the last target of a piercing shot not actually taking the damage of all remaining pierces due to I-Frames
 - Fixed Hell Bullets doing vanilla thrown projectile damage, which scales with difficulty
+- Fixed Persistent Projectiles being parriable when stuck in ground
 ## Settings & Config
 ## Commands
 ## Tweaks

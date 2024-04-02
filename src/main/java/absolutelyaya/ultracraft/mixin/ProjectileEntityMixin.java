@@ -223,7 +223,7 @@ public abstract class ProjectileEntityMixin extends Entity implements Projectile
 			case ENTITY_TAG -> getType().isIn(EntityRegistry.PROJBOOSTABLE);
 			case LIMITED -> (Object) this instanceof ShotgunPelletEntity;
 			case DISALLOW -> false;
-		} && age < 4;
+		} && age < 8;
 	}
 	
 	@Override

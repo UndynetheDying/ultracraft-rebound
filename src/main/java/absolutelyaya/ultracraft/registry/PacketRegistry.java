@@ -34,6 +34,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -775,7 +776,7 @@ public class PacketRegistry
 		Vec3d eyePos = player.getEyePos();
 		for (ProjectileEntity proj : projectiles)
 		{
-			if(proj.getPos().subtract(eyePos).length() < dist)
+			if(proj.getPos().subtract(eyePos).length() < dist && !(proj instanceof PersistentProjectileEntity persistent && persistent.inGround))
 				output.add(proj);
 		}
 		if(debug > 0)
