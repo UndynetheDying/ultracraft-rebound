@@ -1,7 +1,7 @@
 package absolutelyaya.ultracraft.entity.machine;
 
 import absolutelyaya.ultracraft.ExplosionHandler;
-import absolutelyaya.ultracraft.accessor.MeleeInterruptable;
+import absolutelyaya.ultracraft.accessor.IParriable;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.entity.AbstractUltraFlyingEntity;
 import absolutelyaya.ultracraft.entity.goal.TargetPlayerGoal;
@@ -43,7 +43,7 @@ import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.UUID;
 
-public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity, MeleeInterruptable
+public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity, IParriable
 {
 	private final AnimatableInstanceCache cache = new InstancedAnimatableInstanceCache(this);
 	protected static final TrackedData<Vector3f> FALLROT = DataTracker.registerData(DroneEntity.class, TrackedDataHandlerRegistry.VECTOR3F);
@@ -105,7 +105,7 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 			return true;
 		if(amount >= getMaxHealth() * 3) //obliterated!!
 			explode(source);
-		if(isFalling() && !source.isOf(DamageSources.INTERRUPT))
+		if(isFalling() && !source.isOf(DamageSources.INTERRUPT) && !source.isOf(DamageSources.PUNCH))
 		{
 			explode(source);
 			return false;
@@ -266,13 +266,41 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 	}
 	
 	@Override
-	public void onInterrupt(PlayerEntity interrupter)
+	public boolean isParriable()
 	{
-		setRotation(interrupter.getYaw(), interrupter.getPitch());
-		dataTracker.set(FALLDIR, interrupter.getRotationVector().toVector3f());
+		return isFalling() || isAttacking();
+	}
+	
+	@Override
+	public boolean isParried()
+	{
+		return dataTracker.get(PARRIER).isPresent();
+	}
+	
+	@Override
+	public void setParrier(PlayerEntity p)
+	{
+		dataTracker.set(PARRIER, Optional.of(p.getUuid()));
+	}
+	
+	@Override
+	public void setParried(boolean val, PlayerEntity parrier)
+	{
+		setRotation(parrier.getYaw(), parrier.getPitch());
+		dataTracker.set(FALLDIR, parrier.getRotationVector().toVector3f());
 		dataTracker.set(FALLING, isFalling() ? 70 : 1);
 		dataTracker.set(KEEP_HEIGHT, true);
-		dataTracker.set(PARRIER, Optional.of(interrupter.getUuid()));
+		dataTracker.set(PARRIER, Optional.of(parrier.getUuid()));
+	}
+	
+	@Override
+	public PlayerEntity getParrier()
+	{
+		UUID id = dataTracker.get(PARRIER).orElse(null);
+		if(id == null)
+			return null;
+		else
+			return getWorld().getPlayerByUuid(id);
 	}
 	
 	@Override

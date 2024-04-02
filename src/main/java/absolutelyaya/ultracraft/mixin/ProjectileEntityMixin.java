@@ -262,4 +262,10 @@ public abstract class ProjectileEntityMixin extends Entity implements Projectile
 		if(exploder instanceof PlayerEntity player)
 			knockbackExplosionCauser = player;
 	}
+	
+	@Override
+	public Entity getParriableOwner()
+	{
+		return owner;
+	}
 }

@@ -19,6 +19,7 @@ import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.data.UltraRecipeManager;
 import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.cybergrind.CybergrindManager;
+import absolutelyaya.ultracraft.entity.machine.DroneEntity;
 import absolutelyaya.ultracraft.entity.projectile.AbstractSkewerEntity;
 import absolutelyaya.ultracraft.entity.projectile.ThrownCoinEntity;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
@@ -57,6 +58,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.joml.Vector3f;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 public class PacketRegistry
 {
@@ -167,7 +169,7 @@ public class PacketRegistry
 				ServerConfig config = ServerConfig.INSTANCE;
 				
 				//Punch Entity; Takes Priority over Projectile Parries
-				if(target != null)
+				if(target != null && !(target instanceof DroneEntity drone && drone.isFalling() && arm.isFeedbacker()))
 				{
 					if(player.getOffHandStack().isIn(TagRegistry.PUNCH_FLAMES))
 						target.setFireTicks(100);
@@ -211,16 +213,18 @@ public class PacketRegistry
 				//Fetch all Parry Candidate Projectiles
 				boolean chainingAllowed = ServerConfig.INSTANCE.parryChaining.getValue();
 				Vec3d pos = player.getEyePos();
-				HashSet<ProjectileEntity> projectiles = new HashSet<>();
-				projectiles.addAll(fetchParryCandidates(player, pos, forward, config.parryRange.getValue(), clientVel, chainingAllowed,
-						debug ? 1 : 0, null));
-				projectiles.addAll(fetchParryCandidates(player, pos, forward, config.coinPunchRange.getValue(), clientVel, chainingAllowed,
-						debug ? 2 : 0, EntityRegistry.THROWN_COIN));
+				HashSet<Entity> parriables = new HashSet<>();
+				parriables.addAll(fetchParryCandidates(player, pos, forward, config.parryRange.getValue(), clientVel, chainingAllowed,
+						debug ? 1 : 0, null, null));
+				parriables.addAll(fetchParryCandidates(player, pos, forward, config.parryRange.getValue(), clientVel, chainingAllowed,
+						0, EntityRegistry.DRONE, e -> e instanceof IParriable parriable && parriable.isParriable()));
+				parriables.addAll(fetchParryCandidates(player, pos, forward, config.coinPunchRange.getValue(), clientVel, chainingAllowed,
+						debug ? 2 : 0, EntityRegistry.THROWN_COIN, null));
 				
 				//The actual Parry Logic
-				ProjectileEntity parried;
-				if(projectiles.size() > 0)
-					parried = getNearestProjectile(projectiles, pos);
+				IParriable parried;
+				if(parriables.size() > 0)
+					parried = getNearestParriable(parriables, pos);
 				else
 					return;
 				boolean feedbacker = arm.isFeedbacker();
@@ -231,10 +235,10 @@ public class PacketRegistry
 				}
 				if(!arm.isFeedbacker())
 					return;
-				if(!((ProjectileEntityAccessor)parried).isParriable())
+				if(parried == null || !parried.isParriable())
 					return;
 				boolean heal = true;
-				if(player.equals(parried.getOwner()) && parried.age < 4)
+				if(player.equals(parried.getParriableOwner()) && ((Entity)parried).age < 4)
 				{
 					if(((ProjectileEntityAccessor)parried).isBoostable())
 					{
@@ -251,9 +255,8 @@ public class PacketRegistry
 					player.incrementStat(StatisticRegistry.PARRY);
 				}
 				world.playSound(null, player.getBlockPos(), SoundRegistry.PARRY, SoundCategory.PLAYERS, 0.75f, 2f);
-				ProjectileEntityAccessor pa = (ProjectileEntityAccessor)parried;
-				pa.setParried(true, player);
-				parried.setVelocity(forward.multiply(chainingAllowed ? 2f + 0.2f * ((ChainParryAccessor)pa).getParryCount() : 2.5f));
+				parried.setParried(true, player);
+				((Entity)parried).setVelocity(forward.multiply(chainingAllowed ? 2f + 0.2f * ((ChainParryAccessor)parried).getParryCount() : 2.5f));
 				if(heal && !(parried instanceof ThrownCoinEntity))
 				{
 					player.heal(player.getMaxHealth() - player.getHealth()); //full heal
@@ -712,17 +715,19 @@ public class PacketRegistry
 		});
 	}
 	
-	static ProjectileEntity getNearestProjectile(Set<ProjectileEntity> projectiles, Vec3d to)
+	static IParriable getNearestParriable(Set<Entity> parriables, Vec3d to)
 	{
 		double nearestDistance = 100.0;
-		ProjectileEntity nearest = null;
+		IParriable nearest = null;
 		
-		for (ProjectileEntity e : projectiles)
+		for (Entity e : parriables)
 		{
+			if(!(e instanceof IParriable parriable))
+				continue;
 			double distance = e.squaredDistanceTo(to);
 			if(distance < nearestDistance)
 			{
-				nearest = e;
+				nearest = parriable;
 				nearestDistance = distance;
 			}
 		}
@@ -742,42 +747,50 @@ public class PacketRegistry
 		ServerPlayNetworking.send(player, FINISH_TRAVELLING_PACKET_ID, new PacketByteBuf(Unpooled.buffer()));
 	}
 	
-	static HashSet<ProjectileEntity> fetchParryCandidates(ServerPlayerEntity player, Vec3d pos, Vec3d forward, float dist, Vector3f clientVel,
-													   boolean chainingAllowed, int debug, EntityType<? extends ProjectileEntity> entityType)
+	static HashSet<Entity> fetchParryCandidates(ServerPlayerEntity player, Vec3d pos, Vec3d forward, float dist, Vector3f clientVel,
+													   boolean chainingAllowed, int debug, EntityType<? extends Entity> entityType, Predicate<Entity> predicate)
 	{
-		HashSet<ProjectileEntity> output = new HashSet<>();
+		if(predicate == null)
+			predicate = e -> {
+				if(!(entityType == null || e.getType().equals(entityType)))
+					return false;
+				return (!(e instanceof IParriable) || !(((IParriable)e).isParried()) || chainingAllowed);
+			}; //standard predicate
+		HashSet<Entity> output = new HashSet<>();
 		Box check = new Box(pos.x - 0.3f, pos.y - 0.3f, pos.z - 0.3f,
 				pos.x + 0.3f, pos.y + 0.3f, pos.z + 0.3f)
 							.stretch(forward.multiply(dist)).offset(new Vec3d(clientVel.mul(0.25f)))
 							.stretch(clientVel.x * 16, clientVel.y * 16, clientVel.z * 16).stretch(0, -1, 0);
-		//Get Projectiles that absolutely are in the Parry Check
-		List<ProjectileEntity> projectiles = player.getWorld().getEntitiesByClass(ProjectileEntity.class, check,
+		//Get Pariables that absolutely are in the Parry Check
+		List<Entity> candidates = player.getWorld().getEntitiesByClass(Entity.class, check, predicate);
+		//Get Pariables that could move into the Parry Check
+		List<Entity> potentialCandidates = player.getWorld().getEntitiesByClass(Entity.class, player.getBoundingBox().expand(4),
 				e -> {
-					if(!(entityType == null || e.getType().equals(entityType)))
+					if(!(entityType == null || e.getType().equals(entityType)) || candidates.contains(e))
 						return false;
-					return (!((ProjectileEntityAccessor)e).isParried()) || chainingAllowed;
+					return (!(e instanceof IParriable) || !(((IParriable)e).isParried()) || chainingAllowed);
 				});
-		//Get Projectiles that could move into the Parry Check
-		List<ProjectileEntity> potentialProjectiles = player.getWorld().getEntitiesByClass(ProjectileEntity.class, player.getBoundingBox().expand(4),
-				e -> {
-					if(!(entityType == null || e.getType().equals(entityType)) || projectiles.contains(e))
-						return false;
-					return !(((ProjectileEntityAccessor)e).isParried() || chainingAllowed);
-				});
-		for (ProjectileEntity proj : potentialProjectiles)
+		//Get Drones
+		if(entityType == null || !entityType.equals(EntityRegistry.THROWN_COIN))
+		{
+			List<DroneEntity> drones = player.getWorld().getEntitiesByClass(DroneEntity.class, check, DroneEntity::isParriable);
+			candidates.addAll(drones);
+		}
+		
+		for (Entity proj : potentialCandidates)
 		{
 			Vec3d vel = proj.getVelocity();
 			if (check.intersects(proj.getBoundingBox().expand(vel.x, vel.y, vel.z)))
 			{
-				projectiles.add(proj);
+				candidates.add(proj);
 				break;
 			}
 		}
 		Vec3d eyePos = player.getEyePos();
-		for (ProjectileEntity proj : projectiles)
+		for (Entity candidate : candidates)
 		{
-			if(proj.getPos().subtract(eyePos).length() < dist && !(proj instanceof PersistentProjectileEntity persistent && persistent.inGround))
-				output.add(proj);
+			if(candidate.getPos().subtract(eyePos).length() < dist && !(candidate instanceof PersistentProjectileEntity persistent && persistent.inGround))
+				output.add(candidate);
 		}
 		if(debug > 0)
 		{

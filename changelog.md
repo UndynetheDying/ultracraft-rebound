@@ -7,6 +7,7 @@
 - Fixed Slam storage.. storage(?) issue
 - Fixed alternate revolver hammer pull not working like in the original
 - Hopefully fixed issue with enemies in levels not despawning properly
+- Improved Drone parrying
 ## Settings & Config
 ## Commands
 ## Tweaks
