@@ -6,6 +6,7 @@
 - Fixed Persistent Projectiles being parriable when stuck in ground
 - Fixed Slam storage.. storage(?) issue
 - Fixed alternate revolver hammer pull not working like in the original
+- Hopefully fixed issue with enemies in levels not despawning properly
 ## Settings & Config
 ## Commands
 ## Tweaks

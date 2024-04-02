@@ -34,6 +34,7 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.ChunkManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -162,6 +163,10 @@ public class LevelManager extends DimensionManager
 					Ultracraft.LOGGER.info("New Level Instance ID: " + newId);
 					inst.set(new Pair<>(newId, newInstance));
 					pool.put(newId, newInstance);
+					
+					for (int x = 0; x < box.getBlockCountX(); x += 16)
+						for (int z = 0; z < box.getBlockCountZ(); z += 16)
+							world.getChunkManager().setChunkForced(new ChunkPos(new BlockPos(x + box.getMinX(), 0, z + box.getMinZ())), true);
 				});
 		if(inst.get() == null)
 			Ultracraft.LOGGER.warn("Level Structure " + structure + " placement failed; won't teleport Player.");
@@ -232,6 +237,10 @@ public class LevelManager extends DimensionManager
 		});
 		instances.get(levelId).remove(instanceId);
 		Ultracraft.LOGGER.info("Finished Destroying Level Instance " + instanceId);
+		
+		for (int x = 0; x < box.getBlockCountX(); x += 16)
+			for (int z = 0; z < box.getBlockCountZ(); z += 16)
+				world.getChunkManager().setChunkForced(new ChunkPos(new BlockPos(x + box.getMinX(), 0, z + box.getMinZ())), false);
 	}
 	
 	void rescue(ServerPlayerEntity player, RescueReason reason)
