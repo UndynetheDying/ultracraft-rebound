@@ -111,8 +111,9 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 			cdm.setCooldown(this, getSharpshooterRechargeTime(), GunCooldownManager.TRITARY);
 			player.playSound(SoundRegistry.REVOLVER_ALT_CHARGE, 0.1f, 1.5f);
 		}
+		if(isAlternate() && getNbt(stack, getHammerId()) == 2 && isCanFirePrimary(player))
+			resetAllHammers(stack);
 	}
-	
 	
 	@Override
 	int getSwitchCooldown(ItemStack stack)

@@ -5,6 +5,7 @@
 - Fixed Hell Bullets doing vanilla thrown projectile damage, which scales with difficulty
 - Fixed Persistent Projectiles being parriable when stuck in ground
 - Fixed Slam storage.. storage(?) issue
+- Fixed alternate revolver hammer pull not working like in the original
 ## Settings & Config
 ## Commands
 ## Tweaks
