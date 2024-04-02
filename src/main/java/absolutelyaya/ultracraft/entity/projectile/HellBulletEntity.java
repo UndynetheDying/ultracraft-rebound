@@ -39,7 +39,7 @@ public class HellBulletEntity extends ThrownItemEntity implements ProjectileEnti
 	Class<? extends LivingEntity> ignore;
 	private boolean shot;
 	protected boolean difficultySpeed;
-	protected DamageSource damageSource = getDamageSources().thrown(this, this.getOwner());
+	protected DamageSource damageSource = DamageSources.get(getWorld(), DamageSources.HELL_BULLET, this, this.getOwner());
 	
 	public HellBulletEntity(EntityType<? extends ThrownItemEntity> entityType, World world)
 	{
@@ -78,7 +78,7 @@ public class HellBulletEntity extends ThrownItemEntity implements ProjectileEnti
 	{
 		super.onEntityHit(entityHitResult);
 		Entity entity = entityHitResult.getEntity();
-		float amount = 6f;
+		float amount = 5f;
 		if(entity instanceof AbstractUltraHostileEntity)
 			amount *= 0.25f;
 		if(!entity.getClass().equals(ignore) && !((ProjectileEntityAccessor)this).isParried())
