@@ -108,7 +108,7 @@ public class ExplosionHandler
 				}
 				if(e != ignored)
 				{
-					boolean unUltra = !(e instanceof AbstractUltraHostileEntity);
+					boolean unUltra = !(e instanceof AbstractUltraHostileEntity || e instanceof PlayerEntity);
 					e.damage(source, MathHelper.lerp(normalizedDistance, damage * (unUltra ? 1.5f : 1f), Math.max(damage - falloff, 0f) * (unUltra ? 1.5f : 1f)));
 					if(!(e instanceof PlayerEntity || source.isOf(DamageSources.KNUCKLE_BLAST)))
 						e.setOnFireFor(10);

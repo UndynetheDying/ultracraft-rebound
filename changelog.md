@@ -26,6 +26,7 @@
 - Hopefully fixed or at least improved door desyncing issue
 - Fixed Coin Splitting
 - Hitscans can no longer hit dead entities
+- Fixed Mod Explosion damage boost towards non-mod entities also affecting Players
 ## Settings & Config
 ## Commands
 ## Tweaks
