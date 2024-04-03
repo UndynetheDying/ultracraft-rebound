@@ -13,15 +13,15 @@
   - All Levels Entrance Elevator door trigger has been expanded
   - All Level Unlock Triggers have been expanded
   - Prelude2 // Straight to Hell
-    - Expanded first spawn trigger in "BigOutdoors" Room
-    - Changed "mainRoom" wave 2 Schism placement to guide players towards the right door more naturally
+    - Expanded first spawn trigger in `BigOutdoors` Room
+    - Changed `mainRoom` wave 2 Schism placement to guide players towards the right door more naturally
   - Limbo1 // Illusionary Paradise
-    - fixed softlock in "room-68"
-    - moved spawn trigger in "room-69" slightly
-    - fixed one of the doors in "room-69" not locking properly
+    - fixed softlock in `room-68`
+    - moved spawn trigger in `room-69` slightly
+    - fixed one of the doors in `room-69` not locking properly
   - Limbo2 // Halls of the Blameless
     - Nailgun Pedestal now gets removed after obtaining the Nailgun to reduce confusion
-    - Made "Odd5ShapedRoom"s Spawn Trigger harder to skip accidentally
+    - Made `Odd5ShapedRoom`s Spawn Trigger harder to skip accidentally
 - Added a safeguard that fixes an edit mode desync preventing focusing of blocks
 - Hopefully fixed or at least improved door desyncing issue
 - Fixed Coin Splitting
@@ -31,6 +31,7 @@
 - Fixed Style Bonus Weapon Staleness still being used when only one Weapon is held//equipped
 - Fixed a rare crash involving enemies in levels dying
 - Fixed alternative cybergrind loot tables for enemies being messed up, resulting in nothing being dropped at all
+- Made getting locked out of the `destiny-chapel` Limbo Challenge Structure harder
 ## Settings & Config
 ## Commands
 ## Tweaks
