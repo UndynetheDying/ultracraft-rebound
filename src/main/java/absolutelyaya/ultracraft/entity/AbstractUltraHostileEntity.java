@@ -315,7 +315,11 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 			getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(192f), p -> true).forEach(p -> {
 				ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(p);
 				if(levelStats.getCurrentLevelInstance() != null)
-					LevelManager.Instance.getInstance(levelStats.getCurrentLevelInstance()).onKill();
+				{
+					LevelManager.LevelInstance instance = LevelManager.Instance.getInstance(levelStats.getCurrentLevelInstance());
+					if(instance != null)
+						instance.onKill();
+				}
 			});
 		}
 	}
