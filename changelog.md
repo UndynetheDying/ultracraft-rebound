@@ -40,5 +40,6 @@
 - Added `debug` nbt tag to mod enemies
   - setting it to true does debug stuff with the enemy
   - currently it only makes melee interruptable enemies glow while they are interruptable
+- Changed draw order of Style Bonuses
 ## Resource Changes
 ## API Changes

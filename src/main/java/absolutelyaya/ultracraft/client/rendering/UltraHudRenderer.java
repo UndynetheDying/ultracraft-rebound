@@ -38,6 +38,7 @@ import net.minecraft.util.math.Vec2f;
 import org.joml.*;
 
 import java.lang.Math;
+import java.util.*;
 import java.util.Random;
 
 @SuppressWarnings("SameParameterValue")
@@ -316,7 +317,10 @@ public class UltraHudRenderer
 			if(alpha > 0f)
 			{
 				int i = count;
-				for (Pair<String, Long> p : style.getBonusQueue())
+				List<Pair<String, Long>> bonusList = new ArrayList<>(style.getBonusQueue());
+				if(bonusList.size() > 0)
+					Collections.reverse(bonusList);
+				for (Pair<String, Long> p : bonusList)
 				{
 					if(p == null || i <= 0)
 						break;
