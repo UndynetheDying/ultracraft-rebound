@@ -15,10 +15,15 @@
   - Prelude2 // Straight to Hell
     - Expanded first spawn trigger in "BigOutdoors" Room
     - Changed "mainRoom" wave 2 Schism placement to guide players towards the right door more naturally
+  - Limbo1 // Illusionary Paradise
+    - fixed softlock in "room-68"
+    - moved spawn trigger in "room-69" slightly
+    - fixed one of the doors in "room-69" not locking properly
   - Limbo2 // Halls of the Blameless
     - Nailgun Pedestal now gets removed after obtaining the Nailgun to reduce confusion
     - Made "Odd5ShapedRoom"s Spawn Trigger harder to skip accidentally
 - Added a safeguard that fixes an edit mode desync preventing focusing of blocks
+- Hopefully fixed or at least improved door desyncing issue
 ## Settings & Config
 ## Commands
 ## Tweaks

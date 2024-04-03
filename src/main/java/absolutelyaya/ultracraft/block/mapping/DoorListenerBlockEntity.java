@@ -76,12 +76,16 @@ public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 	@Override
 	protected void onStateChanged(boolean newState)
 	{
+		if(world.isClient)
+			return;
 		Block closedState = Registries.BLOCK.get(close), openState = Registries.BLOCK.get(open);
 		forEachBlockInArea(pos -> {
-			if(newState && world.getBlockState(pos).isOf(openState))
+			BlockState lastState = world.getBlockState(pos);
+			if(newState && lastState.isOf(openState))
 				world.setBlockState(pos, closedState.getDefaultState());
 			else if(!newState && world.getBlockState(pos).isOf(closedState))
 				world.setBlockState(pos, openState.getDefaultState());
+			world.updateListeners(pos, lastState, world.getBlockState(pos), 0);
 		});
 		super.onStateChanged(newState);
 		//TODO: add option to save the areas blocks and restore them when opening the door instead of just filling air
