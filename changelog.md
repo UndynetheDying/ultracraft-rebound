@@ -22,6 +22,7 @@
   - Limbo2 // Halls of the Blameless
     - Nailgun Pedestal now gets removed after obtaining the Nailgun to reduce confusion
     - Made `Odd5ShapedRoom`s Spawn Trigger harder to skip accidentally
+    - Reduced delay before second wave in `FirstRoomIEverMade`
 - Added a safeguard that fixes an edit mode desync preventing focusing of blocks
 - Hopefully fixed or at least improved door desyncing issue
 - Fixed Coin Splitting
