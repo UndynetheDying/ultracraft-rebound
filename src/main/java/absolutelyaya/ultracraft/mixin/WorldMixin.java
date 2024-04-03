@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.mixin;
 
+import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.block.mapping.RoomBlockEntity;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.world.IDimensionDataComponent;
@@ -73,11 +74,13 @@ public abstract class WorldMixin
 				continue;
 			if(!(world.getBlockEntity(roomPos) instanceof RoomBlockEntity room))
 			{
+				Ultracraft.LOGGER.info("invalid room at " + roomPos);
 				data.markRoomInvalid(pos);
 				continue;
 			}
 			if(room.isSuppressModifications() && room.getAreaBox().contains(pos.toCenterPos()))
 			{
+				Ultracraft.LOGGER.info("tried to modify block at " + roomPos);
 				player.sendMessage(Text.translatable("message.limbo.structure.modify-fail"), true);
 				return false;
 			}
