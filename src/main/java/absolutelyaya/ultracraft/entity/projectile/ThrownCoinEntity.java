@@ -371,7 +371,6 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 		if(hitTicks == nextHitDelay)
 			hitNext(lastDamageSource, damage, (LivingEntity)getOwner());
 		baseTick();
-		setGlowing(isSplittable());
 	}
 	
 	@Override
