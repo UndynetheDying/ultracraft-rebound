@@ -24,11 +24,14 @@
     - Made "Odd5ShapedRoom"s Spawn Trigger harder to skip accidentally
 - Added a safeguard that fixes an edit mode desync preventing focusing of blocks
 - Hopefully fixed or at least improved door desyncing issue
+- Fixed Coin Splitting
+- Hitscans can no longer hit dead entities
 ## Settings & Config
 ## Commands
 ## Tweaks
 - Reduced Hell Bullet damage (6 -> 5)
 - Made Interrupting Swordsmachines Melee Attacks easier
+- Made Coin Splitting easier
 ## Minor Changes
 - Finally removed the Console spam caused by datafixers missing from entities
 - Updated Russian Translation

@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft;
 
 import absolutelyaya.ultracraft.accessor.EntityAccessor;
+import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.components.UltraComponents;
@@ -319,7 +320,7 @@ public class ServerHitscanHandler
 			{
 				world.raycast(new RaycastContext(from, modifiedTo, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, owner));
 				EntityHitResult eHit = raycast(owner, from, modifiedTo, box,
-						(entity) -> !entities.contains(entity) && isValidTarget(entity, type), 0.25f, 64f);
+						(entity) -> !entities.contains(entity) && isValidTarget(entity, type) && !entity.isInvulnerable() && entity.isAlive(), 0.25f, 64f);
 				if(eHit == null || eHit.getEntity() == null)
 					break;
 				searchForEntities = eHit.getType() != HitResult.Type.MISS && (maxHits > 0 || (semiPierce && remainingDamage > 0));

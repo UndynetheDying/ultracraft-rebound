@@ -337,7 +337,8 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 	
 	boolean performSplits(HitscanDamageSource source, float amount, LivingEntity attacker, boolean hasTargets)
 	{
-		dataTracker.set(SPLITS, dataTracker.get(SPLITS) - 1);
+		if(splitting)
+			dataTracker.set(SPLITS, dataTracker.get(SPLITS) - 1);
 		if(hasTargets)
 		{
 			nextHitDelay = 2;
@@ -370,6 +371,7 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 		if(hitTicks == nextHitDelay)
 			hitNext(lastDamageSource, damage, (LivingEntity)getOwner());
 		baseTick();
+		setGlowing(isSplittable());
 	}
 	
 	@Override
@@ -514,7 +516,7 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 	
 	public boolean isSplittable()
 	{
-		return !dataTracker.get(PUNCHED) && !dataTracker.get(CHARGEBACK) && (Math.max(1f - Math.abs(getVelocity().y * 6.5f), 0f) > 0.5f || realAge > 20);
+		return !dataTracker.get(PUNCHED) && !dataTracker.get(CHARGEBACK) && (Math.max(1f - Math.abs(getVelocity().y * 6.5f), 0f) > 0.35f || realAge > 25);
 	}
 	
 	@Override
