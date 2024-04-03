@@ -198,7 +198,7 @@ public class StreetCleanerEntity extends AbstractUltraHostileEntity implements G
 		if(source.isOf(DamageSources.FLAMETHROWER))
 			return false;
 		if(source.isOf(DamageTypes.FALL) && getHealth() - amount <= 0)
-			ExplosionHandler.explosion(this, getWorld(), getPos(), DamageSources.get(getWorld(), DamageTypes.EXPLOSION, this, this), 10, 4, 3, true);
+			ExplosionHandler.explosion(this, getWorld(), getPos(), DamageSources.get(getWorld(), DamageSources.EXPLOSION, this, this), 10, 4, 3, true);
 		return super.damage(source, source.isIn(DamageTypeTags.IS_EXPLOSION) ? amount * 0.5f : amount);
 	}
 	

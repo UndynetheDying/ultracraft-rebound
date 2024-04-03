@@ -220,7 +220,7 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 			return;
 		dead = true;
 		ExplosionHandler.explosion(this, getWorld(), getPos(),
-				DamageSources.get(getWorld(), DamageTypes.EXPLOSION, this, source != null ? source.getAttacker() : this),
+				DamageSources.get(getWorld(), DamageSources.EXPLOSION, this, source != null ? source.getAttacker() : this),
 				7, 2, 2f, true);
 		if(!getWorld().isClient)
 			drop(source);

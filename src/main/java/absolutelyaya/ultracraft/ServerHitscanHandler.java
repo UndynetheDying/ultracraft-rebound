@@ -376,7 +376,7 @@ public class ServerHitscanHandler
 				}
 				if(explodeProjectile && e instanceof ProjectileEntity proj && !(e instanceof IIgnoreSharpshooter || e instanceof ThrownCoinEntity))
 				{
-					ExplosionHandler.explosion(owner, world, proj.getPos(), DamageSources.get(world, DamageTypes.EXPLOSION, owner), 5f, 1f, 7.5f, true);
+					ExplosionHandler.explosion(owner, world, proj.getPos(), DamageSources.get(world, DamageSources.EXPLOSION, owner), 5f, 1f, 7.5f, true);
 					proj.kill();
 					explodeProjectile = false;
 					if(winged != null)
@@ -386,7 +386,7 @@ public class ServerHitscanHandler
 					disableExplosion = true;
 			}
 			if(explosion != null && ((bHit != null && !bHit.getType().equals(HitResult.Type.MISS)) || finalEHit != null) && !disableExplosion)
-				ExplosionHandler.explosion(null, world, new Vec3d(modifiedTo.x, modifiedTo.y, modifiedTo.z), world.getDamageSources().explosion(owner, owner),
+				ExplosionHandler.explosion(null, world, new Vec3d(modifiedTo.x, modifiedTo.y, modifiedTo.z), DamageSources.get(world, DamageSources.EXPLOSION, owner),
 						explosion.damage, explosion.falloff, explosion.radius, explosion.breakBlocks);
 			if(entities.size() == 0 && owner instanceof PlayerEntity p)
 			{

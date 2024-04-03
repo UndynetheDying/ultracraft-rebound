@@ -53,7 +53,7 @@ public class ExplosionListenerBlockEntity extends AbstractListenerBlockEntity
 	protected void onStateChanged(boolean newState)
 	{
 		if(newState && !world.isClient)
-			ExplosionHandler.explosion(null, world, getPos().toCenterPos(), DamageSources.get(world, DamageTypes.EXPLOSION),
+			ExplosionHandler.explosion(null, world, getPos().toCenterPos(), DamageSources.get(world, DamageSources.EXPLOSION),
 					explosionDamage, 0f, explosionRadius, false);
 		super.onStateChanged(newState);
 	}

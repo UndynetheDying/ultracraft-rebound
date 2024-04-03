@@ -27,6 +27,7 @@
 - Fixed Coin Splitting
 - Hitscans can no longer hit dead entities
 - Fixed Mod Explosion damage boost towards non-mod entities also affecting Players
+- Fixed Mod Explosion damage scaling with difficulty
 - Fixed double//tripple//multi kill style bonuses not working correctly
 - Fixed Style Bonus Weapon Staleness still being used when only one Weapon is held//equipped
 - Fixed a rare crash involving enemies in levels dying

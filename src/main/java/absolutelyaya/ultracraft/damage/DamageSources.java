@@ -49,6 +49,7 @@ public class DamageSources
 	public static final RegistryKey<DamageType> GOOFED = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Ultracraft.MOD_ID, "goofed"));
 	public static final RegistryKey<DamageType> SKILL_ISSUE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Ultracraft.MOD_ID, "skill_issue"));
 	public static final RegistryKey<DamageType> HELL_BULLET = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Ultracraft.MOD_ID, "hell_bullet"));
+	public static final RegistryKey<DamageType> EXPLOSION = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Ultracraft.MOD_ID, "explosion"));
 	
 	public static DamageSource get(World world, RegistryKey<DamageType> type)
 	{
