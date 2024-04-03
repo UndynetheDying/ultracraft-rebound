@@ -42,7 +42,7 @@ I would not recommend putting this mod into modpacks (you can ofc, but it will p
 
 ## ULTRACRAFT Discord
 Join our community-run Discord Server to connect with other fans of the mod and discover Modpacks and Servers using it!
-https://discord.gg/qxzr2vN5Ey
+https://discord.gg/BWcnACAvHC
 
 ## Note
 This Project uses two licenses. All the Code is licensed under MIT. All Assets are licensed under CC-BY-NC 4.0
