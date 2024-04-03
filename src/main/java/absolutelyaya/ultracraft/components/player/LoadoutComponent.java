@@ -6,7 +6,6 @@ import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.util.InventoryUtil;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
@@ -115,6 +114,28 @@ public class LoadoutComponent implements ILoadoutComponent
 			ClientPlayNetworking.send(PacketRegistry.TERMINAL_WEAPON_DISPENSE_PACKET_ID, buf);
 			provider.giveItemStack(Registries.ITEM.get(alt ? weapon.getAlt(itemID) : itemID).getDefaultStack());
 			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isMoreThanOneWeaponHeld()
+	{
+		boolean b = false;
+		for (Weapon weapon : Weapon.values())
+		{
+			if(weapon.ids == null)
+				continue;
+			boolean isHeld = isWeaponTypeHeld(weapon);
+			if(isHeld)
+			{
+				if(getLoadoutForWeapon(weapon).length > 1)
+					return true;
+				if(!b)
+					b = true;
+				else
+					return true;
+			}
 		}
 		return false;
 	}
