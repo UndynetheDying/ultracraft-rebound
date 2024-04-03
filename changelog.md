@@ -7,7 +7,18 @@
 - Fixed Slam storage.. storage(?) issue
 - Fixed alternate revolver hammer pull not working like in the original
 - Hopefully fixed issue with enemies in levels not despawning properly
+  - If it does work, that should also fix stained glass windows sometimes staying behind when a level instance gets destroyed
 - Improved Drone parrying
+- Improvements to Levels
+  - All Levels Entrance Elevator door trigger has been expanded
+  - All Level Unlock Triggers have been expanded
+  - Prelude2 // Straight to Hell
+    - Expanded first spawn trigger in "BigOutdoors" Room
+    - Changed "mainRoom" wave 2 Schism placement to guide players towards the right door more naturally
+  - Limbo2 // Halls of the Blameless
+    - Nailgun Pedestal now gets removed after obtaining the Nailgun to reduce confusion
+    - Made "Odd5ShapedRoom"s Spawn Trigger harder to skip accidentally
+- Added a safeguard that fixes an edit mode desync preventing focusing of blocks
 ## Settings & Config
 ## Commands
 ## Tweaks
