@@ -30,6 +30,7 @@
 - Fixed double//tripple//multi kill style bonuses not working correctly
 - Fixed Style Bonus Weapon Staleness still being used when only one Weapon is held//equipped
 - Fixed a rare crash involving enemies in levels dying
+- Fixed alternative cybergrind loot tables for enemies being messed up, resulting in nothing being dropped at all
 ## Settings & Config
 ## Commands
 ## Tweaks

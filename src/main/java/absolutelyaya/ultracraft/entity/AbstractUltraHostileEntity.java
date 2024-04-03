@@ -302,7 +302,7 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 	protected Identifier getLootTableId()
 	{
 		if(isCybergrind())
-			return super.getLootTableId().withPrefixedPath("_cg");
+			return super.getLootTableId().withSuffixedPath("_cg");
 		return super.getLootTableId();
 	}
 	
