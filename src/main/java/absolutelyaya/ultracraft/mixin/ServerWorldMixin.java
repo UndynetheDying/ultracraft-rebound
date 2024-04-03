@@ -2,12 +2,20 @@ package absolutelyaya.ultracraft.mixin;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.ServerWorldAccessor;
+import absolutelyaya.ultracraft.block.PortalBlock;
+import absolutelyaya.ultracraft.block.mapping.RoomBlockEntity;
+import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.components.world.IDimensionDataComponent;
 import absolutelyaya.ultracraft.entity.demon.HideousPart;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -36,6 +44,31 @@ public class ServerWorldMixin implements ServerWorldAccessor
 	{
 		if(original == null)
 			return hideousParts.get(id);
+		return original;
+	}
+	
+	@ModifyReturnValue(method = "canPlayerModifyAt", at = @At("RETURN"))
+	boolean onCanPlayerModify(boolean original, @Local PlayerEntity player, @Local BlockPos pos)
+	{
+		if(player.isCreativeLevelTwoOp() || UltraComponents.EDITOR.get(player).isActive())
+			return original;
+		World world = (World)(Object)this;
+		IDimensionDataComponent data = UltraComponents.DIMENSION_DATA.get(this);
+		if(world.getBlockState(pos).getBlock() instanceof PortalBlock)
+			return original;
+		for (BlockPos roomPos : data.getAllMappingRooms())
+		{
+			if(!world.isChunkLoaded(roomPos))
+				continue;
+			if(!(world.getBlockEntity(roomPos) instanceof RoomBlockEntity room))
+			{
+				data.markRoomInvalid(pos);
+				continue;
+			}
+			if(room.isSuppressModifications() && room.getAreaBox().contains(pos.toCenterPos()))
+				return false;
+		}
+		data.clearInvalidRooms();
 		return original;
 	}
 }

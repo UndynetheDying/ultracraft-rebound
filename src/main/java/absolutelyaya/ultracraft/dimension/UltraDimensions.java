@@ -2,13 +2,12 @@ package absolutelyaya.ultracraft.dimension;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -45,19 +44,19 @@ public class UltraDimensions
 		}
 	}
 	
-	public ActionResult onBlockInteract(PlayerEntity player, World world, Hand hand, BlockHitResult hit)
+	public boolean onBlockPlace(ItemPlacementContext ctx)
 	{
-		Identifier key = world.getRegistryKey().getValue();
+		Identifier key = ctx.getWorld().getRegistryKey().getValue();
 		if(!managers.containsKey(key))
-			return ActionResult.PASS;
-		return managers.get(key).onBlockInteract(player, world, hand, hit);
+			return false;
+		return managers.get(key).onPlaceBlock(ctx);
 	}
 	
-	public ActionResult onAttackBlock(PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction)
+	public boolean onAttackBlock(PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction)
 	{
 		Identifier key = world.getRegistryKey().getValue();
 		if(!managers.containsKey(key))
-			return ActionResult.PASS;
+			return false;
 		return managers.get(key).onAttackBlock(player, world, hand, pos, direction);
 	}
 	

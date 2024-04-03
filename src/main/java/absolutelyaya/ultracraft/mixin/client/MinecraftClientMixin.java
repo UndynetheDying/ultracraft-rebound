@@ -9,6 +9,7 @@ import absolutelyaya.ultracraft.client.gui.screen.IntroScreen;
 import absolutelyaya.ultracraft.client.gui.screen.TravelScreen;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.config.ServerConfig;
+import absolutelyaya.ultracraft.dimension.UltraDimensions;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.BlockRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
@@ -211,6 +212,13 @@ public abstract class MinecraftClientMixin
 				return;
 			}
 		}
+		if(UltraDimensions.Instance.onAttackBlock(player, world, Hand.MAIN_HAND,
+				((BlockHitResult)hit).getBlockPos(), ((BlockHitResult)hit).getSide()))
+		{
+			player.swingHand(Hand.MAIN_HAND);
+			cir.setReturnValue(false);
+			return;
+		}
 		
 		if(!pedestal)
 			return;
@@ -259,6 +267,8 @@ public abstract class MinecraftClientMixin
 			ci.cancel();
 		}
 		if(player.getInventory().getMainHandStack().getItem() instanceof AbstractWeaponItem w && w.shouldCancelPunching())
+			ci.cancel();
+		if(bl && UltraDimensions.Instance.onAttackBlock(player, world, Hand.MAIN_HAND, hitPos, ((BlockHitResult)hit).getSide()))
 			ci.cancel();
 		wasBreaking = bl;
 	}

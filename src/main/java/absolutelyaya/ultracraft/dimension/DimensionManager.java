@@ -3,7 +3,7 @@ package absolutelyaya.ultracraft.dimension;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
@@ -29,19 +29,30 @@ public abstract class DimensionManager
 		return ActionResult.PASS;
 	}
 	
-	protected ActionResult onAttackBlock(PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction)
+	protected boolean onAttackBlock(PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction)
 	{
-		if(isPosNotModifiable(player, pos))
+		//if(isPosNotModifiable(player, pos))
+		//{
+		//	player.sendMessage(getModifyFailText(), true);
+		//	return true;
+		//}
+		return false;
+	}
+	
+	protected boolean onPlaceBlock(ItemPlacementContext ctx)
+	{
+		PlayerEntity player = ctx.getPlayer();
+		if(isPosNotModifiable(player, ctx.getBlockPos()))
 		{
 			player.sendMessage(getModifyFailText(), true);
-			return ActionResult.FAIL;
+			return true;
 		}
-		return ActionResult.PASS;
+		return false;
 	}
 	
 	protected boolean isPosNotModifiable(PlayerEntity player, BlockPos pos)
 	{
-		if(player instanceof ServerPlayerEntity serverPlayer && serverPlayer.isCreativeLevelTwoOp())
+		if(player.isCreativeLevelTwoOp())
 			return false;
 		if(UltraComponents.EDITOR.get(player).isActive())
 			return false;

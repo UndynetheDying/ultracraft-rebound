@@ -33,6 +33,7 @@
 - Fixed a rare crash involving enemies in levels dying
 - Fixed alternative cybergrind loot tables for enemies being messed up, resulting in nothing being dropped at all
 - Made getting locked out of the `destiny-chapel` Limbo Challenge Structure harder
+- Hopefully fixed Structures and Levels being breakable when they shouldn't be
 ## Settings & Config
 ## Commands
 ## Tweaks

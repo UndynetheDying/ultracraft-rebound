@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.mixin;
 
-import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.block.PortalBlock;
 import absolutelyaya.ultracraft.block.mapping.RoomBlockEntity;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.world.IDimensionDataComponent;
@@ -10,7 +10,6 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.function.LazyIterationConsumer;
 import net.minecraft.util.math.BlockPos;
@@ -66,6 +65,8 @@ public abstract class WorldMixin
 	@ModifyReturnValue(method = "canPlayerModifyAt", at = @At("RETURN"))
 	boolean onCanPlayerModify(boolean original, @Local PlayerEntity player, @Local BlockPos pos)
 	{
+		if(player.isCreativeLevelTwoOp() || UltraComponents.EDITOR.get(player).isActive())
+			return original;
 		World world = (World)(Object)this;
 		IDimensionDataComponent data = UltraComponents.DIMENSION_DATA.get(this);
 		for (BlockPos roomPos : data.getAllMappingRooms())
@@ -74,16 +75,11 @@ public abstract class WorldMixin
 				continue;
 			if(!(world.getBlockEntity(roomPos) instanceof RoomBlockEntity room))
 			{
-				Ultracraft.LOGGER.info("invalid room at " + roomPos);
 				data.markRoomInvalid(pos);
 				continue;
 			}
 			if(room.isSuppressModifications() && room.getAreaBox().contains(pos.toCenterPos()))
-			{
-				Ultracraft.LOGGER.info("tried to modify block at " + roomPos);
-				player.sendMessage(Text.translatable("message.limbo.structure.modify-fail"), true);
 				return false;
-			}
 		}
 		data.clearInvalidRooms();
 		return original;

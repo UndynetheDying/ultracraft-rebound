@@ -332,9 +332,9 @@ public class LevelManager extends DimensionManager
 	}
 	
 	@Override
-	public ActionResult onAttackBlock(PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction)
+	public boolean onAttackBlock(PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction)
 	{
-		return player.isCreative() ? ActionResult.PASS : ActionResult.FAIL;
+		return !player.isCreative();
 	}
 	
 	@Override
