@@ -28,9 +28,13 @@
 ## Commands
 ## Tweaks
 - Reduced Hell Bullet damage (6 -> 5)
+- Made Interrupting Swordsmachines Melee Attacks easier
 ## Minor Changes
 - Finally removed the Console spam caused by datafixers missing from entities
 - Updated Russian Translation
   - Thanks to closet748, it's no longer scrapped
+- Added `debug` nbt tag to mod enemies
+  - setting it to true does debug stuff with the enemy
+  - currently it only makes melee interruptable enemies glow while they are interruptable
 ## Resource Changes
 ## API Changes

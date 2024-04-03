@@ -1012,12 +1012,11 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 		{
 			sm.setBodyYaw(sm.getYaw());
 			
-			if(timer++ == 4)
-			{
-				sm.addParryIndicatorParticle(new Vec3d(0f, sm.getStandingEyeHeight(), -1f), true, false);
+			if(timer++ == 1)
 				sm.setAttacking(true);
-			}
-			if(timer == 6)
+			if(timer == 4)
+				sm.addParryIndicatorParticle(new Vec3d(0f, sm.getStandingEyeHeight(), -1f), true, false);
+			if(timer == 12)
 				sm.setAttacking(false);
 			if(timer == 9)
 				sm.setCurrentAttackTrail((byte)1);
@@ -1105,14 +1104,15 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 		public void tick()
 		{
 			sm.setBodyYaw(sm.getYaw());
-			if(timer++ == 18 || timer == 38 || timer == 56)
+			if(timer++ == 16 || timer == 36 || timer == 54)
 			{
 				damaged.clear();
 				sm.lookAtEntity(target, 360, 360);
 				sm.setAttacking(true);
-				sm.addParryIndicatorParticle(new Vec3d(0f, sm.getStandingEyeHeight(), -1f), true, false);
 			}
-			else if(timer == 22 || timer == 41 || timer == 60)
+			else if(timer == 18 || timer == 38 || timer == 56)
+				sm.addParryIndicatorParticle(new Vec3d(0f, sm.getStandingEyeHeight(), -1f), true, false);
+			else if(timer == 22 || timer == 44 || timer == 66)
 				sm.setAttacking(false);
 			else if(timer == 27 || timer == 42 || timer == 62)
 			{
@@ -1213,12 +1213,11 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 		{
 			sm.setBodyYaw(sm.getYaw());
 			
-			if(timer++ == 4)
-			{
-				sm.addParryIndicatorParticle(new Vec3d(0f, sm.getStandingEyeHeight(), -1f), true, false);
+			if(timer++ == 1)
 				sm.setAttacking(true);
-			}
-			if(timer == 6)
+			if(timer == 4)
+				sm.addParryIndicatorParticle(new Vec3d(0f, sm.getStandingEyeHeight(), -1f), true, false);
+			if(timer == 8)
 				sm.setAttacking(false);
 			if(timer == 12)
 				sm.setCurrentAttackTrail((byte)5);
