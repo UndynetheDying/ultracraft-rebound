@@ -1,5 +1,9 @@
 package absolutelyaya.ultracraft.components.world;
 
+import absolutelyaya.ultracraft.block.mapping.RoomBlockEntity;
+import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.dimension.UltraDimensions;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
@@ -60,13 +64,17 @@ public class DimensionDataComponent implements IDimensionDataComponent
 	public void registerRoomMappingBlock(BlockPos pos)
 	{
 		if(!mappingRooms.contains(pos))
+		{
 			mappingRooms.add(pos);
+			UltraComponents.DIMENSION_DATA.sync(provider);
+		}
 	}
 	
 	@Override
 	public void removeRoomMappingBlock(BlockPos pos)
 	{
-		mappingRooms.remove(pos);
+		if(mappingRooms.remove(pos))
+			UltraComponents.DIMENSION_DATA.sync(provider);
 	}
 	
 	public List<BlockPos> getAllMappingRooms()
@@ -86,6 +94,30 @@ public class DimensionDataComponent implements IDimensionDataComponent
 	{
 		invalidRooms.forEach(mappingRooms::remove);
 		invalidRooms.clear();
+		UltraComponents.DIMENSION_DATA.sync(provider);
+	}
+	
+	public boolean isPosNotModifiable(PlayerEntity player, BlockPos pos)
+	{
+		if(player.isCreativeLevelTwoOp() || UltraComponents.EDITOR.get(player).isActive())
+			return false;
+		IDimensionDataComponent data = UltraComponents.DIMENSION_DATA.get(provider);
+		for (BlockPos roomPos : data.getAllMappingRooms())
+		{
+			if(!provider.isChunkLoaded(roomPos))
+				continue;
+			if(!(provider.getBlockEntity(roomPos) instanceof RoomBlockEntity room))
+			{
+				data.markRoomInvalid(pos);
+				if(UltraDimensions.Instance != null)
+					UltraDimensions.Instance.onSuppressedModification(player);
+				continue;
+			}
+			if(room.isSuppressModifications() && room.getAreaBox().contains(pos.toCenterPos()))
+				return true;
+		}
+		data.clearInvalidRooms();
+		return !provider.canPlayerModifyAt(player, pos);
 	}
 	
 	@Override

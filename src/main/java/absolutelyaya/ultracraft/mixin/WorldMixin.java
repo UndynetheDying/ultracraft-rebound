@@ -62,26 +62,26 @@ public abstract class WorldMixin
 		});
 	}
 	
-	@ModifyReturnValue(method = "canPlayerModifyAt", at = @At("RETURN"))
-	boolean onCanPlayerModify(boolean original, @Local PlayerEntity player, @Local BlockPos pos)
-	{
-		if(player.isCreativeLevelTwoOp() || UltraComponents.EDITOR.get(player).isActive())
-			return original;
-		World world = (World)(Object)this;
-		IDimensionDataComponent data = UltraComponents.DIMENSION_DATA.get(this);
-		for (BlockPos roomPos : data.getAllMappingRooms())
-		{
-			if(!world.isChunkLoaded(roomPos))
-				continue;
-			if(!(world.getBlockEntity(roomPos) instanceof RoomBlockEntity room))
-			{
-				data.markRoomInvalid(pos);
-				continue;
-			}
-			if(room.isSuppressModifications() && room.getAreaBox().contains(pos.toCenterPos()))
-				return false;
-		}
-		data.clearInvalidRooms();
-		return original;
-	}
+	//@ModifyReturnValue(method = "canPlayerModifyAt", at = @At("RETURN"))
+	//boolean onCanPlayerModify(boolean original, @Local PlayerEntity player, @Local BlockPos pos)
+	//{
+	//	if(player.isCreativeLevelTwoOp() || UltraComponents.EDITOR.get(player).isActive())
+	//		return original;
+	//	World world = (World)(Object)this;
+	//	IDimensionDataComponent data = UltraComponents.DIMENSION_DATA.get(this);
+	//	for (BlockPos roomPos : data.getAllMappingRooms())
+	//	{
+	//		if(!world.isChunkLoaded(roomPos))
+	//			continue;
+	//		if(!(world.getBlockEntity(roomPos) instanceof RoomBlockEntity room))
+	//		{
+	//			data.markRoomInvalid(pos);
+	//			continue;
+	//		}
+	//		if(room.isSuppressModifications() && room.getAreaBox().contains(pos.toCenterPos()))
+	//			return false;
+	//	}
+	//	data.clearInvalidRooms();
+	//	return original;
+	//}
 }

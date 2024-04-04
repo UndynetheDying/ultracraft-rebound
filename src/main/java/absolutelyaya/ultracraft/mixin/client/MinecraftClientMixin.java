@@ -9,7 +9,6 @@ import absolutelyaya.ultracraft.client.gui.screen.IntroScreen;
 import absolutelyaya.ultracraft.client.gui.screen.TravelScreen;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.config.ServerConfig;
-import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.BlockRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
@@ -33,7 +32,6 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.item.Items;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.resource.ResourceReload;
 import net.minecraft.server.integrated.IntegratedServer;
@@ -216,7 +214,7 @@ public abstract class MinecraftClientMixin
 				return;
 			}
 		}
-		if(world.getRegistryKey().equals(LevelManager.WORLD_KEY))
+		if(UltraComponents.DIMENSION_DATA.get(world).isPosNotModifiable(player, ((BlockHitResult)hit).getBlockPos()))
 		{
 			player.swingHand(Hand.MAIN_HAND);
 			cir.setReturnValue(false);
@@ -271,7 +269,7 @@ public abstract class MinecraftClientMixin
 		}
 		if(player.getInventory().getMainHandStack().getItem() instanceof AbstractWeaponItem w && w.shouldCancelPunching())
 			ci.cancel();
-		if(bl && world.getRegistryKey().equals(LevelManager.WORLD_KEY))
+		if(bl && UltraComponents.DIMENSION_DATA.get(world).isPosNotModifiable(player, hitPos))
 			ci.cancel();
 		wasBreaking = bl;
 	}

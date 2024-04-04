@@ -25,6 +25,8 @@ import absolutelyaya.ultracraft.recipe.RecipeSerializers;
 import absolutelyaya.ultracraft.registry.*;
 import com.google.gson.JsonObject;
 import com.mojang.logging.LogUtils;
+import dev.architectury.event.EventResult;
+import dev.architectury.event.events.common.BlockEvent;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
@@ -91,7 +93,6 @@ public class Ultracraft implements ModInitializer
         
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             new UltraDimensions(server);
-            //UseItemCallback.EVENT.register(((player, world, hand) -> UltraDimensions.Instance.onUseItem(player, world, hand)));
             UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
                 IEditorComponent editor = UltraComponents.EDITOR.get(player);
                 if(editor.isActive() && hand.equals(Hand.MAIN_HAND))
@@ -99,7 +100,6 @@ public class Ultracraft implements ModInitializer
                 return ActionResult.PASS;
             });
         });
-        //AttackBlockCallback.EVENT.register(((player, world, hand, pos, direction) -> UltraDimensions.Instance.onAttackBlock(player, world, hand, pos, direction)));
         
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             LevelManager.Instance.onServerStop();

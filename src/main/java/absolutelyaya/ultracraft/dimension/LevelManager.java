@@ -17,7 +17,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -323,18 +322,6 @@ public class LevelManager extends DimensionManager
 			if(player.getY() < world.getBottomY() - 10)
 				rescue(player, RescueReason.VOID);
 		}
-	}
-	
-	@Override
-	public ActionResult onBlockInteract(PlayerEntity player, World world, Hand hand, BlockHitResult hit)
-	{
-		return player.isCreative() || !(player.getStackInHand(hand).getItem() instanceof BlockItem) ? ActionResult.PASS : ActionResult.FAIL;
-	}
-	
-	@Override
-	public boolean onAttackBlock(PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction)
-	{
-		return !player.isCreative();
 	}
 	
 	@Override

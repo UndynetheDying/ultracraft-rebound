@@ -2,14 +2,10 @@ package absolutelyaya.ultracraft.dimension;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 
@@ -44,20 +40,12 @@ public class UltraDimensions
 		}
 	}
 	
-	public boolean onBlockPlace(ItemPlacementContext ctx)
+	public void onSuppressedModification(PlayerEntity player)
 	{
-		Identifier key = ctx.getWorld().getRegistryKey().getValue();
+		Identifier key = player.getWorld().getRegistryKey().getValue();
 		if(!managers.containsKey(key))
-			return false;
-		return managers.get(key).onPlaceBlock(ctx);
-	}
-	
-	public boolean onAttackBlock(PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction)
-	{
-		Identifier key = world.getRegistryKey().getValue();
-		if(!managers.containsKey(key))
-			return false;
-		return managers.get(key).onAttackBlock(player, world, hand, pos, direction);
+			return;
+		managers.get(key).onSuppressedModification(player);
 	}
 	
 	public void onWorldLoad(MinecraftServer server, ServerWorld world)
