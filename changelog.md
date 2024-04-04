@@ -35,6 +35,7 @@
 - Fixed alternative cybergrind loot tables for enemies being messed up, resulting in nothing being dropped at all
 - Made getting locked out of the `destiny-chapel` Limbo Challenge Structure harder
 - Hopefully fixed Structures and Levels being breakable when they shouldn't be
+- Fixed typo in Triple Kill 
 ## Settings & Config
 ## Commands
 ## Tweaks
@@ -49,5 +50,6 @@
   - setting it to true does debug stuff with the enemy
   - currently it only makes melee interruptable enemies glow while they are interruptable
 - Changed draw order of Style Bonuses
+- Fixed a small bit of weirdness with weapon loadouts
 ## Resource Changes
 ## API Changes
