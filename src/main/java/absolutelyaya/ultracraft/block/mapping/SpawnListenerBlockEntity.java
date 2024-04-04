@@ -79,10 +79,10 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 		else if(!newState)
 		{
 			entities.forEach(e -> {
-				if(e != null && e.isAlive())
-					e.remove(Entity.RemovalReason.DISCARDED);
+				if(e != null && e.isAlive() && !e.isRemoved())
+					e.setRemoved(Entity.RemovalReason.DISCARDED);
 			});
-			entities.clear();
+			entities.removeIf(Entity::isRemoved);
 		}
 		super.onStateChanged(newState);
 	}
@@ -92,10 +92,10 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 	{
 		super.reset();
 		entities.forEach(e -> {
-			if(e != null && e.isAlive())
-				e.remove(Entity.RemovalReason.DISCARDED);
+			if(e != null && e.isAlive() && !e.isRemoved())
+				e.setRemoved(Entity.RemovalReason.DISCARDED);
 		});
-		entities.clear();
+		entities.removeIf(Entity::isRemoved);
 	}
 	
 	@Override
