@@ -739,7 +739,7 @@ public class TerminalBlockEntity extends BlockEntity implements GeoBlockEntity
 	public boolean isOwner(UUID id)
 	{
 		if(owner == null)
-			return true;
+			return world.getPlayerByUuid(id).isCreativeLevelTwoOp();
 		return owner.equals(id);
 	}
 	

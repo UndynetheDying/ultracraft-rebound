@@ -54,6 +54,7 @@
 - Added more Hell Mass to Demons
 - Travelling between dimensions now cancels slams
 - Fixed Limbo Decal Structure `gateway2` having a stripe of red terracotta
+- Terminals without Owner can no longer be customized by any Player
 ## Resource Changes
 - Fixed minor issue with `ultracraft:bright_panel` blockstate//model
 ## API Changes
