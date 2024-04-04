@@ -25,18 +25,11 @@ import absolutelyaya.ultracraft.recipe.RecipeSerializers;
 import absolutelyaya.ultracraft.registry.*;
 import com.google.gson.JsonObject;
 import com.mojang.logging.LogUtils;
-import dev.architectury.event.EventResult;
-import dev.architectury.event.events.client.ClientPlayerEvent;
-import dev.architectury.event.events.common.BlockEvent;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
-import net.fabricmc.fabric.api.client.networking.v1.ClientLoginConnectionEvents;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
@@ -67,7 +60,7 @@ public class Ultracraft implements ModInitializer
     public static final Logger LOGGER = LogUtils.getLogger();
     static final String SUPPORTER_LIST = "https://raw.githubusercontent.com/absolutelyaya/absolutelyaya/main/cool-people.json";
     public static String VERSION;
-	public static boolean DYN_LIGHTS, SERVER_SIDE;
+	public static boolean DYN_LIGHTS, SERVER_SIDE, VIVECRAFT;
 	static int freezeTicks;
     static Map<UUID, Integer> supporterCache = new HashMap<>(), supporterCacheAdditions = new HashMap<>();
     static ServerConfig config;
@@ -156,6 +149,7 @@ public class Ultracraft implements ModInitializer
         SERVER_SIDE = FabricLoader.getInstance().getEnvironmentType().equals(EnvType.SERVER);
         FabricLoader.getInstance().getModContainer(MOD_ID).ifPresent(modContainer -> VERSION = modContainer.getMetadata().getVersion().getFriendlyString());
         FabricLoader.getInstance().getModContainer("lambdynlights").ifPresent(container -> DYN_LIGHTS = true);
+        FabricLoader.getInstance().getModContainer("vivecraft").ifPresent(container -> VIVECRAFT = true);
         LOGGER.info("Ultracraft initialized.");
     }
     

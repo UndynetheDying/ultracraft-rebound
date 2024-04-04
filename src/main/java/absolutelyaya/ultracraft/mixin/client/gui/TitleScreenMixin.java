@@ -79,6 +79,8 @@ public abstract class TitleScreenMixin extends Screen
             MinecraftClient.getInstance().getSoundManager().stop(ambience);
         }
         
+        if(Ultracraft.VIVECRAFT)
+            return;
         if(ambience == null)
         {
             switch (config.BGID)
@@ -101,6 +103,8 @@ public abstract class TitleScreenMixin extends Screen
     @Inject(method = "init", at = @At("TAIL"))
     void onInit(CallbackInfo ci)
     {
+        if(Ultracraft.VIVECRAFT)
+            return;
         TitleBGButton limbo = addDrawableChild(new TitleBGButton(-24, 2,
                 32, 32, 64, 0, 32, BG_ICON_TEXTURE, 128, 128,
                 button -> setBG("limbo"), Text.translatable("narrator.button.background.limbo")));
@@ -124,6 +128,8 @@ public abstract class TitleScreenMixin extends Screen
     @Inject(method = "render", at = @At("TAIL"))
     void onRender(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci)
     {
+        if(Ultracraft.VIVECRAFT)
+            return;
         if(config.BGID.equals("limbo"))
         {
             Text t = Text.translatable("screen.ultracraft.title.subtitle");
