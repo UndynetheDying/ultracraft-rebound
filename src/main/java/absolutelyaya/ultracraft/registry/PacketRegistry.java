@@ -745,6 +745,8 @@ public class PacketRegistry
 	static void onTravelFinished(ServerPlayerEntity player)
 	{
 		ServerPlayNetworking.send(player, FINISH_TRAVELLING_PACKET_ID, new PacketByteBuf(Unpooled.buffer()));
+		if(player instanceof WingedPlayerEntity winged)
+			winged.setSlamming(false);
 	}
 	
 	static HashSet<Entity> fetchParryCandidates(ServerPlayerEntity player, Vec3d pos, Vec3d forward, float dist, Vector3f clientVel,

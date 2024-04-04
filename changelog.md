@@ -52,6 +52,7 @@
 - Changed draw order of Style Bonuses
 - Fixed a small bit of weirdness with weapon loadouts
 - Added more Hell Mass to Demons
+- Travelling between dimensions now cancels slams
 ## Resource Changes
 - Fixed minor issue with `ultracraft:bright_panel` blockstate//model
 ## API Changes
