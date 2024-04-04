@@ -27,9 +27,10 @@
 - Hopefully fixed or at least improved door desyncing issue
 - Fixed Coin Splitting
 - Hitscans can no longer hit dead entities
-- Fixed Mod Explosion damage boost towards non-mod entities also affecting Players
-- Fixed Mod Explosion damage scaling with difficulty
-- Fixed double//tripple//multi kill style bonuses not working correctly
+- Fixed all Mod Explosions doing 2.25x the damage they were supposed to
+  - Fixed Mod Explosion damage boost towards non-mod entities also affecting Players
+  - Fixed Mod Explosion damage scaling with difficulty
+- Fixed double//triple//multi kill style bonuses not working correctly
 - Fixed Style Bonus Weapon Staleness still being used when only one Weapon is held//equipped
 - Fixed a rare crash involving enemies in levels dying
 - Fixed alternative cybergrind loot tables for enemies being messed up, resulting in nothing being dropped at all
@@ -38,6 +39,7 @@
 - Fixed typo in Triple Kill
 - Fixed Main Menu Crashing the game when using Vivecraft
 - Added Travel Button to Pause Screen while in a level
+- Added Drone dodging behavior back
 ## Settings & Config
 ## Commands
 ## Tweaks

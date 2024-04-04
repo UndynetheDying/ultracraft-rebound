@@ -84,7 +84,7 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 	protected void initGoals()
 	{
 		goalSelector.add(1, new DroneAttackGoal(this));
-		//goalSelector.add(0, new DroneRandomMovementGoal(this));
+		goalSelector.add(0, new DroneRandomMovementGoal(this));
 		
 		targetSelector.add(1, new TargetPlayerGoal(this));
 	}
@@ -405,7 +405,7 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 		@Override
 		public boolean canStart()
 		{
-			return true;
+			return drone.getTarget() != null;
 		}
 		
 		@Override
@@ -423,15 +423,11 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 				for (int i = 0; i < 5; i++)
 				{
 					Vec3d dest;
-					if(target != null)
-					{
-						if(drone.distanceTo(target) < (drone.lovesTarget() ? 1f : 3f))
-							dest = drone.getPos().add(drone.getPos().subtract(target.getEyePos()).normalize().multiply(3f));
-						else
-							dest = drone.getPos().add(Vec3d.fromPolar(0f, drone.getYaw() + 90f).multiply((drone.random.nextFloat() - 0.5) * 6));
-					}
+					if(drone.distanceTo(target) < (drone.lovesTarget() ? 1f : 3f))
+						dest = drone.getPos().add(drone.getPos().subtract(target.getEyePos()).normalize().multiply(3f));
 					else
-						dest = drone.getPos().addRandom(drone.random, 15f);
+						dest = drone.getPos().add(Vec3d.fromPolar(0f, drone.getYaw() + 90f).multiply((drone.random.nextFloat() - 0.5) * 6));
+					
 					if(drone.getDistanceToGround() > 20f)
 						dest = dest.subtract(0, drone.getDistanceToGround() - 20, 0);
 					HitResult hit = drone.getWorld().raycast(new RaycastContext(dest, drone.getPos(), RaycastContext.ShapeType.COLLIDER,
