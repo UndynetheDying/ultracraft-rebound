@@ -1,6 +1,6 @@
 {
 	"credit": "Made by Absolutelyaya",
-	"parent": "ultracraft:block/elevator_floor_left",
+	"parent": "ultracraft:block/elevator/elevator_floor_left",
 	"textures": {
 		"1": "ultracraft:block/bright_panel_end",
 		"particle": "ultracraft:block/bright_panel",
