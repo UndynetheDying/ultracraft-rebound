@@ -51,5 +51,6 @@
   - currently it only makes melee interruptable enemies glow while they are interruptable
 - Changed draw order of Style Bonuses
 - Fixed a small bit of weirdness with weapon loadouts
+- Added more Hell Mass to Demons
 ## Resource Changes
 ## API Changes
