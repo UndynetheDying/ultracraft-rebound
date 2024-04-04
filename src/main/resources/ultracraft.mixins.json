@@ -43,6 +43,7 @@
     "client.gui.DownloadingTerrainScreenMixin",
     "client.gui.IngameHudMixin",
     "client.gui.ItemOverlayMixin",
+    "client.gui.GameMenuScreenMixin",
     "client.gui.SkinOptionsScreenMixin",
     "client.gui.TitleScreenMixin",
     "client.render.BackgroundRendererMixin",

@@ -37,6 +37,7 @@
 - Hopefully fixed Structures and Levels being breakable when they shouldn't be
 - Fixed typo in Triple Kill
 - Fixed Main Menu Crashing the game when using Vivecraft
+- Added Travel Button to Pause Screen while in a level
 ## Settings & Config
 ## Commands
 ## Tweaks
