@@ -61,8 +61,8 @@ public class TerminalBlock extends BlockWithEntity
 			TerminalBlockEntity terminal = (TerminalBlockEntity)world.getBlockEntity(pos.up());
 			if(itemStack.hasNbt() && itemStack.getNbt().contains("terminalData"))
 				terminal.fromitem(itemStack);
-			else if(placer.isPlayer())
-					terminal.owner = placer.getUuid();
+			if(terminal.owner == null && placer.isPlayer())
+				terminal.owner = placer.getUuid();
 			terminal.base = TerminalItem.getBase(itemStack);
 			world.setBlockState(pos.up(2),
 					BlockRegistry.TERMINAL.getDefaultState().with(FACING, state.get(FACING)).with(HALF, DoubleBlockHalf.UPPER));
