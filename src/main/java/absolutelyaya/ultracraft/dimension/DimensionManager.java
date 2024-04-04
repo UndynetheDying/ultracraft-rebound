@@ -31,11 +31,11 @@ public abstract class DimensionManager
 	
 	protected boolean onAttackBlock(PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction)
 	{
-		//if(isPosNotModifiable(player, pos))
-		//{
-		//	player.sendMessage(getModifyFailText(), true);
-		//	return true;
-		//}
+		if(isPosNotModifiable(player, pos))
+		{
+			player.sendMessage(getModifyFailText(), true);
+			return true;
+		}
 		return false;
 	}
 	

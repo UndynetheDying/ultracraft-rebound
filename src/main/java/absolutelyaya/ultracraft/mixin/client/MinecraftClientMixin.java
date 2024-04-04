@@ -9,7 +9,7 @@ import absolutelyaya.ultracraft.client.gui.screen.IntroScreen;
 import absolutelyaya.ultracraft.client.gui.screen.TravelScreen;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.config.ServerConfig;
-import absolutelyaya.ultracraft.dimension.UltraDimensions;
+import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.BlockRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
@@ -33,8 +33,10 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.item.Items;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.resource.ResourceReload;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.sound.MusicSound;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
@@ -71,6 +73,8 @@ public abstract class MinecraftClientMixin
 	@Shadow @Nullable public HitResult crosshairTarget;
 	
 	@Shadow public abstract void setScreen(@Nullable Screen screen);
+	
+	@Shadow @Nullable public abstract IntegratedServer getServer();
 	
 	boolean isShooting, wasBreaking;
 	
@@ -212,8 +216,7 @@ public abstract class MinecraftClientMixin
 				return;
 			}
 		}
-		if(UltraDimensions.Instance.onAttackBlock(player, world, Hand.MAIN_HAND,
-				((BlockHitResult)hit).getBlockPos(), ((BlockHitResult)hit).getSide()))
+		if(world.getRegistryKey().equals(LevelManager.WORLD_KEY))
 		{
 			player.swingHand(Hand.MAIN_HAND);
 			cir.setReturnValue(false);
@@ -268,7 +271,7 @@ public abstract class MinecraftClientMixin
 		}
 		if(player.getInventory().getMainHandStack().getItem() instanceof AbstractWeaponItem w && w.shouldCancelPunching())
 			ci.cancel();
-		if(bl && UltraDimensions.Instance.onAttackBlock(player, world, Hand.MAIN_HAND, hitPos, ((BlockHitResult)hit).getSide()))
+		if(bl && world.getRegistryKey().equals(LevelManager.WORLD_KEY))
 			ci.cancel();
 		wasBreaking = bl;
 	}
