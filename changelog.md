@@ -45,6 +45,7 @@
 - Fixed Hideous Mass Harpoon Velocity being way too high because I forgor to normalize a vector
 - Fixed V2s Arm Progression Item Drop (or any that are set to not give actually an item really) not working properly
 - Room Mapping Blocks can now be set to not use the reset timer using `/edit attribute set room resetCooldown never`
+- Fixed Progression Item Entities being.. pick-uppable..? multiple times
 ## Settings & Config
 ## Commands
 ## Tweaks
