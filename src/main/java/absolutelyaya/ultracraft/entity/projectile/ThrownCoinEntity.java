@@ -20,7 +20,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -339,13 +338,8 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 	{
 		if(splitting)
 			dataTracker.set(SPLITS, dataTracker.get(SPLITS) - 1);
-		if(hasTargets)
-		{
-			nextHitDelay = 2;
-			hitTicks = 1;
-		}
-		else
-			hitTicks = (byte)nextHitDelay;
+		nextHitDelay = 2;
+		hitTicks = 1;
 		splitting = true;
 		hitNext(source, amount, attacker);
 		return true;

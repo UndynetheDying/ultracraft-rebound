@@ -546,8 +546,13 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 	@Override
 	public boolean damage(DamageSource source, float amount)
 	{
-		if(isPlayingIntro() && !source.isIn(DamageTypeTags.V2_BYPASS_INTRO))
-			return false;
+		if(isPlayingIntro())
+		{
+			if(source.isIn(DamageTypeTags.V2_BYPASS_INTRO))
+				amount *= 2.5f;
+			else
+				return false;
+		}
 		if(source.isOf(DamageTypes.FALL))
 			return false;
 		if(getHealth() - amount <= 0 || isPlayingOutro())
