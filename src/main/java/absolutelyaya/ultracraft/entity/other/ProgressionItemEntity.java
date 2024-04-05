@@ -63,7 +63,7 @@ public class ProgressionItemEntity extends ItemEntity
 			PlayerEntity player = MinecraftClient.getInstance().player;
 			IProgressionComponent progression = UltraComponents.PROGRESSION.get(player);
 			ILoadoutComponent loadout = UltraComponents.LOADOUT.get(player);
-			if(progression.isOwned(Identifier.tryParse(getProgressionEntry())) && isAlreadyHeld(loadout))
+			if(progression.isOwned(Identifier.tryParse(getProgressionEntry())) && !(dataTracker.get(PICKUP) && isAlreadyHeld(loadout)))
 			{
 				MinecraftClient.getInstance().world.removeEntity(getId(), Entity.RemovalReason.DISCARDED);
 				return;
