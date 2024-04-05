@@ -53,6 +53,7 @@
 - Made Coin Splitting easier
 - Made Hideous Mass Enrage faster and reduced all of its Attacks Cooldowns
 - Reduced Malicious Face Attack Cooldown
+- Slightly improved Overpump Knockback
 ## Minor Changes
 - Finally removed the Console spam caused by datafixers missing from entities
 - Updated Russian Translation

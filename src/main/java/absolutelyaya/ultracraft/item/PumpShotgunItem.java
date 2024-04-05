@@ -123,7 +123,7 @@ public class PumpShotgunItem extends AbstractShotgunItem
 		if(overcharge && !world.isClient)
 		{
 			winged.setBloodHealCooldown(10);
-			ExplosionHandler.explosion(user, world, user.getPos().add(user.getRotationVector()),
+			ExplosionHandler.explosion(user, world, user.getPos().add(user.getRotationVector().add(0f, 1f, 0f)),
 					DamageSources.get(world, DamageSources.OVERCHARGE, user), 20, 16.6f, 3, true, true);
 			if(!(ServerConfig.INSTANCE.dodgeableOverpump.getValue() && UltraComponents.HIVEL.get(user).isDashing()))
 				user.damage(DamageSources.get(world, DamageSources.OVERCHARGE_SELF), 10);
