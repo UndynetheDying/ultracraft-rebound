@@ -12,13 +12,15 @@
 - Improvements to Levels
   - All Levels Entrance Elevator door trigger has been expanded
   - All Level Unlock Triggers have been expanded
+  - With some rare exceptions, none of the Rooms in Levels should have Reset Timers anymore
   - Prelude2 // Straight to Hell
     - Expanded first spawn trigger in `BigOutdoors` Room
     - Changed `mainRoom` wave 2 Schism placement to guide players towards the right door more naturally
   - Limbo1 // Illusionary Paradise
-    - fixed softlock in `room-68`
-    - moved spawn trigger in `room-69` slightly
-    - fixed one of the doors in `room-69` not locking properly
+    - Fixed softlock in `room-68`
+    - Moved spawn trigger in `room-69` slightly
+    - Fixed one of the doors in `room-69` not locking properly
+    - Made Maurice in `` more visible
   - Limbo2 // Halls of the Blameless
     - Nailgun Pedestal now gets removed after obtaining the Nailgun to reduce confusion
     - Made `Odd5ShapedRoom`s Spawn Trigger harder to skip accidentally
@@ -42,6 +44,7 @@
 - Added Drone dodging behavior back
 - Fixed Hideous Mass Harpoon Velocity being way too high because I forgor to normalize a vector
 - Fixed V2s Arm Progression Item Drop (or any that are set to not give actually an item really) not working properly
+- Room Mapping Blocks can now be set to not use the reset timer using `/edit attribute set room resetCooldown never`
 ## Settings & Config
 ## Commands
 ## Tweaks
