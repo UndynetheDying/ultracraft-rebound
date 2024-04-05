@@ -40,12 +40,14 @@
 - Fixed Main Menu Crashing the game when using Vivecraft
 - Added Travel Button to Pause Screen while in a level
 - Added Drone dodging behavior back
+- Fixed Hideous Mass Harpoon Velocity being way too high because I forgor to normalize a vector
 ## Settings & Config
 ## Commands
 ## Tweaks
 - Reduced Hell Bullet damage (6 -> 5)
 - Made Interrupting Swordsmachines Melee Attacks easier
 - Made Coin Splitting easier
+- Made Hideous Mass Enrage faster and reduced all of its Attacks Cooldowns
 ## Minor Changes
 - Finally removed the Console spam caused by datafixers missing from entities
 - Updated Russian Translation
@@ -59,6 +61,8 @@
 - Travelling between dimensions now cancels slams
 - Fixed Limbo Decal Structure `gateway2` having a stripe of red terracotta
 - Terminals without Owner can no longer be customized by any Player
+- Fixed Hideous Mass T-Posing under specific conditions after an Attack animation
+  - no more funi flesh doggo :pensive:
 ## Resource Changes
 - Fixed minor issue with `ultracraft:bright_panel` blockstate//model
 ## API Changes

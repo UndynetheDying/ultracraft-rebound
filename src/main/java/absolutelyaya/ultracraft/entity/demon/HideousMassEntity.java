@@ -63,7 +63,7 @@ import java.util.List;
 
 public class HideousMassEntity extends AbstractUltraHostileEntity implements GeoEntity, IAnimatedEnemy, Enrageable
 {
-	protected static final float BOSS_HEALTH = 250f, REGULAR_HEALTH = 120f;
+	protected static final float BOSS_HEALTH = 250f, REGULAR_HEALTH = 120f, ENRAGE_THRESHOLD = 0.25f;
 	protected static final TrackedData<Integer> ATTACK_COOLDOWN = DataTracker.registerData(HideousMassEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Integer> MORTAR_COUNTER = DataTracker.registerData(HideousMassEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Integer> SLAM_COUNTER = DataTracker.registerData(HideousMassEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -75,18 +75,18 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 	protected static final TrackedData<Boolean> HIDDEN = DataTracker.registerData(HideousMassEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	static final RawAnimation POSE_ANIM = RawAnimation.begin().thenPlay("pose");
 	static final RawAnimation LAY_POSE_ANIM = RawAnimation.begin().thenPlay("lay_pose");
-	static final RawAnimation MORTAR_ANIM = RawAnimation.begin().thenPlay("mortar");
+	static final RawAnimation MORTAR_ANIM = RawAnimation.begin().thenPlay("mortar").thenPlay("pose");
 	static final RawAnimation SLAM_STANDING_ANIM = RawAnimation.begin().thenPlay("stand_slam_start").thenPlay("slam");
 	static final RawAnimation SLAM_LAYING_ANIM = RawAnimation.begin().thenPlay("lay_slam_start").thenPlay("slam");
-	static final RawAnimation STAND_UP_ANIM = RawAnimation.begin().thenPlay("stand_up");
-	static final RawAnimation CLAP_ANIM = RawAnimation.begin().thenPlay("clap");
-	static final RawAnimation HARPOON_ANIM = RawAnimation.begin().thenPlay("harpoon");
+	static final RawAnimation STAND_UP_ANIM = RawAnimation.begin().thenPlay("stand_up").thenPlay("pose");
+	static final RawAnimation CLAP_ANIM = RawAnimation.begin().thenPlay("clap").thenPlay("lay_pose");
+	static final RawAnimation HARPOON_ANIM = RawAnimation.begin().thenPlay("harpoon").thenPlay("lay_pose");
 	static final RawAnimation ENRAGED_ANIM = RawAnimation.begin().thenPlay("enrage_start").thenPlay("enrage_loop");
 	static final RawAnimation TURN_ANIM = RawAnimation.begin().thenPlay("turn");
 	static final RawAnimation TURN_LAYING_ANIM = RawAnimation.begin().thenPlay("lay_turn");
 	static final RawAnimation ENRAGED_TURN_ANIM = RawAnimation.begin().thenPlay("enrage_turn");
 	static final RawAnimation HIDE_POSE_ANIM = RawAnimation.begin().thenPlay("hide_pose");
-	static final RawAnimation UNHIDE_ANIM = RawAnimation.begin().thenPlay("unhide");
+	static final RawAnimation UNHIDE_ANIM = RawAnimation.begin().thenPlay("unhide").thenPlay("pose");
 	final AnimatableInstanceCache cache = new InstancedAnimatableInstanceCache(this);
 	private static final byte ANIMATION_IDLE = 0;
 	private static final byte ANIMATION_MORTAR = 1;
@@ -151,7 +151,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 	protected void initDataTracker()
 	{
 		super.initDataTracker();
-		dataTracker.startTracking(ATTACK_COOLDOWN, 10);
+		dataTracker.startTracking(ATTACK_COOLDOWN, 5);
 		dataTracker.startTracking(ENRAGED, false);
 		dataTracker.startTracking(LAYING, false);
 		dataTracker.startTracking(MORTAR_COUNTER, 0);
@@ -168,11 +168,11 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		goalSelector.add(0, new UnhideGoal(this));
 		goalSelector.add(0, new EnrageGoal(this));
 		goalSelector.add(1, new StandupGoal(this));
-		goalSelector.add(2, new MortarAttackGoal(this));
-		goalSelector.add(3, new ClapAttackGoal(this));
-		goalSelector.add(3, new HarpoonAttackGoal(this));
-		goalSelector.add(4, new SlamAttackGoal(this, true));
-		goalSelector.add(4, new SlamAttackGoal(this, false));
+		goalSelector.add(2, new MortarAttackGoal(this).setCooldown(20, 10));
+		goalSelector.add(3, new ClapAttackGoal(this).setCooldown(15, 10));
+		goalSelector.add(3, new HarpoonAttackGoal(this).setCooldown(15, 10));
+		goalSelector.add(4, new SlamAttackGoal(this, true).setCooldown(20, 15));
+		goalSelector.add(4, new SlamAttackGoal(this, false).setCooldown(15, 15));
 		
 		targetSelector.add(1, new TargetPlayerGoal(this));
 	}
@@ -531,13 +531,12 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 	{
 		if(getTarget() == null)
 			return;
-		HarpoonEntity harpoon = HarpoonEntity.spawn(this, getLeashPos(0f), new Vec3d(0f, 0f, 0f));
 		Entity target = getTarget();
 		double targetY = target.getEyeY();
 		double x = target.getX() - getX();
-		double y = targetY - harpoon.getY();
+		double y = targetY - getLeashPos(0f).getY();
 		double z = target.getZ() - getZ();
-		harpoon.setVelocity(x, y, z, 4f, 0.0f);
+		HarpoonEntity harpoon = HarpoonEntity.spawn(this, getLeashPos(0f), new Vec3d(x, y, z).normalize().multiply(1.75f));
 		harpoon.setNoGravity(true);
 		harpoon.setYaw(-getYaw());
 		playSound(SoundRegistry.REPULSIVE_SKEWER_SHOOT, 2.0f, 0.4f / (getRandom().nextFloat() * 0.4f + 0.8f));
@@ -647,6 +646,11 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 	public Vec3d getEnragedFeatureOffset()
 	{
 		return new Vec3d(0, -0.5f, 0);
+	}
+	
+	public boolean shouldEnrage()
+	{
+		return getHealth() < getTrueMaxHealth() * ENRAGE_THRESHOLD;
 	}
 	
 	@Override
@@ -862,7 +866,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		{
 			if(mob.isDying() || mob.isDead() || mob.isHidden())
 				return false;
-			return super.canStart() && mob.getHealth() < 50f || (mob.isHasHarpoon() && mob.dataTracker.get(LAYING) && mob.dataTracker.get(SLAM_COUNTER) > 2);
+			return mob.getAnimation() == animIdle && (mob.shouldEnrage() || (mob.isHasHarpoon() && mob.dataTracker.get(LAYING) && mob.dataTracker.get(SLAM_COUNTER) > 2));
 		}
 		
 		@Override
@@ -888,9 +892,9 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		{
 			if(mob.isDying() || mob.isDead() || mob.isHidden())
 				return false;
-			if(mob.getCooldown() > 0 || mob.getAnimation() != ANIMATION_IDLE)
+			if(mob.getAnimation() != ANIMATION_IDLE)
 				return false;
-			return !mob.dataTracker.get(LAYING) && !mob.isEnraged() && mob.getHealth() < 50f;
+			return !mob.dataTracker.get(LAYING) && !mob.isEnraged() && mob.shouldEnrage();
 		}
 		
 		@Override
