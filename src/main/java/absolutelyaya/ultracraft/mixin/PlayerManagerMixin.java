@@ -27,7 +27,11 @@ public class PlayerManagerMixin
 			ILevelStatsComponent stats = UltraComponents.LEVEL_STATS.get(player);
 			stats.onDeath();
 			if(checkpoint.onRespawn() && stats.getCurrentLevelInstance() != null)
-				LevelManager.Instance.getInstance(stats.getCurrentLevelInstance()).restoreLastCheckpointKills();
+			{
+				LevelManager.LevelInstance instance = LevelManager.Instance.getInstance(stats.getCurrentLevelInstance());
+				if(instance != null)
+					instance.restoreLastCheckpointKills();
+			}
 		}
 	}
 }

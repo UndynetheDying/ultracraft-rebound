@@ -17,7 +17,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -162,6 +161,10 @@ public class LevelManager extends DimensionManager
 					Ultracraft.LOGGER.info("New Level Instance ID: " + newId);
 					inst.set(new Pair<>(newId, newInstance));
 					pool.put(newId, newInstance);
+					
+					for (int x = 0; x < box.getBlockCountX(); x += 16)
+						for (int z = 0; z < box.getBlockCountZ(); z += 16)
+							world.getChunkManager().setChunkForced(new ChunkPos(new BlockPos(x + box.getMinX(), 0, z + box.getMinZ())), true);
 				});
 		if(inst.get() == null)
 			Ultracraft.LOGGER.warn("Level Structure " + structure + " placement failed; won't teleport Player.");
@@ -232,6 +235,10 @@ public class LevelManager extends DimensionManager
 		});
 		instances.get(levelId).remove(instanceId);
 		Ultracraft.LOGGER.info("Finished Destroying Level Instance " + instanceId);
+		
+		for (int x = 0; x < box.getBlockCountX(); x += 16)
+			for (int z = 0; z < box.getBlockCountZ(); z += 16)
+				world.getChunkManager().setChunkForced(new ChunkPos(new BlockPos(x + box.getMinX(), 0, z + box.getMinZ())), false);
 	}
 	
 	void rescue(ServerPlayerEntity player, RescueReason reason)
@@ -315,18 +322,6 @@ public class LevelManager extends DimensionManager
 			if(player.getY() < world.getBottomY() - 10)
 				rescue(player, RescueReason.VOID);
 		}
-	}
-	
-	@Override
-	public ActionResult onBlockInteract(PlayerEntity player, World world, Hand hand, BlockHitResult hit)
-	{
-		return player.isCreative() || !(player.getStackInHand(hand).getItem() instanceof BlockItem) ? ActionResult.PASS : ActionResult.FAIL;
-	}
-	
-	@Override
-	public ActionResult onAttackBlock(PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction)
-	{
-		return player.isCreative() ? ActionResult.PASS : ActionResult.FAIL;
 	}
 	
 	@Override

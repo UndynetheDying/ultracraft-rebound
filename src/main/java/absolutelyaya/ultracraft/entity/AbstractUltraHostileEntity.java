@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.entity;
 
+import absolutelyaya.ultracraft.accessor.MeleeInterruptable;
 import absolutelyaya.ultracraft.api.HeavyEntities;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.ILevelStatsComponent;
@@ -13,7 +14,6 @@ import com.chocohead.mm.api.ClassTinkerers;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.boss.ServerBossBar;
 import net.minecraft.entity.damage.DamageSource;
@@ -47,6 +47,7 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 	protected static final TrackedData<Byte> ANIMATION = DataTracker.registerData(AbstractUltraHostileEntity.class, TrackedDataHandlerRegistry.BYTE);
 	protected static final TrackedData<Boolean> BOSS = DataTracker.registerData(AbstractUltraHostileEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	protected static final TrackedData<Boolean> CYBERGRIND = DataTracker.registerData(AbstractUltraHostileEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+	protected static final TrackedData<Boolean> DEBUG = DataTracker.registerData(AbstractUltraHostileEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	
 	protected ServerBossBar bossBar;
 	boolean wasBossbarVisible;
@@ -68,6 +69,7 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 		dataTracker.startTracking(ANIMATION, (byte)0);
 		dataTracker.startTracking(BOSS, getBossDefault());
 		dataTracker.startTracking(CYBERGRIND, false);
+		dataTracker.startTracking(DEBUG, false);
 	}
 	
 	@Nullable
@@ -85,6 +87,8 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 			dataTracker.set(BOSS, nbt.getBoolean("boss"));
 		if(nbt.contains("cybergrind", NbtElement.BYTE_TYPE))
 			dataTracker.set(CYBERGRIND, nbt.getBoolean("cybergrind"));
+		if(nbt.contains("debug", NbtElement.BYTE_TYPE))
+			dataTracker.set(DEBUG, nbt.getBoolean("debug"));
 	}
 	
 	@Override
@@ -93,6 +97,7 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 		super.writeCustomDataToNbt(nbt);
 		nbt.putBoolean("boss", dataTracker.get(BOSS));
 		nbt.putBoolean("cybergrind", dataTracker.get(CYBERGRIND));
+		nbt.putBoolean("cybergrind", dataTracker.get(DEBUG));
 	}
 	
 	@Override
@@ -194,6 +199,8 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 					.forEach(p -> bossBar.addPlayer((ServerPlayerEntity)p));
 		}
 		wasBossbarVisible = isBossBarVisible();
+		if(this instanceof MeleeInterruptable && dataTracker.get(DEBUG))
+			setGlowing(isAttacking());
 	}
 	
 	@Override
@@ -295,7 +302,7 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 	protected Identifier getLootTableId()
 	{
 		if(isCybergrind())
-			return super.getLootTableId().withPrefixedPath("_cg");
+			return super.getLootTableId().withSuffixedPath("_cg");
 		return super.getLootTableId();
 	}
 	
@@ -308,7 +315,11 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 			getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(192f), p -> true).forEach(p -> {
 				ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(p);
 				if(levelStats.getCurrentLevelInstance() != null)
-					LevelManager.Instance.getInstance(levelStats.getCurrentLevelInstance()).onKill();
+				{
+					LevelManager.LevelInstance instance = LevelManager.Instance.getInstance(levelStats.getCurrentLevelInstance());
+					if(instance != null)
+						instance.onKill();
+				}
 			});
 		}
 	}

@@ -1,7 +1,8 @@
 package absolutelyaya.ultracraft.entity.machine;
 
 import absolutelyaya.ultracraft.ExplosionHandler;
-import absolutelyaya.ultracraft.accessor.MeleeInterruptable;
+import absolutelyaya.ultracraft.accessor.ChainParryAccessor;
+import absolutelyaya.ultracraft.accessor.IParriable;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.entity.AbstractUltraFlyingEntity;
 import absolutelyaya.ultracraft.entity.goal.TargetPlayerGoal;
@@ -43,7 +44,7 @@ import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.UUID;
 
-public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity, MeleeInterruptable
+public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity, IParriable, ChainParryAccessor
 {
 	private final AnimatableInstanceCache cache = new InstancedAnimatableInstanceCache(this);
 	protected static final TrackedData<Vector3f> FALLROT = DataTracker.registerData(DroneEntity.class, TrackedDataHandlerRegistry.VECTOR3F);
@@ -55,6 +56,7 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 	protected static final TrackedData<Optional<UUID>> PARRIER = DataTracker.registerData(DroneEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
 	protected static final TrackedData<Boolean> LOVEABLE = DataTracker.registerData(DroneEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	protected static final TrackedData<OptionalInt> LOVE = DataTracker.registerData(DroneEntity.class, TrackedDataHandlerRegistry.OPTIONAL_INT);
+	protected static final TrackedData<Integer> PARRIES = DataTracker.registerData(DroneEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	boolean wasCharging;
 	
 	public DroneEntity(EntityType<? extends HostileEntity> entityType, World world)
@@ -78,13 +80,14 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 		dataTracker.startTracking(PARRIER, Optional.empty());
 		dataTracker.startTracking(LOVEABLE, false);
 		dataTracker.startTracking(LOVE, OptionalInt.empty());
+		dataTracker.startTracking(PARRIES, 0);
 	}
 	
 	@Override
 	protected void initGoals()
 	{
 		goalSelector.add(1, new DroneAttackGoal(this));
-		//goalSelector.add(0, new DroneRandomMovementGoal(this));
+		goalSelector.add(0, new DroneRandomMovementGoal(this));
 		
 		targetSelector.add(1, new TargetPlayerGoal(this));
 	}
@@ -105,7 +108,7 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 			return true;
 		if(amount >= getMaxHealth() * 3) //obliterated!!
 			explode(source);
-		if(isFalling() && !source.isOf(DamageSources.INTERRUPT))
+		if(isFalling() && !source.isOf(DamageSources.INTERRUPT) && !source.isOf(DamageSources.PUNCH))
 		{
 			explode(source);
 			return false;
@@ -220,7 +223,7 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 			return;
 		dead = true;
 		ExplosionHandler.explosion(this, getWorld(), getPos(),
-				DamageSources.get(getWorld(), DamageTypes.EXPLOSION, this, source != null ? source.getAttacker() : this),
+				DamageSources.get(getWorld(), DamageSources.EXPLOSION, this, source != null ? source.getAttacker() : this),
 				7, 2, 2f, true);
 		if(!getWorld().isClient)
 			drop(source);
@@ -266,13 +269,41 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 	}
 	
 	@Override
-	public void onInterrupt(PlayerEntity interrupter)
+	public boolean isParriable()
 	{
-		setRotation(interrupter.getYaw(), interrupter.getPitch());
-		dataTracker.set(FALLDIR, interrupter.getRotationVector().toVector3f());
+		return isFalling() || isAttacking();
+	}
+	
+	@Override
+	public boolean isParried()
+	{
+		return dataTracker.get(PARRIER).isPresent();
+	}
+	
+	@Override
+	public void setParrier(PlayerEntity p)
+	{
+		dataTracker.set(PARRIER, Optional.of(p.getUuid()));
+	}
+	
+	@Override
+	public void setParried(boolean val, PlayerEntity parrier)
+	{
+		setRotation(parrier.getYaw(), parrier.getPitch());
+		dataTracker.set(FALLDIR, parrier.getRotationVector().toVector3f());
 		dataTracker.set(FALLING, isFalling() ? 70 : 1);
 		dataTracker.set(KEEP_HEIGHT, true);
-		dataTracker.set(PARRIER, Optional.of(interrupter.getUuid()));
+		dataTracker.set(PARRIER, Optional.of(parrier.getUuid()));
+	}
+	
+	@Override
+	public PlayerEntity getParrier()
+	{
+		UUID id = dataTracker.get(PARRIER).orElse(null);
+		if(id == null)
+			return null;
+		else
+			return getWorld().getPlayerByUuid(id);
 	}
 	
 	@Override
@@ -316,6 +347,18 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 		super.setAttacking(attacking);
 		if(attacking)
 			playSound(SoundRegistry.DRONE_CHARGE, 1f, 1f);
+	}
+	
+	@Override
+	public int getParryCount()
+	{
+		return dataTracker.get(PARRIES);
+	}
+	
+	@Override
+	public void setParryCount(int i)
+	{
+		dataTracker.set(PARRIES, i);
 	}
 	
 	static class DroneMoveControl extends MoveControl
@@ -377,7 +420,7 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 		@Override
 		public boolean canStart()
 		{
-			return true;
+			return drone.getTarget() != null;
 		}
 		
 		@Override
@@ -395,15 +438,11 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 				for (int i = 0; i < 5; i++)
 				{
 					Vec3d dest;
-					if(target != null)
-					{
-						if(drone.distanceTo(target) < (drone.lovesTarget() ? 1f : 3f))
-							dest = drone.getPos().add(drone.getPos().subtract(target.getEyePos()).normalize().multiply(3f));
-						else
-							dest = drone.getPos().add(Vec3d.fromPolar(0f, drone.getYaw() + 90f).multiply((drone.random.nextFloat() - 0.5) * 6));
-					}
+					if(drone.distanceTo(target) < (drone.lovesTarget() ? 1f : 3f))
+						dest = drone.getPos().add(drone.getPos().subtract(target.getEyePos()).normalize().multiply(3f));
 					else
-						dest = drone.getPos().addRandom(drone.random, 15f);
+						dest = drone.getPos().add(Vec3d.fromPolar(0f, drone.getYaw() + 90f).multiply((drone.random.nextFloat() - 0.5) * 6));
+					
 					if(drone.getDistanceToGround() > 20f)
 						dest = dest.subtract(0, drone.getDistanceToGround() - 20, 0);
 					HitResult hit = drone.getWorld().raycast(new RaycastContext(dest, drone.getPos(), RaycastContext.ShapeType.COLLIDER,

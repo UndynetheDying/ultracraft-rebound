@@ -474,7 +474,11 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			if(curSlamCooldown > 0)
 				curSlamCooldown--;
 			if(slamJumpTimer > 0)
+			{
 				slamJumpTimer--;
+				if(slamJumpTimer == 0 && slamStored)
+					slamStored = false;
+			}
 		}
 	}
 	
@@ -665,6 +669,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	public void setSlammingClient(boolean v)
 	{
 		slamming = v;
+		if(!v && slamStored)
+			slamStored = false;
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeBoolean(v);
 		ClientPlayNetworking.send(PacketRegistry.SLAM_STATE_PACKET_ID, buf);

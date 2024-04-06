@@ -5,7 +5,8 @@
     { "item": "minecraft:diamond", "count": 4 },
     { "item": "minecraft:netherite_scrap", "count": 1 }
   ],
-  "result": "ultracraft:attractor_nailgun",
+  "point-alternative": -1,
+  "result": "ultracraft:overheat_nailgun",
   "extra-output": [],
   "unlocks": []
 }

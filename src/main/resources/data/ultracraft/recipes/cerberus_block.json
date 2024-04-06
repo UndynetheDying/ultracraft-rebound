@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     " #",
-    "G#",
+    "GH",
     " #"
   ],
   "key": {
@@ -11,6 +11,9 @@
     },
     "G": {
       "item": "ultracraft:cerberus_ball"
+    },
+    "H": {
+      "item": "ultracraft:hell_mass"
     }
   },
   "result": {

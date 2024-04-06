@@ -35,10 +35,10 @@ public class ArmFeature<T extends PlayerEntity, M extends PlayerEntityModel<T>> 
 			return;
 		IArmComponent arms = UltraComponents.ARMS.get(entity);
 		byte activeArm = arms.getActiveArm();
-		PlayerEntityModel<T> model = getContextModel();
 		boolean noneEquipped = activeArm == -1;
 		if(noneEquipped || !arms.isVisible())
 			return;
+		PlayerEntityModel<T> model = getContextModel();
 		boolean slim = entity instanceof AbstractClientPlayerEntity clientPlayer && clientPlayer.getModel().equals("slim");
 		VertexConsumer consumer = vertexConsumers.getBuffer(RenderLayer.getEntityCutout(getTexture(activeArm, slim)));
 		int overlay = LivingEntityRenderer.getOverlay(entity, 0f);

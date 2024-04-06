@@ -105,7 +105,7 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 					e.tick();
 			});
 		}
-		else //reset
+		else if(maxResetCooldown > 0)
 		{
 			if(lastActive)
 				curResetCooldown = maxResetCooldown;
@@ -124,9 +124,15 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	{
 		for (String key : flags.keySet())
 			setFlag(key, false);
+		List<BlockPos> remove = new ArrayList<>();
 		for (BlockPos pos : children.keySet())
+		{
 			if(world.getBlockEntity(this.pos.add(pos)) instanceof AbstractMappingBlockEntity child && child.getParent().equals(this.pos))
 				child.reset();
+			else
+				remove.add(pos);
+		}
+		remove.forEach(this::removeChild);
 		world.getEntitiesByType(TypeFilter.instanceOf(CerberusEntity.class), getAreaBox(), LivingEntity::isAlive)
 				.forEach(e -> {
 					if(e.isAlive())
@@ -226,7 +232,12 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	public void setAttribute(String s, String value)
 	{
 		if(s.equals("resetCooldown"))
-			maxResetCooldown = Math.max(Integer.parseInt(value), 1);
+		{
+			if(value.equals("never") || value.equals("-1") || value.equals("null"))
+				maxResetCooldown = -1;
+			else
+				maxResetCooldown = Math.max(Integer.parseInt(value), 1);
+		}
 		else if(s.equals("suppressModifications"))
 			suppressModifications = Boolean.parseBoolean(value);
 		super.setAttribute(s, value);
@@ -236,7 +247,7 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	public String getAttribute(String attribute)
 	{
 		if(attribute.equals("resetCooldown"))
-			return String.valueOf(maxResetCooldown);
+			return maxResetCooldown == -1 ? "never" : String.valueOf(maxResetCooldown);
 		else if(attribute.equals("suppressModifications"))
 			return String.valueOf(suppressModifications);
 		return null;

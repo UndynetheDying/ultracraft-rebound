@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.components.world;
 
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
@@ -27,4 +28,6 @@ public interface IDimensionDataComponent extends ComponentV3
 	void markRoomInvalid(BlockPos pos);
 	
 	void clearInvalidRooms();
+	
+	boolean isPosNotModifiable(PlayerEntity player, BlockPos pos);
 }

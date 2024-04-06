@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft;
 
 import absolutelyaya.ultracraft.accessor.EntityAccessor;
+import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.components.UltraComponents;
@@ -319,7 +320,7 @@ public class ServerHitscanHandler
 			{
 				world.raycast(new RaycastContext(from, modifiedTo, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, owner));
 				EntityHitResult eHit = raycast(owner, from, modifiedTo, box,
-						(entity) -> !entities.contains(entity) && isValidTarget(entity, type), 0.25f, 64f);
+						(entity) -> !entities.contains(entity) && isValidTarget(entity, type) && !entity.isInvulnerable() && entity.isAlive(), 0.25f, 64f);
 				if(eHit == null || eHit.getEntity() == null)
 					break;
 				searchForEntities = eHit.getType() != HitResult.Type.MISS && (maxHits > 0 || (semiPierce && remainingDamage > 0));
@@ -371,12 +372,11 @@ public class ServerHitscanHandler
 				else
 				{
 					//hit the last pierced enemy with up to 10 of the remaining pierce shots. A Pierce revolver shot that hits just one enemy, will damage it 3 times.
-					for (int j = 0; j < Math.min(10, i == entities.size() - 1 && maxHits < 16 ? maxHits + 1 : 1); j++)
-						e.damage(damageSource, damage * getDamageMultipier(type));
+					e.damage(damageSource, damage * getDamageMultipier(type) * Math.min(10, i == entities.size() - 1 && maxHits < 16 ? maxHits + 1 : 1));
 				}
 				if(explodeProjectile && e instanceof ProjectileEntity proj && !(e instanceof IIgnoreSharpshooter || e instanceof ThrownCoinEntity))
 				{
-					ExplosionHandler.explosion(owner, world, proj.getPos(), DamageSources.get(world, DamageTypes.EXPLOSION, owner), 5f, 1f, 7.5f, true);
+					ExplosionHandler.explosion(owner, world, proj.getPos(), DamageSources.get(world, DamageSources.EXPLOSION, owner), 5f, 1f, 7.5f, true);
 					proj.kill();
 					explodeProjectile = false;
 					if(winged != null)
@@ -386,7 +386,7 @@ public class ServerHitscanHandler
 					disableExplosion = true;
 			}
 			if(explosion != null && ((bHit != null && !bHit.getType().equals(HitResult.Type.MISS)) || finalEHit != null) && !disableExplosion)
-				ExplosionHandler.explosion(null, world, new Vec3d(modifiedTo.x, modifiedTo.y, modifiedTo.z), world.getDamageSources().explosion(owner, owner),
+				ExplosionHandler.explosion(null, world, new Vec3d(modifiedTo.x, modifiedTo.y, modifiedTo.z), DamageSources.get(world, DamageSources.EXPLOSION, owner),
 						explosion.damage, explosion.falloff, explosion.radius, explosion.breakBlocks);
 			if(entities.size() == 0 && owner instanceof PlayerEntity p)
 			{

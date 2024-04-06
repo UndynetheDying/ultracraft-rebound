@@ -32,7 +32,6 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -43,6 +42,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.JsonHelper;
 import org.slf4j.Logger;
@@ -60,7 +60,7 @@ public class Ultracraft implements ModInitializer
     public static final Logger LOGGER = LogUtils.getLogger();
     static final String SUPPORTER_LIST = "https://raw.githubusercontent.com/absolutelyaya/absolutelyaya/main/cool-people.json";
     public static String VERSION;
-	public static boolean DYN_LIGHTS, SERVER_SIDE;
+	public static boolean DYN_LIGHTS, SERVER_SIDE, VIVECRAFT;
 	static int freezeTicks;
     static Map<UUID, Integer> supporterCache = new HashMap<>(), supporterCacheAdditions = new HashMap<>();
     static ServerConfig config;
@@ -95,12 +95,10 @@ public class Ultracraft implements ModInitializer
                 IEditorComponent editor = UltraComponents.EDITOR.get(player);
                 if(editor.isActive() && hand.equals(Hand.MAIN_HAND))
                     return editor.useBlock(player, hitResult.getBlockPos());
-                return UltraDimensions.Instance.onBlockInteract(player, world, hand, hitResult);
+                return ActionResult.PASS;
             });
-            
-            AttackBlockCallback.EVENT.register(((player, world, hand, pos, direction) -> UltraDimensions.Instance.onAttackBlock(player, world, hand, pos, direction)));
-            //UseItemCallback.EVENT.register(((player, world, hand) -> UltraDimensions.Instance.onUseItem(player, world, hand)));
         });
+        
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             LevelManager.Instance.onServerStop();
         });
@@ -151,6 +149,7 @@ public class Ultracraft implements ModInitializer
         SERVER_SIDE = FabricLoader.getInstance().getEnvironmentType().equals(EnvType.SERVER);
         FabricLoader.getInstance().getModContainer(MOD_ID).ifPresent(modContainer -> VERSION = modContainer.getMetadata().getVersion().getFriendlyString());
         FabricLoader.getInstance().getModContainer("lambdynlights").ifPresent(container -> DYN_LIGHTS = true);
+        FabricLoader.getInstance().getModContainer("vivecraft").ifPresent(container -> VIVECRAFT = true);
         LOGGER.info("Ultracraft initialized.");
     }
     

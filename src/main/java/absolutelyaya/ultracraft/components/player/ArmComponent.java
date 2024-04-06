@@ -13,8 +13,8 @@ public class ArmComponent implements IArmComponent
 {
 	public static final Identifier[] armIDs = new Identifier[]
 		{
-			new Identifier(Ultracraft.MOD_ID, "feedbacker"),
-			new Identifier(Ultracraft.MOD_ID, "knuckleblaster")
+			ProgressionComponent.FEEDBACKER,
+			ProgressionComponent.KNUCKLEBLASTER
 		};
 	
 	final PlayerEntity provider;
@@ -35,18 +35,26 @@ public class ArmComponent implements IArmComponent
 	@Override
 	public boolean setActiveArm(byte i)
 	{
+		boolean ignoreChangedCheck = false;
+		if(i == -1)
+		{
+			ignoreChangedCheck = true;
+			i = activeArm;
+		}
+		if(i == -1)
+			return false;
 		if(armIDs.length <= i || i < 0)
 		{
 			Ultracraft.LOGGER.warn("Tried equipping invalid Arm (index " + i + " out of bounds)");
 			return false;
 		}
-		if(activeArm == i)
+		if(!ignoreChangedCheck && activeArm == i)
 			return false;
 		IProgressionComponent progression = UltraComponents.PROGRESSION.get(provider);
-		if(progression.isOwned(armIDs[i]))
+		if(progression.isUnlocked(armIDs[i]))
 			activeArm = i;
 		else
-			activeArm = -1;
+			activeArm = getFirstUnlockedArmIfCurrentlyInvalid();
 		sync();
 		return true;
 	}
@@ -114,14 +122,39 @@ public class ArmComponent implements IArmComponent
 	@Override
 	public boolean isVisible()
 	{
-		return visible;
+		return visible && getUnlockedArmCount() > 0;
 	}
 	
 	@Override
 	public void setPunchPressed(boolean v)
 	{
+		if(v)
+		{
+			byte i = getFirstUnlockedArmIfCurrentlyInvalid();
+			if(i == -1)
+			{
+				punchPressed = false;
+				sync();
+				return;
+			}
+			else
+				setActiveArm(i);
+		}
 		punchPressed = v;
 		sync();
+	}
+	
+	byte getFirstUnlockedArmIfCurrentlyInvalid()
+	{
+		IProgressionComponent progression = UltraComponents.PROGRESSION.get(provider);
+		if(activeArm == -1 || !progression.isUnlocked(armIDs[activeArm]))
+		{
+			for (int i = 0; i < armIDs.length; i++)
+				if(progression.isUnlocked(armIDs[i]))
+					return (byte)i;
+			return -1;
+		}
+		return activeArm;
 	}
 	
 	@Override

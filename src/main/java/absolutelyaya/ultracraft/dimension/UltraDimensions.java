@@ -5,12 +5,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 
@@ -45,20 +40,12 @@ public class UltraDimensions
 		}
 	}
 	
-	public ActionResult onBlockInteract(PlayerEntity player, World world, Hand hand, BlockHitResult hit)
+	public void onSuppressedModification(PlayerEntity player)
 	{
-		Identifier key = world.getRegistryKey().getValue();
+		Identifier key = player.getWorld().getRegistryKey().getValue();
 		if(!managers.containsKey(key))
-			return ActionResult.PASS;
-		return managers.get(key).onBlockInteract(player, world, hand, hit);
-	}
-	
-	public ActionResult onAttackBlock(PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction)
-	{
-		Identifier key = world.getRegistryKey().getValue();
-		if(!managers.containsKey(key))
-			return ActionResult.PASS;
-		return managers.get(key).onAttackBlock(player, world, hand, pos, direction);
+			return;
+		managers.get(key).onSuppressedModification(player);
 	}
 	
 	public void onWorldLoad(MinecraftServer server, ServerWorld world)

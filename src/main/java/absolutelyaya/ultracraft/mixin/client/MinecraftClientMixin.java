@@ -34,6 +34,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.resource.ResourceReload;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.sound.MusicSound;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
@@ -70,6 +71,8 @@ public abstract class MinecraftClientMixin
 	@Shadow @Nullable public HitResult crosshairTarget;
 	
 	@Shadow public abstract void setScreen(@Nullable Screen screen);
+	
+	@Shadow @Nullable public abstract IntegratedServer getServer();
 	
 	boolean isShooting, wasBreaking;
 	
@@ -211,6 +214,12 @@ public abstract class MinecraftClientMixin
 				return;
 			}
 		}
+		if(UltraComponents.DIMENSION_DATA.get(world).isPosNotModifiable(player, ((BlockHitResult)hit).getBlockPos()))
+		{
+			player.swingHand(Hand.MAIN_HAND);
+			cir.setReturnValue(false);
+			return;
+		}
 		
 		if(!pedestal)
 			return;
@@ -259,6 +268,8 @@ public abstract class MinecraftClientMixin
 			ci.cancel();
 		}
 		if(player.getInventory().getMainHandStack().getItem() instanceof AbstractWeaponItem w && w.shouldCancelPunching())
+			ci.cancel();
+		if(bl && UltraComponents.DIMENSION_DATA.get(world).isPosNotModifiable(player, hitPos))
 			ci.cancel();
 		wasBreaking = bl;
 	}

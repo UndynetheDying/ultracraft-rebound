@@ -78,7 +78,7 @@ public class ItemRegistry
 			new Identifier(Ultracraft.MOD_ID, "placeholder"),
 			new Item(new FabricItemSettings().food(new FoodComponent.Builder().alwaysEdible().hunger(-1).build())));
 	public static final LumpFishItem LUMPFISH = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "lumpfish"), new LumpFishItem(new FabricItemSettings()));
+			new Identifier(Ultracraft.MOD_ID, "lumpfish"), new LumpFishItem(new FabricItemSettings().maxCount(64)));
 	
 	//Weapons
 	public static final PierceRevolverItem PIERCE_REVOLVER = Registry.register(Registries.ITEM,

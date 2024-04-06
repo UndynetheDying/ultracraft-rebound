@@ -30,6 +30,7 @@ import absolutelyaya.ultracraft.client.sound.*;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
 import absolutelyaya.ultracraft.config.*;
+import absolutelyaya.ultracraft.dimension.UltraDimensions;
 import absolutelyaya.ultracraft.entity.husk.AbstractHuskEntity;
 import absolutelyaya.ultracraft.entity.machine.SwordsmachineEntity;
 import absolutelyaya.ultracraft.entity.projectile.IHomingProjectile;

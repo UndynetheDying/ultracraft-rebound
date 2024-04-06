@@ -48,6 +48,7 @@ public class CreditsScreen extends Screen
 		contributors.add(new ContributorElement("test", "Talon_MC", "AshenWulf", "Athanes", "Marmalude"));
 		HashMap<String, List<String>> localizerMap = new HashMap<>();
 		localizerMap.put("LOLCAT", new ArrayList<>() { { add("Doggochleb"); } });
+		localizerMap.put("Russian", new ArrayList<>() { { add("closet748"); } });
 		localizers = new LocalizerElement(localizerMap);
 		//init Supporter list and keep it; no need to fetch the list every time the screen is opened
 		if(!initializedSupporters)
@@ -205,19 +206,27 @@ public class CreditsScreen extends Screen
 		public void render(DrawContext context, TextRenderer tRender)
 		{
 			MatrixStack matrices = context.getMatrices();
+			matrices.push();
 			context.drawText(tRender, role, 0, 0, 0xffffffff, true);
 			matrices.translate(8, tRender.fontHeight + 3, 0);
 			for (Map.Entry<Text, List<Text>> entry : entries.entrySet())
 			{
+				int maxWidth = 0;
 				context.drawText(tRender, entry.getKey(), 0, 0, 0xffffffff, true);
 				matrices.translate(8, 1, 0);
-				entry.getValue().forEach(i -> {
+				matrices.push();
+				for (Text i : entry.getValue())
+				{
 					matrices.translate(0, tRender.fontHeight + 1, 0);
 					context.drawText(tRender, i, 0, 0, 0xffffffff, true);
-				});
-				matrices.translate(-8, 0, 0);
+					if(tRender.getWidth(i) > maxWidth)
+						maxWidth = tRender.getWidth(i);
+				}
+				matrices.pop();
+				matrices.translate(maxWidth + 8, 0, 0);
 			}
 			matrices.translate(-8, tRender.fontHeight * 2, 0);
+			matrices.pop();
 		}
 	}
 	

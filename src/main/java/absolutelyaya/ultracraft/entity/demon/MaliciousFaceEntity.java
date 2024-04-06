@@ -799,7 +799,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		public void stop()
 		{
 			super.stop();
-			face.dataTracker.set(ATTACK_COOLDOWN, 30 + (int)(face.random.nextFloat() * 50));
+			face.dataTracker.set(ATTACK_COOLDOWN, 20 + (int)(face.random.nextFloat() * 40));
 		}
 	}
 	
@@ -876,7 +876,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 					repeat = false;
 					return;
 				}
-				face.dataTracker.set(ATTACK_COOLDOWN, 50 + (int)(face.random.nextFloat() * 60));
+				face.dataTracker.set(ATTACK_COOLDOWN, 40 + (int)(face.random.nextFloat() * 30));
 				face.dataTracker.set(CHARGE, 0);
 			}
 		}

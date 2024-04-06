@@ -185,17 +185,26 @@ public class LoadoutTab extends Tab
 		}
 		if(action.equals("order"))
 		{
-			if(order[value] == 2)
+			if(order[value] >= getMaxOrder() - 1)
 				return true;
 			order[value] = order[value] + 1;
 			for (int i = 0; i < 3; i++)
 			{
-				if(order[value] == order[i] && i != value)
+				if(order[value] == order[i] && i != value && state[i] > 0)
 					order[i] = order[i] - 1;
 			}
 			return true;
 		}
 		return super.onButtonClicked(action, value);
+	}
+	
+	int getMaxOrder()
+	{
+		int i = 0;
+		for (int state : state)
+			if(state > 0)
+				i++;
+		return i;
 	}
 	
 	boolean canBeAlternate()

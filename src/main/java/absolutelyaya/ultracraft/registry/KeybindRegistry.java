@@ -146,11 +146,10 @@ public class KeybindRegistry
 		ClientPlayerEntity player = client.player;
 		if(player == null || player.isSpectator())
 			return false;
-		if(arm != -1)
-		{
-			IArmComponent armComponent = UltraComponents.ARMS.get(player);
-			armComponent.setActiveArm(arm);
-		}
+		IArmComponent armComponent = UltraComponents.ARMS.get(player);
+		if(armComponent.getUnlockedArmCount() == 0)
+			return false;
+		armComponent.setActiveArm(arm);
 		if(!((LivingEntityAccessor)player).punch())
 			return false;
 		if(player.isMainPlayer())

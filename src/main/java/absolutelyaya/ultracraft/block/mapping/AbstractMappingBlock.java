@@ -70,7 +70,11 @@ public abstract class AbstractMappingBlock extends BlockWithEntity
 		if(!editor.isActive())
 			return ActionResult.PASS;
 		if(editor.getEditAreaStep() > 0 && !world.isClient)
+		{
+			if(editor.getEditFocus().size() == 0)
+				editor.setEditAreaStep(0);
 			return ActionResult.SUCCESS;
+		}
 		AbstractMappingBlockEntity entity = null;
 		if(world.getBlockEntity(pos) instanceof AbstractMappingBlockEntity b)
 			entity = b;

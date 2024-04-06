@@ -29,6 +29,13 @@ public abstract class TimedAttackGoal<T extends HostileEntity & IAnimatedEnemy> 
 		return mob.getTarget() != null && mob.canSee(mob.getTarget());
 	}
 	
+	public TimedAttackGoal<T> setCooldown(int base, int randomRange)
+	{
+		baseCooldown = base;
+		randomCooldownRange = randomRange;
+		return this;
+	}
+	
 	@Override
 	public void start()
 	{

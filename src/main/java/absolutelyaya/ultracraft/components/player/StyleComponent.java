@@ -62,20 +62,28 @@ public class StyleComponent implements IStyleComponent
 	@Override
 	public void styleBonusGet(StyleBonus bonus)
 	{
+		if(bonus == null)
+			return;
 		bonusQueue.add(new Pair<>(bonus.getTranslationKey(), provider.getWorld().getTime()));
 		float score = bonus.getScore();
+		boolean shouldApplyStaleness = shouldApplyStaleness();
 		if(bonus.isUseStaleness())
 		{
 			ItemStack stack = provider.getMainHandStack();
 			if(stack == null)
 				return;
 			Identifier id = Registries.ITEM.getId(stack.getItem());
-			score *= getStalenessMod(id);
-			if(stack.getItem() instanceof AbstractWeaponItem)
-				stalenessMap.put(id, MathHelper.clamp(getStaleness(id) + 5, 0, 150));
-			for (Identifier key : stalenessMap.keySet())
-				if(!key.equals(id) && getStaleness(id) > 0)
-					stalenessMap.put(key, MathHelper.clamp(getStaleness(key) - 10, 0, 150));
+			if(!shouldApplyStaleness)
+				stalenessMap.remove(id);
+			else
+			{
+				score *= getStalenessMod(id);
+				if(stack.getItem() instanceof AbstractWeaponItem)
+					stalenessMap.put(id, MathHelper.clamp(getStaleness(id) + 5, 0, 150));
+				for (Identifier key : stalenessMap.keySet())
+					if(!key.equals(id) && getStaleness(id) > 0)
+						stalenessMap.put(key, MathHelper.clamp(getStaleness(key) - 10, 0, 150));
+			}
 		}
 		if(!provider.getWorld().isClient)
 		{
@@ -99,7 +107,7 @@ public class StyleComponent implements IStyleComponent
 	{
 		boolean heavy = HeavyEntities.isHeavy(entity.getType());
 		styleBonusGet(StyleBonusManager.getBonuses().get(heavy ? BIG_KILL_ID : KILL_ID));
-		if(killStreakTimer > 0)
+		if(killStreakTimer > 0 || killStreak == 0)
 			killStreak++;
 		killStreakTimer = 15;
 		if(killStreak > 1)
@@ -263,6 +271,11 @@ public class StyleComponent implements IStyleComponent
 		return movementMultiplier;
 	}
 	
+	boolean shouldApplyStaleness()
+	{
+		return UltraComponents.LOADOUT.get(provider).isMoreThanOneWeaponHeld();
+	}
+	
 	@Override
 	public void readFromNbt(NbtCompound tag)
 	{
@@ -272,6 +285,7 @@ public class StyleComponent implements IStyleComponent
 			chain = tag.getFloat("chain");
 		if(tag.contains("staleness", NbtElement.LIST_TYPE))
 		{
+			stalenessMap.clear();
 			tag.getList("staleness", NbtElement.COMPOUND_TYPE).forEach(i -> {
 				if(i instanceof NbtCompound compound)
 				{

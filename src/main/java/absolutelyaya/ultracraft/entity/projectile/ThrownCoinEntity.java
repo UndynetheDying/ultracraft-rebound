@@ -20,7 +20,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -281,7 +280,7 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 						ServerHitscanHandler.sendPacket((ServerWorld) getWorld(), getPos(), closest.getEyePos(), hitscanType);
 						closest.damage(DamageSources.get(getWorld(), DamageSources.CHARGEBACK, getOwner(), chargebackCauser), chargebackCauser == closest ? Float.MAX_VALUE : damage);
 						ExplosionHandler.explosion(getOwner(), getWorld(), closest.getPos(),
-								DamageSources.get(getWorld(), DamageTypes.EXPLOSION, this, getOwner()), 10, 0f, 5.5f, true);
+								DamageSources.get(getWorld(), DamageSources.EXPLOSION, this, getOwner()), 10, 0f, 5.5f, true);
 						Ultracraft.freeze((ServerWorld) getWorld(), 5);
 						coins.forEach(Entity::kill); //necessary because otherwise *two* final chargeback attacks occur. Don't ask why, I have no idea
 						return true;
@@ -337,14 +336,10 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 	
 	boolean performSplits(HitscanDamageSource source, float amount, LivingEntity attacker, boolean hasTargets)
 	{
-		dataTracker.set(SPLITS, dataTracker.get(SPLITS) - 1);
-		if(hasTargets)
-		{
-			nextHitDelay = 2;
-			hitTicks = 1;
-		}
-		else
-			hitTicks = (byte)nextHitDelay;
+		if(splitting)
+			dataTracker.set(SPLITS, dataTracker.get(SPLITS) - 1);
+		nextHitDelay = 2;
+		hitTicks = 1;
 		splitting = true;
 		hitNext(source, amount, attacker);
 		return true;
@@ -514,7 +509,7 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 	
 	public boolean isSplittable()
 	{
-		return !dataTracker.get(PUNCHED) && !dataTracker.get(CHARGEBACK) && (Math.max(1f - Math.abs(getVelocity().y * 6.5f), 0f) > 0.5f || realAge > 20);
+		return !dataTracker.get(PUNCHED) && !dataTracker.get(CHARGEBACK) && (Math.max(1f - Math.abs(getVelocity().y * 6.5f), 0f) > 0.35f || realAge > 25);
 	}
 	
 	@Override

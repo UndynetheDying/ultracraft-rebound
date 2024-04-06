@@ -691,8 +691,8 @@
   "screen.ultracraft.credits.sound": "SFX Help:",
   "screen.ultracraft.credits.test": "Playtesters // QA:",
   "screen.ultracraft.credits.localization": "Localization:",
-  "screen.ultracraft.credits.localization.lolcat": "LOLCAT",
   "screen.ultracraft.credits.supporter-info": "If you're a Supporter (<- certified cool person) of Absolutelyaya on Ko-fi, but are missing from the list, or would like to be hidden, please contact me (<- yaya) so I can add you to the list // hide you. (<- this is done manually)\nBoth Past and Present Supporters may be listed here; I greatly appreciate all of you <3",
+  "screen.ultracraft.pause.exitLevel": "Exit Ultracraft Level",
 
   "level.ultracraft.error.title": "Invalid ID",
   "level.ultracraft.error.description": "The ID for this buttons level wasn't found. This shouldn't really ever happen.",
@@ -796,7 +796,7 @@
   "stylebonus.ultracraft.kill": "+ KILL",
   "stylebonus.ultracraft.air_kill": "+ AIRSHOT",
   "stylebonus.ultracraft.doublekill": "§6+ DOUBLE KILL",
-  "stylebonus.ultracraft.tripplekill": "§6+ TRIPPLE KILL",
+  "stylebonus.ultracraft.tripplekill": "§6+ TRIPLE KILL",
   "stylebonus.ultracraft.multikill": "§6+ MULTIKILL",
   "stylebonus.ultracraft.big_kill": "+ BIG KILL",
   "stylebonus.ultracraft.big_fist": "+ BIG FISTKILL",
