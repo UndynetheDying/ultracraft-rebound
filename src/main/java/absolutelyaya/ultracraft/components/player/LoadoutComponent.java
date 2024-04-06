@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.components.player;
 
 import absolutelyaya.ultracraft.Weapon;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.util.InventoryUtil;
@@ -24,7 +25,8 @@ import java.util.*;
 public class LoadoutComponent implements ILoadoutComponent
 {
 	final PlayerEntity provider;
-	private final Map<Weapon, Identifier[]> loadouts = new HashMap<>();;
+	private final Map<Weapon, Identifier[]> loadouts = new HashMap<>();
+	boolean lastOneWeaponHeld, weaponCountDirty;
 	
 	public LoadoutComponent(PlayerEntity provider)
 	{
@@ -39,9 +41,20 @@ public class LoadoutComponent implements ILoadoutComponent
 		return loadouts.getOrDefault(weapon, new Identifier[0]);
 	}
 	
+	public int getOwnedWeaponCountInLoadoutForWeapon(Weapon weapon)
+	{
+		int count = 0;
+		IProgressionComponent progression = UltraComponents.PROGRESSION.get(provider);
+		for (Identifier id : loadouts.getOrDefault(weapon, new Identifier[0]))
+			if(id != null && progression.isOwned(id))
+				count++;
+		return count;
+	}
+	
 	@Override
 	public void setLoadoutForWeapon(Weapon weapon, Identifier[] ids)
 	{
+		weaponCountDirty = true;
 		loadouts.put(weapon, ids);
 		sync(weapon);
 	}
@@ -121,6 +134,9 @@ public class LoadoutComponent implements ILoadoutComponent
 	@Override
 	public boolean isMoreThanOneWeaponHeld()
 	{
+		if(!weaponCountDirty)
+			return lastOneWeaponHeld;
+		weaponCountDirty = false;
 		boolean b = false;
 		for (Weapon weapon : Weapon.values())
 		{
@@ -129,15 +145,21 @@ public class LoadoutComponent implements ILoadoutComponent
 			boolean isHeld = isWeaponTypeHeld(weapon);
 			if(isHeld)
 			{
-				if(getLoadoutForWeapon(weapon).length > 1)
-					return true;
+				if(getOwnedWeaponCountInLoadoutForWeapon(weapon) > 1)
+					return lastOneWeaponHeld = true;
 				if(!b)
 					b = true;
 				else
-					return true;
+					return lastOneWeaponHeld = true;
 			}
 		}
-		return false;
+		return lastOneWeaponHeld = false;
+	}
+	
+	@Override
+	public void setWeaponCountDirty()
+	{
+		weaponCountDirty = true;
 	}
 	
 	@Override

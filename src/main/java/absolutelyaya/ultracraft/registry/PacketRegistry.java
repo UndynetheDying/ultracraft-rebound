@@ -154,6 +154,8 @@ public class PacketRegistry
 			boolean debug = buf.readBoolean();
 			server.execute(() -> {
 				IArmComponent arm = UltraComponents.ARMS.get(player);
+				if(arm.getUnlockedArmCount() == 0)
+					return;
 				if(punchArm != -1)
 					arm.setActiveArm(punchArm);
 				if(player instanceof LivingEntityAccessor accessor)

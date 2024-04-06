@@ -23,6 +23,10 @@ import java.util.Map;
 
 public class ProgressionComponent implements IProgressionComponent, AutoSyncedComponent
 {
+	static final Identifier FEEDBACKER = new Identifier(Ultracraft.MOD_ID, "feedbacker");
+	static final Identifier KNUCKLEBLASTER = new Identifier(Ultracraft.MOD_ID, "knuckleblaster");
+	static final Identifier SLAB = new Identifier(Ultracraft.MOD_ID, "slab");
+	
 	static final List<Identifier> ENTRIES = new ArrayList<>() {
 		{
 			add(Registries.ITEM.getId(ItemRegistry.PIERCE_REVOLVER));
@@ -32,9 +36,9 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 			add(Registries.ITEM.getId(ItemRegistry.PUMP_SHOTGUN));
 			add(Registries.ITEM.getId(ItemRegistry.ATTRACTOR_NAILGUN));
 			add(Registries.ITEM.getId(ItemRegistry.OVERHEAT_NAILGUN));
-			add(new Identifier(Ultracraft.MOD_ID, "feedbacker"));
-			add(new Identifier(Ultracraft.MOD_ID, "knuckleblaster"));
-			add(new Identifier(Ultracraft.MOD_ID, "slab"));
+			add(FEEDBACKER);
+			add(KNUCKLEBLASTER);
+			add(SLAB);
 		}
 	};
 	static final Map<Identifier, Identifier[]> UNLOCK_LOGIC = new HashMap<>() {
@@ -59,8 +63,7 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 	public ProgressionComponent(PlayerEntity provider)
 	{
 		this.provider = provider;
-		unlocked.add(new Identifier(Ultracraft.MOD_ID, "feedbacker"));
-		owned.add(new Identifier(Ultracraft.MOD_ID, "feedbacker"));
+		unlocked.add(FEEDBACKER);
 	}
 	
 	@Override
@@ -151,6 +154,7 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 	public void sync()
 	{
 		UltraComponents.PROGRESSION.sync(provider);
+		UltraComponents.LOADOUT.get(provider).setWeaponCountDirty();
 	}
 	
 	@Override

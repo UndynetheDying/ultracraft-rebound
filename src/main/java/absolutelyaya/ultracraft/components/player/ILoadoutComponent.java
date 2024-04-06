@@ -24,5 +24,7 @@ public interface ILoadoutComponent extends ComponentV3, AutoSyncedComponent
 	
 	boolean isMoreThanOneWeaponHeld();
 	
+	void setWeaponCountDirty();
+	
 	void sync(Weapon weapon);
 }

@@ -20,7 +20,7 @@
     - Fixed softlock in `room-68`
     - Moved spawn trigger in `room-69` slightly
     - Fixed one of the doors in `room-69` not locking properly
-    - Made Maurice in `` more visible
+    - Made decorative Maurice in the room with the red skull more visible
   - Limbo2 // Halls of the Blameless
     - Nailgun Pedestal now gets removed after obtaining the Nailgun to reduce confusion
     - Made `Odd5ShapedRoom`s Spawn Trigger harder to skip accidentally
@@ -50,7 +50,9 @@
 - Fixed Swordsmachine not dropping a Shotgun Progression Item when mob loot is disabled
 - Fixed Vanilla and Progression Item Entities being destroyed by slamming on them
 - Fixed ████████ not being stackable
-- Fixed Sneak and Sprint state sort of getting stuck server side when enabling hivel mode 
+- Fixed Sneak and Sprint state sort of getting stuck server side when enabling hivel mode
+- Offhand punches now get disabled when no arm is unlocked (feedbacker is still unlocked by default)
+- Punching while having a locked arm equipped, now switches to the first unlocked one automatically
 ## Settings & Config
 ## Commands
 ## Tweaks
