@@ -317,6 +317,11 @@ public class PacketRegistry
 				wings.setActive(wingsActive);
 				wings.sync();
 				((WingedPlayerEntity)player).updateSpeedConfig();
+				if(wingsActive)
+				{
+					player.setSneaking(false);
+					player.setSprinting(false);
+				}
 				if(whitelisted)
 					return;
 				PacketByteBuf cbuf = new PacketByteBuf(Unpooled.buffer());

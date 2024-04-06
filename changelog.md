@@ -50,6 +50,7 @@
 - Fixed Swordsmachine not dropping a Shotgun Progression Item when mob loot is disabled
 - Fixed Vanilla and Progression Item Entities being destroyed by slamming on them
 - Fixed ████████ not being stackable
+- Fixed Sneak and Sprint state sort of getting stuck server side when enabling hivel mode 
 ## Settings & Config
 ## Commands
 ## Tweaks
