@@ -271,7 +271,7 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 		}
 		if(type == 2)
 		{
-			sm.setHealth(74);
+			sm.setHealth(sm.getTrueMaxHealth() * sm.getPhaseRatio());
 			sm.dataTracker.set(HAS_SHOTGUN, false);
 		}
 		world.spawnEntity(sm);
@@ -420,9 +420,7 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 		{
 			dataTracker.set(BREAKDOWN_TICKS, 60);
 			dataTracker.set(ANIMATION, ANIMATION_BREAKDOWN);
-			if(!(source.getAttacker() instanceof PlayerEntity))
-				return b;
-			if(isBoss() && getWorld().getGameRules().getBoolean(GameRules.DO_MOB_LOOT) && source.getAttacker() instanceof ServerPlayerEntity)
+			if(isBoss() && source.getAttacker() instanceof ServerPlayerEntity)
 				ProgressionItemEntity.spawn(getWorld(), getPos(), "ultracraft:core_shotgun",
 						ItemRegistry.CORE_SHOTGUN.getDefaultStack(), getRandom());
 		}
