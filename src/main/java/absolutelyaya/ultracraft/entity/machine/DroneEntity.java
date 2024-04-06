@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.entity.machine;
 
 import absolutelyaya.ultracraft.ExplosionHandler;
+import absolutelyaya.ultracraft.accessor.ChainParryAccessor;
 import absolutelyaya.ultracraft.accessor.IParriable;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.entity.AbstractUltraFlyingEntity;
@@ -43,7 +44,7 @@ import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.UUID;
 
-public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity, IParriable
+public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity, IParriable, ChainParryAccessor
 {
 	private final AnimatableInstanceCache cache = new InstancedAnimatableInstanceCache(this);
 	protected static final TrackedData<Vector3f> FALLROT = DataTracker.registerData(DroneEntity.class, TrackedDataHandlerRegistry.VECTOR3F);
@@ -55,6 +56,7 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 	protected static final TrackedData<Optional<UUID>> PARRIER = DataTracker.registerData(DroneEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
 	protected static final TrackedData<Boolean> LOVEABLE = DataTracker.registerData(DroneEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	protected static final TrackedData<OptionalInt> LOVE = DataTracker.registerData(DroneEntity.class, TrackedDataHandlerRegistry.OPTIONAL_INT);
+	protected static final TrackedData<Integer> PARRIES = DataTracker.registerData(DroneEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	boolean wasCharging;
 	
 	public DroneEntity(EntityType<? extends HostileEntity> entityType, World world)
@@ -78,6 +80,7 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 		dataTracker.startTracking(PARRIER, Optional.empty());
 		dataTracker.startTracking(LOVEABLE, false);
 		dataTracker.startTracking(LOVE, OptionalInt.empty());
+		dataTracker.startTracking(PARRIES, 0);
 	}
 	
 	@Override
@@ -344,6 +347,18 @@ public class DroneEntity extends AbstractUltraFlyingEntity implements GeoEntity,
 		super.setAttacking(attacking);
 		if(attacking)
 			playSound(SoundRegistry.DRONE_CHARGE, 1f, 1f);
+	}
+	
+	@Override
+	public int getParryCount()
+	{
+		return dataTracker.get(PARRIES);
+	}
+	
+	@Override
+	public void setParryCount(int i)
+	{
+		dataTracker.set(PARRIES, i);
 	}
 	
 	static class DroneMoveControl extends MoveControl
