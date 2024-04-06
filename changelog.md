@@ -48,6 +48,7 @@
 - Fixed Progression Item Entities being.. pick-uppable..? multiple times
 - Fixed Swordsmachine (2nd phase only) spawning with too little health
 - Fixed Swordsmachine not dropping a Shotgun Progression Item when mob loot is disabled
+- Fixed Vanilla and Progression Item Entities being destroyed by slamming on them
 ## Settings & Config
 ## Commands
 ## Tweaks
