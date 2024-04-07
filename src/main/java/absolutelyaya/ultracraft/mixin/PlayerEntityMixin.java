@@ -17,6 +17,7 @@ import absolutelyaya.ultracraft.registry.*;
 import com.chocohead.mm.api.ClassTinkerers;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -376,7 +377,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 		return 0;
 	}
 	
-	@ModifyConstant(method = "getOffGroundSpeed", constant = @Constant(floatValue = 0.02f))
+	@ModifyExpressionValue(method = "getOffGroundSpeed", at = @At(value = "CONSTANT", args = "floatValue=0.02f"))
 	float modifyAirControl(float val)
 	{
 		if(isWingsActive() && UltraComponents.HIVEL.get(this).isAirControlIncreased())
