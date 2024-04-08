@@ -6,5 +6,7 @@
 ## Commands
 ## Tweaks
 ## Minor Changes
+- Updated Russian translation
+  - Provided by closet748
 ## Resource Changes
 ## API Changes
