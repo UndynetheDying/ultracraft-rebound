@@ -20,6 +20,7 @@ import absolutelyaya.ultracraft.entity.machine.V2Entity;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import absolutelyaya.ultracraft.registry.StatusEffectRegistry;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import io.netty.buffer.Unpooled;
@@ -273,7 +274,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 		ci.cancel();
 	}
 	
-	@ModifyConstant(method = "travel", constant = @Constant(floatValue = 0.91f))
+	@ModifyExpressionValue(method = "travel", at = @At(value = "CONSTANT", args = "floatValue=0.91f"))
 	float modifySlowdown(float val)
 	{
 		if(!(this instanceof WingedPlayerEntity winged && UltraComponents.WING_DATA.get(winged).isActive()) ||

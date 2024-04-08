@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.mixin.client.gui;
 
 import absolutelyaya.ultracraft.client.gui.screen.TravelScreen;
 import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.components.player.ILevelStatsComponent;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -25,7 +26,8 @@ public abstract class GameMenuScreenMixin extends Screen
 	@Inject(method = "initWidgets", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/GridWidget;refreshPositions()V"), locals = LocalCapture.CAPTURE_FAILHARD)
 	void onInit(CallbackInfo ci, @Local GridWidget.Adder adder)
 	{
-		if(UltraComponents.LEVEL_STATS.get(client.player).getCurrentLevelInstance() != null)
+		ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(client.player);
+		if(levelStats != null && levelStats.getCurrentLevelInstance() != null)
 			adder.add(new ButtonWidget.Builder(Text.translatable("screen.ultracraft.pause.exitLevel"),
 					b -> client.setScreen(new TravelScreen(false, false))).width(204).build(), 2);
 	}
