@@ -336,6 +336,8 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 			return false;
 		if(source.isOf(DamageSources.SLAM))
 			amount *= 3.5;
+		if(source.isOf(DamageSources.NAIL))
+			amount *= 1.5;
 		if(source.isOf(DamageSources.CHARGEBACK))
 			amount = 999;
 		if(dataTracker.get(DEAD))
