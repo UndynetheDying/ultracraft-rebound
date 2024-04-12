@@ -26,6 +26,8 @@ public abstract class GameMenuScreenMixin extends Screen
 	@Inject(method = "initWidgets", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/GridWidget;refreshPositions()V"), locals = LocalCapture.CAPTURE_FAILHARD)
 	void onInit(CallbackInfo ci, @Local GridWidget.Adder adder)
 	{
+		if(UltraComponents.LEVEL_STATS == null) //prevent that mysterious crash caused by some mod
+			return;
 		ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(client.player);
 		if(levelStats != null && levelStats.getCurrentLevelInstance() != null)
 			adder.add(new ButtonWidget.Builder(Text.translatable("screen.ultracraft.pause.exitLevel"),

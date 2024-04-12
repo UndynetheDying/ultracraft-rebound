@@ -403,13 +403,13 @@ public class ItemRegistry
 			content.add(BlockRegistry.MAP_TITLE);
 			content.add(BlockRegistry.MAP_TITLE_LISTENER);
 			content.add(BlockRegistry.MAP_DAMAGE);
+			content.add(BlockRegistry.MAP_LEVEL);
 			content.add(BlockRegistry.MAP_REDSTONE);
 			content.add(BlockRegistry.MAP_RECEIVER);
 			content.add(BlockRegistry.MAP_DOOR);
 			content.add(BlockRegistry.MAP_SPAWNER);
 			content.add(BlockRegistry.MAP_SOUND);
 			content.add(BlockRegistry.MAP_EXPLOSION);
-			content.add(BlockRegistry.MAP_LEVEL);
 			content.add(BlockRegistry.MAP_CYBERGRIND);
 			content.add(BlockRegistry.MAP_LIGHT);
 			content.add(BlockRegistry.MAP_GLOBAL_REDSTONE);
