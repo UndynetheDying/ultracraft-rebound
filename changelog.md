@@ -1,4 +1,5 @@
 ## Major Changes
+- Fixed some crashes
 ## Settings & Config
 ## Commands
 ## Tweaks

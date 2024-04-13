@@ -339,7 +339,7 @@ public class LevelManager extends DimensionManager
 	@Override
 	Text getModifyFailText()
 	{
-		return null;
+		return Text.empty();
 	}
 	
 	public void debugInstanceEverythingALot()
