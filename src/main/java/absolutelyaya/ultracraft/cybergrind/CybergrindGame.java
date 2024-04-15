@@ -102,9 +102,9 @@ public class CybergrindGame
 		Vector4i bounds = getArenaBounds();
 		List<PlayerEntity> remove = new ArrayList<>();
 		for (PlayerEntity player : getParticipants())
-			if(!(player.getX() > bounds.x && player.getX() < bounds.z && player.getZ() > bounds.y && player.getZ() < bounds.w))
+			if(!(player.getX() > bounds.x - 2 && player.getX() < bounds.z + 2 && player.getZ() > bounds.y - 2 && player.getZ() < bounds.w + 2))
 				remove.add(player);
-		participants.removeAll(remove);
+		remove.forEach(this::removeParticipant);
 	}
 	
 	void addParticipant(PlayerEntity player)
@@ -117,9 +117,9 @@ public class CybergrindGame
 	
 	public void removeParticipant(PlayerEntity player)
 	{
+		UltraComponents.WINGED.get(player).setCybergrindData(null);
 		if(!participants.contains(player))
 			return;
-		UltraComponents.WINGED.get(player).setCybergrindData(null);
 		participants.remove(player);
 		if(participants.size() == 0)
 			end();
