@@ -3,12 +3,16 @@ package absolutelyaya.ultracraft.mixin.client.gui;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.ClientConfig;
 import absolutelyaya.ultracraft.client.UltracraftClient;
+import absolutelyaya.ultracraft.client.gui.BetterSplashText;
 import absolutelyaya.ultracraft.client.gui.screen.CreditsScreen;
 import absolutelyaya.ultracraft.client.gui.screen.IntroScreen;
 import absolutelyaya.ultracraft.client.gui.widget.TitleBGButton;
 import absolutelyaya.ultracraft.client.rendering.TitleBGRenderer;
 import absolutelyaya.ultracraft.client.rendering.TitleLimboBGRenderer;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.CubeMapRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -20,6 +24,8 @@ import net.minecraft.client.gui.widget.PressableTextWidget;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.SoundManager;
+import net.minecraft.resource.ReloadableResourceManagerImpl;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -33,6 +39,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Mixin(TitleScreen.class)
 public abstract class TitleScreenMixin extends Screen
@@ -48,6 +56,7 @@ public abstract class TitleScreenMixin extends Screen
     RotatingCubeMapRenderer ultraBG, defaultBG, limboBG;
     SoundInstance ambience;
     int ambienceTicks;
+    String lastLanguage;
     
     protected TitleScreenMixin(Text title)
     {
@@ -61,13 +70,8 @@ public abstract class TitleScreenMixin extends Screen
         ultraBG = new TitleBGRenderer(PANORAMA_CUBE_MAP);
         limboBG = new TitleLimboBGRenderer(PANORAMA_CUBE_MAP);
         
-        LocalDateTime time = LocalDateTime.now();
-        if(time.getHour() == 6 && time.getMinute() == 9)
-            splashText = new SplashTextRenderer("No Sex :pensive:");
-        else if(time.getHour() == 4 && time.getMinute() == 20)
-            splashText = new SplashTextRenderer("WOOOOOO 420!"); //not encouraging drug use, it's just the funny number :D
-        else if(time.getHour() == 3 && time.getMinute() == 33)
-            splashText = new SplashTextRenderer("Something Wicked this way comes");
+        refreshSplash();
+        lastLanguage = client.getLanguageManager().getLanguage();
     }
     
     @Inject(method = "tick", at = @At("HEAD"))
@@ -98,6 +102,11 @@ public abstract class TitleScreenMixin extends Screen
         }
         if(ambienceTicks > 0)
             ambienceTicks--;
+        if(client != null && (lastLanguage == null || !lastLanguage.equals(client.getLanguageManager().getLanguage())))
+        {
+            refreshSplash();
+            lastLanguage = client.getLanguageManager().getLanguage();
+        }
     }
     
     @Inject(method = "init", at = @At("TAIL"))
@@ -150,5 +159,18 @@ public abstract class TitleScreenMixin extends Screen
         };
         config.BGID = bg;
         UltracraftClient.saveConfig();
+    }
+    
+    void refreshSplash()
+    {
+        LocalDateTime time = LocalDateTime.now();
+        if(time.getHour() == 6 && time.getMinute() == 9)
+            splashText = BetterSplashText.nosex();
+        else if(time.getMonthValue() == 4 && time.getDayOfMonth() == 20)
+            splashText = BetterSplashText.fourtwenty(); //not encouraging drug use, it's just the funi number :D
+        else if(time.getHour() == 3 && time.getMinute() == 33)
+            splashText = BetterSplashText.wicked();
+        else if(splashText != null)
+            splashText = new BetterSplashText(splashText);
     }
 }
