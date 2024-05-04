@@ -29,6 +29,13 @@
     "y": 48,
     "z": 76
   },
+  "music": {
+    "default": {
+      "author": "Efefski",
+      "calm": "ultracraft:music.limbo2_calm",
+      "combat": "ultracraft:music.limbo2"
+    }
+  },
   "spawn-rot": -90,
   "version": 1
 }

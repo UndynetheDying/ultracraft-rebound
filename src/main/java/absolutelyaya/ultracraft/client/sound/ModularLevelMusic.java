@@ -1,35 +1,38 @@
 package absolutelyaya.ultracraft.client.sound;
 
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
 public class ModularLevelMusic
 {
-	final RegistryEntry<SoundEvent> calm, combat;
+	final String author;
+	final Identifier calmID, combatID;
 	
-	public ModularLevelMusic(Identifier calm, Identifier combat)
+	public ModularLevelMusic(String author, Identifier calmID, Identifier combatID)
 	{
-		Registry<SoundEvent> registry = Registries.SOUND_EVENT;
-		this.calm = registry.getEntry(registry.get(calm));
-		this.combat = registry.getEntry(registry.get(combat));
+		this.author = author;
+		this.calmID = calmID;
+		this.combatID = combatID;
 	}
 	
-	public ModularLevelMusic(RegistryEntry<SoundEvent> calm, RegistryEntry<SoundEvent> combat)
+	public String getAuthor()
 	{
-		this.calm = calm;
-		this.combat = combat;
+		return author;
 	}
 	
-	public RegistryEntry<SoundEvent> getCalmSound()
+	public SoundEvent getCalmSound()
 	{
-		return calm;
+		if(calmID == null)
+			return null;
+		return SoundEvent.of(calmID);
 	}
 	
-	public RegistryEntry<SoundEvent> getCombatSound()
+	public SoundEvent getCombatSound()
 	{
-		return combat;
+		if(combatID == null)
+			return null;
+		return SoundEvent.of(combatID);
 	}
 }

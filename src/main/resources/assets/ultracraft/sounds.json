@@ -538,5 +538,15 @@
     "sounds": [
       "ultracraft:music/clair_de_lune"
     ]
+  },
+  "music.limbo2": {
+    "sounds": [
+      "ultracraft:music/efefski/limbo2"
+    ]
+  },
+  "music.limbo2_calm": {
+    "sounds": [
+      "ultracraft:music/efefski/limbo2_calm"
+    ]
   }
 }

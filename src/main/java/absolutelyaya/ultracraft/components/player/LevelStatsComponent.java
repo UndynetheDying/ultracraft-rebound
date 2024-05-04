@@ -31,8 +31,8 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	HashMap<Identifier, Integer> lastPlayedVersion = new HashMap<>();
 	HashMap<Identifier, Integer> bestRanks = new HashMap<>();
 	Identifier currentLevel;
-	String currentLevelInstance;
-	boolean fighting, undamaged, invalid;
+	String currentLevelInstance, curLevelSoundTrackID = "default";
+	boolean fighting, undamaged, invalid, shouldMusicFade;
 	int fightCheckCooldown, deaths, kills;
 	float style;
 	long timerStart = -1, lastStoppedTimer = -1, timerPause = -1;
@@ -55,6 +55,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 		currentLevelInstance = instance;
 		if(!provider.getWorld().isClient && lastInstance != null)
 			LevelManager.Instance.leaveInstance((ServerPlayerEntity)provider, lastInstance);
+		shouldMusicFade = currentLevel != null;
 		currentLevel = levelId;
 		if(levelId != null)
 		{
@@ -62,6 +63,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 			Ultracraft.rechargeWeapons(provider);
 			provider.setHealth(provider.getMaxHealth());
 		}
+		curLevelSoundTrackID = "default";
 		UltraComponents.LEVEL_STATS.sync(provider);
 	}
 	
@@ -309,6 +311,30 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	}
 	
 	@Override
+	public void setCurLevelSoundTrackKey(String id)
+	{
+		curLevelSoundTrackID = id;
+	}
+	
+	@Override
+	public String getCurLevelSoundTrackKey()
+	{
+		return curLevelSoundTrackID;
+	}
+	
+	@Override
+	public void setShouldMusicFade(boolean val)
+	{
+		shouldMusicFade = val;
+	}
+	
+	@Override
+	public boolean shouldLevelMusicFade()
+	{
+		return shouldMusicFade;
+	}
+	
+	@Override
 	public void readFromNbt(NbtCompound tag)
 	{
 		if(tag.contains("level", NbtElement.STRING_TYPE))
@@ -325,6 +351,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 			kills = tag.getInt("kills");
 		invalid = tag.contains("invalid", NbtElement.BYTE_TYPE);
 		undamaged = tag.contains("undamaged", NbtElement.BYTE_TYPE);
+		shouldMusicFade = tag.contains("shouldMusicFade", NbtElement.BYTE_TYPE);
 		if(tag.contains("bestTimes", NbtElement.COMPOUND_TYPE))
 		{
 			bestTimes.clear();
@@ -363,7 +390,9 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 		if(invalid)
 			tag.putBoolean("invalid", true);
 		if(undamaged)
-			tag.putBoolean("undamaged", undamaged);
+			tag.putBoolean("undamaged", true);
+		if(shouldMusicFade)
+			tag.putBoolean("shouldMusicFade", true);
 		if(bestTimes != null)
 		{
 			NbtCompound records = new NbtCompound();

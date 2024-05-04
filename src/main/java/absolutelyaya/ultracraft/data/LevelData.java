@@ -5,17 +5,13 @@ import absolutelyaya.ultracraft.util.TimeUtil;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class LevelData
 {
@@ -27,7 +23,7 @@ public final class LevelData
 	String[] timeStrings;
 	long[] timeRanks;
 	int[] killRanks, styleRanks;
-	ModularLevelMusic music;
+	Map<String, ModularLevelMusic> music = new HashMap<>();
 	boolean unimplemented, hidden;
 	float spawnRot;
 	int version;
@@ -128,17 +124,17 @@ public final class LevelData
 	
 	public boolean hasMusic()
 	{
-		return music != null;
+		return !music.isEmpty();
 	}
 	
-	public void setMusic(Identifier calm, Identifier fight)
+	public void putMusic(String id, String author, Identifier calm, Identifier fight)
 	{
-		music = new ModularLevelMusic(calm, fight);
+		music.put(id, new ModularLevelMusic(author, calm, fight));
 	}
 	
-	public ModularLevelMusic getMusic()
+	public ModularLevelMusic getMusic(String id)
 	{
-		return music;
+		return music.getOrDefault(id, null);
 	}
 	
 	public void setTimeRanks(String[] strings)
@@ -177,7 +173,7 @@ public final class LevelData
 		styleRanks = ranks;
 	}
 	
-	public boolean getBuiltin()
+	public boolean isBuiltin()
 	{
 		return builtin;
 	}
@@ -304,12 +300,18 @@ public final class LevelData
 		if(hasMusic())
 		{
 			NbtCompound music = new NbtCompound();
-			RegistryEntry<SoundEvent> calm = this.music.getCalmSound();
-			if(calm != null && calm.value() != null)
-				music.putString("calm", calm.value().getId().toString());
-			RegistryEntry<SoundEvent> combat = this.music.getCombatSound();
-			if(combat != null && combat.value() != null)
-				music.putString("combat", combat.value().getId().toString());
+			this.music.forEach((key, val) -> {
+				NbtCompound entry = new NbtCompound();
+				if(val.getAuthor() != null && !val.getAuthor().isEmpty())
+					entry.putString("author", val.getAuthor());
+				SoundEvent calm = val.getCalmSound();
+				if(calm != null)
+					entry.putString("calm", calm.getId().toString());
+				SoundEvent combat = val.getCombatSound();
+				if(combat != null)
+					entry.putString("combat", combat.getId().toString());
+				music.put(key, entry);
+			});
 			nbt.put("music", music);
 		}
 		nbt.putFloat("spawnRot", spawnRot);
@@ -343,12 +345,19 @@ public final class LevelData
 		if(nbt.contains("music", NbtElement.COMPOUND_TYPE))
 		{
 			NbtCompound music = nbt.getCompound("music");
-			Identifier calm = null, combat = null;
-			if(music.contains("calm", NbtElement.STRING_TYPE))
-				calm = Identifier.tryParse(music.getString("calm"));
-			if(music.contains("combat", NbtElement.STRING_TYPE))
-				combat = Identifier.tryParse(music.getString("combat"));
-			data.setMusic(calm, combat);
+			for (String key : music.getKeys())
+			{
+				NbtCompound entry = music.getCompound(key);
+				String trackAuthor = null;
+				Identifier calm = null, combat = null;
+				if (entry.contains("author", NbtElement.STRING_TYPE))
+					trackAuthor = entry.getString("author");
+				if (entry.contains("calm", NbtElement.STRING_TYPE))
+					calm = Identifier.tryParse(entry.getString("calm"));
+				if (entry.contains("combat", NbtElement.STRING_TYPE))
+					combat = Identifier.tryParse(entry.getString("combat"));
+				data.putMusic(key, trackAuthor, calm, combat);
+			}
 		}
 		data.setUnimplemented(nbt.getBoolean("unimplemented"));
 		data.setHidden(nbt.getBoolean("hidden"));

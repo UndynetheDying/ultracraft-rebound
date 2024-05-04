@@ -31,8 +31,11 @@
     "z": 9
   },
   "music": {
-    "calm": "minecraft:music_disc.cat",
-    "combat": "minecraft:music_disc.ward"
+    "default": {
+      "author": "c418",
+      "calm": "minecraft:music_disc.cat",
+      "combat": "minecraft:music_disc.ward"
+    }
   },
   "version": 1
 }

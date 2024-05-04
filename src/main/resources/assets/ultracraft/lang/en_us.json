@@ -564,6 +564,7 @@
   "message.limbo.slab-press": "At the Center of Limbo, a Mechanism stirs",
   "message.limbo.slab-open": "And finally, a Door opens",
   "message.limbo.structure.modify-fail": "Something prevents you from modifying this Structure",
+  "message.announce-music": "Now Playing:",
 
   "intro.ultracraft.calibration": "BOOT UP SEQUENCE READY\n\nFIRMWARE\n  §aVERSION %s§r\n\nCALIBRATION\n  §4EXPIRED§r\n  §4NEW CALIBRATION REQUIRED§r\n\n",
   "intro.ultracraft.input": "Press any Key",
@@ -693,6 +694,7 @@
   "screen.ultracraft.credits.sound": "SFX Help:",
   "screen.ultracraft.credits.test": "Playtesters // QA:",
   "screen.ultracraft.credits.localization": "Localization:",
+  "screen.ultracraft.credits.music": "Composers:",
   "screen.ultracraft.credits.supporter-info": "If you're a Supporter (<- certified cool person) of Absolutelyaya on Ko-fi, but are missing from the list, or would like to be hidden, please contact me (<- yaya) so I can add you to the list // hide you. (<- this is done manually)\nBoth Past and Present Supporters may be listed here; I greatly appreciate all of you <3",
   "screen.ultracraft.pause.exitLevel": "Exit Ultracraft Level",
 

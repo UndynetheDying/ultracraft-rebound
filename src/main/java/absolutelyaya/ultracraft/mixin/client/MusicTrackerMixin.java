@@ -8,7 +8,6 @@ import absolutelyaya.ultracraft.components.player.ILevelStatsComponent;
 import absolutelyaya.ultracraft.data.LevelDataManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.*;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -39,25 +38,31 @@ public abstract class MusicTrackerMixin
 		if (client.getMusicType() != null)
 		{
 			if(curLevelMusic != null)
-				stopModular();
+				stopModular(false);
 			return;
 		}
 		ci.cancel();
 		if (client.player == null)
 		{
 			if(curLevelMusic != null)
-				stopModular();
+				stopModular(false);
 			return;
 		}
 		ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(client.player);
 		Identifier level = levelStats.getCurrentLevel();
 		ModularLevelMusic music = null;
+		if(levelStats.shouldLevelMusicFade())
+		{
+			stopModular(true);
+			levelStats.setShouldMusicFade(false);
+		}
+		String trackID = levelStats.getCurLevelSoundTrackKey();
 		if(level != null)
-			music = LevelDataManager.getLevelData(level).getMusic();
+			music = LevelDataManager.getLevelData(level).getMusic(trackID);
 		if(music == null)
 		{
 			if(curLevelMusic != null)
-				stopModular();
+				stopModular(false);
 			return;
 		}
 		if (current != null)
@@ -85,26 +90,32 @@ public abstract class MusicTrackerMixin
 			client.getSoundManager().play(fight);
 	}
 	
-	ModularMusicInstance playModular(RegistryEntry<SoundEvent> sound, boolean fight)
+	ModularMusicInstance playModular(SoundEvent sound, boolean fight)
 	{
-		if(sound.value() == null)
+		if(sound == null)
 			return null;
-		ModularMusicInstance instance = new ModularMusicInstance(sound.value(), fight);
+		ModularMusicInstance instance = new ModularMusicInstance(sound);
 		if (instance.getSound() != SoundManager.MISSING_SOUND)
 			client.getSoundManager().play(instance);
 		return instance;
 	}
 	
-	void stopModular()
+	void stopModular(boolean fade)
 	{
 		if(calm != null)
 		{
-			client.getSoundManager().stop(calm);
+			if(!fade)
+				client.getSoundManager().stop(calm);
+			else
+				calm.startFadeout();
 			calm = null;
 		}
 		if(fight != null)
 		{
-			client.getSoundManager().stop(fight);
+			if(!fade)
+				client.getSoundManager().stop(fight);
+			else
+				fight.startFadeout();
 			fight = null;
 		}
 		curLevelMusic = null;

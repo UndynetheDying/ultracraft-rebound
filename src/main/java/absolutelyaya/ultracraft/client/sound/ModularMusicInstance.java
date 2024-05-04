@@ -1,23 +1,26 @@
 package absolutelyaya.ultracraft.client.sound;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.TickableSoundInstance;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.math.random.Random;
 
 public class ModularMusicInstance extends PositionedSoundInstance implements TickableSoundInstance
 {
-	public ModularMusicInstance(SoundEvent sound, boolean battle)
+	boolean fadingIn = true, fadingOut;
+	float fadeInVolume = 0.01f;
+	
+	public ModularMusicInstance(SoundEvent sound)
 	{
-		super(sound.getId(), SoundCategory.MUSIC, battle ? 1f : 0f, 1f, SoundInstance.createRandom(), true, 0,
+		super(sound.getId(), SoundCategory.MUSIC, 0f, 1f, SoundInstance.createRandom(), true, 0,
 				AttenuationType.NONE, 0.0, 0.0, 0.0, true);
 	}
 	
 	public void setVolume(float volume)
 	{
-		this.volume = volume;
+		this.volume = Math.min(volume, fadingIn ? fadeInVolume : Float.MAX_VALUE);
 	}
 	
 	@Override
@@ -29,6 +32,20 @@ public class ModularMusicInstance extends PositionedSoundInstance implements Tic
 	@Override
 	public void tick()
 	{
+		if(fadingOut && fadingIn)
+			fadingIn = false;
+		if(fadingOut && (volume -= 0.05f) <= 0)
+			MinecraftClient.getInstance().getSoundManager().stop(this);
+		if(fadingIn && fadeInVolume < 1f)
+		{
+			fadeInVolume = Math.min(fadeInVolume + 0.1f, 1f);
+			volume = fadeInVolume;
+		}
+	}
 	
+	public void startFadeout()
+	{
+		fadingIn = false;
+		fadingOut = true;
 	}
 }
