@@ -2,7 +2,9 @@ package absolutelyaya.ultracraft.components.player;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.gui.LevelHUD;
+import absolutelyaya.ultracraft.client.sound.ModularLevelMusic;
 import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.data.LevelDataManager;
 import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
@@ -31,7 +33,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	HashMap<Identifier, Integer> lastPlayedVersion = new HashMap<>();
 	HashMap<Identifier, Integer> bestRanks = new HashMap<>();
 	Identifier currentLevel;
-	String currentLevelInstance, curLevelSoundTrackID = "default";
+	String currentLevelInstance, curLevelSoundTrackKey = "default";
 	boolean fighting, undamaged, invalid, shouldMusicFade;
 	int fightCheckCooldown, deaths, kills;
 	float style;
@@ -55,7 +57,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 		currentLevelInstance = instance;
 		if(!provider.getWorld().isClient && lastInstance != null)
 			LevelManager.Instance.leaveInstance((ServerPlayerEntity)provider, lastInstance);
-		shouldMusicFade = currentLevel != null;
+		setShouldMusicFade(currentLevel != null);
 		currentLevel = levelId;
 		if(levelId != null)
 		{
@@ -63,7 +65,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 			Ultracraft.rechargeWeapons(provider);
 			provider.setHealth(provider.getMaxHealth());
 		}
-		curLevelSoundTrackID = "default";
+		setCurLevelSoundTrackKey("default");
 		UltraComponents.LEVEL_STATS.sync(provider);
 	}
 	
@@ -311,15 +313,21 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	}
 	
 	@Override
-	public void setCurLevelSoundTrackKey(String id)
+	public void setCurLevelSoundTrackKey(String key)
 	{
-		curLevelSoundTrackID = id;
+		curLevelSoundTrackKey = key;
+		if(currentLevel != null)
+		{
+			ModularLevelMusic music = LevelDataManager.getLevelData(currentLevel).getMusic(key);
+			if(music != null && music.shouldShowPopup())
+				LevelHUD.Instance.onMusicChange(music);
+		}
 	}
 	
 	@Override
 	public String getCurLevelSoundTrackKey()
 	{
-		return curLevelSoundTrackID;
+		return curLevelSoundTrackKey;
 	}
 	
 	@Override
@@ -351,7 +359,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 			kills = tag.getInt("kills");
 		invalid = tag.contains("invalid", NbtElement.BYTE_TYPE);
 		undamaged = tag.contains("undamaged", NbtElement.BYTE_TYPE);
-		shouldMusicFade = tag.contains("shouldMusicFade", NbtElement.BYTE_TYPE);
+		setShouldMusicFade(tag.contains("shouldMusicFade", NbtElement.BYTE_TYPE));
 		if(tag.contains("bestTimes", NbtElement.COMPOUND_TYPE))
 		{
 			bestTimes.clear();
@@ -392,7 +400,10 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 		if(undamaged)
 			tag.putBoolean("undamaged", true);
 		if(shouldMusicFade)
+		{
 			tag.putBoolean("shouldMusicFade", true);
+			shouldMusicFade = false;
+		}
 		if(bestTimes != null)
 		{
 			NbtCompound records = new NbtCompound();

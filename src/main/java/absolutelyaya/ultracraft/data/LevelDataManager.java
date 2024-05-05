@@ -121,16 +121,21 @@ public class LevelDataManager extends JsonDataLoader
 				JsonObject music = json.getAsJsonObject("music");
 				for (Map.Entry<String, JsonElement> entry : music.entrySet())
 				{
-					String trackAuthor = null;
+					String trackAuthor = null, trackName = "untitled";
 					Identifier calm = null, combat = null;
+					int col = 0xff0000;
 					JsonObject elementt = entry.getValue().getAsJsonObject();
 					if(elementt.has("author"))
 						trackAuthor = JsonHelper.getString(elementt, "author");
+					if(elementt.has("title"))
+						trackName = JsonHelper.getString(elementt, "title");
+					if(elementt.has("color"))
+						col = Integer.valueOf(JsonHelper.getString(elementt, "color"), 16);
 					if(elementt.has("calm"))
 						calm = Identifier.tryParse(JsonHelper.getString(elementt, "calm"));
 					if(elementt.has("combat"))
 						combat = Identifier.tryParse(JsonHelper.getString(elementt, "combat"));
-					level.putMusic(entry.getKey(), trackAuthor, calm, combat);
+					level.putMusic(entry.getKey(), trackAuthor, trackName, col, calm, combat);
 				}
 			}
 			if(json.has("unimplemented"))

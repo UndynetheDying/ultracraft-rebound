@@ -40,7 +40,7 @@ public class ColorUtil
 	 * Converts a Hex Color from an Integer to a Vector3f
 	 * @param col The color to convert
 	 * @param min Whether the result should be on a scale of 0-1; if false, scale will be 0-255
-	 * @return The Color as a Math friendly Vector3f
+	 * @return The Color as a Math friendly Vector3f in BGR format
 	 */
 	public static Vector3f asVector3f(int col, boolean min)
 	{

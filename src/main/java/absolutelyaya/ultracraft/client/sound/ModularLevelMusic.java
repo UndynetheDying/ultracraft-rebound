@@ -1,18 +1,19 @@
 package absolutelyaya.ultracraft.client.sound;
 
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
 public class ModularLevelMusic
 {
-	final String author;
+	final String author, name;
 	final Identifier calmID, combatID;
+	final int color;
 	
-	public ModularLevelMusic(String author, Identifier calmID, Identifier combatID)
+	public ModularLevelMusic(String author, String name, int color, Identifier calmID, Identifier combatID)
 	{
 		this.author = author;
+		this.name = name;
+		this.color = color;
 		this.calmID = calmID;
 		this.combatID = combatID;
 	}
@@ -20,6 +21,16 @@ public class ModularLevelMusic
 	public String getAuthor()
 	{
 		return author;
+	}
+	
+	public String getTrackName()
+	{
+		return name;
+	}
+	
+	public int getColor()
+	{
+		return color;
 	}
 	
 	public SoundEvent getCalmSound()
@@ -34,5 +45,10 @@ public class ModularLevelMusic
 		if(combatID == null)
 			return null;
 		return SoundEvent.of(combatID);
+	}
+	
+	public boolean shouldShowPopup()
+	{
+		return author != null && !author.isEmpty();
 	}
 }

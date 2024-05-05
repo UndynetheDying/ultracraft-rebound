@@ -564,7 +564,8 @@
   "message.limbo.slab-press": "At the Center of Limbo, a Mechanism stirs",
   "message.limbo.slab-open": "And finally, a Door opens",
   "message.limbo.structure.modify-fail": "Something prevents you from modifying this Structure",
-  "message.announce-music": "Now Playing:",
+  "message.ultracraft.announce-music": "Now Playing:",
+  "message.ultracraft.music-author-prefix": "by %s",
 
   "intro.ultracraft.calibration": "BOOT UP SEQUENCE READY\n\nFIRMWARE\n  §aVERSION %s§r\n\nCALIBRATION\n  §4EXPIRED§r\n  §4NEW CALIBRATION REQUIRED§r\n\n",
   "intro.ultracraft.input": "Press any Key",

@@ -127,9 +127,9 @@ public final class LevelData
 		return !music.isEmpty();
 	}
 	
-	public void putMusic(String id, String author, Identifier calm, Identifier fight)
+	public void putMusic(String id, String author, String name, int color, Identifier calm, Identifier fight)
 	{
-		music.put(id, new ModularLevelMusic(author, calm, fight));
+		music.put(id, new ModularLevelMusic(author, name, color, calm, fight));
 	}
 	
 	public ModularLevelMusic getMusic(String id)
@@ -304,6 +304,9 @@ public final class LevelData
 				NbtCompound entry = new NbtCompound();
 				if(val.getAuthor() != null && !val.getAuthor().isEmpty())
 					entry.putString("author", val.getAuthor());
+				if(val.getTrackName() != null && !val.getTrackName().isEmpty())
+					entry.putString("author", val.getAuthor());
+				entry.putInt("color", val.getColor());
 				SoundEvent calm = val.getCalmSound();
 				if(calm != null)
 					entry.putString("calm", calm.getId().toString());
@@ -348,15 +351,20 @@ public final class LevelData
 			for (String key : music.getKeys())
 			{
 				NbtCompound entry = music.getCompound(key);
-				String trackAuthor = null;
+				String trackAuthor = null, trackName = "untitled";
 				Identifier calm = null, combat = null;
+				int col = 0xff0000;
 				if (entry.contains("author", NbtElement.STRING_TYPE))
 					trackAuthor = entry.getString("author");
+				if (entry.contains("title", NbtElement.STRING_TYPE))
+					trackName = entry.getString("title");
+				if (entry.contains("title", NbtElement.INT_TYPE))
+					col = entry.getInt("color");
 				if (entry.contains("calm", NbtElement.STRING_TYPE))
 					calm = Identifier.tryParse(entry.getString("calm"));
 				if (entry.contains("combat", NbtElement.STRING_TYPE))
 					combat = Identifier.tryParse(entry.getString("combat"));
-				data.putMusic(key, trackAuthor, calm, combat);
+				data.putMusic(key, trackAuthor, trackName, col, calm, combat);
 			}
 		}
 		data.setUnimplemented(nbt.getBoolean("unimplemented"));

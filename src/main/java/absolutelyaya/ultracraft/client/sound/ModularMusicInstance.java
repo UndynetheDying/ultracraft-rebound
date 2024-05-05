@@ -14,7 +14,7 @@ public class ModularMusicInstance extends PositionedSoundInstance implements Tic
 	
 	public ModularMusicInstance(SoundEvent sound)
 	{
-		super(sound.getId(), SoundCategory.MUSIC, 0f, 1f, SoundInstance.createRandom(), true, 0,
+		super(sound.getId(), SoundCategory.MUSIC, 0.01f, 1f, SoundInstance.createRandom(), true, 0,
 				AttenuationType.NONE, 0.0, 0.0, 0.0, true);
 	}
 	
@@ -37,10 +37,9 @@ public class ModularMusicInstance extends PositionedSoundInstance implements Tic
 		if(fadingOut && (volume -= 0.05f) <= 0)
 			MinecraftClient.getInstance().getSoundManager().stop(this);
 		if(fadingIn && fadeInVolume < 1f)
-		{
 			fadeInVolume = Math.min(fadeInVolume + 0.1f, 1f);
-			volume = fadeInVolume;
-		}
+		else
+			fadingIn = false;
 	}
 	
 	public void startFadeout()
