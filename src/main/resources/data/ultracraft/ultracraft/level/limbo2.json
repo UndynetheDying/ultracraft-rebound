@@ -32,8 +32,7 @@
   "music": {
     "default": {
       "author": "Efefski",
-      "title": "test.music.title",
-      "color": "ffff00",
+      "color": "60ccce",
       "calm": "ultracraft:music.limbo2_calm",
       "combat": "ultracraft:music.limbo2"
     }

@@ -181,14 +181,28 @@ public class ItemRegistry
 	public static final TerminalItem TERMINAL = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "terminal"),
 			new TerminalItem(BlockRegistry.TERMINAL, new FabricItemSettings()));
-	public static final MusicDiscItem CLAIR_DE_LUNE_DISK = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "clair_de_lune"),
-			new MusicDiscItem(15, SoundRegistry.CLAIR_DE_LUNE.value(), new FabricItemSettings().maxCount(1), 231));
 	public static final FlorpItem FLORP = (FlorpItem)Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "florp"), new FlorpItem(new FabricItemSettings().rarity(Rarity.EPIC).maxCount(1))
 																.putLore(true, new String[] { "item.ultracraft.florp.hiddenlore" }));
 	public static final SkyBlockItem SKY = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "sky_block"), new SkyBlockItem(new FabricItemSettings().rarity(Rarity.EPIC)));
+	
+	//music disks
+	public static final MusicDiscItem CLAIR_DE_LUNE_DISK = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "disc/clair_de_lune"),
+			new MusicDiscItem(15, SoundRegistry.CLAIR_DE_LUNE.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 231));
+	public static final MusicDiscItem CERBERUS_DISK = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "disc/cerberus"),
+			new MusicDiscItem(15, SoundRegistry.CERBERUS.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 135));
+	public static final MusicDiscItem CERBERUS_CALM_DISK = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "disc/cerberus_calm"),
+			new MusicDiscItem(15, SoundRegistry.CERBERUS_CALM.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 135));
+	public static final MusicDiscItem LIMBO2_DISK = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "disc/limbo2"),
+			new MusicDiscItem(15, SoundRegistry.LIMBO2.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 176));
+	public static final MusicDiscItem LIMBO2_CALM_DISK = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "disc/limbo2_calm"),
+			new MusicDiscItem(15, SoundRegistry.LIMBO2_CALM.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 176));
 	
 	//Animated Blocks
 	public static final HellSpawnerItem HELL_SPAWNER = Registry.register(Registries.ITEM,
@@ -210,6 +224,7 @@ public class ItemRegistry
 	
 	public static final RegistryKey<ItemGroup> ULTRACRAFT_TAB = RegistryKey.of(RegistryKeys.ITEM_GROUP, new Identifier(Ultracraft.MOD_ID, "item"));
 	public static final RegistryKey<ItemGroup> EDIT_MODE_TAB = RegistryKey.of(RegistryKeys.ITEM_GROUP, new Identifier(Ultracraft.MOD_ID, "edit"));
+	public static final RegistryKey<ItemGroup> MUSIC_TAB = RegistryKey.of(RegistryKeys.ITEM_GROUP, new Identifier(Ultracraft.MOD_ID, "music"));
 	
 	public static void register()
 	{
@@ -316,7 +331,6 @@ public class ItemRegistry
 			content.add(SWORDSMACHINE.getDefaultStack("tundra"));
 			content.add(SWORDSMACHINE.getDefaultStack("agony"));
 			content.add(DRONE_MASK);
-			content.add(CLAIR_DE_LUNE_DISK);
 			for (TerminalBlockEntity.Base b : TerminalBlockEntity.Base.values())
 				if(!b.equals(TerminalBlockEntity.Base.RGB))
 					content.add(TerminalItem.getStack(b));
@@ -415,6 +429,15 @@ public class ItemRegistry
 			content.add(BlockRegistry.MAP_GLOBAL_REDSTONE);
 			content.add(BlockRegistry.MAP_GLOBAL_RECEIVER);
 			content.add(BlockRegistry.MAP_GLOBAL_TITLE);
+		});
+		Registry.register(Registries.ITEM_GROUP, MUSIC_TAB,
+				FabricItemGroup.builder().displayName(Text.translatable("itemGroup.ultracraft.music")).icon(() -> new ItemStack(ItemRegistry.CLAIR_DE_LUNE_DISK)).build());
+		ItemGroupEvents.modifyEntriesEvent(MUSIC_TAB).register(content -> {
+			content.add(ItemRegistry.CERBERUS_CALM_DISK);
+			content.add(ItemRegistry.CERBERUS_DISK);
+			content.add(ItemRegistry.LIMBO2_CALM_DISK);
+			content.add(ItemRegistry.LIMBO2_DISK);
+			content.add(ItemRegistry.CLAIR_DE_LUNE_DISK);
 		});
 	}
 }

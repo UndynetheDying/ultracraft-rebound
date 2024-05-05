@@ -30,6 +30,17 @@
     "y": 70,
     "z": 115
   },
+  "music": {
+    "default": {
+      "author": "Psykomatic",
+      "title": "music.ultracraft.cerberus",
+      "color": "ff0000",
+      "calm": "ultracraft:music.cerberus_calm",
+      "combat": "ultracraft:music.cerberus",
+      "combat-threshold": 1,
+      "no-calmdown": true
+    }
+  },
   "spawn-rot": -90,
   "version": 1,
   "next-level": "ultracraft:limbo1"

@@ -305,7 +305,7 @@ public final class LevelData
 				if(val.getAuthor() != null && !val.getAuthor().isEmpty())
 					entry.putString("author", val.getAuthor());
 				if(val.getTrackName() != null && !val.getTrackName().isEmpty())
-					entry.putString("author", val.getAuthor());
+					entry.putString("title", val.getTrackName());
 				entry.putInt("color", val.getColor());
 				SoundEvent calm = val.getCalmSound();
 				if(calm != null)
@@ -358,7 +358,7 @@ public final class LevelData
 					trackAuthor = entry.getString("author");
 				if (entry.contains("title", NbtElement.STRING_TYPE))
 					trackName = entry.getString("title");
-				if (entry.contains("title", NbtElement.INT_TYPE))
+				if (entry.contains("color", NbtElement.INT_TYPE))
 					col = entry.getInt("color");
 				if (entry.contains("calm", NbtElement.STRING_TYPE))
 					calm = Identifier.tryParse(entry.getString("calm"));

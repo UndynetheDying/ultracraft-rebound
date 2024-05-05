@@ -118,8 +118,16 @@
   "item.ultracraft.harpoon_gun.lore2": "§6Alt Fire pulls the Harpoons back, throwing light enemies towards you and you towards Heavy Enemies or Blocks.",
   "item.ultracraft.soap": "Soap",
   "item.ultracraft.stained_glass_window": "Stained Glass Window",
-  "item.ultracraft.clair_de_lune": "Music Disc",
-  "item.ultracraft.clair_de_lune.desc": "Clair de Lune - Debussy (Noteblock Cover)",
+  "item.ultracraft.disc.clair_de_lune": "Music Disc",
+  "item.ultracraft.disc.clair_de_lune.desc": "Debussy - Clair de Lune (Noteblock Cover)",
+  "item.ultracraft.disc.limbo2": "Music Disc",
+  "item.ultracraft.disc.limbo2.desc": "Efefski - untitled (Combat Mix)",
+  "item.ultracraft.disc.limbo2_calm": "Music Disc",
+  "item.ultracraft.disc.limbo2_calm.desc": "Efefski - untitled (Calm Mix)",
+  "item.ultracraft.disc.cerberus": "Music Disc",
+  "item.ultracraft.disc.cerberus.desc": "Psykomatic - Wardens of Hell (Intense Mix)",
+  "item.ultracraft.disc.cerberus_calm": "Music Disc",
+  "item.ultracraft.disc.cerberus_calm.desc": "Psykomatic - Wardens of Hell (Calm Mix)",
   "item.ultracraft.knuckleblaster": "Knuckleblaster",
   "item.ultracraft.hell_mass": "Hell Mass",
   "item.ultracraft.florp": "Florp",
@@ -338,6 +346,7 @@
 
   "itemGroup.ultracraft.item": "ULTRACRAFT",
   "itemGroup.ultracraft.edit": "Edit Mode Blocks",
+  "itemGroup.ultracraft.music": "ULTRACRAFT OST",
 
   "command.ultracraft.block.client-success": "Block Successful! The User will now only be displayed with default wings.",
   "command.ultracraft.block.client-fail": "That User is already blocked.",
@@ -726,6 +735,8 @@
   "level.ultracraft.tutorial.title": "Tutorial",
   "level.ultracraft.example.title": "Example Level",
   "level.ultracraft.example.description": "An Example Level for Datapack//Level Creators.",
+
+  "music.ultracraft.cerberus": "Wardens of Hell",
 
   "terminal.coming-soon": "Coming Soon",
   "terminal.button": "Button",

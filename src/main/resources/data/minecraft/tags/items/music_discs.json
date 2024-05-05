@@ -1,6 +1,10 @@
 {
   "replace": false,
   "values": [
-    "ultracraft:clair_de_lune"
+    "ultracraft:disc/clair_de_lune",
+    "ultracraft:disc/cerberus",
+    "ultracraft:disc/cerberus_calm",
+    "ultracraft:disc/limbo2",
+    "ultracraft:disc/limbo2_calm"
   ]
 }
