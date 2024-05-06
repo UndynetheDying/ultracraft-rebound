@@ -23,10 +23,12 @@ public class LevelRankingScreen extends AbstractTravelScreen
 	int timeRank = -1, killRank = -1, styleRank = -1, finalRank = -1;
 	ButtonWidget nextLevelButton;
 	float anim = 0f;
+	boolean titleSuffix;
 	
-	public LevelRankingScreen()
+	public LevelRankingScreen(boolean titleSuffix)
 	{
 		super(Text.of("ranking"));
+		this.titleSuffix = titleSuffix;
 	}
 	
 	@Override
@@ -35,7 +37,7 @@ public class LevelRankingScreen extends AbstractTravelScreen
 		super.init();
 		levelStats = UltraComponents.LEVEL_STATS.get(client.player);
 		LevelData data = LevelDataManager.getLevelData(levelStats.getCurrentLevel());
-		title = Text.translatable(data.getTitleKey() + ".title");
+		title = Text.translatable(data.getTitleKey() + (titleSuffix ? ".title" : ""));
 		if(data.hasFullRankingData())
 		{
 			long time = levelStats.getLastStoppedTimer();

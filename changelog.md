@@ -42,6 +42,9 @@
 - Crops now break from slamming//explosions
 - Slam block breaking area was extended upwards by one Block
 - Made Bright Panels actually bright (they now emit Light Level 6)
+- Added `rankingTitleSuffix` Attribute to Force Travel Trigger Mapping Blocks
+  - If this is enabled, the title of the ranking screen will have `.title` suffixed to it
+  - In the built-in Levels this is used to display a different Translation Key on the Ranking Screen than on the Travel Screen mroe easily.
 ## Resource Changes
 - The Icon for the Sound Listener Mapping Block is now used for Music Listeners instead
 - Changed how Music in the Level Metadata works
