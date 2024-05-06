@@ -28,6 +28,9 @@ I would not recommend putting this mod into modpacks (you can ofc, but it will p
 - Node//Block Based Scripting System to make functional Levels like in Ultrakill
 - 6 Levels
 - Make, Share and Download your own Custom Levels via Datapacks
+- OST featuring Tracks by:
+  - Efefski
+  - Psykomatic
 - 1 Dimension
   - Layer 1 // Limbo
 - Structures
@@ -41,8 +44,10 @@ I would not recommend putting this mod into modpacks (you can ofc, but it will p
 - A few Secrets and Jokes
 
 ## ULTRACRAFT Discord
-Join our community-run Discord Server to connect with other fans of the mod and discover Modpacks and Servers using it!
+Join our community-run Discord Server to connect with other fans of the mod and discover Modpacks and Servers using it!<br>
 https://discord.gg/BWcnACAvHC
 
 ## Note
 This Project uses two licenses. All the Code is licensed under MIT. All Assets are licensed under CC-BY-NC 4.0
+
+I don't have a problem with the OST being used in videos, streams or whatever; please credit the respective artists though, they deserve recognition for their work. If issues arise, please let me know and I'll try my best to resolve stuff.

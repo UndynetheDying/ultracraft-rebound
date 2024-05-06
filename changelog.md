@@ -2,6 +2,8 @@
 - Added an OST composed by various Ultrakill fan//ust composers
   - Prelude 3 - Wardens of Hell by [Psykomatic](https://www.youtube.com/@psykomatic0)
   - Limbo 2 - untitled by [Efefski](https://www.youtube.com/@efefski)
+  - All Tracks have Music disks for both their calm and combat version (if applicable)
+    - These currently cannot be obtained in survival. I'll think of something for that.
   - Everyone involved has done a fantastic Job and were a joy to work with. If you like their work, please consider supporting them!
 - Major Improvements to the Music System
   - When the Game is paused or the local player is dead, the music will lower in pitch and volume
@@ -37,6 +39,8 @@
 ## Minor Changes
 - Changed how Splash Texts work internally to allow for them being translated
 - Changed map level unlock block icon and name back because I have the Stupid
+- Crops now break from slamming//explosions
+- Slam block breaking area was extended upwards by one Block
 ## Resource Changes
 - The Icon for the Sound Listener Mapping Block is now used for Music Listeners instead
 - Changed how Music in the Level Metadata works
@@ -51,4 +55,6 @@
   - Added `no-calmdown` Field
     - Setting this to true makes it so that once the combat track is playing, it won't go back to the calm track anymore
     - This is used in Limbo3 for example
+- Changed the order Clair de Lunes Music disc description to be more uniform with minecraft (it's now `Author - Title` and not the other way around)
+- Crops were added to the fragile Block Tag
 ## API Changes
