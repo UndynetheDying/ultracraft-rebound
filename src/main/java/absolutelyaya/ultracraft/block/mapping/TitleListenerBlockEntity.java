@@ -42,7 +42,10 @@ public class TitleListenerBlockEntity extends AbstractListenerBlockEntity
 	protected void onStateChanged(boolean newState)
 	{
 		if(!newState)
+		{
+			super.onStateChanged(false);
 			return;
+		}
 		if(world.getBlockEntity(getParent()) instanceof RoomBlockEntity room)
 		{
 			for (PlayerEntity player : room.getContainedPlayers())
@@ -54,7 +57,7 @@ public class TitleListenerBlockEntity extends AbstractListenerBlockEntity
 					winged.sendBoxTitle(Text.translatable(text));
 			}
 		}
-		super.onStateChanged(newState);
+		super.onStateChanged(true);
 	}
 	
 	@Override

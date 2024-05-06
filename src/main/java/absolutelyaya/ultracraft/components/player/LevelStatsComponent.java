@@ -6,12 +6,12 @@ import absolutelyaya.ultracraft.client.sound.ModularLevelMusic;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.data.LevelDataManager;
 import absolutelyaya.ultracraft.dimension.LevelManager;
-import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.util.TimeUtil;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -87,7 +87,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 		if(fightCheckCooldown-- > 0)
 			return fighting;
 		fighting = provider.getWorld().getOtherEntities(provider, provider.getBoundingBox().expand(32f),
-				e -> e instanceof AbstractUltraHostileEntity && e.isAlive()).size() > combatThreshold;
+				e -> e instanceof HostileEntity && e.isAlive()).size() > combatThreshold;
 		fightCheckCooldown = 5;
 		return fighting;
 	}
@@ -315,9 +315,12 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	@Override
 	public void setCurLevelSoundTrackKey(String key)
 	{
+		if((key == null && curLevelSoundTrackKey == null) || (key != null && key.equals(curLevelSoundTrackKey)))
+			return;
 		curLevelSoundTrackKey = key;
 		if(currentLevel != null)
 		{
+			setShouldMusicFade(true);
 			ModularLevelMusic music = LevelDataManager.getLevelData(currentLevel).getMusic(key);
 			if(music != null && music.shouldShowPopup())
 			{
@@ -337,7 +340,6 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	public void setShouldMusicFade(boolean val)
 	{
 		shouldMusicFade = val;
-		System.out.println(val ? "FADE" : "NOO");
 	}
 	
 	@Override
@@ -449,7 +451,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 				records.putInt(e.getKey().toString(), e.getValue());
 			tag.put("bestRanks", records);
 		}
-		if(lastPlayedVersion.size() > 0)
+		if(!lastPlayedVersion.isEmpty())
 		{
 			NbtCompound records = new NbtCompound();
 			for (Map.Entry<Identifier, Integer> e : lastPlayedVersion.entrySet())

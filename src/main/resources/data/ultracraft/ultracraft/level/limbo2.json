@@ -30,7 +30,7 @@
     "z": 76
   },
   "music": {
-    "default": {
+    "main": {
       "author": "Efefski",
       "color": "60ccce",
       "calm": "ultracraft:music.limbo2_calm",
@@ -38,5 +38,5 @@
     }
   },
   "spawn-rot": -90,
-  "version": 1
+  "version": 2
 }

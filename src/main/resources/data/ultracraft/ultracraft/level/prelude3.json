@@ -31,7 +31,7 @@
     "z": 115
   },
   "music": {
-    "default": {
+    "fight": {
       "author": "Psykomatic",
       "title": "music.ultracraft.cerberus",
       "color": "ff0000",
@@ -42,6 +42,6 @@
     }
   },
   "spawn-rot": -90,
-  "version": 1,
+  "version": 2,
   "next-level": "ultracraft:limbo1"
 }

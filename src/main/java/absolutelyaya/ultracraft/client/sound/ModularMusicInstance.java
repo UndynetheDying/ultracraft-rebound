@@ -53,7 +53,6 @@ public class ModularMusicInstance extends PositionedSoundInstance implements Tic
 					normalVolume = volume;
 					if(pauseMultiplier == -1f)
 						pauseMultiplier = 0.99f;
-					System.out.println(normalPitch);
 				}
 				else if(pauseMultiplier > 0.7f)
 					pauseMultiplier = Math.max(pauseMultiplier - 0.1f / (death ? 100f : 5f), 0.7f);
@@ -63,7 +62,7 @@ public class ModularMusicInstance extends PositionedSoundInstance implements Tic
 			if(pauseMultiplier >= 0f)
 			{
 				pitch = normalPitch * pauseMultiplier;
-				volume = normalVolume - (0.75f * ((1f - pauseMultiplier) / 0.3f));
+				setVolume(normalVolume - (0.75f * ((1f - pauseMultiplier) / 0.3f)));
 				if(pauseMultiplier == 1f)
 					pauseMultiplier = -1f;
 			}

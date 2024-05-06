@@ -68,6 +68,8 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 				EntryStacks.of(BlockRegistry.MAP_DAMAGE),
 				EntryStacks.of(BlockRegistry.MAP_CYBERGRIND),
 				EntryStacks.of(BlockRegistry.MAP_LIGHT),
+				EntryStacks.of(BlockRegistry.MAP_MUSIC),
+				EntryStacks.of(BlockRegistry.MAP_MUSIC_LISTENER),
 				EntryStacks.of(BlockRegistry.MAP_GLOBAL_REDSTONE),
 				EntryStacks.of(BlockRegistry.MAP_GLOBAL_RECEIVER),
 				EntryStacks.of(BlockRegistry.MAP_GLOBAL_TITLE));

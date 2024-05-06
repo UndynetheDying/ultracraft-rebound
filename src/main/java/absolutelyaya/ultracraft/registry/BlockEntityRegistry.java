@@ -40,6 +40,8 @@ public class BlockEntityRegistry
 	public static final BlockEntityType<DamageBlockEntity> MAP_DAMAGE;
 	public static final BlockEntityType<CybergrindBlockEntity> MAP_CYBERGRIND;
 	public static final BlockEntityType<LightBlockEntity> MAP_LIGHT;
+	public static final BlockEntityType<MusicTriggerBlockEntity> MAP_MUSIC;
+	public static final BlockEntityType<MusicListenerBlockEntity> MAP_MUSIC_LISTENER;
 	
 	public static void register() {
 	}
@@ -131,5 +133,11 @@ public class BlockEntityRegistry
 		MAP_LIGHT = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				new Identifier(Ultracraft.MOD_ID, "map_light"),
 				FabricBlockEntityTypeBuilder.create(LightBlockEntity::new, BlockRegistry.MAP_LIGHT).build());
+		MAP_MUSIC = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Ultracraft.MOD_ID, "map_music"),
+				FabricBlockEntityTypeBuilder.create(MusicTriggerBlockEntity::new, BlockRegistry.MAP_MUSIC).build());
+		MAP_MUSIC_LISTENER = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Ultracraft.MOD_ID, "map_music_listener"),
+				FabricBlockEntityTypeBuilder.create(MusicListenerBlockEntity::new, BlockRegistry.MAP_MUSIC_LISTENER).build());
 	}
 }

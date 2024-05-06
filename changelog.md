@@ -1,4 +1,25 @@
 ## Major Changes
+- Added an OST composed by various Ultrakill fan//ust composers
+  - Prelude 3 - Wardens of Hell by [Psykomatic](https://www.youtube.com/@psykomatic0)
+  - Limbo 2 - untitled by [Efefski](https://www.youtube.com/@efefski)
+  - Everyone involved has done a fantastic Job and were a joy to work with. If you like their work, please consider supporting them!
+- Major Improvements to the Music System
+  - When the Game is paused or the local player is dead, the music will lower in pitch and volume
+  - Combat Music is now triggered by all Hostile entities, not just ultracraft enemies
+  - It's now possible to set multiple Tracks per Level
+  - Added a Popup that shows up whenever a new Track starts playing, and it has sufficient metadata
+    - It says the Name and Author of the Track along with a neat colored stripe
+  - Music will fade out when the Level is finished (or in other words, when a Force Travel Trigger is entered)
+  - For more info on the specifics, refer to the `Resource Changes` Segment
+- Added new Mapping Blocks to control Music in Levels
+  - Music Listener
+    - Changes the currently playing Soundtrack Key of everyone in the Room while the bound **local** flag activates
+    - If `stopOnDisable` is enabled, the currently playing Soundtrack Key of Players will be cleared (meaning the music stops) upon the bound **local** flag deactivating. 
+  - Music Trigger
+    - Changes the currently playing Soundtrack Key of Players that enter its Area IF the bound **local** flag is active
+    - If the Track Key is already playing for the Player, it won't do anything
+  - To stop the currently playing music, either set the key to an unused value, or leave it empty
+  - When a Track Switches, the last one will fade out and the next one will Fade in to make for a smooth transition
 - Added Wing Overlays
   - Wing Overlays are like Wing re-textures. They aren't recolorable.
   - Added Pride themed Wing overlays
@@ -17,4 +38,17 @@
 - Changed how Splash Texts work internally to allow for them being translated
 - Changed map level unlock block icon and name back because I have the Stupid
 ## Resource Changes
+- The Icon for the Sound Listener Mapping Block is now used for Music Listeners instead
+- Changed how Music in the Level Metadata works
+  - You can now set multiple Tracks for the same Level
+    - Their Key (value in brackets `""` before the colon `:`) will be their Track ID
+    - Any String works as a track Key. If you set the key to be `default`, it will start playing immediately upon entering the level
+  - Added `title`, `author` and `color` Fields 
+    - These will be used for a pop-up that shows up whenever the Track starts playing, IF an author is set
+  - Added `combat-threshold` Field
+    - The music will automatically switch to the combat version if there are more enemies than the combat-threshold around the local player
+    - Default is 0, so if there's 1 Enemy, the Combat track variant will play
+  - Added `no-calmdown` Field
+    - Setting this to true makes it so that once the combat track is playing, it won't go back to the calm track anymore
+    - This is used in Limbo3 for example
 ## API Changes

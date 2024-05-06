@@ -149,6 +149,8 @@ public class BlockRegistry
 	public static final Block MAP_DAMAGE = register("map_damage", new DamageBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_CYBERGRIND = register("map_cybergrind", new CybergrindBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_LIGHT = register("map_light", new LightBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK).luminance(LightBlock::getLightLevel)), true);
+	public static final Block MAP_MUSIC = register("map_music", new MusicTriggerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
+	public static final Block MAP_MUSIC_LISTENER = register("map_music_listener", new MusicListenerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	
 	private static Block register(String name, Block block, boolean item)
 	{

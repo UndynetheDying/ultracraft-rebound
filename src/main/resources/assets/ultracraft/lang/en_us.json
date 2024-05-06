@@ -196,6 +196,8 @@
   "block.ultracraft.map_global_redstone": "Map Global Redstone Listener",
   "block.ultracraft.map_global_receiver": "Map Global Redstone Receiver",
   "block.ultracraft.map_global_title": "Map Global Title Listener",
+  "block.ultracraft.map_music_listener": "Map Music Listener",
+  "block.ultracraft.map_music_trigger": "Map Music Trigger",
   "block.ultracraft.sheetmetal": "Sheet Metal Block",
   "block.ultracraft.sheetmetal_sheet": "Sheet Metal Sheet Block",
   "block.ultracraft.sheetmetal_sheet_slab": "Sheet Metal Sheet Slab",

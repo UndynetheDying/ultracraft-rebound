@@ -416,6 +416,8 @@ public class ItemRegistry
 			content.add(BlockRegistry.MAP_TRAVEL);
 			content.add(BlockRegistry.MAP_TITLE);
 			content.add(BlockRegistry.MAP_TITLE_LISTENER);
+			content.add(BlockRegistry.MAP_MUSIC);
+			content.add(BlockRegistry.MAP_MUSIC_LISTENER);
 			content.add(BlockRegistry.MAP_DAMAGE);
 			content.add(BlockRegistry.MAP_LEVEL);
 			content.add(BlockRegistry.MAP_REDSTONE);
