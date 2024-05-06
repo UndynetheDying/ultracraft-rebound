@@ -185,4 +185,10 @@ public class LevelRankingScreen extends AbstractTravelScreen
 		}
 		return super.mouseClicked(mouseX, mouseY, button);
 	}
+	
+	@Override
+	public boolean shouldPause()
+	{
+		return false;
+	}
 }

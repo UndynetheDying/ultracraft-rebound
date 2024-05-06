@@ -1,16 +1,17 @@
 package absolutelyaya.ultracraft.client.sound;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.DeathScreen;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.TickableSoundInstance;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 
-public class ModularMusicInstance extends PositionedSoundInstance implements TickableSoundInstance
+public class ModularMusicInstance extends PositionedSoundInstance implements TickableSoundInstance, INonPausingSoundInstance
 {
-	boolean fadingIn = true, fadingOut;
-	float fadeInVolume = 0.01f;
+	boolean fadingIn = true, fadingOut, wasGamePaused;
+	float fadeInVolume = 0.01f, normalPitch = 1f, normalVolume = 1f, pauseMultiplier = -1f;
 	
 	public ModularMusicInstance(SoundEvent sound)
 	{
@@ -32,19 +33,53 @@ public class ModularMusicInstance extends PositionedSoundInstance implements Tic
 	@Override
 	public void tick()
 	{
+		MinecraftClient client = MinecraftClient.getInstance();
 		if(fadingOut && fadingIn)
 			fadingIn = false;
 		if(fadingOut && (volume -= 0.05f) <= 0)
-			MinecraftClient.getInstance().getSoundManager().stop(this);
+			client.getSoundManager().stop(this);
 		if(fadingIn && fadeInVolume < 1f)
 			fadeInVolume = Math.min(fadeInVolume + 0.1f, 1f);
 		else
 			fadingIn = false;
+		boolean death = client.currentScreen instanceof DeathScreen;
+		if(shouldLowerPitchWhenPaused())
+		{
+			if(client.isPaused() || death)
+			{
+				if(!wasGamePaused)
+				{
+					normalPitch = pitch;
+					normalVolume = volume;
+					if(pauseMultiplier == -1f)
+						pauseMultiplier = 0.99f;
+					System.out.println(normalPitch);
+				}
+				else if(pauseMultiplier > 0.7f)
+					pauseMultiplier = Math.max(pauseMultiplier - 0.1f / (death ? 100f : 5f), 0.7f);
+			}
+			else if(pauseMultiplier >= 0f && pauseMultiplier < 1f)
+				pauseMultiplier = Math.min(pauseMultiplier + 0.2f / 5f, 1f);
+			if(pauseMultiplier >= 0f)
+			{
+				pitch = normalPitch * pauseMultiplier;
+				volume = normalVolume - (0.75f * ((1f - pauseMultiplier) / 0.3f));
+				if(pauseMultiplier == 1f)
+					pauseMultiplier = -1f;
+			}
+		}
+		wasGamePaused = client.isPaused() || death;
 	}
 	
 	public void startFadeout()
 	{
 		fadingIn = false;
 		fadingOut = true;
+	}
+	
+	@Override
+	public boolean shouldLowerPitchWhenPaused()
+	{
+		return !fadingOut;
 	}
 }

@@ -321,7 +321,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 			ModularLevelMusic music = LevelDataManager.getLevelData(currentLevel).getMusic(key);
 			if(music != null && music.shouldShowPopup())
 			{
-				LevelHUD.Instance.onMusicChange(music);
+				LevelHUD.Instance.queueNewMusicPopup(music);
 				combatThreshold = music.getCombatThreshold();
 			}
 		}
@@ -337,6 +337,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	public void setShouldMusicFade(boolean val)
 	{
 		shouldMusicFade = val;
+		System.out.println(val ? "FADE" : "NOO");
 	}
 	
 	@Override
@@ -346,10 +347,24 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	}
 	
 	@Override
+	public void onFinishLevel()
+	{
+		if(currentLevel != null)
+		{
+			combatThreshold = 0;
+			setShouldMusicFade(true);
+			curLevelSoundTrackKey = null;
+			UltraComponents.LEVEL_STATS.sync(provider);
+		}
+	}
+	
+	@Override
 	public void readFromNbt(NbtCompound tag)
 	{
 		if(tag.contains("level", NbtElement.STRING_TYPE))
 			currentLevel = new Identifier(tag.getString("level"));
+		else
+			currentLevel = null;
 		if(tag.contains("timerStart", NbtElement.LONG_TYPE))
 			timerStart = tag.getLong("timerStart");
 		if(tag.contains("lastStoppedTime", NbtElement.LONG_TYPE))
@@ -364,7 +379,8 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 			combatThreshold = tag.getInt("combatThreshold");
 		invalid = tag.contains("invalid", NbtElement.BYTE_TYPE);
 		undamaged = tag.contains("undamaged", NbtElement.BYTE_TYPE);
-		setShouldMusicFade(tag.contains("shouldMusicFade", NbtElement.BYTE_TYPE));
+		if(tag.contains("shouldMusicFade", NbtElement.BYTE_TYPE))
+			setShouldMusicFade(true);
 		if(tag.contains("bestTimes", NbtElement.COMPOUND_TYPE))
 		{
 			bestTimes.clear();
@@ -390,6 +406,10 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 		}
 		if(tag.contains("currentLevelInstance", NbtElement.STRING_TYPE))
 			currentLevelInstance = tag.getString("currentLevelInstance");
+		if(tag.contains("soundtrackKey", NbtElement.STRING_TYPE))
+			curLevelSoundTrackKey = tag.getString("soundtrackKey");
+		else
+			curLevelSoundTrackKey = null;
 	}
 	
 	@Override
@@ -437,10 +457,10 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 			tag.put("versions", records);
 		}
 		if(getCurrentLevel() != null)
-		{
 			tag.putString("level", getCurrentLevel().toString());
-		}
 		if(currentLevelInstance != null && !currentLevelInstance.isEmpty())
 			tag.putString("currentLevelInstance", currentLevelInstance);
+		if(curLevelSoundTrackKey != null)
+			tag.putString("soundtrackKey", curLevelSoundTrackKey);
 	}
 }

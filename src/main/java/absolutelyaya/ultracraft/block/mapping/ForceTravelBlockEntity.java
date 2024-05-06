@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.block.mapping;
 
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import io.netty.buffer.Unpooled;
@@ -84,6 +85,7 @@ public class ForceTravelBlockEntity extends AbstractTriggerBlockEntity
 					buf.writeBoolean(true);
 					buf.writeBoolean(openRanking);
 					ServerPlayNetworking.send(player, PacketRegistry.TRAVEL_SCREEN_PACKET_ID, buf);
+					UltraComponents.LEVEL_STATS.get(player).onFinishLevel();
 				}
 			}
 			lastContained = containedEntities;

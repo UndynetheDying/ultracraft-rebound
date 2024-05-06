@@ -58,7 +58,7 @@ public abstract class MusicTrackerMixin
 			minAction = 0f;
 		}
 		String trackID = levelStats.getCurLevelSoundTrackKey();
-		if(level != null)
+		if(level != null && trackID != null)
 			music = LevelDataManager.getLevelData(level).getMusic(trackID);
 		if(music == null)
 		{

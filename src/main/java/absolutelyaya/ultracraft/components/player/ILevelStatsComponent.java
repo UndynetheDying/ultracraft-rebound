@@ -73,4 +73,6 @@ public interface ILevelStatsComponent extends ComponentV3
 	void setShouldMusicFade(boolean val);
 	
 	boolean shouldLevelMusicFade();
+	
+	void onFinishLevel();
 }

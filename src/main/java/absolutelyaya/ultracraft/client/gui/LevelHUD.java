@@ -107,7 +107,7 @@ public class LevelHUD
 			curTimeRank++;
 	}
 	
-	public void onMusicChange(ModularLevelMusic music)
+	public void queueNewMusicPopup(ModularLevelMusic music)
 	{
 		musicPopupDelay = 2f;
 		musicPopupTime = 10f;
