@@ -24,7 +24,7 @@ public abstract class MusicTrackerMixin
 {
 	Identifier curLevelMusic;
 	ModularMusicInstance calm, fight;
-	float action;
+	float action, minAction;
 	
 	@Shadow @Final private MinecraftClient client;
 	
@@ -55,6 +55,7 @@ public abstract class MusicTrackerMixin
 		{
 			stopModular(true);
 			levelStats.setShouldMusicFade(false);
+			minAction = 0f;
 		}
 		String trackID = levelStats.getCurLevelSoundTrackKey();
 		if(level != null)
@@ -65,7 +66,7 @@ public abstract class MusicTrackerMixin
 				stopModular(false);
 			return;
 		}
-		if (current != null)
+		if (current != null) //stop any vanilla music
 			stop();
 		if(curLevelMusic == null || !curLevelMusic.equals(level))
 		{
@@ -76,11 +77,14 @@ public abstract class MusicTrackerMixin
 			if(calm == null && fight != null)
 				fight.setVolume(1f);
 			curLevelMusic = level;
+			minAction = 0f;
 		}
 		else if(calm != null && fight != null)
 		{
 			action = MathHelper.clamp(action + (levelStats.isInFight() ? 0.05f : -0.05f) * client.getTickDelta() *
 													   UltracraftClient.getConfig().musicTransitionSpeed, 0f, 1f);
+			if(music.isNoCalmdown())
+				minAction = action = Math.max(action, minAction);
 			calm.setVolume(1f - action);
 			fight.setVolume(action);
 		}

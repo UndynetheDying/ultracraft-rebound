@@ -123,7 +123,8 @@ public class LevelDataManager extends JsonDataLoader
 				{
 					String trackAuthor = null, trackName = "untitled";
 					Identifier calm = null, combat = null;
-					int col = 0xff0000;
+					int col = 0xff0000, combatThreshold = 0;
+					boolean noCalmdown = false;
 					JsonObject elementt = entry.getValue().getAsJsonObject();
 					if(elementt.has("author"))
 						trackAuthor = JsonHelper.getString(elementt, "author");
@@ -135,7 +136,11 @@ public class LevelDataManager extends JsonDataLoader
 						calm = Identifier.tryParse(JsonHelper.getString(elementt, "calm"));
 					if(elementt.has("combat"))
 						combat = Identifier.tryParse(JsonHelper.getString(elementt, "combat"));
-					level.putMusic(entry.getKey(), trackAuthor, trackName, col, calm, combat);
+					if(elementt.has("combat-threshold"))
+						combatThreshold = JsonHelper.getInt(elementt, "combat-threshold");
+					if(elementt.has("no-calmdown"))
+						noCalmdown = JsonHelper.getBoolean(elementt, "no-calmdown");
+					level.putMusic(entry.getKey(), trackAuthor, trackName, col, calm, combat, combatThreshold, noCalmdown);
 				}
 			}
 			if(json.has("unimplemented"))

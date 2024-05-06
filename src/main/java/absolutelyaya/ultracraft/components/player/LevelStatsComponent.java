@@ -35,7 +35,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	Identifier currentLevel;
 	String currentLevelInstance, curLevelSoundTrackKey = "default";
 	boolean fighting, undamaged, invalid, shouldMusicFade;
-	int fightCheckCooldown, deaths, kills;
+	int fightCheckCooldown, deaths, kills, combatThreshold;
 	float style;
 	long timerStart = -1, lastStoppedTimer = -1, timerPause = -1;
 	
@@ -87,8 +87,8 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 		if(fightCheckCooldown-- > 0)
 			return fighting;
 		fighting = provider.getWorld().getOtherEntities(provider, provider.getBoundingBox().expand(32f),
-				e -> e instanceof AbstractUltraHostileEntity && e.isAlive()).size() > 0;
-		fightCheckCooldown = 10;
+				e -> e instanceof AbstractUltraHostileEntity && e.isAlive()).size() > combatThreshold;
+		fightCheckCooldown = 5;
 		return fighting;
 	}
 	
@@ -320,7 +320,10 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 		{
 			ModularLevelMusic music = LevelDataManager.getLevelData(currentLevel).getMusic(key);
 			if(music != null && music.shouldShowPopup())
+			{
 				LevelHUD.Instance.onMusicChange(music);
+				combatThreshold = music.getCombatThreshold();
+			}
 		}
 	}
 	
@@ -357,6 +360,8 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 			deaths = tag.getInt("deaths");
 		if(tag.contains("kills", NbtElement.INT_TYPE))
 			kills = tag.getInt("kills");
+		if(tag.contains("combatThreshold", NbtElement.INT_TYPE))
+			combatThreshold = tag.getInt("combatThreshold");
 		invalid = tag.contains("invalid", NbtElement.BYTE_TYPE);
 		undamaged = tag.contains("undamaged", NbtElement.BYTE_TYPE);
 		setShouldMusicFade(tag.contains("shouldMusicFade", NbtElement.BYTE_TYPE));
@@ -404,6 +409,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 			tag.putBoolean("shouldMusicFade", true);
 			shouldMusicFade = false;
 		}
+		tag.putInt("combatThreshold", combatThreshold);
 		if(bestTimes != null)
 		{
 			NbtCompound records = new NbtCompound();

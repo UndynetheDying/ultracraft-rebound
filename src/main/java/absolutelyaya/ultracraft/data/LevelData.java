@@ -127,9 +127,9 @@ public final class LevelData
 		return !music.isEmpty();
 	}
 	
-	public void putMusic(String id, String author, String name, int color, Identifier calm, Identifier fight)
+	public void putMusic(String id, String author, String name, int color, Identifier calm, Identifier fight, int combatThreshold, boolean noCalmdown)
 	{
-		music.put(id, new ModularLevelMusic(author, name, color, calm, fight));
+		music.put(id, new ModularLevelMusic(author, name, color, calm, fight, combatThreshold, noCalmdown));
 	}
 	
 	public ModularLevelMusic getMusic(String id)
@@ -313,6 +313,11 @@ public final class LevelData
 				SoundEvent combat = val.getCombatSound();
 				if(combat != null)
 					entry.putString("combat", combat.getId().toString());
+				int combatThreshold = val.getCombatThreshold();
+				if(combatThreshold > 0)
+					entry.putInt("combatThreshold", combatThreshold);
+				if(val.isNoCalmdown())
+					entry.putBoolean("noCalmdown", true);
 				music.put(key, entry);
 			});
 			nbt.put("music", music);
@@ -353,7 +358,8 @@ public final class LevelData
 				NbtCompound entry = music.getCompound(key);
 				String trackAuthor = null, trackName = "untitled";
 				Identifier calm = null, combat = null;
-				int col = 0xff0000;
+				int col = 0xff0000, combatThreshold = 0;
+				boolean noCalmdown = false;
 				if (entry.contains("author", NbtElement.STRING_TYPE))
 					trackAuthor = entry.getString("author");
 				if (entry.contains("title", NbtElement.STRING_TYPE))
@@ -364,7 +370,11 @@ public final class LevelData
 					calm = Identifier.tryParse(entry.getString("calm"));
 				if (entry.contains("combat", NbtElement.STRING_TYPE))
 					combat = Identifier.tryParse(entry.getString("combat"));
-				data.putMusic(key, trackAuthor, trackName, col, calm, combat);
+				if (entry.contains("combatThreshold", NbtElement.INT_TYPE))
+					combatThreshold = entry.getInt("combatThreshold");
+				if (entry.contains("noCalmdown", NbtElement.BYTE_TYPE))
+					noCalmdown = entry.getBoolean("noCalmdown");
+				data.putMusic(key, trackAuthor, trackName, col, calm, combat, combatThreshold, noCalmdown);
 			}
 		}
 		data.setUnimplemented(nbt.getBoolean("unimplemented"));

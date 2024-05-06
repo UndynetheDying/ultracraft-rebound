@@ -7,15 +7,18 @@ public class ModularLevelMusic
 {
 	final String author, name;
 	final Identifier calmID, combatID;
-	final int color;
+	final int color, combatThreshold;
+	final boolean noCalmdown;
 	
-	public ModularLevelMusic(String author, String name, int color, Identifier calmID, Identifier combatID)
+	public ModularLevelMusic(String author, String name, int color, Identifier calmID, Identifier combatID, int combatThreshold, boolean noCalmdown)
 	{
 		this.author = author;
 		this.name = name;
 		this.color = color;
 		this.calmID = calmID;
 		this.combatID = combatID;
+		this.combatThreshold = combatThreshold;
+		this.noCalmdown = noCalmdown;
 	}
 	
 	public String getAuthor()
@@ -50,5 +53,15 @@ public class ModularLevelMusic
 	public boolean shouldShowPopup()
 	{
 		return author != null && !author.isEmpty();
+	}
+	
+	public int getCombatThreshold()
+	{
+		return combatThreshold;
+	}
+	
+	public boolean isNoCalmdown()
+	{
+		return noCalmdown;
 	}
 }
