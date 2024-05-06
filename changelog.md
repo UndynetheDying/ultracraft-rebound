@@ -41,6 +41,7 @@
 - Changed map level unlock block icon and name back because I have the Stupid
 - Crops now break from slamming//explosions
 - Slam block breaking area was extended upwards by one Block
+- Made Bright Panels actually bright (they now emit Light Level 6)
 ## Resource Changes
 - The Icon for the Sound Listener Mapping Block is now used for Music Listeners instead
 - Changed how Music in the Level Metadata works

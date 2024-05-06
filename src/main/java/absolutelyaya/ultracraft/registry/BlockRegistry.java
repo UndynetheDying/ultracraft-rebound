@@ -97,9 +97,9 @@ public class BlockRegistry
 	public static final Block COLUMN2_STAIRS = register("column2_stairs",
 			new StairsBlock(COLUMN2.getDefaultState(), AbstractBlock.Settings.copy(COLUMN2)), true);
 	public static final Block BRIGHT_PANEL = register("bright_panel",
-			new BrightPanelBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.IRON_GRAY)), true);
+			new BrightPanelBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.IRON_GRAY).luminance(state -> 6)), true);
 	public static final Block BRIGHT_PANEL_STAIRS = register("bright_panel_stairs",
-			new StairsBlock(BRIGHT_PANEL.getDefaultState(), AbstractBlock.Settings.copy(BRIGHT_PANEL)), true);
+			new StairsBlock(BRIGHT_PANEL.getDefaultState(), AbstractBlock.Settings.copy(BRIGHT_PANEL).luminance(state -> 6)), true);
 	public static final Block SHEETMETAL = register("sheetmetal",
 			new Block(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.IRON_GRAY).sounds(BlockSoundGroup.LANTERN)), true);
 	public static final Block FRAMED = register("framed",
