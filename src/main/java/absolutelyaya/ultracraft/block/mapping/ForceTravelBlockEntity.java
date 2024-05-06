@@ -22,7 +22,7 @@ public class ForceTravelBlockEntity extends AbstractTriggerBlockEntity
 {
 	List<? extends LivingEntity> lastContained = new ArrayList<>();
 	static List<String> attributes = new ArrayList<>();
-	boolean openRanking = true;
+	boolean openRanking = true, rankingTitleSuffix = true;
 	
 	public ForceTravelBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -59,6 +59,8 @@ public class ForceTravelBlockEntity extends AbstractTriggerBlockEntity
 	{
 		if(attribute.equals("openRanking"))
 			return String.valueOf(openRanking);
+		else if(attribute.equals("rankingTitleSuffix"))
+			return String.valueOf(rankingTitleSuffix);
 		return null;
 	}
 	
@@ -67,6 +69,8 @@ public class ForceTravelBlockEntity extends AbstractTriggerBlockEntity
 	{
 		if(s.equals("openRanking"))
 			openRanking = Boolean.parseBoolean(value);
+		else if(s.equals("rankingTitleSuffix"))
+			rankingTitleSuffix = Boolean.parseBoolean(value);
 		super.setAttribute(s, value);
 	}
 	
@@ -83,6 +87,7 @@ public class ForceTravelBlockEntity extends AbstractTriggerBlockEntity
 					PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 					buf.writeBoolean(true);
 					buf.writeBoolean(openRanking);
+					buf.writeBoolean(rankingTitleSuffix);
 					ServerPlayNetworking.send(player, PacketRegistry.TRAVEL_SCREEN_PACKET_ID, buf);
 				}
 			}
@@ -96,6 +101,8 @@ public class ForceTravelBlockEntity extends AbstractTriggerBlockEntity
 		super.readNbt(nbt);
 		if(nbt.contains("openRanking", NbtElement.BYTE_TYPE))
 			openRanking = nbt.getBoolean("openRanking");
+		if(nbt.contains("rankingTitleSuffix", NbtElement.BYTE_TYPE))
+			rankingTitleSuffix = nbt.getBoolean("rankingTitleSuffix");
 	}
 	
 	@Override
@@ -103,6 +110,7 @@ public class ForceTravelBlockEntity extends AbstractTriggerBlockEntity
 	{
 		super.writeNbt(nbt);
 		nbt.putBoolean("openRanking", openRanking);
+		nbt.putBoolean("rankingTitleSuffix", rankingTitleSuffix);
 	}
 	
 	@Override
@@ -113,5 +121,6 @@ public class ForceTravelBlockEntity extends AbstractTriggerBlockEntity
 	
 	static {
 		attributes.add("openRanking");
+		attributes.add("rankingTitleSuffix");
 	}
 }

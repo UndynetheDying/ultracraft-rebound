@@ -367,8 +367,9 @@ public class ClientPacketRegistry
 		ClientPlayNetworking.registerGlobalReceiver(TRAVEL_SCREEN_PACKET_ID, (((client, handler, buf, responseSender) -> {
 			boolean forced = buf.readBoolean();
 			boolean ranking = buf.readBoolean() && UltraComponents.LEVEL_STATS.get(client.player).getCurrentLevelInstance() != null;
+			boolean titleSuffix = buf.readBoolean();
 			client.execute(() -> {
-				client.setScreen(ranking ? new LevelRankingScreen() : new TravelScreen(false, forced));
+				client.setScreen(ranking ? new LevelRankingScreen(titleSuffix) : new TravelScreen(false, forced));
 			});
 		})));
 		ClientPlayNetworking.registerGlobalReceiver(EDIT_PING_PACKET_ID, (((client, handler, buf, responseSender) -> {

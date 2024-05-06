@@ -4,18 +4,16 @@
   - Added Pride themed Wing overlays
     - Happy Pride Month!
     - You don't need to be a Supporter to use these. Pride should never have a price tag
-    - Please let me know if you feel like another should be added
+    - Please let me know if you feel like more should be added
 - Inverted Scrolling on Wing Customization Screen
 - Added Unique Textures for almost every ultracraft Spawn Egg
-- Fixed some nullref issues when setting Mapping Block Attributes to values that fail parsing.
+- Fixed some nullref issues when setting Mapping Block Attributes to values that fail parsing
 ## Settings & Config
 ## Commands
 ## Tweaks
 ## Minor Changes
 - Changed how Splash Texts work internally to allow for them being translated
-- Changed map level unlock block icon and name back because I have the Stupid
-- Crops now break from slamming//explosions
-- Slam block breaking area was extended upwards by one Block
+- Changed `Map Level Unlock Listener` icon and name back because I have the Stupid
 - Added `rankingTitleSuffix` Attribute to Force Travel Trigger Mapping Blocks
   - If this is enabled, the title of the ranking screen will have `.title` suffixed to it
   - In the built-in Levels this is used to display a different Translation Key on the Ranking Screen than on the Travel Screen more easily.

@@ -251,7 +251,7 @@ public class EditModeCommands
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		String key = context.getArgument("key", String.class);
 		IEditorComponent editor = UltraComponents.EDITOR.get(player);
-		if(key.equals("room") && !editor.isAllowRecursiveRooms())
+		if(key.equals("room"))
 		{
 			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.rebind.room"));
 			return Command.SINGLE_SUCCESS;

@@ -411,7 +411,7 @@
   "command.ultracraft.edit.flag.set.success": "Flag '%1$s' set to %2$s.",
   "command.ultracraft.edit.flag.set.fail": "Flag '%s' doesn't exist",
   "command.ultracraft.edit.flag.bind": "Bound Flag '%1$s' to focused key '%2$s'.",
-  "command.ultracraft.edit.rebind.room": "Recursive Rooms aren't enabled.",
+  "command.ultracraft.edit.rebind.room": "Rooms don't have Parents.",
   "command.ultracraft.edit.rebind.start": "Rebinding Parent of Key '%s'.",
   "command.ultracraft.edit.config.speed": "Edit mode Fly Speed set to %s.",
   "command.ultracraft.edit.config.no-clip.on": "Activated NoClip in edit mode.",
