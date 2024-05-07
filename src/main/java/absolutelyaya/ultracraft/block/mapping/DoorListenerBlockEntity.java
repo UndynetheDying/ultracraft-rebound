@@ -112,17 +112,17 @@ public class DoorListenerBlockEntity extends AbstractListenerBlockEntity
 	}
 	
 	@Override
-	public void setAttribute(String s, String value)
+	public void setAttribute(String s, String value) throws AttributeParseException, NumberFormatException
 	{
 		switch (s)
 		{
-			case "closedBlock" -> close = Identifier.tryParse(value);
-			case "openBlock" -> open = Identifier.tryParse(value);
+			case "closedBlock" -> close = parseIdentifier(value);
+			case "openBlock" -> open = parseIdentifier(value);
 			case "resetBlock" -> {
 				if(value.equals("null"))
 					reset = null;
 				else
-					reset = Identifier.tryParse(value);
+					reset = parseIdentifier(value);
 			}
 			case "delay" -> activationDelay = Integer.parseInt(value);
 			case "skull" -> skull = Boolean.parseBoolean(value);

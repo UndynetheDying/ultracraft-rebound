@@ -68,12 +68,12 @@ public class SoundListenerBlockEntity extends AbstractListenerBlockEntity
 	}
 	
 	@Override
-	public void setAttribute(String s, String value)
+	public void setAttribute(String s, String value) throws AttributeParseException, NumberFormatException
 	{
 		switch (s)
 		{
 			case "delay" -> activationDelay = Integer.parseInt(value);
-			case "sound" -> sound = Identifier.tryParse(value);
+			case "sound" -> sound = parseIdentifier(value);
 			case "volume" -> volume = Float.parseFloat(value);
 			case "pitch" -> pitch = Float.parseFloat(value);
 			case "playOnDeactivate" -> playOnDeactivate = Boolean.parseBoolean(value);

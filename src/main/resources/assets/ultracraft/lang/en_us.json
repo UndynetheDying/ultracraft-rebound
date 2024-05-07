@@ -430,6 +430,9 @@
   "command.ultracraft.edit.config.show-area-owner.off": "Lines between areas and owners are now hidden.",
   "command.ultracraft.edit.attribute.not-found": "Attribute '%1$s' not found on focused key '%2$s'",
   "command.ultracraft.edit.attribute.set": "Set Attribute '%1$s' to '%2$s' on focused key '%3$s'.",
+  "command.ultracraft.edit.attribute.parse-failed": "Failed to set Attribute; couldn't parse input value. (expected type: '%s')",
+  "command.ultracraft.edit.attribute.number-parse-failed": "Failed to set Attribute; couldn't parse input value to a Number. Please check whether the Attribute is an Integral or Floating Point number and try again",
+  "command.ultracraft.edit.attribute.identifier-parse-failed": "Failed to set Attribute; couldn't parse input value to an Identifier. Keep in mind that Block States//Nbt and stuff are not currently supported",
   "command.ultracraft.edit.config.ghost.on": "Activated Ghost Mode in edit mode.",
   "command.ultracraft.edit.config.ghost.off": "Deactivated Ghost Mode in edit mode.",
 

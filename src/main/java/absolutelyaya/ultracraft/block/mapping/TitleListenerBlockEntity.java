@@ -91,7 +91,7 @@ public class TitleListenerBlockEntity extends AbstractListenerBlockEntity
 	}
 	
 	@Override
-	public void setAttribute(String s, String value)
+	public void setAttribute(String s, String value) throws AttributeParseException, NumberFormatException
 	{
 		switch (s)
 		{

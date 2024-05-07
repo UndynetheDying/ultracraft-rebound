@@ -84,7 +84,7 @@ public class EnemyTriggerBlockEntity extends AbstractTriggerBlockEntity
 	}
 	
 	@Override
-	public void setAttribute(String s, String value)
+	public void setAttribute(String s, String value) throws AttributeParseException, NumberFormatException
 	{
 		switch (s)
 		{

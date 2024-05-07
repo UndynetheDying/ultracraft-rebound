@@ -64,12 +64,12 @@ public class DamageBlockEntity extends AbstractTriggerBlockEntity
 	}
 	
 	@Override
-	public void setAttribute(String s, String value)
+	public void setAttribute(String s, String value) throws AttributeParseException, NumberFormatException
 	{
 		super.setAttribute(s, value);
 		switch (s)
 		{
-			case "damagetype" -> damagetype =  Identifier.tryParse(value);
+			case "damagetype" -> damagetype =  parseIdentifier(value);
 			case "amount" -> amount = Float.parseFloat(value);
 			case "perTick" -> perTick = Boolean.parseBoolean(value);
 		};

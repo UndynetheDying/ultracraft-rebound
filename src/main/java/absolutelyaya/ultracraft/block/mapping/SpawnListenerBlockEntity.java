@@ -117,11 +117,11 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 	}
 	
 	@Override
-	public void setAttribute(String s, String value)
+	public void setAttribute(String s, String value) throws AttributeParseException, NumberFormatException
 	{
 		switch (s)
 		{
-			case "entityType" -> entityType = Identifier.tryParse(value);
+			case "entityType" -> entityType = parseIdentifier(value);
 			case "delay" -> activationDelay = Integer.parseInt(value);
 			case "yaw" -> yaw = Float.parseFloat(value);
 		}

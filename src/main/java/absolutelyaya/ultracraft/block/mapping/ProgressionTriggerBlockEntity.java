@@ -70,10 +70,10 @@ public class ProgressionTriggerBlockEntity extends AbstractTriggerBlockEntity
 	}
 	
 	@Override
-	public void setAttribute(String s, String value)
+	public void setAttribute(String s, String value) throws AttributeParseException, NumberFormatException
 	{
 		switch(s) {
-			case "entry" -> progressionEntry = Identifier.tryParse(value);
+			case "entry" -> progressionEntry = parseIdentifier(value);
 			case "givesItem" -> giveAsItem = Boolean.parseBoolean(value);
 			case "alsoObtain" -> obtain = Boolean.parseBoolean(value);
 			case "message" -> message = value;

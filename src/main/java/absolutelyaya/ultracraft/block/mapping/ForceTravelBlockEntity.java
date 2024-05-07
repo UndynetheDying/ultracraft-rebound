@@ -66,7 +66,7 @@ public class ForceTravelBlockEntity extends AbstractTriggerBlockEntity
 	}
 	
 	@Override
-	public void setAttribute(String s, String value)
+	public void setAttribute(String s, String value) throws AttributeParseException, NumberFormatException
 	{
 		if(s.equals("openRanking"))
 			openRanking = Boolean.parseBoolean(value);

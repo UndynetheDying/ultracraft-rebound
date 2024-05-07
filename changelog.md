@@ -29,6 +29,7 @@
     - You don't need to be a Supporter to use these. Pride should never have a price tag
     - Please let me know if you feel like another should be added
 - Inverted Scrolling on Wing Customization Screen
+- Fixed some nullref issues when setting Mapping Block Attributes to values that fail parsing.
 ## Settings & Config
 ## Commands
 ## Tweaks
@@ -45,6 +46,7 @@
 - Added `rankingTitleSuffix` Attribute to Force Travel Trigger Mapping Blocks
   - If this is enabled, the title of the ranking screen will have `.title` suffixed to it
   - In the built-in Levels this is used to display a different Translation Key on the Ranking Screen than on the Travel Screen mroe easily.
+- Fixed a broken edit mode feedback message (`Nothing focused with key '%s'`)
 ## Resource Changes
 - The Icon for the Sound Listener Mapping Block is now used for Music Listeners instead
 - Changed how Music in the Level Metadata works

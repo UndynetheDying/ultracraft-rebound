@@ -336,11 +336,27 @@ public class EditModeCommands
 				context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.attribute.not-found", attribute, key));
 				return Command.SINGLE_SUCCESS;
 			}
-			e.setAttribute(attribute, value);
+			try
+			{
+				e.setAttribute(attribute, value);
+			}
+			catch (AbstractMappingBlockEntity.AttributeParseException exception)
+			{
+				if(exception.getExpectedDataType().equals("identifier"))
+					context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.attribute.identifier-parse-failed"));
+				else
+					context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.attribute.parse-failed", exception.getExpectedDataType()));
+				return Command.SINGLE_SUCCESS;
+			}
+			catch (NumberFormatException exception)
+			{
+				context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.attribute.number-parse-failed"));
+				return Command.SINGLE_SUCCESS;
+			}
 			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.attribute.set", attribute, value, key));
 		}
 		else
-			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.nothing-focused"));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.nothing-focused", key));
 		return Command.SINGLE_SUCCESS;
 	}
 	
