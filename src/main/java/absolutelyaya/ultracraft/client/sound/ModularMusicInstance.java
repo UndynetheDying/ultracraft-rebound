@@ -81,4 +81,10 @@ public class ModularMusicInstance extends PositionedSoundInstance implements Tic
 	{
 		return !fadingOut;
 	}
+	
+	@Override
+	public boolean shouldAlwaysPlay()
+	{
+		return true;
+	}
 }
