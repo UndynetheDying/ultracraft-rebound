@@ -79,7 +79,7 @@ public class RedstoneListenerBlockEntity extends AbstractListenerBlockEntity
 	}
 	
 	@Override
-	public void setAttribute(String s, String value)
+	public void setAttribute(String s, String value) throws AttributeParseException, NumberFormatException
 	{
 		if(s.equals("maxPulseDuration"))
 			maxPulseDuration = Integer.parseInt(value);

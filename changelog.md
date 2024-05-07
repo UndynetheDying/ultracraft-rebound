@@ -7,6 +7,7 @@
     - Please let me know if you feel like another should be added
 - Inverted Scrolling on Wing Customization Screen
 - Added Unique Textures for almost every ultracraft Spawn Egg
+- Fixed some nullref issues when setting Mapping Block Attributes to values that fail parsing.
 ## Settings & Config
 ## Commands
 ## Tweaks

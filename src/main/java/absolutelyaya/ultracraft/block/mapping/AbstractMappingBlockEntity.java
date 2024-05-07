@@ -10,6 +10,7 @@ import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -192,7 +193,7 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 	
 	public abstract List<String> getAttributes();
 	
-	public void setAttribute(String s, String value)
+	public void setAttribute(String s, String value) throws AttributeParseException, NumberFormatException
 	{
 		markDirty();
 		world.updateListeners(pos, getCachedState(), getCachedState(), 0);
@@ -236,4 +237,27 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 	}
 	
 	//TODO: add Scriptable Blocks
+	
+	public static class AttributeParseException extends Exception
+	{
+		String dataType;
+		
+		public AttributeParseException(String dataType)
+		{
+			this.dataType = dataType;
+		}
+		
+		public String getExpectedDataType()
+		{
+			return dataType;
+		}
+	}
+	
+	static Identifier parseIdentifier(String string) throws AttributeParseException
+	{
+		Identifier output = Identifier.tryParse(string);
+		if(output == null)
+			throw new AttributeParseException("identifier");
+		return output;
+	}
 }
