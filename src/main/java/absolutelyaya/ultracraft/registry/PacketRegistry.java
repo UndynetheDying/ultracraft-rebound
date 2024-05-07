@@ -225,7 +225,7 @@ public class PacketRegistry
 				
 				//The actual Parry Logic
 				IParriable parried;
-				if(parriables.size() > 0)
+				if(!parriables.isEmpty())
 					parried = getNearestParriable(parriables, pos);
 				else
 					return;
@@ -239,8 +239,8 @@ public class PacketRegistry
 					return;
 				if(parried == null || !parried.isParriable())
 					return;
-				boolean heal = true;
-				if(player.equals(parried.getParriableOwner()) && ((Entity)parried).age < 4)
+				boolean heal = !player.equals(parried.getParriableOwner());
+				if(heal && ((Entity)parried).age < 4)
 				{
 					if(((ProjectileEntityAccessor)parried).isBoostable())
 					{
@@ -664,7 +664,7 @@ public class PacketRegistry
 				}
 				Pair<String, LevelManager.LevelInstance> instance;
 				ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(player);
-				if(finalInstanceId.length() > 0 && LevelManager.Instance.isInstanceExistant(finalInstanceId))
+				if(!finalInstanceId.isEmpty() && LevelManager.Instance.isInstanceExistant(finalInstanceId))
 				{
 					instance = new Pair<>(finalInstanceId, LevelManager.Instance.getInstance(finalInstanceId));
 					if(levelStats.getCurrentLevelInstance() != null && levelStats.getCurrentLevelInstance().equals(finalInstanceId) &&
@@ -694,7 +694,7 @@ public class PacketRegistry
 			Identifier levelId = buf.readIdentifier();
 			server.execute(() -> {
 				NbtCompound nbt = LevelManager.Instance.serializePool(levelId);
-				if(nbt.getKeys().size() == 0)
+				if(nbt.getKeys().isEmpty())
 					return;
 				PacketByteBuf cbuf = new PacketByteBuf(Unpooled.buffer());
 				cbuf.writeNbt(nbt);
