@@ -8,27 +8,33 @@ import net.minecraft.world.World;
 
 public enum Layer
 {
-	OVERWORLD(World.OVERWORLD, null, new Identifier(Ultracraft.MOD_ID, "dimension.overworld")),
-	LIMBO(RegistryKey.of(RegistryKeys.WORLD, new Identifier(Ultracraft.MOD_ID, "limbo")), new BlockPos(0, 36, 24),
-			new Identifier(Ultracraft.MOD_ID, "dimension.limbo"));
-	public final RegistryKey<World> worldKey;
+	OVERWORLD(new Identifier(Ultracraft.MOD_ID, "prelude"), null, new Identifier(Ultracraft.MOD_ID, "dimension.overworld")),
+	LIMBO(new Identifier(Ultracraft.MOD_ID, "limbo"), new BlockPos(0, 36, 24), new Identifier(Ultracraft.MOD_ID, "dimension.limbo"));
 	public final BlockPos arrivalPos;
 	public final Identifier progression;
+	public final Identifier id;
 	
-	Layer(RegistryKey<World> worldKey, BlockPos arrivalPos, Identifier progression)
+	Layer(Identifier id, BlockPos arrivalPos, Identifier progression)
 	{
-		this.worldKey = worldKey;
+		this.id = id;
 		this.arrivalPos = arrivalPos;
 		this.progression = progression;
 	}
 	
-	public static Layer fromRegistryKey(RegistryKey<World> registryKey)
+	public static Layer fromIdentifier(Identifier id)
 	{
 		for (Layer l : values())
 		{
-			if(l.worldKey.equals(registryKey))
+			if(l.id.equals(id))
 				return l;
 		}
 		return null;
+	}
+	
+	public RegistryKey<World> getWorldKey()
+	{
+		if(id.equals(new Identifier(Ultracraft.MOD_ID, "prelude")))
+			return World.OVERWORLD;
+		return RegistryKey.of(RegistryKeys.WORLD, id);
 	}
 }

@@ -2,6 +2,8 @@ package absolutelyaya.ultracraft.components.level;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.config.ServerConfig;
+import absolutelyaya.ultracraft.data.LevelCollection;
+import absolutelyaya.ultracraft.data.LevelCollectionManager;
 import absolutelyaya.ultracraft.data.LevelDataManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -83,12 +85,20 @@ public class UltraLevelComponent implements IUltraLevelComponent
 	}
 	
 	@Override
-	public boolean isAnyLimboDestinationUnlocked()
+	public boolean isAnyDestinationInLayerUnlocked(Identifier layer)
 	{
-		return isDestinationUnlocked(new Identifier(Ultracraft.MOD_ID, "limbo1")) ||
-					   isDestinationUnlocked(new Identifier(Ultracraft.MOD_ID, "limbo2")) ||
-					   isDestinationUnlocked(new Identifier(Ultracraft.MOD_ID, "limbo3")) ||
-					   isDestinationUnlocked(new Identifier(Ultracraft.MOD_ID, "dimension.limbo"));
+		LevelCollection collection = LevelCollectionManager.getLevelCollection(layer);
+		if(collection == null)
+		{
+			Ultracraft.LOGGER.warn("Tried to check if any destination is unlocked in a Layer that doesn't exist ({})", layer);
+			return false;
+		}
+		for (Identifier i : collection.getAllDestinations())
+		{
+			if (isDestinationUnlocked(i))
+				return true;
+		}
+		return false;
 	}
 	
 	@Override

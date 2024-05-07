@@ -37,5 +37,6 @@
       "combat": "minecraft:music_disc.ward"
     }
   },
-  "version": 1
+  "version": 1,
+  "unlocked": true
 }

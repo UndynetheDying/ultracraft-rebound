@@ -635,7 +635,7 @@ public class PacketRegistry
 					return;
 				}
 				UltraComponents.LEVEL_STATS.get(player).enterLevel(null, null);
-				ServerWorld world = server.getWorld(layer.worldKey);
+				ServerWorld world = server.getWorld(layer.getWorldKey());
 				BlockPos pos = layer.arrivalPos == null ? world.getSpawnPos() : layer.arrivalPos;
 				FabricDimensions.teleport(player, world, new TeleportTarget(pos.toCenterPos(), Vec3d.ZERO, world.getSpawnAngle(), 0f));
 				onTravelFinished(player);

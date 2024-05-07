@@ -5,10 +5,13 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.gui.widget.LevelButton;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
+import absolutelyaya.ultracraft.data.LevelCollection;
+import absolutelyaya.ultracraft.data.LevelCollectionManager;
 import absolutelyaya.ultracraft.data.LevelDataManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
@@ -20,10 +23,22 @@ import static absolutelyaya.ultracraft.data.LevelDataManager.getLevelData;
 
 public class TravelScreen extends AbstractTravelScreen
 {
+	final Screen parent;
 	final boolean forced;
 	float blinkTimer;
 	TextRenderer textRenderer;
 	List<ClickableWidget> buttons = new ArrayList<>(), layerButtons = new ArrayList<>(), levelButtons = new ArrayList<>();
+	boolean customLevels;
+	
+	public TravelScreen(CustomLevelSelectScreen screen, boolean forced)
+	{
+		super(Text.of("travel"));
+		textRenderer = MinecraftClient.getInstance().textRenderer;
+		parent = screen;
+		this.forced = forced;
+		customLevels = true;
+		openAnimTime = 1f;
+	}
 	
 	public TravelScreen(boolean closeImmediately)
 	{
@@ -43,6 +58,7 @@ public class TravelScreen extends AbstractTravelScreen
 		this.forced = forced;
 		if(noIntro)
 			openAnimTime = 1f;
+		parent = null;
 	}
 	
 	@Override
@@ -66,23 +82,39 @@ public class TravelScreen extends AbstractTravelScreen
 	List<ClickableWidget> initLayerButtons()
 	{
 		layerButtons.clear();
-		List<ClickableWidget> buttons = new ArrayList<>();
-		buttons.add(layerButton(0));
-		ButtonWidget button;
-		buttons.add(button = layerButton(1));
 		IUltraLevelComponent global = UltraComponents.GLOBAL.get(client.player.getWorld().getLevelProperties());
-		button.active = global.isAnyLimboDestinationUnlocked();
-		buttons.add(button = layerButton(2));
-		button.active = false;
-		buttons.add(button = layerButton(3));
-		button.active = false;
+		List<ClickableWidget> buttons = new ArrayList<>();
+		int idx = 0;
+		if(!customLevels)
+		{
+			for (Layer layer : Layer.values())
+			{
+				ButtonWidget button;
+				buttons.add(button = layerButton(layer.id, layer.ordinal()));
+				button.active = global.isAnyDestinationInLayerUnlocked(layer.id);
+			}
+		}
+		else
+		{
+			Map<Identifier, LevelCollection> allLayers = LevelCollectionManager.getAllCustomLayers();
+			for (Identifier id : allLayers.keySet())
+			{
+				ButtonWidget button;
+				buttons.add(button = layerButton(id, idx));
+				button.active = global.isAnyDestinationInLayerUnlocked(id);
+				idx++;
+			}
+		}
 		if(!forced)
-			buttons.add(ButtonWidget.builder(Text.translatable("screen.ultracraft.travel.close"), b -> shouldClose = true)
-								 	.dimensions(width / 2 - 50, height - 32, 100, 20).build());
+			buttons.add(ButtonWidget.builder(Text.translatable("screen.ultracraft.travel.close"), b -> {
+				shouldClose = !customLevels || parent == null;
+				if(!shouldClose)
+					client.setScreen(parent);
+			}).dimensions(width / 2 - 50, height - 32, 100, 20).build());
 		if(LevelDataManager.isCustomLevelsPresent())
 		{
-			Text t = Text.translatable("screen.ultracraft.travel.custom").append(Text.of("..."));
-			buttons.add(ButtonWidget.builder(t, b -> client.setScreen(new CustomLevelSelectScreen(this)))
+			Text t = Text.translatable(customLevels ? "screen.ultracraft.travel.back" : "screen.ultracraft.travel.custom").append(Text.of("..."));
+			buttons.add(ButtonWidget.builder(t, b -> client.setScreen(customLevels ? parent : new CustomLevelSelectScreen(this)))
 								.dimensions(12, height - 32, textRenderer.getWidth(t) + 30, 20).build());
 		}
 		return buttons;
@@ -93,8 +125,30 @@ public class TravelScreen extends AbstractTravelScreen
 		levelButtons.clear();
 		List<ClickableWidget> buttons = new ArrayList<>();
 		int spacing = 8;
+		buttons.add(ButtonWidget.builder(Text.translatable("screen.ultracraft.travel.back"), b -> {
+			selectedLayer = null;
+			layerButtons.addAll(initLayerButtons());
+		}).dimensions(width / 2 - 50, height - 32, 100, 20).build());
+		LevelCollection collection = LevelCollectionManager.getLevelCollection(selectedLayer);
+		if(collection == null)
+		{
+			Ultracraft.LOGGER.warn("tried to open Level Selection Screen for Layer that doesn't exist ({})", selectedLayer);
+			return buttons;
+		}
+		if(collection.isBuiltin())
+			addBuiltinLevelButtons(buttons, spacing);
+		else
+			addCustomLevelButtons(buttons, spacing);
+		return buttons;
+	}
+	
+	void addBuiltinLevelButtons(List<ClickableWidget> buttons, int spacing)
+	{
+		Layer layer = Layer.fromIdentifier(selectedLayer);
 		int x = 0;
-		switch(selectedLayer)
+		if(layer == null)
+			return;
+		switch(layer)
 		{
 			case OVERWORLD ->
 			{
@@ -135,14 +189,42 @@ public class TravelScreen extends AbstractTravelScreen
 				buttons.addAll(List.of(freeroam, limbo1, limbo2, luna));
 			}
 		}
-		buttons.add(ButtonWidget.builder(Text.translatable("screen.ultracraft.travel.back"), b -> {
-			selectedLayer = null;
-			layerButtons.addAll(initLayerButtons());
-		}).dimensions(width / 2 - 50, height - 32, 100, 20).build());
-		return buttons;
+	}
+	
+	void addCustomLevelButtons(List<ClickableWidget> buttons, int spacing)
+	{
+		if(client == null)
+			return;
+		int x = 0, y = 0, maxWidth = (int)(client.getWindow().getScaledWidth() * 0.9f);
+		LevelCollection layer = LevelCollectionManager.getLevelCollection(selectedLayer);
+		if (layer == null)
+			return;
+		List<Identifier> ids = layer.getAllLevels();
+		List<ClickableWidget> line = new ArrayList<>();
+		for (Identifier id : ids)
+		{
+			LevelButton button = new LevelButton(x, height / 2 + y * (64 + spacing) - 32, getLevelData(id), this::selectLevel);
+			buttons.add(button);
+			line.add(button);
+			x += button.getWidth() + spacing;
+			if (x > maxWidth)
+			{
+				centerButtons(x, line);
+				line.clear();
+				x = 0;
+				y++;
+			}
+		}
+		centerButtons(x, line);
 	}
 	
 	void centerButtons(int maxX, ClickableWidget... buttons)
+	{
+		for (ClickableWidget button : buttons)
+			button.setX(button.getX() + (width - maxX) / 2);
+	}
+	
+	void centerButtons(int maxX, List<ClickableWidget> buttons)
 	{
 		for (ClickableWidget button : buttons)
 			button.setX(button.getX() + (width - maxX) / 2);
@@ -176,8 +258,11 @@ public class TravelScreen extends AbstractTravelScreen
 			return;
 		layerButtons.forEach(b -> b.render(context, mouseX, mouseY, delta));
 		context.drawCenteredTextWithShadow(textRenderer, Text.translatable("screen.ultracraft.travel.title"), width / 2, 16, 0xffffffff);
-		if(blinkTimer < 0.5f && curLayer != null)
-			context.drawTexture(TEXTURE, width / 2 - 50 - 16, height / 2 + (curLayer.ordinal() - 2) * 30 + 6,
+		if(curLayer == null || customLevels)
+			return;
+		Layer layer = Layer.fromIdentifier(curLayer);
+		if(blinkTimer < 0.5f && layer != null)
+			context.drawTexture(TEXTURE, width / 2 - 50 - 16, height / 2 + (layer.ordinal() - 2) * 30 + 6,
 					0, 60, 11, 8, 128, 128);
 	}
 	
@@ -186,14 +271,17 @@ public class TravelScreen extends AbstractTravelScreen
 		if(shouldClose)
 			return;
 		levelButtons.forEach(b -> b.render(context, mouseX, mouseY, delta));
-		context.drawCenteredTextWithShadow(textRenderer, Text.translatable("screen.ultracraft.travel.layer" + selectedLayer.ordinal()),
-				width / 2, 16, 0xffffffff);
+		LevelCollection layer = LevelCollectionManager.getLevelCollection(selectedLayer);
+		if(layer == null)
+			return;
+		context.drawCenteredTextWithShadow(textRenderer, layer.getTitleText(), width / 2, 16, 0xffffffff);
 	}
 	
 	@Override
-	protected void selectLayer(int layer)
+	protected void selectLayer(Identifier layer)
 	{
 		super.selectLayer(layer);
+		System.out.println(layer);
 		levelButtons.addAll(initLevelButtons());
 	}
 	

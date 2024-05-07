@@ -663,13 +663,10 @@
   "screen.ultracraft.arm-visibility": "Ultracraft Arm Visible",
   "screen.ultracraft.title.subtitle": "LAYER 1 // LIMBO",
   "screen.ultracraft.travel.title": "Choose your Destination",
-  "screen.ultracraft.travel.layer0": "Overworld",
-  "screen.ultracraft.travel.layer1": "Limbo",
-  "screen.ultracraft.travel.layer2": "Lust",
-  "screen.ultracraft.travel.layer3": "Gluttony",
   "screen.ultracraft.travel.close": "Close",
   "screen.ultracraft.travel.back": "Back",
   "screen.ultracraft.travel.custom": "Custom Levels",
+  "screen.ultracraft.travel.custom-layers": "Custom Layers",
   "screen.ultracraft.travel.waiting": "Waiting for Server...",
   "screen.ultracraft.travel.waiting-long": "This has been taking a while... You can now Press ESC to close this Screen.",
   "screen.ultracraft.travel.instance.title": "Instances of '%s'",
@@ -742,6 +739,12 @@
   "level.ultracraft.tutorial.title": "Tutorial",
   "level.ultracraft.example.title": "Example Level",
   "level.ultracraft.example.description": "An Example Level for Datapack//Level Creators.",
+
+  "layer.ultracraft.prelude": "Prelude",
+  "layer.ultracraft.limbo": "Limbo",
+  "layer.ultracraft.lust": "Lust",
+  "layer.ultracraft.gluttony": "Gluttony",
+  "layer.ultracraft.example.title": "Custom Example",
 
   "music.ultracraft.cerberus": "Wardens of Hell",
 

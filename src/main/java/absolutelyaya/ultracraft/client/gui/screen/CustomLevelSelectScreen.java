@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.client.gui.screen;
 
 import absolutelyaya.ultracraft.client.gui.widget.LevelButton;
+import absolutelyaya.ultracraft.data.LevelCollectionManager;
 import absolutelyaya.ultracraft.data.LevelDataManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
@@ -44,6 +45,12 @@ public class CustomLevelSelectScreen extends AbstractTravelScreen
 			listHeight += b.getHeight() + 8;
 		});
 		maxScroll = listHeight - 32;
+		if(LevelCollectionManager.isCustomLayersPresent())
+		{
+			Text t = Text.translatable("screen.ultracraft.travel.custom-layers").append(Text.of("..."));
+			levelButtons.add(ButtonWidget.builder(t, b -> client.setScreen(new TravelScreen(this, (parent instanceof TravelScreen screen && screen.forced))))
+								.dimensions(12, height - 32, textRenderer.getWidth(t) + 30, 20).build());
+		}
 	}
 	
 	@Override

@@ -18,9 +18,7 @@ import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.cybergrind.CybergrindData;
-import absolutelyaya.ultracraft.data.LevelDataManager;
-import absolutelyaya.ultracraft.data.UltraRecipeManager;
-import absolutelyaya.ultracraft.data.LevelData;
+import absolutelyaya.ultracraft.data.*;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.particle.ParryIndicatorParticleEffect;
 import absolutelyaya.ultracraft.recipe.UltraRecipe;
@@ -420,13 +418,21 @@ public class ClientPacketRegistry
 			});
 		})));
 		ClientPlayNetworking.registerGlobalReceiver(SEND_LEVELS_PACKET_ID, (((client, handler, buf, responseSender) -> {
-			for (int i = 0; i <= 1; i++) //execute twice; once to get levels and again to get custom levels
+			for (int i = 0; i <= 1; i++) //execute twice; once to get builtin levels and again to get custom levels
 			{
 				List<LevelData> list = buf.readList(LevelData::deserialize);
 				ImmutableMap.Builder<Identifier, LevelData> builder = ImmutableMap.builder();
 				for(LevelData level : list)
 					builder.put(level.getID(), level);
 				LevelDataManager.setLevels(builder.build(), i == 0);
+			}
+			for (int i = 0; i <= 1; i++) //execute twice as well; once to get builtin layers and again to get custom layers
+			{
+				List<LevelCollection> list = buf.readList(LevelCollection::deserialize);
+				ImmutableMap.Builder<Identifier, LevelCollection> builder = ImmutableMap.builder();
+				for(LevelCollection layer : list)
+					builder.put(layer.getID(), layer);
+				LevelCollectionManager.setLayers(builder.build(), i == 0);
 			}
 		})));
 		ClientPlayNetworking.registerGlobalReceiver(SEND_LEVEL_INSTANCES_PACKET_ID, (((client, handler, buf, responseSender) -> {

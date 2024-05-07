@@ -29,6 +29,7 @@
     - You don't need to be a Supporter to use these. Pride should never have a price tag
     - Please let me know if you feel like another should be added
 - Inverted Scrolling on Wing Customization Screen
+- Added Support for Custom Layers // Level Collections using Datapacks
 - Fixed some nullref issues when setting Mapping Block Attributes to values that fail parsing.
 ## Settings & Config
 - Added a Server Config Setting that allows disabling Edit Mode Room Modification Suppression
@@ -66,4 +67,5 @@
     - This is used in Limbo3 for example
 - Changed the order Clair de Lunes Music disc description to be more uniform with minecraft (it's now `Author - Title` and not the other way around)
 - Crops were added to the fragile Block Tag
+- Translation Keys for Layer Buttons changed (`screen.ultracraft.travel.layer<index>` -> `layer.ultracraft.<layer-name>`)
 ## API Changes

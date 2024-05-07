@@ -7,6 +7,8 @@ import absolutelyaya.ultracraft.client.gui.TitleHUD;
 import absolutelyaya.ultracraft.client.gui.widget.LevelInstanceButton;
 import absolutelyaya.ultracraft.client.rendering.TitleBGRenderer;
 import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.data.LevelCollection;
+import absolutelyaya.ultracraft.data.LevelCollectionManager;
 import absolutelyaya.ultracraft.data.LevelDataManager;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -35,7 +37,7 @@ public abstract class AbstractTravelScreen extends Screen
 	protected float openAnimTime, closeAnimTime;
 	protected boolean shouldClose, awaitingFeedback;
 	protected long waitingSince;
-	protected Layer curLayer, selectedLayer;
+	protected Identifier curLayer, selectedLayer;
 	protected Identifier selectedLevel;
 	Map<String, UUID> instanceMap = new HashMap<>();
 	List<ClickableWidget> instanceButtons = new ArrayList<>();
@@ -49,16 +51,20 @@ public abstract class AbstractTravelScreen extends Screen
 	protected void init()
 	{
 		super.init();
-		curLayer = Layer.fromRegistryKey(MinecraftClient.getInstance().world.getRegistryKey());
+		if(MinecraftClient.getInstance().world != null)
+			curLayer = MinecraftClient.getInstance().world.getRegistryKey().getValue();
 		ClientPlayNetworking.send(PacketRegistry.REQUEST_DESTINATIONS_PACKET_ID, new PacketByteBuf(Unpooled.buffer()));
 		if(selectedLevel != null)
 			instanceButtons = initInstanceButtons();
 	}
 	
-	protected ButtonWidget layerButton(int layer)
+	protected ButtonWidget layerButton(Identifier layer, int idx)
 	{
-		return new LayerButton(width / 2 - 50, height / 2 + (layer - 2) * 30, 100, 20,
-				Text.translatable("screen.ultracraft.travel.layer" + layer), b -> selectLayer(layer));
+		LevelCollection collection = LevelCollectionManager.getLevelCollection(layer);
+		if(collection == null)
+			return null;
+		return new LayerButton(width / 2 - 50, height / 2 + (idx - 2) * 30, 100, 20,
+				collection.getTitleText(), b -> selectLayer(layer));
 	}
 	
 	@Override
@@ -112,7 +118,7 @@ public abstract class AbstractTravelScreen extends Screen
 	
 	protected void travel(Layer layer)
 	{
-		if(curLayer != null && layer.worldKey.equals(curLayer.worldKey))
+		if(layer.id.equals(curLayer))
 		{
 			setShouldClose();
 			return;
@@ -159,9 +165,10 @@ public abstract class AbstractTravelScreen extends Screen
 		UltraComponents.LEVEL_STATS.get(client.player).stopTimer(true);
 	}
 	
-	protected void selectLayer(int layer)
+	protected void selectLayer(Identifier layer)
 	{
-		selectedLayer =	Layer.values()[layer];
+		selectedLayer =	layer;
+		System.out.println(layer);
 	}
 	
 	@Override

@@ -1,0 +1,14 @@
+{
+  "title": "layer.ultracraft.prelude",
+  "description": "test description",
+  "author": "Absolutelyaya",
+  "builtin": true,
+  "levels": [
+    "ultracraft:prelude1",
+    "ultracraft:prelude2",
+    "ultracraft:prelude3"
+  ],
+  "extra-destinations": [
+    "ultracraft:dimension.overworld"
+  ]
+}

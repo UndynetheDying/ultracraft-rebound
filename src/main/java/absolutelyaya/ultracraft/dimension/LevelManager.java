@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.block.mapping.AbstractMappingBlockEntity;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.ILevelStatsComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.data.LevelCollectionManager;
 import absolutelyaya.ultracraft.data.LevelData;
 import absolutelyaya.ultracraft.data.LevelDataManager;
 import absolutelyaya.ultracraft.entity.demon.MaliciousFaceEntity;
@@ -57,6 +58,7 @@ public class LevelManager extends DimensionManager
 	{
 		Instance = this;
 		new LevelDataManager();
+		new LevelCollectionManager();
 	}
 	
 	public void init(ServerWorld world)
