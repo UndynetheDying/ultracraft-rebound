@@ -31,6 +31,8 @@
 - Inverted Scrolling on Wing Customization Screen
 - Fixed some nullref issues when setting Mapping Block Attributes to values that fail parsing.
 ## Settings & Config
+- Added a Server Config Setting that allows disabling Edit Mode Room Modification Suppression
+  - Or in other Words, it lets you break and place Blocks in otherwise protected Areas, like Levels
 ## Commands
 ## Tweaks
 - Nerfed Nailgun Damage a little

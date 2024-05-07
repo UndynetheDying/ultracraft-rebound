@@ -26,6 +26,7 @@ public class ServerConfig extends Config
 	public final BooleanEntry customLevelsUnlocked = new BooleanEntry("UnlockAllCustomLevels", true);
 	public final FloatEntry parryRange = (FloatEntry)new FloatEntry("ParryRange", 3f).setRange(0f, Float.MAX_VALUE);
 	public final FloatEntry coinPunchRange = (FloatEntry)new FloatEntry("CoinPunchRange", 4f).setRange(0f, Float.MAX_VALUE);
+	public final BooleanEntry disableModificationSuppression = new BooleanEntry("DisableModificationSuppression", false);
 	//Weapon Damage
 	public final FloatEntry feedbackerDamage = (FloatEntry)new FloatEntry("FeedbackerDamage", 1f).setRange(0f, Float.MAX_VALUE);
 	public final FloatEntry knuckleblasterDamage = (FloatEntry)new FloatEntry("KnuckleblasterDamage", 2.5f).setRange(0f, Float.MAX_VALUE);
@@ -33,7 +34,7 @@ public class ServerConfig extends Config
 	public final FloatEntry shotgunDamage = (FloatEntry)new FloatEntry("ShotgunDamage", 1f).setRange(0f, Float.MAX_VALUE);
 	public final FloatEntry nailgunDamage = (FloatEntry)new FloatEntry("NailgunDamage", 1f).setRange(0f, Float.MAX_VALUE);
 	//Debug
-	public final BooleanEntry disableFixedStructures = new BooleanEntry("DisableFixedStructures", false); //TODO: set default to false before release obvs
+	public final BooleanEntry disableFixedStructures = new BooleanEntry("DisableFixedStructures", false);
 	
 	public ServerConfig(MinecraftServer server)
 	{
@@ -58,8 +59,9 @@ public class ServerConfig extends Config
 		entries.add(bloodSaturation);
 		entries.add(dodgeableOverpump);
 		entries.add(customLevelsUnlocked);
-		entries.add(parryRange); //TODO: add to config screen
-		entries.add(coinPunchRange); //TODO: add to config screen
+		entries.add(parryRange); //TODO: add icon
+		entries.add(coinPunchRange); //TODO: add icon
+		entries.add(disableModificationSuppression); //TODO: add icon
 		entries.add(new Comment(" ## ############################# ##  #"));
 		entries.add(new Comment("      Weapon Damage Multipliers"));
 		entries.add(new Comment(" ## ############################# ##  #"));

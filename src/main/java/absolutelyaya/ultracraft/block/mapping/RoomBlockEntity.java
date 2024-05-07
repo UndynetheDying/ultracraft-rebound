@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.block.mapping;
 
 import absolutelyaya.ultracraft.block.CerberusBlock;
 import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.entity.IFlagger;
 import absolutelyaya.ultracraft.entity.demon.CerberusEntity;
@@ -36,7 +37,7 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	{
 		super(BlockEntityRegistry.MAP_ROOM, pos, state);
 		id = "room-" + i;
-		i++;
+		i++; //this is completely useless, but a little funny so I'll leave it in
 	}
 	
 	public static <T extends BlockEntity> void tick(World world, BlockPos ignored1, BlockState ignored2, T instance)
@@ -253,6 +254,11 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 		return null;
 	}
 	
+	public boolean isSuppressModifications()
+	{
+		return suppressModifications && !ServerConfig.INSTANCE.disableModificationSuppression.getValue();
+	}
+	
 	public boolean resetIfEmpty()
 	{
 		if(!active)
@@ -314,11 +320,6 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	{
 		UltraComponents.DIMENSION_DATA.get(world).removeRoomMappingBlock(pos);
 		super.markRemoved();
-	}
-	
-	public boolean isSuppressModifications()
-	{
-		return suppressModifications;
 	}
 	
 	static {

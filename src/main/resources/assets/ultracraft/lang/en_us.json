@@ -503,6 +503,8 @@
   "config.ultracraft.ParryRange.description": "The maximum distance a Projectile can be away to successfully parry it.",
   "config.ultracraft.CoinPunchRange": "Coin-Punch Range",
   "config.ultracraft.CoinPunchRange.description": "The maximum distance a Coin can be away to punch it.",
+  "config.ultracraft.DisableModificationSuppression": "Disable Modification Suppression",
+  "config.ultracraft.DisableModificationSuppression.description": "Allows breaking and placing Blocks in any Edit Mode Room, regardless of its 'modificationSuppression' Attribute.",
 
   "stat.ultracraft.collect_soul_orb": "Collected Soul Orbs",
   "stat.ultracraft.collect_blood_orb": "Collected Blood Orbs",
