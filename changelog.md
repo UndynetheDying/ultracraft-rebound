@@ -47,6 +47,7 @@
   - If this is enabled, the title of the ranking screen will have `.title` suffixed to it
   - In the built-in Levels this is used to display a different Translation Key on the Ranking Screen than on the Travel Screen mroe easily.
 - Fixed a broken edit mode feedback message (`Nothing focused with key '%s'`)
+- Fixed parrying your own projectiles healing you
 ## Resource Changes
 - The Icon for the Sound Listener Mapping Block is now used for Music Listeners instead
 - Changed how Music in the Level Metadata works
