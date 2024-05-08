@@ -44,10 +44,13 @@ public abstract class SoundSystemMixin
 						float pitch = getAdjustedPitch(i);
 						Channel.SourceManager manager = sources.get(i);
 						//since the game is paused, updating the sources position shouldn't be necessary.
-						manager.run(source -> {
-							source.setVolume(volume);
-							source.setPitch(pitch);
-						});
+						if(manager != null)
+						{
+							manager.run(source -> {
+								source.setVolume(volume);
+								source.setPitch(pitch);
+							});
+						}
 					}
 				}
 			});
@@ -58,7 +61,7 @@ public abstract class SoundSystemMixin
 	void onPauseAll(CallbackInfo ci)
 	{
 		tickingSounds.forEach(i -> {
-			if(i instanceof INonPausingSoundInstance)
+			if(i instanceof INonPausingSoundInstance && sources.get(i) != null)
 				sources.get(i).run(Source::resume);
 		});
 	}
