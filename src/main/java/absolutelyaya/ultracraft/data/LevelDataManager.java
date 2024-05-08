@@ -25,7 +25,7 @@ public class LevelDataManager extends JsonDataLoader
 {
 	public static final LevelData ERR_DATA = new LevelData(new Identifier(Ultracraft.MOD_ID, "placeholder"),
 			"level.ultracraft.error.title", "level.ultracraft.error.description", "", "", null,
-			new Identifier(Ultracraft.MOD_ID, "textures/level/err.png"), BlockPos.ORIGIN, true);
+			new Identifier(Ultracraft.MOD_ID, "textures/level/err.png"), BlockPos.ORIGIN, true, true);
 	public static final Identifier PLACEHOLDER_THUMB = new Identifier(Ultracraft.MOD_ID, "textures/level/placeholder.png");
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 	public static LevelDataManager Instance;
@@ -64,6 +64,7 @@ public class LevelDataManager extends JsonDataLoader
 		prepared.forEach((id, element) -> {
 			JsonObject json = element.getAsJsonObject();
 			boolean builtin = JsonHelper.getBoolean(json, "builtin", false);
+			boolean defaultUnlocked = JsonHelper.getBoolean(json, "unlocked", false);
 			if(!json.has("structure"))
 			{
 				Ultracraft.LOGGER.warn("{} '{}' does not have a structure parameter!", builtin ? "Level" : "Custom Level", id);
@@ -85,7 +86,7 @@ public class LevelDataManager extends JsonDataLoader
 						JsonHelper.getInt(pos, "y", 0),
 						JsonHelper.getInt(pos, "z", 0));
 			}
-			LevelData level = new LevelData(id, title, description, author, authorlink, structure, thumbnail, spawnOffset, builtin);
+			LevelData level = new LevelData(id, title, description, author, authorlink, structure, thumbnail, spawnOffset, builtin, defaultUnlocked);
 			if(json.has("ranking"))
 			{
 				JsonObject ranking = json.getAsJsonObject("ranking");

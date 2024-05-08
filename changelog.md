@@ -34,6 +34,8 @@
 ## Settings & Config
 - Added a Server Config Setting that allows disabling Edit Mode Room Modification Suppression
   - Or in other Words, it lets you break and place Blocks in otherwise protected Areas, like Levels
+- Changed default value for `UnlockCustomLevels` Server Config to `false`
+  - If your Server//World is set to the old default value, the config will update to reflect this change automatically upon loading next.
 ## Commands
 ## Tweaks
 - Nerfed Nailgun Damage a little
@@ -65,6 +67,8 @@
   - Added `no-calmdown` Field
     - Setting this to true makes it so that once the combat track is playing, it won't go back to the calm track anymore
     - This is used in Limbo3 for example
+- Added `unlocked` Field to Level Metadata
+  - This defines whether a Level should always be unlocked. The default is `false`
 - Changed the order Clair de Lunes Music disc description to be more uniform with minecraft (it's now `Author - Title` and not the other way around)
 - Crops were added to the fragile Block Tag
 - Translation Keys for Layer Buttons changed (`screen.ultracraft.travel.layer<index>` -> `layer.ultracraft.<layer-name>`)

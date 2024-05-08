@@ -168,7 +168,6 @@ public abstract class AbstractTravelScreen extends Screen
 	protected void selectLayer(Identifier layer)
 	{
 		selectedLayer =	layer;
-		System.out.println(layer);
 	}
 	
 	@Override

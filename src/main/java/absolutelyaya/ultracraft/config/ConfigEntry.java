@@ -52,4 +52,9 @@ public abstract class ConfigEntry<T>
 		this.translationKey = key;
 		return this;
 	}
+	
+	public boolean isDefault()
+	{
+		return value == null || value.equals(defaultValue);
+	}
 }

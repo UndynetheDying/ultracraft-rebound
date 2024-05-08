@@ -81,7 +81,8 @@ public class UltraLevelComponent implements IUltraLevelComponent
 	@Override
 	public boolean isDestinationUnlocked(Identifier id)
 	{
-		return unlockedDestinations.contains(id) || (!LevelDataManager.getLevelData(id).isBuiltin() && ServerConfig.INSTANCE.customLevelsUnlocked.getValue());
+		return unlockedDestinations.contains(id) || (!LevelDataManager.getLevelData(id).isBuiltin() && ServerConfig.INSTANCE.customLevelsUnlocked.getValue())
+					   || LevelDataManager.getLevelData(id).isDefaultUnlocked();
 	}
 	
 	@Override

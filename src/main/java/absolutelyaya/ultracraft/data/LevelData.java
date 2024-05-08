@@ -19,7 +19,7 @@ public final class LevelData
 	final String title, description, author, authorLink;
 	final Identifier thumbnail, structure;
 	final BlockPos spawnOffset;
-	final boolean builtin;
+	final boolean builtin, defaultUnlocked;
 	String[] timeStrings;
 	long[] timeRanks;
 	int[] killRanks, styleRanks;
@@ -29,7 +29,7 @@ public final class LevelData
 	int version;
 	Identifier nextLevel;
 	
-	public LevelData(Identifier id, String title, String description, String author, String authorLink, Identifier structure, Identifier thumbnail, BlockPos spawnOffset, boolean builtin)
+	public LevelData(Identifier id, String title, String description, String author, String authorLink, Identifier structure, Identifier thumbnail, BlockPos spawnOffset, boolean builtin, boolean defaultUnlocked)
 	{
 		this.id = id;
 		this.title = title;
@@ -40,6 +40,7 @@ public final class LevelData
 		this.thumbnail = thumbnail;
 		this.spawnOffset = spawnOffset;
 		this.builtin = builtin;
+		this.defaultUnlocked = defaultUnlocked;
 	}
 	
 	public Identifier getID()
@@ -178,6 +179,11 @@ public final class LevelData
 		return builtin;
 	}
 	
+	public boolean isDefaultUnlocked()
+	{
+		return defaultUnlocked;
+	}
+	
 	public void setUnimplemented(boolean unimplemented)
 	{
 		this.unimplemented = unimplemented;
@@ -287,6 +293,7 @@ public final class LevelData
 		spawnOffset.putInt("z", this.spawnOffset.getZ());
 		nbt.put("spawnOffset", spawnOffset);
 		nbt.putBoolean("builtin", builtin);
+		nbt.putBoolean("defaultUnlocked", defaultUnlocked);
 		nbt.putBoolean("unimplemented", unimplemented);
 		nbt.putBoolean("hidden", hidden);
 		if(hasFullRankingData())
@@ -341,8 +348,9 @@ public final class LevelData
 		NbtCompound spawnOffsetNbt = nbt.getCompound("spawnOffset");
 		BlockPos spawnOffset = new BlockPos(spawnOffsetNbt.getInt("x"), spawnOffsetNbt.getInt("y"), spawnOffsetNbt.getInt("z"));
 		boolean builtin = nbt.getBoolean("builtin");
+		boolean defaultUnlocked = nbt.getBoolean("defaultUnlocked");
 		LevelData data = new LevelData(Identifier.tryParse(id), title, description, author, authorLink,
-				Identifier.tryParse(structure), Identifier.tryParse(thumbnail), spawnOffset, builtin);
+				Identifier.tryParse(structure), Identifier.tryParse(thumbnail), spawnOffset, builtin, defaultUnlocked);
 		if(nbt.contains("rankingData", NbtElement.COMPOUND_TYPE))
 		{
 			NbtCompound ranking = nbt.getCompound("rankingData");

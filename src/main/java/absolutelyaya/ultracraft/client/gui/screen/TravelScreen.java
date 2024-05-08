@@ -281,7 +281,6 @@ public class TravelScreen extends AbstractTravelScreen
 	protected void selectLayer(Identifier layer)
 	{
 		super.selectLayer(layer);
-		System.out.println(layer);
 		levelButtons.addAll(initLevelButtons());
 	}
 	
