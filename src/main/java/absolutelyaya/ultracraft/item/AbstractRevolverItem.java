@@ -186,9 +186,8 @@ public abstract class AbstractRevolverItem extends AbstractWeaponItem implements
 	}
 	
 	@Override
-	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
+	protected void appendWeaponInfoTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
 	{
-		super.appendTooltip(stack, world, tooltip, context);
 		if(isAlternate())
 		{
 			tooltip.add(Text.translatable("item.ultracraft.revolver.alternate.lore1"));

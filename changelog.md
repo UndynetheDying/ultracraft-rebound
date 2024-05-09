@@ -22,5 +22,7 @@
   - In the built-in Levels this is used to display a different Translation Key on the Ranking Screen than on the Travel Screen mroe easily.
 - Fixed a broken edit mode feedback message (`Nothing focused with key '%s'`)
 - Fixed parrying your own projectiles healing you
+- Weapon Descriptions are now only shown either Shift Key is held
+- Added Loot Tables for Blocks that were missed
 ## Resource Changes
 ## API Changes

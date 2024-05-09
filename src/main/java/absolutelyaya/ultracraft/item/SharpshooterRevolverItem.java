@@ -276,11 +276,10 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 		approxUseTime = -1;
 	}
 	
-	
 	@Override
-	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
+	protected void appendWeaponInfoTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
 	{
-		super.appendTooltip(stack, world, tooltip, context);
+		super.appendWeaponInfoTooltip(stack, world, tooltip, context);
 		tooltip.add(Text.translatable("item.ultracraft.sharpshooter_revolver.lore1"));
 		tooltip.add(Text.translatable("item.ultracraft.sharpshooter_revolver.lore2"));
 		if(isAlternate())
