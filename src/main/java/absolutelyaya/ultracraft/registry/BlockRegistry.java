@@ -85,7 +85,7 @@ public class BlockRegistry
 	public static final Block FLOWERBED = register("flowerbed",
 			new FlowerbedBlock(AbstractBlock.Settings.copy(Blocks.OAK_LEAVES).mapColor(MapColor.DARK_GREEN)), true);
 	public static final Block PORTAL = register("portal",
-			new PortalBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.TERRACOTTA_PURPLE)), true);
+			new PortalBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).mapColor(MapColor.TERRACOTTA_PURPLE)), false);
 	public static final Block ZOOTYCOONCHAINLINKFENCE = register("zootycoonchainlinkfence",
 			new PaneBlock(AbstractBlock.Settings.copy(Blocks.IRON_BARS).mapColor(MapColor.IRON_GRAY).nonOpaque()), true);
 	public static final Block COLUMN1 = register("column1",

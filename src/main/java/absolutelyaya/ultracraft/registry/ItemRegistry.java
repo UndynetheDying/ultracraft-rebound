@@ -189,6 +189,8 @@ public class ItemRegistry
 																.putLore(true, new String[] { "item.ultracraft.florp.hiddenlore" }));
 	public static final SkyBlockItem SKY = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "sky_block"), new SkyBlockItem(new FabricItemSettings().rarity(Rarity.EPIC)));
+	public static final BlockItem PORTAL = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "portal"), new BlockItem(BlockRegistry.PORTAL, new FabricItemSettings().rarity(Rarity.UNCOMMON)));
 	
 	//Animated Blocks
 	public static final HellSpawnerItem HELL_SPAWNER = Registry.register(Registries.ITEM,
@@ -326,7 +328,7 @@ public class ItemRegistry
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.DAY));
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.EVENING));
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.NIGHT));
-			content.add(BlockRegistry.PORTAL.asItem());
+			content.add(PORTAL);
 		});
 		//Dispenser Behaviors
 		DispenserBlock.registerBehavior(HELL_BULLET, new ProjectileDispenserBehavior(){
