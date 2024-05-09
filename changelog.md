@@ -53,6 +53,7 @@
   - In the built-in Levels this is used to display a different Translation Key on the Ranking Screen than on the Travel Screen mroe easily.
 - Fixed a broken edit mode feedback message (`Nothing focused with key '%s'`)
 - Fixed parrying your own projectiles healing you
+- Weapon Descriptions are now only shown either Shift Key is held
 ## Resource Changes
 - The Icon for the Sound Listener Mapping Block is now used for Music Listeners instead
 - Changed how Music in the Level Metadata works

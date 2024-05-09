@@ -212,9 +212,8 @@ public class FlamethrowerItem extends AbstractWeaponItem implements GeoItem
 	}
 	
 	@Override
-	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
+	protected void appendWeaponInfoTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
 	{
-		super.appendTooltip(stack, world, tooltip, context);
 		tooltip.add(Text.translatable("item.ultracraft.flamethrower.lore1"));
 		tooltip.add(Text.translatable("item.ultracraft.flamethrower.lore2"));
 		tooltip.add(Text.translatable("item.ultracraft.flamethrower.lore3"));

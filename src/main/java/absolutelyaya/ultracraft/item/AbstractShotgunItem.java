@@ -153,9 +153,9 @@ public abstract class AbstractShotgunItem extends AbstractWeaponItem implements 
 	}
 	
 	@Override
-	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
+	protected void appendWeaponInfoTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
 	{
-		super.appendTooltip(stack, world, tooltip, context);
+		
 		tooltip.add(Text.translatable("item.ultracraft.shotgun.lore1"));
 		tooltip.add(Text.translatable(getTranslationKey() + ".lore1"));
 	}
