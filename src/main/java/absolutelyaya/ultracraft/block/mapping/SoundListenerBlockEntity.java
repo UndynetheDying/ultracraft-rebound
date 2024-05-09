@@ -1,11 +1,13 @@
 package absolutelyaya.ultracraft.block.mapping;
 
+import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -55,10 +57,9 @@ public class SoundListenerBlockEntity extends AbstractListenerBlockEntity
 	protected void onStateChanged(boolean newState)
 	{
 		if(newState)
-			world.playSound(null, pos, Registries.SOUND_EVENT.get(sound), SoundCategory.BLOCKS, volume, pitch);
+			world.playSound(null, pos, SoundEvent.of(sound), SoundCategory.BLOCKS, volume, pitch);
 		else if(playOnDeactivate)
-			world.playSound(null, pos, Registries.SOUND_EVENT.get(sound), SoundCategory.BLOCKS, volume, pitch);
-		super.onStateChanged(newState);
+			world.playSound(null, pos, SoundEvent.of(sound), SoundCategory.BLOCKS, volume, pitch);
 	}
 	
 	@Override

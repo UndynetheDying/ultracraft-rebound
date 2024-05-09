@@ -167,8 +167,6 @@ public abstract class AbstractWeaponItem extends Item
 		for (int i = 0; i < ids.length; i++)
 		{
 			Item item = Registries.ITEM.get(ids[i]);
-			if(item == null)
-				continue;
 			variants[i] = item;
 		}
 		int start = -1;
@@ -263,9 +261,9 @@ public abstract class AbstractWeaponItem extends Item
 	
 	protected void handleAnimSound(SoundKeyframeEvent<? extends AbstractWeaponItem> keyframe)
 	{
-		SoundEvent event = Registries.SOUND_EVENT.get(new Identifier(Ultracraft.MOD_ID, keyframe.getKeyframeData().getSound()));
+		SoundEvent event = SoundEvent.of(new Identifier(Ultracraft.MOD_ID, keyframe.getKeyframeData().getSound()));
 		ClientPlayerEntity player = MinecraftClient.getInstance().player;
-		if(player.getMainHandStack().getItem().equals(keyframe.getAnimatable()))
+		if(player != null && player.getMainHandStack().getItem().equals(keyframe.getAnimatable()))
 			player.playSound(event, SoundCategory.PLAYERS, 1f, 1f + (player.getRandom().nextFloat() - 0.5f) * 0.1f);
 	}
 	
