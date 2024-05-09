@@ -82,11 +82,11 @@ public abstract class MusicTrackerMixin
 		else if(calm != null && fight != null)
 		{
 			action = MathHelper.clamp(action + (levelStats.isInFight() ? 0.05f : -0.05f) * client.getTickDelta() *
-													   UltracraftClient.getConfig().musicTransitionSpeed, 0f, 1f);
+													   UltracraftClient.getConfig().musicTransitionSpeed, 0f, 2.5f);
 			if(music.isNoCalmdown())
 				minAction = action = Math.max(action, minAction);
-			calm.setVolume(1f - action);
-			fight.setVolume(action);
+			calm.setVolume(1f - Math.min(action, 1f));
+			fight.setVolume(Math.min(action, 1f));
 		}
 		if(calm != null && !client.getSoundManager().isPlaying(calm))
 			client.getSoundManager().play(calm);

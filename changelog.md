@@ -54,6 +54,7 @@
 - Fixed a broken edit mode feedback message (`Nothing focused with key '%s'`)
 - Fixed parrying your own projectiles healing you
 - Weapon Descriptions are now only shown either Shift Key is held
+- Fixed Creative Players defaulting to flying when entering a world
 ## Resource Changes
 - The Icon for the Sound Listener Mapping Block is now used for Music Listeners instead
 - Changed how Music in the Level Metadata works
