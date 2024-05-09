@@ -18,7 +18,7 @@ public class EditorComponent implements IEditorComponent
 	HashMap<String, BlockPos> focus = new HashMap<>();
 	BlockPos editAreaCore, rebindingParent;
 	int editAreaStep;
-	boolean active, showAreaOwner = true, noClip = true, ghost = false;
+	boolean active, showAreaOwner = true, noClip = true, ghost = false, wasFlyingBeforeEditing = false;
 	float flySpeed = 3f;
 	
 	public EditorComponent(PlayerEntity provider)
@@ -45,12 +45,16 @@ public class EditorComponent implements IEditorComponent
 		
 		if(active)
 		{
-			provider.getAbilities().flying = true;
-			provider.getAbilities().allowFlying = true;
+			wasFlyingBeforeEditing = provider.getAbilities().flying;
+			provider.getAbilities().flying = provider.getAbilities().allowFlying = true;
 			provider.setOnGround(false);
 		}
 		else
-			provider.getAbilities().allowFlying = provider.getAbilities().flying = provider.isCreative() || provider.isSpectator();
+		{
+			provider.getAbilities().flying = (provider.isCreative() && wasFlyingBeforeEditing) || provider.isSpectator();
+			provider.getAbilities().allowFlying = provider.isCreative() || provider.isSpectator();
+		}
+		
 		provider.getAbilities().setFlySpeed(active ? flySpeed / 20f : 0.05f);
 		UltraComponents.EDITOR.sync(provider);
 	}

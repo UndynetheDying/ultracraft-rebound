@@ -24,5 +24,6 @@
 - Fixed parrying your own projectiles healing you
 - Weapon Descriptions are now only shown either Shift Key is held
 - Added Loot Tables for Blocks that were missed
+- Fixed Creative Players defaulting to flying when entering a world
 ## Resource Changes
 ## API Changes
