@@ -279,8 +279,7 @@ public class UltracraftClient implements ClientModInitializer
 		});
 		
 		LivingEntityFeatureRendererRegistrationCallback.EVENT.register((type, renderer, helper, context) -> {
-			if(type.equals(EntityRegistry.MALICIOUS_FACE))
-				helper.register(new EnragedFeature<>(context.getModelLoader()));
+			helper.register(new EnragedFeature<>(context.getModelLoader()));
 			if(type.equals(EntityType.PLAYER))
 			{
 				helper.register(new WingsFeature<>((PlayerEntityRenderer)renderer, context.getModelLoader()));

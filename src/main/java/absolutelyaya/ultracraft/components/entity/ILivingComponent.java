@@ -8,4 +8,8 @@ public interface ILivingComponent extends ComponentV3, AutoSyncedComponent
 	boolean isCancerous();
 	
 	void setCanerous(boolean v);
+	
+	boolean isEnraged();
+	
+	void setEnraged(boolean v);
 }

@@ -19,10 +19,7 @@ import absolutelyaya.ultracraft.entity.projectile.ShotgunPelletEntity;
 import absolutelyaya.ultracraft.entity.projectile.ThrownMachineSwordEntity;
 import absolutelyaya.ultracraft.item.MachineSwordItem;
 import absolutelyaya.ultracraft.particle.TeleportParticleEffect;
-import absolutelyaya.ultracraft.registry.EntityRegistry;
-import absolutelyaya.ultracraft.registry.ItemRegistry;
-import absolutelyaya.ultracraft.registry.PacketRegistry;
-import absolutelyaya.ultracraft.registry.SoundRegistry;
+import absolutelyaya.ultracraft.registry.*;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import io.netty.buffer.Unpooled;
@@ -41,6 +38,7 @@ import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -402,6 +400,8 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 			dataTracker.set(THROW_COOLDOWN, dataTracker.get(THROW_COOLDOWN) - 1);
 		if(dataTracker.get(INTRO_TICKS) > 0 && isOnGround())
 			dataTracker.set(INTRO_TICKS, dataTracker.get(INTRO_TICKS) - 1);
+		if(shouldBeEnraged() && isAlive())
+			addStatusEffect(new StatusEffectInstance(StatusEffectRegistry.ENRAGED, 1, 0, true, false));
 	}
 	
 	@Override
@@ -579,8 +579,12 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 		dataTracker.set(HAS_SWORD, false);
 	}
 	
-	@Override
 	public boolean isEnraged()
+	{
+		return hasStatusEffect(StatusEffectRegistry.ENRAGED);
+	}
+	
+	public boolean shouldBeEnraged()
 	{
 		return dataTracker.get(ENRAGED_TICKS) > 0;
 	}
@@ -588,13 +592,13 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 	@Override
 	public Vec3d getEnrageFeatureSize()
 	{
-		return new Vec3d(1f, -1f, -1f);
+		return new Vec3d(1f, 1f, 1f);
 	}
 	
 	@Override
 	public Vec3d getEnragedFeatureOffset()
 	{
-		return new Vec3d(0f, -2.5f, 0f);
+		return new Vec3d(0f, 2.5f, 0f);
 	}
 	
 	private boolean isIdle()

@@ -18,6 +18,7 @@ public class StatusEffectRegistry
 	public static final StatusEffect IMPALED = new ImpaledStatusEffect(StatusEffectCategory.HARMFUL, 0x670005).addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "287141e7-28fa-4d2a-baf2-4327cfd9f900", -0.4f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
 	public static final StatusEffect RETALIATION = new RetaliationStatusEffect(StatusEffectCategory.HARMFUL, 0x670005);
 	public static final StatusEffect CANCEROUS = new CancerousStatusEffect(StatusEffectCategory.HARMFUL, 0x00c52e);
+	public static final StatusEffect ENRAGED = new CancerousStatusEffect(StatusEffectCategory.BENEFICIAL, 0xff0000);
 	
 	public static void register()
 	{
@@ -26,5 +27,6 @@ public class StatusEffectRegistry
 		Registry.register(Registries.STATUS_EFFECT, new Identifier(Ultracraft.MOD_ID, "impaled"), IMPALED);
 		Registry.register(Registries.STATUS_EFFECT, new Identifier(Ultracraft.MOD_ID, "retaliation"), RETALIATION);
 		Registry.register(Registries.STATUS_EFFECT, new Identifier(Ultracraft.MOD_ID, "cancerous"), CANCEROUS);
+		Registry.register(Registries.STATUS_EFFECT, new Identifier(Ultracraft.MOD_ID, "enraged"), ENRAGED);
 	}
 }

@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.client.rendering.entity.demon;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.UltracraftClient;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.entity.demon.MaliciousFaceEntity;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.model.Model;
@@ -58,7 +59,7 @@ public class MaliciousFaceRenderer extends MobEntityRenderer<MaliciousFaceEntity
 		@Override
 		public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch)
 		{
-			VertexConsumer vertexConsumer = vertexConsumers.getBuffer(getContextModel().cracked && UltracraftClient.isViolentFeaturesEnabled(entity.getWorld()) ? ENRAGED : NORMAL);
+			VertexConsumer vertexConsumer = vertexConsumers.getBuffer(UltraComponents.LIVING.get(entity).isEnraged() ? ENRAGED : NORMAL);
 			matrices.scale(1.005f, 1.005f, 1.005f);
 			((Model)this.getContextModel()).render(matrices, vertexConsumer, 15728880, OverlayTexture.DEFAULT_UV, 0.0f, 1.0f, 1.0f, 1.0f);
 		}

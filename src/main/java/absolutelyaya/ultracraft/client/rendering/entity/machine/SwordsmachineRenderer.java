@@ -2,7 +2,6 @@ package absolutelyaya.ultracraft.client.rendering.entity.machine;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.rendering.entity.feature.gecko.SwordsmachineEmissiveLayer;
-import absolutelyaya.ultracraft.client.rendering.entity.feature.gecko.SwordsmachineRageLayer;
 import absolutelyaya.ultracraft.entity.machine.DestinyBondSwordsmachineEntity;
 import absolutelyaya.ultracraft.entity.machine.SwordsmachineEntity;
 import net.minecraft.client.render.RenderLayer;
@@ -48,7 +47,6 @@ public class SwordsmachineRenderer extends GeoEntityRenderer<SwordsmachineEntity
 				poseStack.pop();
 			}
 		});
-		addRenderLayer(new SwordsmachineRageLayer(this));
 	}
 	
 	@Override

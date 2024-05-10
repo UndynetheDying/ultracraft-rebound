@@ -18,6 +18,7 @@ import absolutelyaya.ultracraft.particle.ParryIndicatorParticleEffect;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.registry.ParticleRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
+import absolutelyaya.ultracraft.registry.StatusEffectRegistry;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.NoPenaltyTargeting;
 import net.minecraft.entity.ai.control.MoveControl;
@@ -31,6 +32,7 @@ import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -183,6 +185,8 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 			else if(outro == 100 && escapePearl != null && !escapePearl.isRemoved())
 				escapePearl.discard();
 		}
+		if(shouldBeEnraged() && isAlive())
+			addStatusEffect(new StatusEffectInstance(StatusEffectRegistry.ENRAGED, 1, 0, true, false));
 	}
 	
 	public SnowballEntity throwEscapeEnderPearl()
@@ -526,10 +530,14 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 		return true;
 	}
 	
-	@Override
 	public boolean isEnraged()
 	{
 		return dataTracker.get(ENRAGED);
+	}
+	
+	public boolean shouldBeEnraged()
+	{
+		return hasStatusEffect(StatusEffectRegistry.ENRAGED);
 	}
 	
 	@Override
@@ -583,13 +591,13 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 	@Override
 	public Vec3d getEnrageFeatureSize()
 	{
-		return new Vec3d(1f, -1f, -1f);
+		return new Vec3d(1f, 1f, 1f);
 	}
 	
 	@Override
 	public Vec3d getEnragedFeatureOffset()
 	{
-		return new Vec3d(0f, -2f, 0f);
+		return new Vec3d(0f, 2f, 0f);
 	}
 	
 	@Override

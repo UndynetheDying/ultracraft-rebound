@@ -31,6 +31,10 @@
 - Inverted Scrolling on Wing Customization Screen
 - Added Support for Custom Layers // Level Collections using Datapacks
 - Fixed some nullref issues when setting Mapping Block Attributes to values that fail parsing.
+- Rage is now a Potion Effect
+  - Doesn't alter any stats by itself
+  - Makes any living entity have the rage halo
+  - If applicable, Enemies Enraged Behavior will be used while having the Effect, regardless of other requirements like Health
 ## Settings & Config
 - Added a Server Config Setting that allows disabling Edit Mode Room Modification Suppression
   - Or in other Words, it lets you break and place Blocks in otherwise protected Areas, like Levels

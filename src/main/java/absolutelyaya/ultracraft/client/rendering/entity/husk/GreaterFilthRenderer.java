@@ -1,7 +1,6 @@
 package absolutelyaya.ultracraft.client.rendering.entity.husk;
 
 import absolutelyaya.ultracraft.Ultracraft;
-import absolutelyaya.ultracraft.client.rendering.entity.feature.gecko.EnragedGreaterFilthLayer;
 import absolutelyaya.ultracraft.entity.husk.GreaterFilthEntity;
 import mod.azure.azurelib.renderer.GeoEntityRenderer;
 import net.minecraft.client.render.RenderLayer;
@@ -15,7 +14,6 @@ public class GreaterFilthRenderer extends GeoEntityRenderer<GreaterFilthEntity>
 	public GreaterFilthRenderer(EntityRendererFactory.Context ctx)
 	{
 		super(ctx, new GreaterFilthModel());
-		addRenderLayer(new EnragedGreaterFilthLayer(this));
 	}
 	
 	@Override

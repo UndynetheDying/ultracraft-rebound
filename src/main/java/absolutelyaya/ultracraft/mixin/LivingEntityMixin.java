@@ -383,6 +383,8 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	{
 		if(effect.getEffectType().equals(StatusEffectRegistry.CANCEROUS))
 			UltraComponents.LIVING.get(this).setCanerous(true);
+		if(effect.getEffectType().equals(StatusEffectRegistry.ENRAGED))
+			UltraComponents.LIVING.get(this).setEnraged(true);
 	}
 	
 	@Inject(method = "onStatusEffectRemoved", at = @At("HEAD"))
@@ -390,6 +392,8 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	{
 		if(effect.getEffectType().equals(StatusEffectRegistry.CANCEROUS))
 			UltraComponents.LIVING.get(this).setCanerous(false);
+		if(effect.getEffectType().equals(StatusEffectRegistry.ENRAGED))
+			UltraComponents.LIVING.get(this).setEnraged(false);
 	}
 	
 	void punchTick()
