@@ -1,5 +1,6 @@
 ## Major Changes
 - Added an OST composed by various Ultrakill fan//ust composers
+  - Prelude 1 - Beyond the Fire by [Triage](https://www.youtube.com/@triageGremlin)
   - Prelude 3 - Wardens of Hell by [Psykomatic](https://www.youtube.com/@psykomatic0)
   - Limbo 2 - untitled by [Efefski](https://www.youtube.com/@efefski)
   - All Tracks have Music disks for both their calm and combat version (if applicable)

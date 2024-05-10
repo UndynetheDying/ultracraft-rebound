@@ -30,6 +30,7 @@
     "y": 70,
     "z": 115
   },
+  "spawn-rot": -90,
   "music": {
     "fight": {
       "author": "Psykomatic",
@@ -41,7 +42,6 @@
       "no-calmdown": true
     }
   },
-  "spawn-rot": -90,
   "version": 2,
   "next-level": "ultracraft:limbo1"
 }

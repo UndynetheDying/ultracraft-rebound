@@ -129,6 +129,10 @@
   "item.ultracraft.disc.cerberus.desc": "Psykomatic - Wardens of Hell (Intense Mix)",
   "item.ultracraft.disc.cerberus_calm": "Music Disc",
   "item.ultracraft.disc.cerberus_calm.desc": "Psykomatic - Wardens of Hell (Calm Mix)",
+  "item.ultracraft.disc.prelude1": "Music Disc",
+  "item.ultracraft.disc.prelude1.desc": "Triage - Beyond the Fire (Intense Mix)",
+  "item.ultracraft.disc.prelude1_calm": "Music Disc",
+  "item.ultracraft.disc.prelude1_calm.desc": "Triage - Beyond the Fire (Calm Mix)",
   "item.ultracraft.knuckleblaster": "Knuckleblaster",
   "item.ultracraft.hell_mass": "Hell Mass",
   "item.ultracraft.florp": "Florp",
@@ -197,8 +201,8 @@
   "block.ultracraft.map_global_redstone": "Map Global Redstone Listener",
   "block.ultracraft.map_global_receiver": "Map Global Redstone Receiver",
   "block.ultracraft.map_global_title": "Map Global Title Listener",
+  "block.ultracraft.map_music": "Map Music Trigger",
   "block.ultracraft.map_music_listener": "Map Music Listener",
-  "block.ultracraft.map_music_trigger": "Map Music Trigger",
   "block.ultracraft.sheetmetal": "Sheet Metal Block",
   "block.ultracraft.sheetmetal_sheet": "Sheet Metal Sheet Block",
   "block.ultracraft.sheetmetal_sheet_slab": "Sheet Metal Sheet Slab",
@@ -749,6 +753,7 @@
   "layer.ultracraft.example.title": "Custom Example",
   "layer.ultracraft.example.description": "An Example Layer//Level Collection for Datapack//Level Creators",
 
+  "music.ultracraft.prelude1": "Beyond the Fire",
   "music.ultracraft.cerberus": "Wardens of Hell",
 
   "terminal.coming-soon": "Coming Soon",

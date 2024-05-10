@@ -539,6 +539,16 @@
       "ultracraft:music/clair_de_lune"
     ]
   },
+  "music.prelude1": {
+    "sounds": [
+      "ultracraft:music/triage/beyondthefire"
+    ]
+  },
+  "music.prelude1_calm": {
+    "sounds": [
+      "ultracraft:music/triage/beyondthefire_calm"
+    ]
+  },
   "music.cerberus": {
     "sounds": [
       "ultracraft:music/psykomatic/cerbfight"
