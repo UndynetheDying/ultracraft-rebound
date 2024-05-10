@@ -59,6 +59,7 @@
 - Fixed parrying your own projectiles healing you
 - Weapon Descriptions are now only shown either Shift Key is held
 - Fixed Creative Players defaulting to flying when entering a world
+- Removed Clair de Lune Music Disc from V2s Loot Table
 ## Resource Changes
 - The Icon for the Sound Listener Mapping Block is now used for Music Listeners instead
 - Changed how Music in the Level Metadata works
@@ -78,4 +79,5 @@
 - Changed the order Clair de Lunes Music disc description to be more uniform with minecraft (it's now `Author - Title` and not the other way around)
 - Crops were added to the fragile Block Tag
 - Translation Keys for Layer Buttons changed (`screen.ultracraft.travel.layer<index>` -> `layer.ultracraft.<layer-name>`)
+- Clair de Lune (Music Disc) Identifier changed (`ultracraft:clair_de_lune` -> `ultracraft:disc/clair_de_lune`)
 ## API Changes
