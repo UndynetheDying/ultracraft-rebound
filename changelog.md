@@ -31,7 +31,6 @@
     - Please let me know if you feel like another should be added
 - Inverted Scrolling on Wing Customization Screen
 - Added Support for Custom Layers // Level Collections using Datapacks
-- Fixed some nullref issues when setting Mapping Block Attributes to values that fail parsing.
 - Rage is now a Potion Effect
   - Doesn't alter any stats by itself
   - Makes any living entity have the rage halo
@@ -61,6 +60,23 @@
 - Weapon Descriptions are now only shown either Shift Key is held
 - Fixed Creative Players defaulting to flying when entering a world
 - Removed Clair de Lune Music Disc from V2s Loot Table
+## Edit Mode Changes
+- Rooms can now be Parented to Rooms (yay, recursion)
+  - Added `/edit config recursiveRooms`, which toggles whether Rooms you pla
+  - Focusing a Room that's part of a Room Hierarchy, the entire Hierarchy is rendered
+    - Added `/edit config showRelations`, which toggles whether colored lines between related Rooms are shown (default: true)
+  - Rooms will tick regardless of whether their parent room is active (or in other words, the hierarchy doesn't affect Rooms Ticking)
+- Changed the Edit Mode Renderer a lot to make rendering the Room Hierarchies easier//possible without more bloat
+- Added new Mapping Blocks to control Music in Levels
+  - Music Listener
+    - Changes the currently playing Soundtrack Key of everyone in the Room while the bound **local** flag activates
+    - If `stopOnDisable` is enabled, the currently playing Soundtrack Key of Players will be cleared (meaning the music stops) upon the bound **local** flag deactivating.
+  - Music Trigger
+    - Changes the currently playing Soundtrack Key of Players that enter its Area IF the bound **local** flag is active
+    - If the Track Key is already playing for the Player, it won't do anything
+  - To stop the currently playing music, either set the key to an unused value, or leave it empty
+  - When a Track Switches, the last one will fade out and the next one will Fade in to make for a smooth transition
+- Fixed some nullref issues when setting Mapping Block Attributes to values that fail parsing.
 ## Resource Changes
 - The Icon for the Sound Listener Mapping Block is now used for Music Listeners instead
 - Changed how Music in the Level Metadata works

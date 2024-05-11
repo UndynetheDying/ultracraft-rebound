@@ -54,7 +54,9 @@ public class EditModeCommands
 												  .then(literal("flySpeed").then(argument("speed", floatArg()).executes(EditModeCommands::setFlySpeed)))
 												  .then(literal("noClip").executes(EditModeCommands::executeToggleNoClip))
 												  .then(literal("showAreaOwner").executes(EditModeCommands::executeToggleShowAreaOwner))
-												  .then(literal("ghost").executes(EditModeCommands::executeToggleGhost)))
+												  .then(literal("ghost").executes(EditModeCommands::executeToggleGhost))
+												  .then(literal("recursiveRooms").executes(EditModeCommands::executeToggleRecursiveRooms))
+												  .then(literal("showRelations").executes(EditModeCommands::executeToggleShowRelations)))
 									.then(literal("attribute").then(literal("set").then(key().then(argument("attribute", string()).suggests(EditModeCommands::suggestAttibutes).then(argument("value", string()).executes(EditModeCommands::setAttribute)))))));
 	}
 	
@@ -88,7 +90,7 @@ public class EditModeCommands
 				{
 					BlockPos pos = center.add(x, y, z);
 					BlockEntity blockEntity = world.getBlockEntity(pos);
-					if(blockEntity instanceof RoomBlockEntity room)
+					if(blockEntity instanceof RoomBlockEntity room && room.getParent() == null)
 					{
 						context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.ping.room-found", room.getID(), x, y, z));
 						roomBlocks.add(pos);
@@ -337,6 +339,30 @@ public class EditModeCommands
 		boolean b = editor.toggleGhost();
 		editor.sync();
 		context.getSource().sendMessage(Text.translatable(b ? "command.ultracraft.edit.config.ghost.on" : "command.ultracraft.edit.config.ghost.off"));
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int executeToggleRecursiveRooms(CommandContext<ServerCommandSource> context)
+	{
+		ServerPlayerEntity player = context.getSource().getPlayer();
+		if(player == null)
+			return Command.SINGLE_SUCCESS;
+		IEditorComponent editor = UltraComponents.EDITOR.get(player);
+		boolean b = editor.toggleRecursiveRooms();
+		editor.sync();
+		context.getSource().sendMessage(Text.translatable(b ? "command.ultracraft.edit.config.recursive-rooms.on" : "command.ultracraft.edit.config.recursive-rooms.off"));
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int executeToggleShowRelations(CommandContext<ServerCommandSource> context)
+	{
+		ServerPlayerEntity player = context.getSource().getPlayer();
+		if(player == null)
+			return Command.SINGLE_SUCCESS;
+		IEditorComponent editor = UltraComponents.EDITOR.get(player);
+		boolean b = editor.toggleShowRelations();
+		editor.sync();
+		context.getSource().sendMessage(Text.translatable(b ? "command.ultracraft.edit.config.relations.on" : "command.ultracraft.edit.config.relations.off"));
 		return Command.SINGLE_SUCCESS;
 	}
 	

@@ -53,7 +53,7 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 			{
 				for (BlockPos pos : room.getChildren())
 				{
-					if(world.getBlockEntity(pos) instanceof AbstractMappingBlockEntity block && !(block instanceof RoomBlockEntity) &&
+					if(world.getBlockEntity(pos) instanceof AbstractMappingBlockEntity block &&
 							   block.getParent() != null && block.getParent().equals(room.getPos()))
 						room.registerChild(pos, block);
 					else
@@ -93,7 +93,7 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	void tick()
 	{
 		boolean lastActive = active;
-		active = getContainedPlayers().size() > 0;
+		active = !getContainedPlayers().isEmpty();
 		
 		world.getEntitiesByType(TypeFilter.instanceOf(AbstractUltraHostileEntity.class), getAreaBox(),
 						i -> i instanceof IFlagger flagger && !flagger.isRoomListener(pos))
@@ -290,7 +290,7 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 						children.put(pos, null);
 				}
 			}
-			if(list.size() > 0)
+			if(!list.isEmpty())
 				childCheckPending = true;
 		}
 		if(nbt.contains("resetCooldown", NbtElement.INT_TYPE))

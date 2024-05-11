@@ -60,5 +60,17 @@ public interface IEditorComponent extends ComponentV3, AutoSyncedComponent
 	
 	boolean toggleGhost();
 	
+	void setAllowRecursiveRooms(boolean v);
+	
+	boolean isAllowRecursiveRooms();
+	
+	boolean toggleRecursiveRooms();
+	
+	void setShowRelations(boolean v);
+	
+	boolean isShowRelations();
+	
+	boolean toggleShowRelations();
+	
 	void sync();
 }
