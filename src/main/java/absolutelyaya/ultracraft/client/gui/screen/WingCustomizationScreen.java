@@ -347,6 +347,7 @@ public class WingCustomizationScreen extends Screen
 		client.setScreen(parent);
 		client.options.hudHidden = wasHudHidden;
 		client.options.setPerspective(oldPerspective);
+		client.options.getFovEffectScale().setValue(fovScale);
 		if(client.player != null)
 			client.player.setPitch(prevPitch);
 		MenuOpen = false;

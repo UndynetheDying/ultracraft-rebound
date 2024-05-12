@@ -1,7 +1,6 @@
 package absolutelyaya.ultracraft;
 
 import absolutelyaya.ultracraft.accessor.EntityAccessor;
-import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.components.UltraComponents;
@@ -23,7 +22,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageType;
-import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.network.PacketByteBuf;

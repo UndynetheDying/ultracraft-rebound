@@ -60,6 +60,7 @@
 - Weapon Descriptions are now only shown either Shift Key is held
 - Fixed Creative Players defaulting to flying when entering a world
 - Removed Clair de Lune Music Disc from V2s Loot Table
+- Fixed Wing Customization Screen messing up FoV Effect Scale Setting
 ## Edit Mode Changes
 - Rooms can now be Parented to Rooms (yay, recursion)
   - Added `/edit config recursiveRooms`, which toggles whether Rooms you pla
