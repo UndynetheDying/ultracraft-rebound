@@ -34,7 +34,11 @@
 - Rage is now a Potion Effect
   - Doesn't alter any stats by itself
   - Makes any living entity have the rage halo
+  - Makes any living entity red
+    - except for those in the entity type tag `ultracraft:no_rage_tint`
   - If applicable, Enemies Enraged Behavior will be used while having the Effect, regardless of other requirements like Health
+- Added Emissive Layer to Hideous Mass Enraged and Dying Textures
+- Added separate Emissive Texture for Enraged Swordsmachine
 ## Settings & Config
 - Added a Server Config Setting that allows disabling Edit Mode Room Modification Suppression
   - Or in other Words, it lets you break and place Blocks in otherwise protected Areas, like Levels

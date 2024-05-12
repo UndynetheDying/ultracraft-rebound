@@ -166,6 +166,7 @@ public class EntityRegistry
 	public static final TagKey<EntityType<?>> STREETCLEANER_DODGE = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "streetcleaner_dodge"));
 	public static final TagKey<EntityType<?>> STREETCLEANER_COUNTER = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "streetcleaner_counter"));
 	public static final TagKey<EntityType<?>> EXPLOSION_AFFECTED_PROJECTILES = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "explosion_affected_projectiles"));
+	public static final TagKey<EntityType<?>> NO_RAGE_TINT = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(Ultracraft.MOD_ID, "no_rage_tint"));
 	
 	public static void register()
 	{

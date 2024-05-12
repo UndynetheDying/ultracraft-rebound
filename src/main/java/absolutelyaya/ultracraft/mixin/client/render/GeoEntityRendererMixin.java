@@ -3,6 +3,7 @@ package absolutelyaya.ultracraft.mixin.client.render;
 import absolutelyaya.ultracraft.client.rendering.entity.feature.EnragedFeature;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.entity.ILivingComponent;
+import absolutelyaya.ultracraft.registry.EntityRegistry;
 import mod.azure.azurelib.cache.object.BakedGeoModel;
 import mod.azure.azurelib.core.animatable.GeoAnimatable;
 import mod.azure.azurelib.core.object.Color;
@@ -44,7 +45,7 @@ public abstract class GeoEntityRendererMixin<T extends Entity & GeoAnimatable> i
 			return Color.WHITE;
 			
 		ILivingComponent living = UltraComponents.LIVING.get(livingEntity);
-		if (living.isEnraged())
+		if (living.isEnraged() && !animatable.getType().isIn(EntityRegistry.NO_RAGE_TINT))
 			return new Color(0xffff4444);
 		if (living.isCancerous())
 			return new Color(0xff33ff4d);

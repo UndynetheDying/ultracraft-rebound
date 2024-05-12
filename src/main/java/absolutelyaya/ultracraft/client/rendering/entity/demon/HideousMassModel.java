@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.client.rendering.entity.demon;
 
 import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.entity.demon.HideousMassEntity;
 import net.minecraft.util.Identifier;
 import mod.azure.azurelib.core.animatable.model.CoreGeoBone;
@@ -24,7 +25,7 @@ public class HideousMassModel extends GeoModel<HideousMassEntity>
 	{
 		if(animatable.isDying() || animatable.isDead())
 			return DYING;
-		return animatable.isEnraged() ? ENRAGED : NORMAL;
+		return UltraComponents.LIVING.get(animatable).isEnraged() ? ENRAGED : NORMAL;
 	}
 	
 	@Override

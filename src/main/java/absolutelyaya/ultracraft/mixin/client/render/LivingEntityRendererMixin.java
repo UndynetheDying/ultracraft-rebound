@@ -1,23 +1,15 @@
 package absolutelyaya.ultracraft.mixin.client.render;
 
-import absolutelyaya.ultracraft.client.rendering.entity.feature.EnragedFeature;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.entity.ILivingComponent;
-import absolutelyaya.ultracraft.registry.StatusEffectRegistry;
+import absolutelyaya.ultracraft.registry.EntityRegistry;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
-import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(LivingEntityRenderer.class)
@@ -34,7 +26,7 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity>
 			args.set(5, 1f);
 			args.set(6, 0.3f);
 		}
-		if(living.isEnraged())
+		if(living.isEnraged() && !livingEntity.getType().isIn(EntityRegistry.NO_RAGE_TINT))
 		{
 			args.set(4, 1f);
 			args.set(5, 0.25f);
