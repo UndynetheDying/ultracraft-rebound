@@ -187,7 +187,7 @@ public class LevelButton extends ClickableWidget
 			{
 				matrices.push();
 				int descBoxWidth = 128;
-				descBoxHeight = tRenderer.getWrappedLinesHeight(description, descBoxWidth) + 8;
+				descBoxHeight = tRenderer.getWrappedLinesHeight(description, descBoxWidth) + 7;
 				matrices.translate((width + 8) * hoverAnim, 0f, 0f);
 				context.fill(0, 0, descBoxWidth, descBoxHeight, 0xff000000);
 				context.drawBorder(0, 0, descBoxWidth, descBoxHeight, 0xffffffff);

@@ -53,7 +53,7 @@ public  class LevelCollectionManager extends JsonDataLoader
 			JsonObject json = element.getAsJsonObject();
 			String title = JsonHelper.getString(json, "title", "layer.unnamed");
 			String description = JsonHelper.getString(json, "description", "");
-			String author = JsonHelper.getString(json, "author", "level.author.unknown");
+			String author = JsonHelper.getString(json, "author", "");
 			boolean builtin = JsonHelper.getBoolean(json, "builtin", false);
 			LevelCollection output = new LevelCollection(id, title, description, author, builtin);
 			if(json.has("levels"))

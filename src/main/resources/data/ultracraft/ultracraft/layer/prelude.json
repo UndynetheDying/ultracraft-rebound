@@ -1,7 +1,5 @@
 {
   "title": "layer.ultracraft.prelude",
-  "description": "test description",
-  "author": "Absolutelyaya",
   "builtin": true,
   "levels": [
     "ultracraft:prelude1",

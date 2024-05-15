@@ -21,8 +21,12 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.text.OrderedText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
@@ -64,7 +68,7 @@ public abstract class AbstractTravelScreen extends Screen
 		if(collection == null)
 			return null;
 		return new LayerButton(width / 2 - 50, height / 2 + (idx - 2) * 30, 100, 20,
-				collection.getTitleText(), b -> selectLayer(layer));
+				collection.getTitleText(), collection.getAuthorText(), collection.getDescriptionText(), b -> selectLayer(layer));
 	}
 	
 	@Override
@@ -183,9 +187,14 @@ public abstract class AbstractTravelScreen extends Screen
 	
 	protected static class LayerButton extends ButtonWidget
 	{
-		protected LayerButton(int x, int y, int width, int height, Text message, PressAction onPress)
+		final Text author, description;
+		float hoverAnim;
+		
+		protected LayerButton(int x, int y, int width, int height, Text message, Text author, Text description, PressAction onPress)
 		{
 			super(x, y, width, height, message, onPress, DEFAULT_NARRATION_SUPPLIER);
+			this.author = author;
+			this.description = description;
 		}
 		
 		@Override
@@ -204,6 +213,40 @@ public abstract class AbstractTravelScreen extends Screen
 					(MathHelper.ceil(alpha * 255f) << 24) + (hover ? 0xffffff : 0), false);
 			if(!active)
 				context.drawTexture(TEXTURE, getX(), getY(), 0, 40, getWidth(), getHeight(), 128, 128);
+			
+			boolean noAuthor;
+			if((noAuthor = author.getString().isEmpty()) && description.getString().isEmpty())
+				return;
+			if(hover && hoverAnim < 1f)
+				hoverAnim = MathHelper.lerp(delta / 5f, hoverAnim, 1f);
+			else if(!hover && hoverAnim > 0f)
+				hoverAnim = MathHelper.lerp(delta / 5f, hoverAnim, 0f);
+			if(hoverAnim < 0.05f)
+				return;
+			RenderSystem.setShaderColor(1f, 1f, 1f, (hoverAnim - 0.5f) * 2f);
+			MatrixStack matrices = context.getMatrices();
+			TextRenderer tRenderer = client.textRenderer;
+			int descBoxWidth = (int)(client.getWindow().getScaledWidth() * 0.33f);
+			int descBoxHeight = tRenderer.getWrappedLinesHeight(description, descBoxWidth) + 8;
+			List<OrderedText> lines = new ArrayList<>(tRenderer.wrapLines(description, descBoxWidth - 6));
+			matrices.push();
+			matrices.translate(getX(), getY(), -5);
+			if(!noAuthor)
+			{
+				descBoxHeight += tRenderer.fontHeight - 1;
+				lines.add(Text.translatable("screen.ultracraft.level.author",
+						author.getString()).setStyle(Style.EMPTY.withColor(Formatting.GOLD)).asOrderedText());
+			}
+			matrices.translate((width + 8) * hoverAnim, 0f, 0f);
+			context.fill(0, 0, descBoxWidth, descBoxHeight, 0xff000000);
+			context.drawBorder(0, 0, descBoxWidth, descBoxHeight, 0xffffffff);
+			for (OrderedText line : lines)
+			{
+				context.drawText(tRenderer, line, 3, 3, 0xffffffff, true);
+				matrices.translate(0, tRenderer.fontHeight + 1, 0f);
+			}
+			matrices.pop();
+			RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		}
 	}
 	
