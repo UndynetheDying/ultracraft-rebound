@@ -31,9 +31,10 @@ public class ProgressionUnlockItem extends SpecialItem
 			return TypedActionResult.fail(user.getStackInHand(hand));
 		UltraComponents.PROGRESSION.get(user).obtain(progressionEntry);
 		if(world.isClient)
-			user.sendMessage(Text.translatable("message.ultracraft.progression.unlock", getName().getString()), true);
+			UltraComponents.WINGED.get(user).sendBoxTitle(Text.translatable("message.ultracraft.progression.unlock", getName().getString()), 10f);
 		TypedActionResult<ItemStack> result = TypedActionResult.success(user.getStackInHand(hand));
-		user.setStackInHand(hand, ItemStack.EMPTY);
+		if(!user.isCreative())
+			user.setStackInHand(hand, ItemStack.EMPTY);
 		return result;
 	}
 	

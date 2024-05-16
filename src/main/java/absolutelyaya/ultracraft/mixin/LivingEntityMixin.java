@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.mixin;
 
 import absolutelyaya.ultracraft.ExplosionHandler;
+import absolutelyaya.ultracraft.compat.TrinketUtil;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
@@ -8,6 +9,7 @@ import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
 import absolutelyaya.ultracraft.components.player.IHivelComponent;
+import absolutelyaya.ultracraft.components.player.ProgressionComponent;
 import absolutelyaya.ultracraft.config.HivelConfig;
 import absolutelyaya.ultracraft.config.RegenSetting;
 import absolutelyaya.ultracraft.config.ServerConfig;
@@ -17,6 +19,7 @@ import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.entity.IAntiCheeseBoss;
 import absolutelyaya.ultracraft.entity.machine.V2Entity;
+import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import absolutelyaya.ultracraft.registry.StatusEffectRegistry;
@@ -95,6 +98,8 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	@Shadow public abstract boolean addStatusEffect(StatusEffectInstance effect);
 	
 	@Shadow public abstract LivingEntity getLastAttacker();
+	
+	@Shadow protected abstract void consumeItem();
 	
 	int punchDuration = 60;
 	Supplier<Boolean> canBleedSupplier = () -> true, takePunchKnockpackSupplier = this::isPushable; //TODO: add Sandy Enemies (eventually)
@@ -201,6 +206,9 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 			for (PlayerEntity player : heal)
 			{
 				if(!(player instanceof WingedPlayerEntity))
+					continue;
+				if(!(UltraComponents.PROGRESSION.get(player).isUnlocked(ProgressionComponent.BLOODHEAL) ||
+							(Ultracraft.TRINKETS && TrinketUtil.isHasTrinketEquipped(player, ItemRegistry.ABSORBANT_PLATING))))
 					continue;
 				if((healRule.equals(RegenSetting.ONLY_HIVEL) && !UltraComponents.WING_DATA.get(player).isActive()))
 					continue;

@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.client.rendering;
 
+import absolutelyaya.ultracraft.compat.TrinketUtil;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
@@ -8,6 +9,7 @@ import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
 import absolutelyaya.ultracraft.components.player.IStyleComponent;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
+import absolutelyaya.ultracraft.components.player.ProgressionComponent;
 import absolutelyaya.ultracraft.item.*;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.util.RenderingUtil;
@@ -64,6 +66,9 @@ public class UltraHudRenderer
 		MinecraftClient client = MinecraftClient.getInstance();
 		ClientPlayerEntity player = client.player;
 		if(player == null || player.isSpectator())
+			return;
+		if(!(UltraComponents.PROGRESSION.get(player).isUnlocked(ProgressionComponent.ULTRAHUD) ||
+				   (Ultracraft.TRINKETS && TrinketUtil.isHasTrinketEquipped(player, ItemRegistry.VIEW_AUGMENT))))
 			return;
 		if(player instanceof WingedPlayerEntity winged && winged.getFocusedTerminal() != null)
 			return;

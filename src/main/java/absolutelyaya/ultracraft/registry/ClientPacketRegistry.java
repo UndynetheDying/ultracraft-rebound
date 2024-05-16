@@ -6,6 +6,7 @@ import absolutelyaya.goop.particles.GoopDropParticleEffect;
 import absolutelyaya.ultracraft.ExplosionHandler;
 import absolutelyaya.ultracraft.client.gui.CybergrindHUD;
 import absolutelyaya.ultracraft.client.gui.screen.*;
+import absolutelyaya.ultracraft.compat.TrinketUtil;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.ITrailEnjoyer;
@@ -17,6 +18,7 @@ import absolutelyaya.ultracraft.client.rendering.UltraHudRenderer;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.components.player.ProgressionComponent;
 import absolutelyaya.ultracraft.cybergrind.CybergrindData;
 import absolutelyaya.ultracraft.data.*;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
@@ -120,13 +122,17 @@ public class ClientPacketRegistry
 								pos.x + (rand.nextDouble() - 0.5) * 0.5, pos.y + halfheight + (rand.nextDouble() - 0.5) * halfheight * 1.5, pos.z + (rand.nextDouble() - 0.5) * 0.5,
 								(rand.nextDouble() - 0.5) * 0.05, (rand.nextDouble() - 0.5) * 0.05, (rand.nextDouble() - 0.5) * 0.05);
 				}
-				if(client.player.squaredDistanceTo(pos) < 10 && !water)
+				PlayerEntity player = client.player;
+				if(!(UltraComponents.PROGRESSION.get(player).isUnlocked(ProgressionComponent.BLOODHEAL) ||
+							 (Ultracraft.TRINKETS && TrinketUtil.isHasTrinketEquipped(player, ItemRegistry.ABSORBANT_PLATING))))
+					return;
+				if(player.squaredDistanceTo(pos) < 10 && !water)
 				{
 					UltracraftClient.addBlood(amount / (shotgun ? 10f : 30f));
 					IWingedPlayerComponent winged = UltraComponents.WINGED.get(client.player);
 					if(!winged.isJustPlayedBloodhealNoise())
 					{
-						client.player.playSound(SoundRegistry.BLOOD_HEAL, SoundCategory.PLAYERS, 0.6f * Math.min(1f, amount * 2), 1.7f);
+						player.playSound(SoundRegistry.BLOOD_HEAL, SoundCategory.PLAYERS, 0.6f * Math.min(1f, amount * 2), 1.7f);
 						winged.setJustPlayedBloodhealNoise();
 					}
 				}

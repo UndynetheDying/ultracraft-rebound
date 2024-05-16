@@ -94,6 +94,9 @@ dependencies {
 
     //GOOP
     modImplementation(include 'com.github.absolutelyaya:goop:fabric-1.20.x-v0.3')
+
+    //Trinkets
+    modCompileOnlyApi("dev.emi:trinkets:${trinkets_version}")
 }
 
 processResources {

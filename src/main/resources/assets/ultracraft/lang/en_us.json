@@ -599,6 +599,7 @@
   "message.limbo.structure.modify-fail": "Something prevents you from modifying this Structure",
   "message.ultracraft.announce-music": "Now Playing:",
   "message.ultracraft.music-author-prefix": "by %s",
+  "message.ultracraft.hivel-not-unlocked": "You don't have any High Velocity Wings to toggle!",
 
   "intro.ultracraft.calibration": "BOOT UP SEQUENCE READY\n\nFIRMWARE\n  §aVERSION %s§r\n\nCALIBRATION\n  §4EXPIRED§r\n  §4NEW CALIBRATION REQUIRED§r\n\n",
   "intro.ultracraft.input": "Press any Key",

@@ -3,6 +3,7 @@ package absolutelyaya.ultracraft.client;
 import absolutelyaya.goop.client.GoopClient;
 import absolutelyaya.ultracraft.client.gui.*;
 import absolutelyaya.ultracraft.client.rendering.CybergrindArenaRenderer;
+import absolutelyaya.ultracraft.compat.TrinketUtil;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
@@ -29,8 +30,8 @@ import absolutelyaya.ultracraft.client.rendering.entity.projectile.*;
 import absolutelyaya.ultracraft.client.sound.*;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
+import absolutelyaya.ultracraft.components.player.ProgressionComponent;
 import absolutelyaya.ultracraft.config.*;
-import absolutelyaya.ultracraft.dimension.UltraDimensions;
 import absolutelyaya.ultracraft.entity.husk.AbstractHuskEntity;
 import absolutelyaya.ultracraft.entity.machine.SwordsmachineEntity;
 import absolutelyaya.ultracraft.entity.projectile.IHomingProjectile;
@@ -353,18 +354,21 @@ public class UltracraftClient implements ClientModInitializer
 		ClientTickEvents.END_WORLD_TICK.register(minecraft -> {
 			Ultracraft.tickFreeze();
 			UltracraftClient.TRAIL_RENDERER.tick();
+			if(joinInfoPending)
+				serverSyncFinished();
+			PlayerEntity player = MinecraftClient.getInstance().player;
+			if(player == null)
+				return;
 			if(!wasMovementSoundsEnabled && config.get().movementSounds)
 			{
-				PlayerEntity player = MinecraftClient.getInstance().player;
-				if(player == null)
-					return;
 				SoundManager sound = MinecraftClient.getInstance().getSoundManager();
 				sound.play(new MovingSlideSoundInstance(player));
 				sound.play(new MovingWindSoundInstance(player));
 			}
 			wasMovementSoundsEnabled = config.get().movementSounds;
-			if(joinInfoPending)
-				serverSyncFinished();
+			if(UltraComponents.WING_DATA.get(player).isActive() && !(UltraComponents.PROGRESSION.get(player).isUnlocked(ProgressionComponent.HIVEL) ||
+						 (Ultracraft.TRINKETS && TrinketUtil.isHasTrinketEquipped(player, ItemRegistry.HIVEL_WINGS))))
+				setHiVel(false, false);
 		});
 		//Block Layers
 		FluidRenderHandlerRegistry.INSTANCE.register(FluidRegistry.STILL_BLOOD, FluidRegistry.Flowing_BLOOD,
@@ -453,6 +457,14 @@ public class UltracraftClient implements ClientModInitializer
 		Setting option = ServerConfig.INSTANCE.hivel.getValue();
 		if(option.equals(Setting.FREE))
 		{
+			if(!(UltraComponents.PROGRESSION.get(player).isUnlocked(ProgressionComponent.HIVEL) ||
+						 (Ultracraft.TRINKETS && TrinketUtil.isHasTrinketEquipped(player, ItemRegistry.HIVEL_WINGS))))
+			{
+				UltraComponents.WINGED.get(player).sendBoxTitle(Text.translatable("message.ultracraft.hivel-not-unlocked"), 2.5f);
+				if(wings.isActive())
+					setHiVel(!wings.isActive(), false);
+				return;
+			}
 			setHiVel(!wings.isActive(), false);
 			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 			buf.writeBoolean(wings.isActive());
@@ -461,8 +473,7 @@ public class UltracraftClient implements ClientModInitializer
 			config.save();
 		}
 		else
-			player.sendMessage(
-					Text.translatable("message.ultracraft.hi-vel-forced",
+			player.sendMessage(Text.translatable("message.ultracraft.hi-vel-forced",
 									Text.translatable(option.equals(Setting.FORCE_ON) ? "options.on" : "options.off")), true);
 	}
 	

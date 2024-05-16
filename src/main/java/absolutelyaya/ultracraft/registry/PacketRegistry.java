@@ -7,6 +7,7 @@ import absolutelyaya.ultracraft.block.HellObserverBlockEntity;
 import absolutelyaya.ultracraft.block.IPunchableBlock;
 import absolutelyaya.ultracraft.block.PedestalBlock;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
+import absolutelyaya.ultracraft.compat.TrinketUtil;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
 import absolutelyaya.ultracraft.components.player.*;
@@ -306,14 +307,16 @@ public class PacketRegistry
 				else if(action == 0)
 					winged.setPrimaryFiring(false);
 				else
-					Ultracraft.LOGGER.warn(player + " tried to use primary fire action but is holding a non-weapon Item!");
+					Ultracraft.LOGGER.warn("{} tried to use primary fire action but is holding a non-weapon Item!", player);
 			});
 		});
 		ServerPlayNetworking.registerGlobalReceiver(SEND_WING_STATE_C2S_PACKET_ID, (server, player, handler, buf, sender) -> {
 			IWingDataComponent wings = UltraComponents.WING_DATA.get(player);
 			IUltraLevelComponent level = UltraComponents.GLOBAL.get(player.getWorld().getLevelProperties());
 			boolean whitelisted = level.isPlayerAllowedToHivel(player);
-			boolean wingsActive = buf.readBoolean() && whitelisted;
+			boolean wingsActive = buf.readBoolean() && whitelisted &&
+										  (UltraComponents.PROGRESSION.get(player).isUnlocked(ProgressionComponent.HIVEL) ||
+												   (Ultracraft.TRINKETS && TrinketUtil.isHasTrinketEquipped(player, ItemRegistry.HIVEL_WINGS)));
 			server.execute(() ->
 			{
 				wings.setActive(wingsActive);

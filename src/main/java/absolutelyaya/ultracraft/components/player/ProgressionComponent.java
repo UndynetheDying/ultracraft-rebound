@@ -24,9 +24,12 @@ import java.util.Map;
 
 public class ProgressionComponent implements IProgressionComponent, AutoSyncedComponent
 {
-	static final Identifier FEEDBACKER = new Identifier(Ultracraft.MOD_ID, "feedbacker");
-	static final Identifier KNUCKLEBLASTER = new Identifier(Ultracraft.MOD_ID, "knuckleblaster");
-	static final Identifier SLAB = new Identifier(Ultracraft.MOD_ID, "slab");
+	public static final Identifier FEEDBACKER = new Identifier(Ultracraft.MOD_ID, "feedbacker");
+	public static final Identifier KNUCKLEBLASTER = new Identifier(Ultracraft.MOD_ID, "knuckleblaster");
+	public static final Identifier SLAB = new Identifier(Ultracraft.MOD_ID, "slab");
+	public static final Identifier HIVEL = new Identifier(Ultracraft.MOD_ID, "hivel");
+	public static final Identifier BLOODHEAL = new Identifier(Ultracraft.MOD_ID, "bloodheal");
+	public static final Identifier ULTRAHUD = new Identifier(Ultracraft.MOD_ID, "ultrahud");
 	
 	static final List<Identifier> ENTRIES = new ArrayList<>() {
 		{
@@ -145,9 +148,9 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 		if(provider.getWorld().getGameRules().getBoolean(GameruleRegistry.START_AS_V1))
 		{
 			unlocked.add(FEEDBACKER);
-			unlocked.add(new Identifier(Ultracraft.MOD_ID, "hivel"));
-			unlocked.add(new Identifier(Ultracraft.MOD_ID, "bloodheal"));
-			unlocked.add(new Identifier(Ultracraft.MOD_ID, "ultrahud"));
+			unlocked.add(HIVEL);
+			unlocked.add(BLOODHEAL);
+			unlocked.add(ULTRAHUD);
 		}
 	}
 	
