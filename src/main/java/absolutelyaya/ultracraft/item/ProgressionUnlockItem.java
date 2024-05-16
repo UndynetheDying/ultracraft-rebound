@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.item;
 
+import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
@@ -26,17 +27,24 @@ public class ProgressionUnlockItem extends SpecialItem
 	@Override
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand)
 	{
+		if(isTrinket() && Ultracraft.TRINKETS)
+			return TypedActionResult.fail(user.getStackInHand(hand));
 		UltraComponents.PROGRESSION.get(user).obtain(progressionEntry);
 		if(world.isClient)
 			user.sendMessage(Text.translatable("message.ultracraft.progression.unlock", getName().getString()), true);
+		TypedActionResult<ItemStack> result = TypedActionResult.success(user.getStackInHand(hand));
 		user.setStackInHand(hand, ItemStack.EMPTY);
-		return TypedActionResult.success(user.getStackInHand(hand));
+		return result;
 	}
 	
 	@Override
 	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
 	{
 		super.appendTooltip(stack, world, tooltip, context);
+		if(isTrinket() && Ultracraft.TRINKETS)
+			return;
 		tooltip.add(Text.translatable("item.ultracraft.progression-item.lore"));
+		if(context.isAdvanced() && context.isCreative())
+			tooltip.add(Text.translatable("item.ultracraft.progression-item.hidden-lore", "§8" + progressionEntry.toString()));
 	}
 }

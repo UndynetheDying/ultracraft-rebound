@@ -39,11 +39,23 @@
   - If applicable, Enemies Enraged Behavior will be used while having the Effect, regardless of other requirements like Health
 - Added Emissive Layer to Hideous Mass Enraged and Dying Textures
 - Added separate Emissive Texture for Enraged Swordsmachine
+- Added New Progression Unlock Items
+  - Feedbacker - Unlocks the Feedbacker Arm
+  - Hivel Wings - Unlocks Ability to toggle High Velocity Mode
+  - Absorbant Plating - Unlocks Blood Healing Ability
+  - All of these Items are unobtainable in Survival per default; They were just added for map and modpack creators pretty much
+  - If Trinkets is installed, these Items lose their Progression Unlock Functionality and are used as equippable Trinkets instead.
+    - If the Gamerule `ultra-startAsV1` is enabled, then the basic mechanics always work regardless of whether the Trinkets are equipped or not!
+- Added Trinkets Support (optional)
+  - This is mainly for Modpack Creators that want more control over ultracraft core mechanic unlocking//progression.
 ## Settings & Config
-- Added a Server Config Setting that allows disabling Edit Mode Room Modification Suppression
+- Added Server Config `DisableModificationSuppression` which allows disabling Edit Mode Room Modification Suppression; Default is `false`
   - Or in other Words, it lets you break and place Blocks in otherwise protected Areas, like Levels
 - Changed default value for `UnlockCustomLevels` Server Config to `false`
   - If your Server//World is set to the old default value, the config will update to reflect this change automatically upon loading next.
+- Added a new Gamerule `ultra-startAsV1`; Default is `true`
+  - Whether Hivel Wings, Blood Healing and the Feedbacker are unlocked per default
+  - This Gamerule can be used in conjunction with the new Progression Unlock Items to add more progression to maps//modpacks
 ## Commands
 ## Tweaks
 - Nerfed Nailgun Damage a little
@@ -102,4 +114,5 @@
 - Crops were added to the fragile Block Tag
 - Translation Keys for Layer Buttons changed (`screen.ultracraft.travel.layer<index>` -> `layer.ultracraft.<layer-name>`)
 - Clair de Lune (Music Disc) Identifier changed (`ultracraft:clair_de_lune` -> `ultracraft:disc/clair_de_lune`)
+- Changed Progression Item Tooltip color (`item.ultracraft.progression-item.lore` | §8 -> §7)
 ## API Changes

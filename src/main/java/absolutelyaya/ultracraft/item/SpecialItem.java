@@ -14,6 +14,7 @@ public class SpecialItem extends Item
 {
 	List<String> lore = new ArrayList<>();
 	List<String> hiddenLore = new ArrayList<>();
+	boolean trinket;
 	
 	public SpecialItem(Settings settings)
 	{
@@ -36,13 +37,24 @@ public class SpecialItem extends Item
 		return this;
 	}
 	
+	public SpecialItem markTrinket()
+	{
+		trinket = true;
+		return this;
+	}
+	
+	public boolean isTrinket()
+	{
+		return trinket;
+	}
+	
 	@Override
 	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
 	{
 		super.appendTooltip(stack, world, tooltip, context);
-		if(lore.size() > 0)
+		if(!lore.isEmpty())
 			lore.forEach(s -> tooltip.add(Text.translatable(s)));
-		if(hiddenLore.size() > 0 && context.isAdvanced())
+		if(!hiddenLore.isEmpty() && context.isAdvanced())
 			hiddenLore.forEach(s -> tooltip.add(Text.translatable(s)));
 	}
 }

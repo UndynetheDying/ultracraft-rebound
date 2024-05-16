@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.gui.terminal.WeaponsTab;
+import absolutelyaya.ultracraft.registry.GameruleRegistry;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import net.minecraft.entity.player.PlayerEntity;
@@ -63,7 +64,7 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 	public ProgressionComponent(PlayerEntity provider)
 	{
 		this.provider = provider;
-		unlocked.add(FEEDBACKER);
+		reset();
 	}
 	
 	@Override
@@ -141,8 +142,13 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 		unlocked = new ArrayList<>();
 		owned = new ArrayList<>();
 		
-		unlocked.add(new Identifier(Ultracraft.MOD_ID, "feedbacker"));
-		owned.add(new Identifier(Ultracraft.MOD_ID, "feedbacker"));
+		if(provider.getWorld().getGameRules().getBoolean(GameruleRegistry.START_AS_V1))
+		{
+			unlocked.add(FEEDBACKER);
+			unlocked.add(new Identifier(Ultracraft.MOD_ID, "hivel"));
+			unlocked.add(new Identifier(Ultracraft.MOD_ID, "bloodheal"));
+			unlocked.add(new Identifier(Ultracraft.MOD_ID, "ultrahud"));
+		}
 	}
 	
 	@Override

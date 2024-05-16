@@ -70,8 +70,6 @@ public class ItemRegistry
 			new Identifier(Ultracraft.MOD_ID, "mincedmeat"), new SpecialItem(new FabricItemSettings()
 						.food(new FoodComponent.Builder().hunger(12).saturationModifier(6f).build()))
 								.putLore(new String[] { "item.ultracraft.mincedmeat.lore" }, new String[] { "item.ultracraft.mincedmeat.hiddenlore" }));
-	public static final Item KNUCKLEBLASTER = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "knuckleblaster"), new ProgressionUnlockItem(new FabricItemSettings(), new Identifier(Ultracraft.MOD_ID, "knuckleblaster")));
 	public static final Item HELL_MASS = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "hell_mass"), new Item(new FabricItemSettings()));
 	public static final Item PLACEHOLDER = Registry.register(Registries.ITEM,
@@ -79,6 +77,18 @@ public class ItemRegistry
 			new Item(new FabricItemSettings().food(new FoodComponent.Builder().alwaysEdible().hunger(-1).build())));
 	public static final LumpFishItem LUMPFISH = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "lumpfish"), new LumpFishItem(new FabricItemSettings().maxCount(64)));
+	
+	//Progression Items
+	public static final Item FEEDBACKER = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "feedbacker"), new ProgressionUnlockItem(new FabricItemSettings(), new Identifier(Ultracraft.MOD_ID, "feedbacker")));
+	public static final Item HIVEL_WINGS = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "hivel_wings"), new ProgressionUnlockItem(new FabricItemSettings(), new Identifier(Ultracraft.MOD_ID, "hivel")).markTrinket());
+	public static final Item ABSORBANT_PLATING = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "absorbant_plating"), new ProgressionUnlockItem(new FabricItemSettings(), new Identifier(Ultracraft.MOD_ID, "bloodheal")).markTrinket());
+	public static final Item VIEW_AUGMENT = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "view_augment"), new ProgressionUnlockItem(new FabricItemSettings(), new Identifier(Ultracraft.MOD_ID, "ultrahud")).markTrinket());
+	public static final Item KNUCKLEBLASTER = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "knuckleblaster"), new ProgressionUnlockItem(new FabricItemSettings(), new Identifier(Ultracraft.MOD_ID, "knuckleblaster")));
 	
 	//Weapons
 	public static final PierceRevolverItem PIERCE_REVOLVER = Registry.register(Registries.ITEM,
@@ -307,6 +317,10 @@ public class ItemRegistry
 			content.add(FLAMETHROWER);
 			content.add(HARPOON);
 			content.add(HARPOON_GUN);
+			content.add(FEEDBACKER);
+			content.add(HIVEL_WINGS);
+			content.add(ABSORBANT_PLATING);
+			content.add(VIEW_AUGMENT);
 			content.add(KNUCKLEBLASTER);
 			content.add(SOAP);
 			content.add(FILTH_SPAWN_EGG);

@@ -60,7 +60,7 @@ public class Ultracraft implements ModInitializer
     public static final Logger LOGGER = LogUtils.getLogger();
     static final String SUPPORTER_LIST = "https://raw.githubusercontent.com/absolutelyaya/absolutelyaya/main/cool-people.json";
     public static String VERSION;
-	public static boolean DYN_LIGHTS, SERVER_SIDE, VIVECRAFT;
+	public static boolean DYN_LIGHTS, SERVER_SIDE, VIVECRAFT, TRINKETS;
 	static int freezeTicks;
     static Map<UUID, Integer> supporterCache = new HashMap<>(), supporterCacheAdditions = new HashMap<>();
     static ServerConfig config;
@@ -78,6 +78,7 @@ public class Ultracraft implements ModInitializer
         PacketRegistry.registerC2S();
         TagRegistry.register();
         SoundRegistry.register();
+        GameruleRegistry.register();
         RecipeSerializers.register();
         CriteriaRegistry.register();
         StatusEffectRegistry.register();
@@ -150,6 +151,7 @@ public class Ultracraft implements ModInitializer
         FabricLoader.getInstance().getModContainer(MOD_ID).ifPresent(modContainer -> VERSION = modContainer.getMetadata().getVersion().getFriendlyString());
         FabricLoader.getInstance().getModContainer("lambdynlights").ifPresent(container -> DYN_LIGHTS = true);
         FabricLoader.getInstance().getModContainer("vivecraft").ifPresent(container -> VIVECRAFT = true);
+        FabricLoader.getInstance().getModContainer("trinkets").ifPresent(container -> TRINKETS = true);
         LOGGER.info("Ultracraft initialized.");
     }
     
