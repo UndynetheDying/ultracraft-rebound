@@ -322,12 +322,15 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 		{
 			setShouldMusicFade(true);
 			ModularLevelMusic music = LevelDataManager.getLevelData(currentLevel).getMusic(key);
+			if(!provider.getWorld().isClient)
+				return;
 			if(music != null && music.shouldShowPopup())
 			{
 				LevelHUD.Instance.queueNewMusicPopup(music);
 				combatThreshold = music.getCombatThreshold();
 			}
 		}
+		UltraComponents.LEVEL_STATS.sync(provider);
 	}
 	
 	@Override
