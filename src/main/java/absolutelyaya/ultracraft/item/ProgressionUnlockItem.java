@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.item;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.components.player.IProgressionComponent;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -29,12 +30,15 @@ public class ProgressionUnlockItem extends SpecialItem
 	{
 		if(isTrinket() && Ultracraft.TRINKETS)
 			return TypedActionResult.fail(user.getStackInHand(hand));
-		UltraComponents.PROGRESSION.get(user).obtain(progressionEntry);
+		IProgressionComponent progression = UltraComponents.PROGRESSION.get(user);
+		if(progression.isUnlocked(progressionEntry))
+			return TypedActionResult.fail(user.getStackInHand(hand));
+		UltraComponents.PROGRESSION.get(user).unlock(progressionEntry);
 		if(world.isClient)
 			UltraComponents.WINGED.get(user).sendBoxTitle(Text.translatable("message.ultracraft.progression.unlock", getName().getString()), 10f);
 		TypedActionResult<ItemStack> result = TypedActionResult.success(user.getStackInHand(hand));
 		if(!user.isCreative())
-			user.setStackInHand(hand, ItemStack.EMPTY);
+			user.getStackInHand(hand).decrement(1);
 		return result;
 	}
 	

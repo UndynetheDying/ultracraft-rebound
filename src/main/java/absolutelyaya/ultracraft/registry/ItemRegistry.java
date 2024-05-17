@@ -80,15 +80,15 @@ public class ItemRegistry
 	
 	//Progression Items
 	public static final Item FEEDBACKER = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "feedbacker"), new ProgressionUnlockItem(new FabricItemSettings(), new Identifier(Ultracraft.MOD_ID, "feedbacker")));
+			new Identifier(Ultracraft.MOD_ID, "feedbacker"), new ProgressionUnlockItem(new FabricItemSettings().maxCount(1), new Identifier(Ultracraft.MOD_ID, "feedbacker")));
 	public static final Item HIVEL_WINGS = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "hivel_wings"), new ProgressionUnlockItem(new FabricItemSettings(), new Identifier(Ultracraft.MOD_ID, "hivel")).markTrinket());
+			new Identifier(Ultracraft.MOD_ID, "hivel_wings"), new ProgressionUnlockItem(new FabricItemSettings().maxCount(1), new Identifier(Ultracraft.MOD_ID, "hivel")).markTrinket());
 	public static final Item ABSORBANT_PLATING = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "absorbant_plating"), new ProgressionUnlockItem(new FabricItemSettings(), new Identifier(Ultracraft.MOD_ID, "bloodheal")).markTrinket());
+			new Identifier(Ultracraft.MOD_ID, "absorbant_plating"), new ProgressionUnlockItem(new FabricItemSettings().maxCount(1), new Identifier(Ultracraft.MOD_ID, "bloodheal")).markTrinket());
 	public static final Item VIEW_AUGMENT = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "view_augment"), new ProgressionUnlockItem(new FabricItemSettings(), new Identifier(Ultracraft.MOD_ID, "ultrahud")).markTrinket());
+			new Identifier(Ultracraft.MOD_ID, "view_augment"), new ProgressionUnlockItem(new FabricItemSettings().maxCount(1), new Identifier(Ultracraft.MOD_ID, "ultrahud")).markTrinket());
 	public static final Item KNUCKLEBLASTER = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "knuckleblaster"), new ProgressionUnlockItem(new FabricItemSettings(), new Identifier(Ultracraft.MOD_ID, "knuckleblaster")));
+			new Identifier(Ultracraft.MOD_ID, "knuckleblaster"), new ProgressionUnlockItem(new FabricItemSettings().maxCount(1), new Identifier(Ultracraft.MOD_ID, "knuckleblaster")));
 	
 	//Weapons
 	public static final PierceRevolverItem PIERCE_REVOLVER = Registry.register(Registries.ITEM,
