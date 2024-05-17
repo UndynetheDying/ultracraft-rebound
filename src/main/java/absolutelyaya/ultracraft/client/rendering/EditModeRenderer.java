@@ -214,7 +214,7 @@ public class EditModeRenderer
 			alpha *= 0.66f;
 		RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
 		Text label = (entity instanceof RoomBlockEntity && depth > 0) ? Text.of("SuperRoom-" + entity.getID()) : entity.getAreaLabel();
-		if(depth == 0 && (editor.getEditFocus("room") != null && !editor.getEditFocus("room").equals(pos)))
+		if(entity instanceof RoomBlockEntity && depth == 0 && (editor.getEditFocus("room") != null && !editor.getEditFocus("room").equals(pos)))
 			label = Text.of("SiblingRoom-" + entity.getID());
 		matrices.push();
 		matrices.translate(targetPos.x, targetPos.y, targetPos.z);
