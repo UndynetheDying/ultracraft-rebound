@@ -25,9 +25,9 @@ public class LevelRankingScreen extends AbstractTravelScreen
 	float anim = 0f;
 	boolean titleSuffix;
 	
-	public LevelRankingScreen(boolean titleSuffix)
+	public LevelRankingScreen(boolean titleSuffix, Identifier forcedDestination)
 	{
-		super(Text.of("ranking"));
+		super(Text.of("ranking"), forcedDestination);
 		this.titleSuffix = titleSuffix;
 	}
 	
@@ -53,12 +53,15 @@ public class LevelRankingScreen extends AbstractTravelScreen
 		}
 		
 		instanceButtons.clear();
-		instanceButtons.add(addDrawable(ButtonWidget.builder(Text.translatable("screen.ultracraft.ranking.select"),
-				press -> client.setScreen(new TravelScreen(false, true, true)))
+		ButtonWidget selectLevelButton;
+		instanceButtons.add(selectLevelButton = addDrawable(ButtonWidget.builder(Text.translatable("screen.ultracraft.ranking.select"),
+				press -> client.setScreen(new TravelScreen(false, true, true, null)))
 							.dimensions(width / 2 - 92, height / 2 + 75, 75, 20).build()));
+		if(forcedDestination != null)
+			selectLevelButton.active = false;
 		nextLevelButton = addDrawable(ButtonWidget.builder(Text.translatable("screen.ultracraft.ranking.next"),
 				press -> {
-					selectLevel(data.getNextLevel());
+					selectLevel(forcedDestination != null ? forcedDestination : data.getNextLevel());
 					String curInstance = levelStats.getCurrentLevelInstance();
 					if(curInstance != null)
 					{
@@ -82,7 +85,7 @@ public class LevelRankingScreen extends AbstractTravelScreen
 			return;
 		}
 		boolean unlocked = UltraComponents.GLOBAL.get(client.world.getLevelProperties()).isDestinationUnlocked(nextLevel);
-		nextLevelButton.active = unlocked && !data.isUnimplemented();
+		nextLevelButton.active = unlocked && !data.isUnimplemented() && forcedDestination == null;
 	}
 	
 	@Override

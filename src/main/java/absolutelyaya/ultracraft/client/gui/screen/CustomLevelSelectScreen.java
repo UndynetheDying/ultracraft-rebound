@@ -24,7 +24,7 @@ public class CustomLevelSelectScreen extends AbstractTravelScreen
 	
 	public CustomLevelSelectScreen(Screen parent)
 	{
-		super(Text.translatable("screen.ultracraft.travel.custom"));
+		super(Text.translatable("screen.ultracraft.travel.custom"), null);
 		this.parent = parent;
 		if(parent != null)
 			openAnimTime = 1f;

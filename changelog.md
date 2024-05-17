@@ -102,6 +102,12 @@
   - To stop the currently playing music, either set the key to an unused value, or leave it empty
   - When a Track Switches, the last one will fade out and the next one will Fade in to make for a smooth transition
 - Fixed some nullref issues when setting Mapping Block Attributes to values that fail parsing.
+- Added Attribute `forceDestination` to ForceTravelTriggers
+  - If this value is set, the player won't get a choice on where they travel
+  - If `openRanking` is enabled, they'll still be shown the Ranking Screen; however, the next Level button will always lead to the forced Destination and the Select Level Button is Disabled
+  - If `openRanking` is disabled, they'll travel to the forced Destination immediately after the Travel Screen intro Animation finished
+  - It takes an Identifier being either a level or layer dimension id (in other words a valid destination) and its Default Value is `none`
+  - The Default value can be restored by setting it to any of the following: [`null`, `none`, `default`]
 ## Resource Changes
 - The Icon for the Sound Listener Mapping Block is now used for Music Listeners instead
 - Changed how Music in the Level Metadata works

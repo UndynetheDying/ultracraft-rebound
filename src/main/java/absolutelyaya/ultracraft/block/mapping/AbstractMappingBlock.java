@@ -92,13 +92,16 @@ public abstract class AbstractMappingBlock extends BlockWithEntity
 				return ActionResult.SUCCESS;
 			}
 			BlockPos topRoom = editor.getEditFocus("room");
-			if(world.getBlockEntity(topRoom) instanceof RoomBlockEntity room)
-				topRoom = room.getTopLevelParent();
-			if(topRoom != null && !entity.getTopLevelParent().equals(topRoom))
+			if(topRoom != null )
 			{
-				if(!world.isClient)
-					player.sendMessage(Text.of("This belongs to a different Room"));
-				return ActionResult.SUCCESS;
+				if(world.getBlockEntity(topRoom) instanceof RoomBlockEntity room)
+					topRoom = room.getTopLevelParent();
+				if(topRoom != null && !topRoom.equals(entity.getTopLevelParent()))
+				{
+					if(!world.isClient)
+						player.sendMessage(Text.of("This belongs to a different Room"));
+					return ActionResult.SUCCESS;
+				}
 			}
 		}
 		BlockPos rebind = editor.getRebindingParent();

@@ -29,6 +29,6 @@ public abstract class GameMenuScreenMixin extends Screen
 		ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(client.player);
 		if(levelStats.getCurrentLevelInstance() != null)
 			adder.add(new ButtonWidget.Builder(Text.translatable("screen.ultracraft.pause.exitLevel"),
-					b -> client.setScreen(new TravelScreen(false, false))).width(204).build(), 2);
+					b -> client.setScreen(new TravelScreen(false, false, null))).width(204).build(), 2);
 	}
 }

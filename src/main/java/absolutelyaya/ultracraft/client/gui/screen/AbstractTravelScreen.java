@@ -43,12 +43,14 @@ public abstract class AbstractTravelScreen extends Screen
 	protected long waitingSince;
 	protected Identifier curLayer, selectedLayer;
 	protected Identifier selectedLevel;
+	protected final Identifier forcedDestination;
 	Map<String, UUID> instanceMap = new HashMap<>();
 	List<ClickableWidget> instanceButtons = new ArrayList<>();
 	
-	protected AbstractTravelScreen(Text title)
+	protected AbstractTravelScreen(Text title, Identifier forcedDestination)
 	{
 		super(title);
+		this.forcedDestination = forcedDestination;
 	}
 	
 	@Override

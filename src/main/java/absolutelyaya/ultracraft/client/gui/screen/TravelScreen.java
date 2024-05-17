@@ -5,9 +5,11 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.gui.widget.LevelButton;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
+import absolutelyaya.ultracraft.components.player.ILevelStatsComponent;
 import absolutelyaya.ultracraft.data.LevelCollection;
 import absolutelyaya.ultracraft.data.LevelCollectionManager;
 import absolutelyaya.ultracraft.data.LevelDataManager;
+import absolutelyaya.ultracraft.dimension.LevelManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -32,7 +34,7 @@ public class TravelScreen extends AbstractTravelScreen
 	
 	public TravelScreen(CustomLevelSelectScreen screen, boolean forced)
 	{
-		super(Text.of("travel"));
+		super(Text.of("travel"), null);
 		textRenderer = MinecraftClient.getInstance().textRenderer;
 		parent = screen;
 		this.forced = forced;
@@ -42,17 +44,17 @@ public class TravelScreen extends AbstractTravelScreen
 	
 	public TravelScreen(boolean closeImmediately)
 	{
-		this(closeImmediately, false);
+		this(closeImmediately, false, null);
 	}
 	
-	public TravelScreen(boolean closeImmediately, boolean forced)
+	public TravelScreen(boolean closeImmediately, boolean forced, Identifier forcedDestination)
 	{
-		this(closeImmediately, forced, false);
+		this(closeImmediately, forced, false, forcedDestination);
 	}
 	
-	public TravelScreen(boolean closeImmediately, boolean forced, boolean noIntro)
+	public TravelScreen(boolean closeImmediately, boolean forced, boolean noIntro, Identifier forcedDestination)
 	{
-		super(Text.of("travel"));
+		super(Text.of("travel"), forcedDestination);
 		textRenderer = MinecraftClient.getInstance().textRenderer;
 		shouldClose = closeImmediately;
 		this.forced = forced;
@@ -70,6 +72,8 @@ public class TravelScreen extends AbstractTravelScreen
 	
 	public void initButtons()
 	{
+		if(forcedDestination != null)
+			return;
 		buttons.clear();
 		if(selectedLayer == null)
 			layerButtons.addAll(initLayerButtons());
@@ -242,7 +246,20 @@ public class TravelScreen extends AbstractTravelScreen
 		super.render(context, mouseX, mouseY, delta);
 		if(openAnimTime < 1f)
 			buttons.forEach(b -> b.setAlpha(openAnimTime));
-		if(selectedLevel != null)
+		else if(forcedDestination != null)
+		{
+			selectLevel(forcedDestination);
+			ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(client.player);
+			String curInstance = levelStats.getCurrentLevelInstance();
+			if(curInstance != null)
+			{
+				LevelManager.LevelInstance inst = LevelManager.Instance.getInstance(curInstance);
+				enterInstance(inst != null && inst.isPrivate() ? "private" : "");
+			}
+			else
+				enterInstance("");
+		}
+		if(selectedLevel != null || forcedDestination != null)
 			return;
 		if(selectedLayer != null)
 			renderLayerLevels(context, mouseX, mouseY, delta);
