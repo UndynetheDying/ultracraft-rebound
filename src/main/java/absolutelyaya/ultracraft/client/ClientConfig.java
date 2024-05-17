@@ -81,6 +81,10 @@ public class ClientConfig implements ConfigData
 	public boolean safeVFX = true;
 	@ConfigEntry.Gui.Tooltip
 	public boolean deathScreen = false;
+	@ConfigEntry.Gui.Tooltip
+	public boolean armSkinFirstPerson = true;
+	@ConfigEntry.Gui.Tooltip
+	public boolean onlyShowArmWhilePunching = false;
 	public boolean repeatIntro = false;
 	public boolean neverIntro = false;
 	
@@ -101,7 +105,7 @@ public class ClientConfig implements ConfigData
 	@ConfigEntry.Gui.Excluded
 	public List<UUID> blockedPlayers = new ArrayList<>();
 	@ConfigEntry.Gui.Excluded
-	public boolean armVisible = true;
+	public boolean armSkinThirdPerson = true;
 	@ConfigEntry.Gui.Excluded
 	public boolean hivel = false;
 }

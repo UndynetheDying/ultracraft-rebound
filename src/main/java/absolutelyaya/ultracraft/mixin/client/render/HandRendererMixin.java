@@ -1,5 +1,7 @@
 package absolutelyaya.ultracraft.mixin.client.render;
 
+import absolutelyaya.ultracraft.client.ClientConfig;
+import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.client.rendering.entity.feature.ArmFeature;
@@ -27,6 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShieldItem;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import org.spongepowered.asm.mixin.Final;
@@ -50,7 +53,13 @@ public abstract class HandRendererMixin
 	{
 		if(item.getItem() instanceof ShieldItem)
 			return;
+		IArmComponent arms = UltraComponents.ARMS.get(player);
+		if(arms.getUnlockedArmCount() == 0)
+			return;
 		LivingEntityAccessor playerAccessor = ((LivingEntityAccessor)player);
+		ClientConfig config = UltracraftClient.getConfig();
+		if(config.onlyShowArmWhilePunching && !playerAccessor.IsPunching())
+			return;
 		if(hand == Hand.OFF_HAND && (playerAccessor.IsPunching() || !item.isEmpty()))
 		{
 			RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
@@ -79,8 +88,8 @@ public abstract class HandRendererMixin
 			else
 				positionPunchArm(matrices, equipProgress, !right, !item.isEmpty());
 			
-			IArmComponent arms = UltraComponents.ARMS.get(player);
-			VertexConsumer consumer = vertexConsumers.getBuffer(RenderLayer.getEntityCutout(ArmFeature.getTexture(arms.getActiveArm(), player.getModel().equals("slim"))));
+			Identifier texture = config.armSkinFirstPerson ? ArmFeature.getTexture(arms.getActiveArm(), player.getModel().equals("slim")) : player.getSkinTexture();
+			VertexConsumer consumer = vertexConsumers.getBuffer(RenderLayer.getEntityCutout(texture));
 			if(right)
 			{
 				model.leftArm.render(matrices, consumer, light, OverlayTexture.DEFAULT_UV);
@@ -93,7 +102,6 @@ public abstract class HandRendererMixin
 			}
 			setArmVisibility(model, right ? Arm.LEFT : Arm.RIGHT, arm, sleeve);
 			matrices.push();
-			boolean transform = true;
 			int flip = right ? 1 : -1;
 			matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(110 * flip));
 			matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(0));
@@ -141,9 +149,7 @@ public abstract class HandRendererMixin
 			//	matrices.scale(0.35f, 0.35f, 0.35f);
 			//	transform = false;
 			//}
-			renderItem(player, item,
-					transform ? (right ? ModelTransformationMode.FIRST_PERSON_RIGHT_HAND : ModelTransformationMode.FIRST_PERSON_LEFT_HAND) :
-							ModelTransformationMode.NONE, !right, matrices, vertexConsumers, light);
+			renderItem(player, item, right ? ModelTransformationMode.FIRST_PERSON_RIGHT_HAND : ModelTransformationMode.FIRST_PERSON_LEFT_HAND, !right, matrices, vertexConsumers, light);
 			matrices.pop();
 			matrices.pop();
 			ci.cancel();

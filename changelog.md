@@ -56,6 +56,11 @@
 - Added a new Gamerule `ultra-startAsV1`; Default is `true`
   - Whether Hivel Wings, Blood Healing and the Feedbacker are unlocked per default
   - This Gamerule can be used in conjunction with the new Progression Unlock Items to add more progression to maps//modpacks
+- Added Client Setting `armSkinFirstPerson`; Default is `true`
+  - Whether the First Person offhand arm skin is replaced by that of the equipped ultracraft arm
+- Added Client Setting `onlyShowarmWhilePunching`; Default is `false`
+  - Whether the First Person offhand arm is always visible when holding an item and an ultracraft arm is equipped
+- Due to an Internal name change, your Third Person ultracraft Arm Skin Setting might be reset to it's default value 
 ## Commands
 ## Tweaks
 - Nerfed Nailgun Damage a little
@@ -81,10 +86,11 @@
 - Progression Unlock Itemsn now use Ultracraft Titles instead of vanilla ones
 ## Edit Mode Changes
 - Rooms can now be Parented to Rooms (yay, recursion)
-  - Added `/edit config recursiveRooms`, which toggles whether Rooms you pla
+  - Added `/edit config recursiveRooms`, which toggles whether Rooms you place while having another Room focused, will be parented to the selected Room or just be placed as new Root.
   - Focusing a Room that's part of a Room Hierarchy, the entire Hierarchy is rendered
     - Added `/edit config showRelations`, which toggles whether colored lines between related Rooms are shown (default: true)
   - Rooms will tick regardless of whether their parent room is active (or in other words, the hierarchy doesn't affect Rooms Ticking)
+  - Recoursive Rooms are disabled by default for convenience
 - Changed the Edit Mode Renderer a lot to make rendering the Room Hierarchies easier//possible without more bloat
 - Added new Mapping Blocks to control Music in Levels
   - Music Listener

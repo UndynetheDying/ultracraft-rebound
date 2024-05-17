@@ -1042,5 +1042,11 @@
   "text.autoconfig.ultracraft.option.musicTransitionSpeed.@Tooltip": "How quickly a levels music should transition between calm and fighting tracks.",
 
   "text.autoconfig.ultracraft.option.showStylePanel": "Show Style Panel",
-  "text.autoconfig.ultracraft.option.showStylePanel.@Tooltip": "Whether the Style Panel is shown while performing stylish things in Hivel Mode."
+  "text.autoconfig.ultracraft.option.showStylePanel.@Tooltip": "Whether the Style Panel is shown while performing stylish things in Hivel Mode.",
+
+  "text.autoconfig.ultracraft.option.armSkinFirstPerson": "First Person Arm Skin Replacement",
+  "text.autoconfig.ultracraft.option.armSkinFirstPerson.@Tooltip": "Whether to replace the Offhand Skin with the appropriate equipped Ultracraft Arm in First Person.",
+
+  "text.autoconfig.ultracraft.option.onlyShowArmWhilePunching": "Only show Arm while punching",
+  "text.autoconfig.ultracraft.option.onlyShowArmWhilePunching.@Tooltip": "Whether the offhand arm should only be visible while holding an item and an Ultracraft Arm is equipped."
 }
