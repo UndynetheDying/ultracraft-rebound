@@ -220,7 +220,6 @@ public class UltracraftClient implements ClientModInitializer
 		cybergrindHUD = new CybergrindHUD();
 		HudRenderCallback.EVENT.register((context, delta) -> {
 			weaponInfoHUD.render(context, delta);
-			editModeHUD.render(context, delta);
 			levelHUD.render(context, delta);
 			cybergrindHUD.render(context);
 		});
