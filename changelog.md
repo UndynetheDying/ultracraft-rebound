@@ -60,7 +60,9 @@
   - Whether the First Person offhand arm skin is replaced by that of the equipped ultracraft arm
 - Added Client Setting `onlyShowarmWhilePunching`; Default is `false`
   - Whether the First Person offhand arm is always visible when holding an item and an ultracraft arm is equipped
-- Due to an Internal name change, your Third Person ultracraft Arm Skin Setting might be reset to it's default value 
+- Added Client Setting `hideVanillaHotbar`; Default is `false`
+  - Whether the Vanilla Hotbar is hidden; all other HUD elements stay.
+- Due to an Internal name change, your Third Person ultracraft Arm Skin Setting might be reset to its default value 
 ## Commands
 ## Tweaks
 - Nerfed Nailgun Damage a little

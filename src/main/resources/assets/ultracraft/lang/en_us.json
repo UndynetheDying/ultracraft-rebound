@@ -1048,5 +1048,8 @@
   "text.autoconfig.ultracraft.option.armSkinFirstPerson.@Tooltip": "Whether to replace the Offhand Skin with the appropriate equipped Ultracraft Arm in First Person.",
 
   "text.autoconfig.ultracraft.option.onlyShowArmWhilePunching": "Only show Arm while punching",
-  "text.autoconfig.ultracraft.option.onlyShowArmWhilePunching.@Tooltip": "Whether the offhand arm should only be visible while holding an item and an Ultracraft Arm is equipped."
+  "text.autoconfig.ultracraft.option.onlyShowArmWhilePunching.@Tooltip": "Whether the offhand arm should only be visible while holding an item and an Ultracraft Arm is equipped.",
+
+  "text.autoconfig.ultracraft.option.hideVanillaHotbar": "Hide Vanilla Hotbar",
+  "text.autoconfig.ultracraft.option.hideVanillaHotbar.@Tooltip": "Whether to hide the Vanilla Hotbar."
 }

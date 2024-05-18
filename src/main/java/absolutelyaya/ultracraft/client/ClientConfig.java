@@ -85,6 +85,9 @@ public class ClientConfig implements ConfigData
 	public boolean armSkinFirstPerson = true;
 	@ConfigEntry.Gui.Tooltip
 	public boolean onlyShowArmWhilePunching = false;
+	@ConfigEntry.Category("ultra-hud")
+	@ConfigEntry.Gui.Tooltip
+	public boolean hideVanillaHotbar = false;
 	public boolean repeatIntro = false;
 	public boolean neverIntro = false;
 	
