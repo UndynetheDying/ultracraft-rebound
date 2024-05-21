@@ -1,0 +1,7 @@
+{
+	"parent": "ultracraft:block/carpet/line_alt",
+	"textures": {
+		"0": "ultracraft:block/cyan_carpet",
+		"particle": "ultracraft:block/cyan_carpet_round"
+	}
+}

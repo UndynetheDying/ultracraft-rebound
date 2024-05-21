@@ -1,0 +1,7 @@
+{
+	"parent": "ultracraft:block/carpet/line",
+	"textures": {
+		"0": "ultracraft:block/black_carpet",
+		"particle": "ultracraft:block/black_carpet_round"
+	}
+}

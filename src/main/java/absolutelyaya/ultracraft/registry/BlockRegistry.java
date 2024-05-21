@@ -80,8 +80,38 @@ public class BlockRegistry
 								 .allowsSpawning((state, blockView, blockPos, entityType) -> false)), false);
 	public static final Block SLAB_BLOCK = register("slab_block",
 			new absolutelyaya.ultracraft.block.SlabBlock(AbstractBlock.Settings.copy(Blocks.SMOOTH_STONE).mapColor(MapColor.LIGHT_GRAY).luminance(b -> b.get(absolutelyaya.ultracraft.block.SlabBlock.ACTIVE) ? 5 : 0)), true);
-	public static final Block CARPET = register("carpet",
+	public static final Block RED_CARPET = register("red_carpet",
+			new CarpetBlock(AbstractBlock.Settings.copy(Blocks.RED_CARPET).mapColor(MapColor.RED)), true);
+	public static final Block ORANGE_CARPET = register("orange_carpet",
+			new CarpetBlock(AbstractBlock.Settings.copy(Blocks.ORANGE_CARPET).mapColor(MapColor.ORANGE)), true);
+	public static final Block YELLOW_CARPET = register("yellow_carpet",
+			new CarpetBlock(AbstractBlock.Settings.copy(Blocks.YELLOW_CARPET).mapColor(MapColor.YELLOW)), true);
+	public static final Block LIME_CARPET = register("lime_carpet",
+			new CarpetBlock(AbstractBlock.Settings.copy(Blocks.LIME_CARPET).mapColor(MapColor.LIME)), true);
+	public static final Block GREEN_CARPET = register("green_carpet",
+			new CarpetBlock(AbstractBlock.Settings.copy(Blocks.GREEN_CARPET).mapColor(MapColor.GREEN)), true);
+	public static final Block CYAN_CARPET = register("cyan_carpet",
+			new CarpetBlock(AbstractBlock.Settings.copy(Blocks.CYAN_CARPET).mapColor(MapColor.CYAN)), true);
+	public static final Block LIGHT_BLUE_CARPET = register("light_blue_carpet",
+			new CarpetBlock(AbstractBlock.Settings.copy(Blocks.LIGHT_BLUE_CARPET).mapColor(MapColor.LIGHT_BLUE)), true);
+	public static final Block BLUE_CARPET = register("carpet",
 			new CarpetBlock(AbstractBlock.Settings.copy(Blocks.BLUE_CARPET).mapColor(MapColor.BLUE)), true);
+	public static final Block PURPLE_CARPET = register("purple_carpet",
+			new CarpetBlock(AbstractBlock.Settings.copy(Blocks.PURPLE_CARPET).mapColor(MapColor.PURPLE)), true);
+	public static final Block MAGENTA_CARPET = register("magenta_carpet",
+			new CarpetBlock(AbstractBlock.Settings.copy(Blocks.MAGENTA_CARPET).mapColor(MapColor.MAGENTA)), true);
+	public static final Block PINK_CARPET = register("pink_carpet",
+			new CarpetBlock(AbstractBlock.Settings.copy(Blocks.PINK_CARPET).mapColor(MapColor.PINK)), true);
+	public static final Block BROWN_CARPET = register("brown_carpet",
+			new CarpetBlock(AbstractBlock.Settings.copy(Blocks.BROWN_CARPET).mapColor(MapColor.BROWN)), true);
+	public static final Block BLACK_CARPET = register("black_carpet",
+			new CarpetBlock(AbstractBlock.Settings.copy(Blocks.BLACK_CARPET).mapColor(MapColor.BLACK)), true);
+	public static final Block GRAY_CARPET = register("gray_carpet",
+			new CarpetBlock(AbstractBlock.Settings.copy(Blocks.GRAY_CARPET).mapColor(MapColor.GRAY)), true);
+	public static final Block LIGHT_GRAY_CARPET = register("light_gray_carpet",
+			new CarpetBlock(AbstractBlock.Settings.copy(Blocks.LIGHT_GRAY_CARPET).mapColor(MapColor.LIGHT_GRAY)), true);
+	public static final Block WHITE_CARPET = register("white_carpet",
+			new CarpetBlock(AbstractBlock.Settings.copy(Blocks.WHITE_CARPET).mapColor(MapColor.WHITE)), true);
 	public static final Block FLOWERBED = register("flowerbed",
 			new FlowerbedBlock(AbstractBlock.Settings.copy(Blocks.OAK_LEAVES).mapColor(MapColor.DARK_GREEN)), true);
 	public static final Block PORTAL = register("portal",
@@ -169,6 +199,6 @@ public class BlockRegistry
 	{
 		FlammableBlockRegistry registry = FlammableBlockRegistry.getDefaultInstance();
 		registry.add(FLOWERBED, 20, 10);
-		registry.add(CARPET, 20, 5);
+		registry.add(BLUE_CARPET, 20, 5);
 	}
 }

@@ -48,6 +48,7 @@
     - If the Gamerule `ultra-startAsV1` is enabled, then the basic mechanics always work regardless of whether the Trinkets are equipped or not!
 - Added Trinkets Support (optional)
   - This is mainly for Modpack Creators that want more control over ultracraft core mechanic unlocking//progression.
+- Added Fancy Carpet Variants in all Colors
 ## Settings & Config
 - Added Server Config `DisableModificationSuppression` which allows disabling Edit Mode Room Modification Suppression; Default is `false`
   - Or in other Words, it lets you break and place Blocks in otherwise protected Areas, like Levels
@@ -88,6 +89,7 @@
 - Progression Unlock Items now use Ultracraft Titles instead of Vanilla ones
 - Knuckleblaster Unlcok Item is no longer Stackable
 - Edit Mode HUD now renders behind chat
+- Fancy Carpet is no longer Waterloggable
 ## Edit Mode Changes
 - Rooms can now be Parented to Rooms (yay, recursion)
   - Added `/edit config recursiveRooms`, which toggles whether Rooms you place while having another Room focused, will be parented to the selected Room or just be placed as new Root.
@@ -133,4 +135,5 @@
 - Translation Keys for Layer Buttons changed (`screen.ultracraft.travel.layer<index>` -> `layer.ultracraft.<layer-name>`)
 - Clair de Lune (Music Disc) Identifier changed (`ultracraft:clair_de_lune` -> `ultracraft:disc/clair_de_lune`)
 - Changed Progression Item Tooltip color (`item.ultracraft.progression-item.lore` | §8 -> §7)
+- Renamed Fancy Carpet Block (`block.ultracraft.carpet` | `Fancy Carpet` -> `Blue Fancy Carpet`)
 ## API Changes

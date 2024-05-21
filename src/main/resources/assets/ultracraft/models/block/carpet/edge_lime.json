@@ -1,0 +1,7 @@
+{
+	"parent": "ultracraft:block/carpet/edge",
+	"textures": {
+		"0": "ultracraft:block/lime_carpet",
+		"particle": "ultracraft:block/lime_carpet_round"
+	}
+}

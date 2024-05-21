@@ -74,5 +74,23 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 				EntryStacks.of(BlockRegistry.MAP_GLOBAL_RECEIVER),
 				EntryStacks.of(BlockRegistry.MAP_GLOBAL_TITLE));
 		registry.group(new Identifier(Ultracraft.MOD_ID, "mapping"), Text.translatable("rei-group.ultracraft.mapping"), entries);
+		entries = List.of(
+				EntryStacks.of(BlockRegistry.RED_CARPET),
+				EntryStacks.of(BlockRegistry.ORANGE_CARPET),
+				EntryStacks.of(BlockRegistry.YELLOW_CARPET),
+				EntryStacks.of(BlockRegistry.LIME_CARPET),
+				EntryStacks.of(BlockRegistry.GREEN_CARPET),
+				EntryStacks.of(BlockRegistry.CYAN_CARPET),
+				EntryStacks.of(BlockRegistry.LIGHT_BLUE_CARPET),
+				EntryStacks.of(BlockRegistry.BLUE_CARPET),
+				EntryStacks.of(BlockRegistry.PURPLE_CARPET),
+				EntryStacks.of(BlockRegistry.MAGENTA_CARPET),
+				EntryStacks.of(BlockRegistry.PINK_CARPET),
+				EntryStacks.of(BlockRegistry.BROWN_CARPET),
+				EntryStacks.of(BlockRegistry.BLACK_CARPET),
+				EntryStacks.of(BlockRegistry.GRAY_CARPET),
+				EntryStacks.of(BlockRegistry.LIGHT_GRAY_CARPET),
+				EntryStacks.of(BlockRegistry.WHITE_CARPET));
+		registry.group(new Identifier(Ultracraft.MOD_ID, "carpet"), Text.translatable("rei-group.ultracraft.carpet"), entries);
 	}
 }

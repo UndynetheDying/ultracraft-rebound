@@ -1,0 +1,7 @@
+{
+	"parent": "ultracraft:block/carpet/fill",
+	"textures": {
+		"0": "ultracraft:block/pink_carpet",
+		"particle": "ultracraft:block/pink_carpet_round"
+	}
+}
