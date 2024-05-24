@@ -95,6 +95,8 @@ public class ClientConfig implements ConfigData
 	@ConfigEntry.Gui.Excluded
 	public String wingPattern = "";
 	@ConfigEntry.Gui.Excluded
+	public String wingOverlay = "";
+	@ConfigEntry.Gui.Excluded
 	public boolean showEpilepsyWarning = true;
 	@ConfigEntry.Gui.Excluded
 	public List<UUID> blockedPlayers = new ArrayList<>();

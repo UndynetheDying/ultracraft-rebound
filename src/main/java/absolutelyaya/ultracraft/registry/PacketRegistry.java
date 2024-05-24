@@ -332,14 +332,14 @@ public class PacketRegistry
 		});
 		ServerPlayNetworking.registerGlobalReceiver(SEND_WING_DATA_C2S_PACKET_ID, (server, player, handler, buf, sender) -> {
 			IWingDataComponent wings = UltraComponents.WING_DATA.get(player);
-			if(wings == null)
-				return;
 			Vector3f wingColor = buf.readVector3f(), metalColor = buf.readVector3f();
-			String pattern = Ultracraft.checkSupporter(player.getUuid(), false) ? buf.readString() : "";
+			String pattern = buf.readString();
+			String overlay = buf.readString();
 			server.execute(() -> {
 				wings.setColor(wingColor, 0);
 				wings.setColor(metalColor, 1);
-				wings.setPattern(pattern);
+				wings.setPattern(Ultracraft.checkSupporter(player.getUuid(), false) ? pattern : "");
+				wings.setOverlay(overlay);
 				wings.sync();
 			});
 		});

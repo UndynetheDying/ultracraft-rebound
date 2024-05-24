@@ -3,6 +3,7 @@
 #moj_import <fog.glsl>
 
 uniform sampler2D Sampler0;
+uniform sampler2D Sampler1;
 uniform vec3 WingColor;
 uniform vec3 MetalColor;
 
@@ -14,17 +15,17 @@ uniform vec4 FogColor;
 in float vertexDistance;
 in vec4 vertexColor;
 in vec4 lightMapColor;
-in vec4 overlayColor;
 in vec2 texCoord0;
-in vec4 normal;
 
 out vec4 fragColor;
 
-vec3 saturate(vec3 v){
+vec3 saturate(vec3 v)
+{
     return clamp(v,0.0,1.0);
 }
 
-vec3 hsv2rgb(vec3 c){
+vec3 hsv2rgb(vec3 c)
+{
     vec4 K=vec4(1.,2./3.,1./3.,3.);
     return c.z*mix(K.xxx,saturate(abs(fract(c.x+K.xyz)*6.-K.w)-K.x),c.y);
 }
@@ -71,13 +72,21 @@ vec3 getBlue(float brightness)
 void main()
 {
     vec4 colorIn = texture(Sampler0, texCoord0);
+    vec4 overlayIn = texture(Sampler1, texCoord0);
     vec4 color = colorIn;
-    if (color.a < 0.1)
+    if (color.a < 0.1 && overlayIn.a < 0.1)
         discard;
+    if(overlayIn.a == 1.0 && overlayIn.r + overlayIn.g + overlayIn.b > 0)
+        color = overlayIn;
+    else
+    {
+        color.rgb = mix(vec3(0, 0, 0), hsv2rgb(getRed(colorIn.r).rgb / vec3(360, 100, 100)), colorIn.r > 0 ? 1.0 : 0.0);
+        color.rgb = mix(color.rgb, hsv2rgb(getBlue(colorIn.b).rgb / vec3(360, 100, 100)), colorIn.b > 0 ? 1.0 : 0.0);
+        color.rgb = mix(color.rgb, vec3(colorIn.g, colorIn.g, colorIn.g), colorIn.g > 0 ? 1.0 : 0.0);
+        if(overlayIn.a > 0.0)
+            color.rgb = mix(color.rgb, overlayIn.rgb, overlayIn.w);
+    }
 
-    color.rgb = mix(vec3(0, 0, 0), hsv2rgb(getRed(colorIn.r).rgb / vec3(360, 100, 100)), colorIn.r > 0 ? 1.0 : 0.0);
-    color.rgb = mix(color.rgb, hsv2rgb(getBlue(colorIn.b).rgb / vec3(360, 100, 100)), colorIn.b > 0 ? 1.0 : 0.0);
-    color.rgb = mix(color.rgb, vec3(colorIn.g, colorIn.g, colorIn.g), colorIn.g > 0 ? 1.0 : 0.0);
     vec4 v = vertexColor;
     vec4 light = lightMapColor;
     if(colorIn.r > 0)

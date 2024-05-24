@@ -89,7 +89,7 @@ public class UltracraftClient implements ClientModInitializer
 	public static final EntityModelLayer MALICIOUS_LAYER = new EntityModelLayer(new Identifier(Ultracraft.MOD_ID, "malicious"), "main");
 	public static final EntityModelLayer ENRAGE_LAYER = new EntityModelLayer(new Identifier(Ultracraft.MOD_ID, "enraged"), "main");
 	public static final EntityModelLayer INTERRUPTABLE_CHARGE_LAYER = new EntityModelLayer(new Identifier(Ultracraft.MOD_ID, "interruptable_charge"), "main");
-	public static String wingPreset = "", wingPattern = "";
+	public static String wingPreset = "", wingPattern = "", wingOverlay = "";
 	private static ShaderProgram wingsColoredProgram, wingsColoredUIProgram, texPosFade, flesh, sky;
 	public static ClientHitscanHandler HITSCAN_HANDLER;
 	public static TrailRenderer TRAIL_RENDERER;
@@ -242,6 +242,7 @@ public class UltracraftClient implements ClientModInitializer
 			buf.writeVector3f(wings.getColors()[0]);
 			buf.writeVector3f(wings.getColors()[1]);
 			buf.writeString(wings.getPattern());
+			buf.writeString(wings.getOverlay());
 			ClientPlayNetworking.send(PacketRegistry.SEND_WING_DATA_C2S_PACKET_ID, buf);
 			buf = new PacketByteBuf(Unpooled.buffer());
 			buf.writeBoolean(config.get().armVisible);
@@ -388,6 +389,7 @@ public class UltracraftClient implements ClientModInitializer
 		setWingColor(config.get().wingColors[1].toVector3f(), 1);
 		wingPreset = config.get().wingPreset;
 		setWingPattern(config.get().wingPattern);
+		setWingOverlay(config.get().wingOverlay);
 		
 		refreshSupporter();
 	}
@@ -602,7 +604,7 @@ public class UltracraftClient implements ClientModInitializer
 		return flesh;
 	}
 	
-	public static ShaderProgram getDaySkyProgram()
+	public static ShaderProgram getSkyProgram()
 	{
 		return sky;
 	}
@@ -629,6 +631,13 @@ public class UltracraftClient implements ClientModInitializer
 		wingPattern = id;
 		if(MinecraftClient.getInstance().player != null && MinecraftClient.getInstance().player instanceof WingedPlayerEntity winged)
 			UltraComponents.WING_DATA.get(winged).setPattern(id);
+	}
+	
+	public static void setWingOverlay(String id)
+	{
+		wingOverlay = id;
+		if(MinecraftClient.getInstance().player != null && MinecraftClient.getInstance().player instanceof WingedPlayerEntity winged)
+			UltraComponents.WING_DATA.get(winged).setOverlay(id);
 	}
 	
 	public static void refreshSupporter()

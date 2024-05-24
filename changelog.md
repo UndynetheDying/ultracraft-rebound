@@ -1,13 +1,14 @@
 ## Major Changes
-- Fixed some crashes
-- Fixed an Issue where out of bounds Players would wouldn't be removed from Cybergrinds, causing desyncs
-  - and they'd be counted as out of bounds when just walking into the arena walls
+- Added Wing Overlays
+  - Wing Overlays are like Wing re-textures. They aren't recolorable.
+  - Added Pride themed Wing overlays
+    - Happy Pride Month!
+    - You don't need to be a Supporter to use these. Pride should never have a price tag
+    - Please let me know if you feel like another should be added
+- Inverted Scrolling on Wing Customization Screen
 ## Settings & Config
 ## Commands
 ## Tweaks
-- Fixed Malicious Face Nail Damage Modifier (1x -> 1.5x)
 ## Minor Changes
-- Fixed Level Unlock Trigger Icon having an Question Mark as if it were a Listener
-  - Also fixed it being sorted into the Listener Items in the Creative Inventory
 ## Resource Changes
 ## API Changes

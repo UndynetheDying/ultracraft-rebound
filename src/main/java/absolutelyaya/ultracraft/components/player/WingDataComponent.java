@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.rendering.UltraHudRenderer;
+import absolutelyaya.ultracraft.registry.WingPatterns;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -12,8 +13,8 @@ import org.joml.Vector3f;
 
 public class WingDataComponent implements IWingDataComponent, AutoSyncedComponent
 {
-	Vector3f[] wingColors = new Vector3f[] { new Vector3f(247f / 255f, 1f, 154f / 255f), new Vector3f(117f / 255f, 154f / 255f, 1f) };
-	String wingPattern = "";
+	Vector3f[] colors = new Vector3f[] { new Vector3f(247f / 255f, 1f, 154f / 255f), new Vector3f(117f / 255f, 154f / 255f, 1f) };
+	String pattern = "", overlay = "";
 	boolean visible;
 	PlayerEntity provider;
 	
@@ -27,25 +28,50 @@ public class WingDataComponent implements IWingDataComponent, AutoSyncedComponen
 	{
 		if(UltracraftClient.getConfig().blockedPlayers.contains(provider.getUuid()))
 			return UltracraftClient.getDefaultWingColors();
-		return wingColors;
+		return colors;
 	}
 	
 	@Override
 	public void setColor(Vector3f val, int idx)
 	{
-		wingColors[idx] = val;
+		colors[idx] = val;
 	}
 	
 	@Override
 	public String getPattern()
 	{
-		return wingPattern;
+		return pattern;
 	}
 	
 	@Override
 	public void setPattern(String id)
 	{
-		wingPattern = id;
+		pattern = id;
+	}
+	
+	@Override
+	public String getOverlay()
+	{
+		if(!isOverlayExists(overlay))
+			overlay = "";
+		return overlay;
+	}
+	
+	@Override
+	public void setOverlay(String id)
+	{
+		if(!isOverlayExists(id))
+		{
+			overlay = "";
+			return;
+		}
+		overlay = id;
+	}
+	
+	@Override
+	public boolean isOverlayExists(String id)
+	{
+		return WingPatterns.getAllOverlayIDs().contains(id);
 	}
 	
 	@Override
@@ -88,9 +114,10 @@ public class WingDataComponent implements IWingDataComponent, AutoSyncedComponen
 	public void readFromNbt(NbtCompound tag)
 	{
 		NbtCompound colors = tag.getCompound("colors");
-		wingColors[0] = deserializeColor(colors.getCompound("wings"));
-		wingColors[1] = deserializeColor(colors.getCompound("metal"));
-		wingPattern = Ultracraft.checkSupporter(provider.getUuid(), provider.getWorld().isClient) ? tag.getString("pattern") : "";
+		this.colors[0] = deserializeColor(colors.getCompound("wings"));
+		this.colors[1] = deserializeColor(colors.getCompound("metal"));
+		pattern = Ultracraft.checkSupporter(provider.getUuid(), provider.getWorld().isClient) ? tag.getString("pattern") : "";
+		overlay = tag.getString("overlay");
 		visible = tag.getBoolean("visible");
 	}
 	
@@ -98,10 +125,11 @@ public class WingDataComponent implements IWingDataComponent, AutoSyncedComponen
 	public void writeToNbt(NbtCompound tag)
 	{
 		NbtCompound colors = new NbtCompound();
-		colors.put("wings", serializeColor(wingColors[0]));
-		colors.put("metal", serializeColor(wingColors[1]));
+		colors.put("wings", serializeColor(this.colors[0]));
+		colors.put("metal", serializeColor(this.colors[1]));
 		tag.put("colors", colors);
-		tag.putString("pattern", wingPattern);
+		tag.putString("pattern", pattern);
+		tag.putString("overlay", overlay);
 		tag.putBoolean("visible", visible);
 	}
 }
