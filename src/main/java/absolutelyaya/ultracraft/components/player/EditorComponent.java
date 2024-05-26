@@ -273,6 +273,10 @@ public class EditorComponent implements IEditorComponent
 			setAllowRecursiveRooms(tag.getBoolean("recursiveRooms"));
 		if(tag.contains("showRelations", NbtElement.BYTE_TYPE))
 			setShowRelations(tag.getBoolean("showRelations"));
+		if(tag.contains("rebindingParent", NbtElement.LONG_TYPE))
+			rebindingParent = BlockPos.fromLong(tag.getLong("rebindingParent"));
+		else
+			rebindingParent = null;
 	}
 	
 	@Override
@@ -288,5 +292,7 @@ public class EditorComponent implements IEditorComponent
 		tag.putBoolean("ghost", ghost);
 		tag.putBoolean("recursiveRooms", recursiveRooms);
 		tag.putBoolean("showRelations", showRelations);
+		if(rebindingParent != null)
+			tag.putLong("rebindingParent", rebindingParent.asLong());
 	}
 }

@@ -273,15 +273,17 @@ public class EditModeCommands
 		if(player == null)
 			return Command.SINGLE_SUCCESS;
 		String key = context.getArgument("key", String.class);
-		if(key.equals("room"))
+		IEditorComponent editor = UltraComponents.EDITOR.get(player);
+		if(key.equals("room") && !editor.isAllowRecursiveRooms())
 		{
 			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.rebind.room"));
 			return Command.SINGLE_SUCCESS;
 		}
-		BlockPos pos = UltraComponents.EDITOR.get(player).getEditFocus(key);
+		BlockPos pos = editor.getEditFocus(key);
 		if(pos != null && player.getWorld().getBlockEntity(pos) instanceof AbstractMappingBlockEntity entity)
 		{
-			UltraComponents.EDITOR.get(player).setRebindingParent(pos);
+			editor.setRebindingParent(pos);
+			editor.sync();
 			BlockPos lastParent = entity.getParent();
 			entity.setParent(null);
 			if(player.getWorld().getBlockEntity(lastParent) instanceof RoomBlockEntity room)
