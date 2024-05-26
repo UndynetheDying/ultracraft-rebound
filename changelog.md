@@ -49,6 +49,7 @@
 - Added Trinkets Support (optional)
   - This is mainly for Modpack Creators that want more control over ultracraft core mechanic unlocking//progression.
 - Added Fancy Carpet Variants in all Colors
+- Fixed players keeping their inventory due to a checkpoint still dropping XP
 ## Settings & Config
 - Added Server Config `DisableModificationSuppression` which allows disabling Edit Mode Room Modification Suppression; Default is `false`
   - Or in other Words, it lets you break and place Blocks in otherwise protected Areas, like Levels
@@ -90,6 +91,7 @@
 - Knuckleblaster Unlcok Item is no longer Stackable
 - Edit Mode HUD now renders behind chat
 - Fancy Carpet is no longer Waterloggable
+- Fixed Create per-tick damage types not being applied to players in hivel appropriately
 ## Edit Mode Changes
 - Rooms can now be Parented to Rooms (yay, recursion)
   - Added `/edit config recursiveRooms`, which toggles whether Rooms you place while having another Room focused, will be parented to the selected Room or just be placed as new Root.

@@ -196,6 +196,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 			ci.cancel();
 	}
 	
+	@Inject(method="getXpToDrop", at = @At("HEAD"), cancellable = true)
+	void onGetXpToDrop(CallbackInfoReturnable<Integer> cir)
+	{
+		if(getWorld().getRegistryKey().equals(LevelManager.WORLD_KEY) || UltraComponents.WINGED.get(this).getLastCheckpoint() != null)
+			cir.setReturnValue(0);
+	}
+	
 	@ModifyReturnValue(method = "isSwimming", at = @At("RETURN"))
 	boolean onIsSwimming(boolean original)
 	{
