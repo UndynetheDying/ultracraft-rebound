@@ -233,6 +233,10 @@ public class EditorComponent implements IEditorComponent
 			setFlySpeed(tag.getFloat("flySpeed"));
 		if(tag.contains("ghost", NbtElement.BYTE_TYPE))
 			setGhost(tag.getBoolean("ghost"));
+		if(tag.contains("rebindingParent", NbtElement.LONG_TYPE))
+			rebindingParent = BlockPos.fromLong(tag.getLong("rebindingParent"));
+		else
+			rebindingParent = null;
 	}
 	
 	@Override
@@ -246,5 +250,7 @@ public class EditorComponent implements IEditorComponent
 		tag.putBoolean("noclip", noClip);
 		tag.putFloat("flySpeed", flySpeed);
 		tag.putBoolean("ghost", ghost);
+		if(rebindingParent != null)
+			tag.putLong("rebindingParent", rebindingParent.asLong());
 	}
 }
