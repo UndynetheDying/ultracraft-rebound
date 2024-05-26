@@ -11,9 +11,6 @@
     "minecraft:lightning_bolt",
     "minecraft:out_of_world",
     "minecraft:outside_border",
-    "ultracraft:flamethrower",
-    "create:crush",
-    "create:fan_fire",
-    "create:fan_lava"
+    "ultracraft:flamethrower"
   ]
 }

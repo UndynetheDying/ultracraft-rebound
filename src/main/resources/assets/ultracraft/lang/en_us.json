@@ -430,6 +430,7 @@
   "command.ultracraft.debug.level.rank-reset-all.success-multiple": "Reset all best saved Level Completion Ranks for %s Players.",
   "command.ultracraft.debug.level.time-reset-all.success": "Reset all of %s's best saved Level Completion Times.",
   "command.ultracraft.debug.level.time-reset-all.success-multiple": "Reset all best saved Level Completion Times for %s Players.",
+  "command.ultracraft.debug.clear-likely-per-tick-damage-types.success": "Cleared all automatically detected Likely per-tick damage types.",
   "command.ultracraft.edit.enable": "%s has entered edit mode.",
   "command.ultracraft.edit.disable": "%s has left edit mode.",
   "command.ultracraft.edit.nothing-focused": "Nothing focused with key '%s'",

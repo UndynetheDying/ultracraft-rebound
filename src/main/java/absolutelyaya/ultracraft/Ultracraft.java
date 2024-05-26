@@ -36,6 +36,7 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.network.PacketByteBuf;
@@ -50,9 +51,7 @@ import org.slf4j.Logger;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class Ultracraft implements ModInitializer
 {
@@ -65,6 +64,7 @@ public class Ultracraft implements ModInitializer
     static Map<UUID, Integer> supporterCache = new HashMap<>(), supporterCacheAdditions = new HashMap<>();
     static ServerConfig config;
     static HivelConfig hivelConfig;
+    static List<DamageType> likelyPerTickDamageTypes = new ArrayList<>();
     
     @Override
     public void onInitialize()
@@ -296,5 +296,21 @@ public class Ultracraft implements ModInitializer
             else if (item instanceof AbstractNailgunItem nailgun && nailgun.getNbt(stack, "nails") < 100)
                 nailgun.setNbt(stack, "nails", 100);
         });
+    }
+    
+    public static boolean isLikelyPerTickDamageType(DamageType type)
+    {
+        return likelyPerTickDamageTypes.contains(type);
+    }
+    
+    public static void addLikelyPerTickDamageType(DamageType type)
+    {
+        likelyPerTickDamageTypes.add(type);
+        LOGGER.info("Identified Damage Type '{}' as potential per-tick Damage Type", type.msgId());
+    }
+    
+    public static void clearLikelyPerTickDamageTypes()
+    {
+        likelyPerTickDamageTypes.clear();
     }
 }

@@ -49,7 +49,11 @@
 - Added Trinkets Support (optional)
   - This is mainly for Modpack Creators that want more control over ultracraft core mechanic unlocking//progression.
 - Added Fancy Carpet Variants in all Colors
-- Fixed players keeping their inventory due to a checkpoint still dropping XP
+- Fixed players that kept their inventory due to a checkpoint still dropping XP
+- Added System that automatically detects whether a damage type is applied every tick
+  - This only affects IFrames in Hivel Mode
+  - The List of detected Damage Types isn't saved; it'll be cleared when the server//world is closed
+  - Damage Types that were detected as per tick will use iframes as if the player wasn't in hivel
 ## Settings & Config
 - Added Server Config `DisableModificationSuppression` which allows disabling Edit Mode Room Modification Suppression; Default is `false`
   - Or in other Words, it lets you break and place Blocks in otherwise protected Areas, like Levels
@@ -66,6 +70,8 @@
   - Whether the Vanilla Hotbar is hidden; all other HUD elements stay.
 - Due to an Internal name change, your Third Person ultracraft Arm Skin Setting might be reset to its default value 
 ## Commands
+- Added new Debug Command `/ultracraft debug clearLikelyPerTickDamageTypes`
+  - Clears the List of automatically identified per-tick damage types
 ## Tweaks
 - Nerfed Nailgun Damage a little
   - Heatsink Nails against Enemies (0.3 -> 0.25)
@@ -91,7 +97,6 @@
 - Knuckleblaster Unlcok Item is no longer Stackable
 - Edit Mode HUD now renders behind chat
 - Fancy Carpet is no longer Waterloggable
-- Fixed Create per-tick damage types not being applied to players in hivel appropriately
 ## Edit Mode Changes
 - Rooms can now be Parented to Rooms (yay, recursion)
   - Added `/edit config recursiveRooms`, which toggles whether Rooms you place while having another Room focused, will be parented to the selected Room or just be placed as new Root.
