@@ -97,6 +97,7 @@
 - Knuckleblaster Unlcok Item is no longer Stackable
 - Edit Mode HUD now renders behind chat
 - Fancy Carpet is no longer Waterloggable
+- Fancy Carpet is no longer Flammable
 ## Edit Mode Changes
 - Rooms can now be Parented to Rooms (yay, recursion)
   - Added `/edit config recursiveRooms`, which toggles whether Rooms you place while having another Room focused, will be parented to the selected Room or just be placed as new Root.

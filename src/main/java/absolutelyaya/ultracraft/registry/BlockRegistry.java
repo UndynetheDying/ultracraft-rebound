@@ -199,6 +199,5 @@ public class BlockRegistry
 	{
 		FlammableBlockRegistry registry = FlammableBlockRegistry.getDefaultInstance();
 		registry.add(FLOWERBED, 20, 10);
-		registry.add(BLUE_CARPET, 20, 5);
 	}
 }
