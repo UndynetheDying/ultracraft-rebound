@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.mixin.client;
 
 import absolutelyaya.ultracraft.client.UltracraftClient;
+import absolutelyaya.ultracraft.client.gui.LevelHUD;
 import absolutelyaya.ultracraft.client.sound.ModularLevelMusic;
 import absolutelyaya.ultracraft.client.sound.ModularMusicInstance;
 import absolutelyaya.ultracraft.components.UltraComponents;
@@ -55,6 +56,7 @@ public abstract class MusicTrackerMixin
 		{
 			stopModular(true);
 			levelStats.setShouldMusicFade(false);
+			LevelHUD.clearLastPlayedMusicId();
 			minAction = 0f;
 		}
 		String trackID = levelStats.getCurLevelSoundTrackKey();

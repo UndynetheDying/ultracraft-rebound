@@ -32,9 +32,6 @@
   "spawn-rot": -90,
   "music": {
     "main": {
-      "author": "Triage",
-      "title": "music.ultracraft.prelude1",
-      "color": "ff0000",
       "calm": "ultracraft:music.prelude1_calm",
       "combat": "ultracraft:music.prelude1"
     }

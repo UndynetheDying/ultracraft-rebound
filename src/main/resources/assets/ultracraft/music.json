@@ -1,0 +1,44 @@
+{
+  "ultracraft:music/the_fire_is_gone": {
+    "title": "The Fire is Gone (Noteblock Cover)",
+    "author": "Heaven Pierce Her"
+  },
+  "ultracraft:music/clair_de_lune": {
+    "title": "Clair de Lune (Noteblock Cover)",
+    "author": "Claude Debussy"
+  },
+  "ultracraft:music/triage/beyondthefire": {
+    "group": "prelude1",
+    "author": "Triage",
+    "title": "music.ultracraft.prelude1",
+    "color": "ff0000"
+  },
+  "ultracraft:music/triage/beyondthefire_calm": {
+    "group": "prelude1",
+    "author": "Triage",
+    "title": "music.ultracraft.prelude1",
+    "color": "ff0000"
+  },
+  "ultracraft:music/psykomatic/cerbcalm": {
+    "group": "prelude3",
+    "author": "Psykomatic",
+    "title": "music.ultracraft.cerberus",
+    "color": "ff0000"
+  },
+  "ultracraft:music/psykomatic/cerbfight": {
+    "group": "prelude3",
+    "author": "Psykomatic",
+    "title": "music.ultracraft.cerberus",
+    "color": "ff0000"
+  },
+  "ultracraft:music/efefski/limbo2": {
+    "group": "limbo2",
+    "author": "Efefski",
+    "color": "60ccce"
+  },
+  "ultracraft:music/efefski/limbo2_calm": {
+    "group": "limbo2",
+    "author": "Efefski",
+    "color": "60ccce"
+  }
+}

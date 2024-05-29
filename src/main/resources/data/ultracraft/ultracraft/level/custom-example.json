@@ -32,7 +32,6 @@
   },
   "music": {
     "default": {
-      "author": "c418",
       "calm": "minecraft:music_disc.cat",
       "combat": "minecraft:music_disc.ward"
     }

@@ -32,8 +32,6 @@
   "spawn-rot": -90,
   "music": {
     "main": {
-      "author": "Efefski",
-      "color": "60ccce",
       "calm": "ultracraft:music.limbo2_calm",
       "combat": "ultracraft:music.limbo2"
     }

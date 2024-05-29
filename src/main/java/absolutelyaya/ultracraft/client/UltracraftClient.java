@@ -72,6 +72,7 @@ import net.minecraft.client.sound.SoundManager;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -196,6 +197,8 @@ public class UltracraftClient implements ClientModInitializer
 		ScreenHandlerRegistry.registerClient();
 		
 		WingColorPresetManager.restoreDefaults();
+		
+		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new MusicMetadataManager());
 		
 		HITSCAN_HANDLER = new ClientHitscanHandler();
 		TRAIL_RENDERER = new TrailRenderer();

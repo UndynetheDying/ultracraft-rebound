@@ -33,9 +33,6 @@
   "spawn-rot": -90,
   "music": {
     "fight": {
-      "author": "Psykomatic",
-      "title": "music.ultracraft.cerberus",
-      "color": "ff0000",
       "calm": "ultracraft:music.cerberus_calm",
       "combat": "ultracraft:music.cerberus",
       "combat-threshold": 1,

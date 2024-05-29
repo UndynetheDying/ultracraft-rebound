@@ -128,9 +128,9 @@ public final class LevelData
 		return !music.isEmpty();
 	}
 	
-	public void putMusic(String id, String author, String name, int color, Identifier calm, Identifier fight, int combatThreshold, boolean noCalmdown)
+	public void putMusic(String id, Identifier calm, Identifier fight, int combatThreshold, boolean noCalmdown)
 	{
-		music.put(id, new ModularLevelMusic(author, name, color, calm, fight, combatThreshold, noCalmdown));
+		music.put(id, new ModularLevelMusic(calm, fight, combatThreshold, noCalmdown));
 	}
 	
 	public ModularLevelMusic getMusic(String id)
@@ -309,11 +309,6 @@ public final class LevelData
 			NbtCompound music = new NbtCompound();
 			this.music.forEach((key, val) -> {
 				NbtCompound entry = new NbtCompound();
-				if(val.getAuthor() != null && !val.getAuthor().isEmpty())
-					entry.putString("author", val.getAuthor());
-				if(val.getTrackName() != null && !val.getTrackName().isEmpty())
-					entry.putString("title", val.getTrackName());
-				entry.putInt("color", val.getColor());
 				SoundEvent calm = val.getCalmSound();
 				if(calm != null)
 					entry.putString("calm", calm.getId().toString());
@@ -364,16 +359,9 @@ public final class LevelData
 			for (String key : music.getKeys())
 			{
 				NbtCompound entry = music.getCompound(key);
-				String trackAuthor = null, trackName = "untitled";
 				Identifier calm = null, combat = null;
-				int col = 0xff0000, combatThreshold = 0;
+				int combatThreshold = 0;
 				boolean noCalmdown = false;
-				if (entry.contains("author", NbtElement.STRING_TYPE))
-					trackAuthor = entry.getString("author");
-				if (entry.contains("title", NbtElement.STRING_TYPE))
-					trackName = entry.getString("title");
-				if (entry.contains("color", NbtElement.INT_TYPE))
-					col = entry.getInt("color");
 				if (entry.contains("calm", NbtElement.STRING_TYPE))
 					calm = Identifier.tryParse(entry.getString("calm"));
 				if (entry.contains("combat", NbtElement.STRING_TYPE))
@@ -382,7 +370,7 @@ public final class LevelData
 					combatThreshold = entry.getInt("combatThreshold");
 				if (entry.contains("noCalmdown", NbtElement.BYTE_TYPE))
 					noCalmdown = entry.getBoolean("noCalmdown");
-				data.putMusic(key, trackAuthor, trackName, col, calm, combat, combatThreshold, noCalmdown);
+				data.putMusic(key,  calm, combat, combatThreshold, noCalmdown);
 			}
 		}
 		data.setUnimplemented(nbt.getBoolean("unimplemented"));

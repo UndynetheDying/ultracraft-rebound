@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.client.gui;
 
-import absolutelyaya.ultracraft.client.sound.ModularLevelMusic;
+import absolutelyaya.ultracraft.client.sound.MusicMetadata;
+import absolutelyaya.ultracraft.client.sound.MusicMetadataManager;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.ILevelStatsComponent;
 import absolutelyaya.ultracraft.util.ColorUtil;
@@ -9,23 +10,29 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.sound.SoundInstance;
+import net.minecraft.client.sound.SoundInstanceListener;
+import net.minecraft.client.sound.WeightedSoundSet;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import org.joml.Vector3f;
 
 import java.awt.*;
 
-public class LevelHUD
+public class LevelHUD implements SoundInstanceListener
 {
 	public static LevelHUD Instance;
 	long[] rankRequirements = new long[0];
 	long pb, ppb, last;
 	float displayFinishedTimer, musicPopupTime, musicPopupDelay, musicPopupVisibility;
 	byte curTimeRank;
-	ModularLevelMusic musicPopup;
+	Identifier lastMusicId;
+	MusicMetadata musicPopup;
+	boolean listening = false;
 	
 	public LevelHUD()
 	{
@@ -34,6 +41,11 @@ public class LevelHUD
 	
 	public void render(DrawContext context, float tickDelta)
 	{
+		if(!listening)
+		{
+			MinecraftClient.getInstance().getSoundManager().registerListener(this);
+			listening = true;
+		}
 		MinecraftClient client = MinecraftClient.getInstance();
 		ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(client.player);
 		boolean gamePaused = client.isPaused();
@@ -107,7 +119,7 @@ public class LevelHUD
 			curTimeRank++;
 	}
 	
-	public void queueNewMusicPopup(ModularLevelMusic music)
+	public void queueNewMusicPopup(MusicMetadata music)
 	{
 		musicPopupDelay = 2f;
 		musicPopupTime = 10f;
@@ -127,8 +139,8 @@ public class LevelHUD
 		}
 		TextRenderer tRenderer = MinecraftClient.getInstance().textRenderer;
 		Text header = Text.translatable("message.ultracraft.announce-music");
-		Text trackName = Text.translatable(musicPopup.getTrackName()).getWithStyle(Style.EMPTY.withBold(true)).get(0);
-		Text author = Text.translatable("message.ultracraft.music-author-prefix", Text.translatable(musicPopup.getAuthor()));
+		Text trackName = musicPopup.title().getWithStyle(Style.EMPTY.withBold(true)).get(0);
+		Text author = Text.translatable("message.ultracraft.music-author-prefix", musicPopup.author());
 		int minWidth = getHighest(tRenderer.getWidth(header), tRenderer.getWidth(trackName), tRenderer.getWidth(author), 128);
 		context.setShaderColor(1f, 1f, 1f, musicPopupVisibility);
 		MatrixStack matrices = context.getMatrices();
@@ -139,7 +151,7 @@ public class LevelHUD
 		context.drawText(tRenderer, trackName, 4, 2 + tRenderer.fontHeight, 0xffffff, true);
 		context.drawText(tRenderer, author, 4, 2 + tRenderer.fontHeight * 2, 0xffffff, true);
 		context.setShaderColor(1f, 1f, 1f, Math.min(musicPopupVisibility * 2, 1f));
-		Vector3f col = ColorUtil.asVector3f(musicPopup.getColor(), true);
+		Vector3f col = ColorUtil.asVector3f(musicPopup.color(), true);
 		if(musicPopupTime > 0f)
 			col = col.lerp(new Vector3f(1f), 1f - musicPopupVisibility * musicPopupVisibility);
 		context.fill(-2, 0, 0, 32, new Color(col.z, col.y, col.x).getRGB());
@@ -154,5 +166,21 @@ public class LevelHUD
 			if(highest < i)
 				highest = i;
 		return highest;
+	}
+	
+	@Override
+	public void onSoundPlayed(SoundInstance sound, WeightedSoundSet soundSet)
+	{
+		Identifier nextId = sound.getSound().getIdentifier();
+		if(MusicMetadataManager.INSTANCE.shouldShowPopup(lastMusicId, nextId))
+		{
+			queueNewMusicPopup(MusicMetadataManager.INSTANCE.getMusicMeta(nextId));
+			lastMusicId = nextId;
+		}
+	}
+	
+	public static void clearLastPlayedMusicId()
+	{
+		Instance.lastMusicId = null;
 	}
 }
