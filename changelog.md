@@ -13,8 +13,11 @@
   - It's now possible to set multiple Tracks per Level
   - Added a Popup that shows up whenever a new Track starts playing, and it has sufficient metadata
     - It says the Name and Author of the Track along with a neat colored stripe
+    - To add credit pop-ups for non-ultracraft music, make a resourcepack containing a `music.json` file in the same directory that the `sounds.json` would go in
   - Music will fade out when the Level is finished (or in other words, when a Force Travel Trigger is entered)
   - For more info on the specifics, refer to the `Resource Changes` Segment
+- Added Music to Cybergrind
+  - You can put your own cybergrind playlist in the game using a Resourcepack that replaces the sound `ultracraft:music.cybergrind`
 - Added new Mapping Blocks to control Music in Levels
   - Music Listener
     - Changes the currently playing Soundtrack Key of everyone in the Room while the bound **local** flag activates
@@ -101,6 +104,7 @@
 - Fancy Carpet is no longer Flammable
 - Added Band-Aid fix for sky block textures getting messed up when using Sodium
   - Shaders still make the skybox invisible tho unfortunately
+- Finally added some missing Icons to the `/ultracraft config` screen
 ## Edit Mode Changes
 - Rooms can now be Parented to Rooms (yay, recursion)
   - Added `/edit config recursiveRooms`, which toggles whether Rooms you place while having another Room focused, will be parented to the selected Room or just be placed as new Root.

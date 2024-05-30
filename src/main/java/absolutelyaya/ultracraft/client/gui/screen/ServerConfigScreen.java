@@ -64,9 +64,9 @@ public class ServerConfigScreen extends Screen
 		addRule(config.bloodSaturation, ConfigWidget.ValueType.BOOL, 24);
 		addRule(config.dodgeableOverpump, ConfigWidget.ValueType.BOOL, 25);
 		addRule(config.customLevelsUnlocked, ConfigWidget.ValueType.BOOL, 28);
-		addRule(config.parryRange, ConfigWidget.ValueType.FLOAT, -1);
-		addRule(config.coinPunchRange, ConfigWidget.ValueType.FLOAT, -1);
-		addRule(config.disableModificationSuppression, ConfigWidget.ValueType.BOOL, -1);
+		addRule(config.parryRange, ConfigWidget.ValueType.FLOAT, 29);
+		addRule(config.coinPunchRange, ConfigWidget.ValueType.FLOAT, 30);
+		addRule(config.disableModificationSuppression, ConfigWidget.ValueType.BOOL, 31);
 		
 		boolean b = false;
 		if(simplistic != null)
