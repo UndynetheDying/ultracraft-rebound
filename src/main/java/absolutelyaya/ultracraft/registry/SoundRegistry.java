@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.Ultracraft;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.sound.MusicSound;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
@@ -141,6 +142,10 @@ public class SoundRegistry
 	public static final RegistryEntry.Reference<SoundEvent> CERBERUS_CALM = registerReference("music.cerberus_calm");
 	public static final RegistryEntry.Reference<SoundEvent> LIMBO2 = registerReference("music.limbo2");
 	public static final RegistryEntry.Reference<SoundEvent> LIMBO2_CALM = registerReference("music.limbo2_calm");
+	public static final RegistryEntry.Reference<SoundEvent> CYBERGRIND = registerReference("music.cybergrind");
+	public static final RegistryEntry.Reference<SoundEvent> CYBERGRIND_DISK = registerReference("music.efefski_cybergrind");
+	
+	public static final MusicSound CYBERGRIND_MUSIC = new MusicSound(CYBERGRIND, 0, 0, true);
 	
 	public static void register()
 	{

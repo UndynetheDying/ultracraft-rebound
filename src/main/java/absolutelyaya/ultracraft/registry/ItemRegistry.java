@@ -221,6 +221,9 @@ public class ItemRegistry
 	public static final MusicDiscItem LIMBO2_CALM_DISK = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "disc/limbo2_calm"),
 			new MusicDiscItem(15, SoundRegistry.LIMBO2_CALM.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 176));
+	public static final MusicDiscItem CYBERGRIND_DISK = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "disc/cybergrind"),
+			new MusicDiscItem(15, SoundRegistry.CYBERGRIND_DISK.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 269));
 	
 	//Animated Blocks
 	public static final HellSpawnerItem HELL_SPAWNER = Registry.register(Registries.ITEM,
@@ -479,6 +482,7 @@ public class ItemRegistry
 			content.add(ItemRegistry.LIMBO2_CALM_DISK);
 			content.add(ItemRegistry.LIMBO2_DISK);
 			content.add(ItemRegistry.CLAIR_DE_LUNE_DISK);
+			content.add(ItemRegistry.CYBERGRIND_DISK);
 		});
 	}
 }

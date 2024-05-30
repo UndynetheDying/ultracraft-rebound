@@ -45,7 +45,7 @@ public class MusicMetadataManager implements SimpleSynchronousResourceReloadList
 		if(!musicData.containsKey(nextTrack) || nextTrack.equals(lastTrack))
 			return false;
 		MusicMetadata lastData = getMusicMeta(lastTrack), nextData = getMusicMeta(nextTrack);
-		return lastData == null || lastData.group() == null || !nextData.group().equals(lastData.group());
+		return lastData == null || lastData.group() == null || nextData.group() == null || !nextData.group().equals(lastData.group());
 	}
 	
 	@Override

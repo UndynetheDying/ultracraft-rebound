@@ -568,5 +568,15 @@
     "sounds": [
       "ultracraft:music/efefski/limbo2_calm"
     ]
+  },
+  "music.efefski_cybergrind": {
+    "sounds": [
+      "ultracraft:music/efefski/cybergrind"
+    ]
+  },
+  "music.cybergrind": {
+    "sounds": [
+      "ultracraft:music/efefski/cybergrind"
+    ]
   }
 }

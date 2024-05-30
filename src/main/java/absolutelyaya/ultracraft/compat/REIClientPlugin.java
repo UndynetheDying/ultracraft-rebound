@@ -92,5 +92,15 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 				EntryStacks.of(BlockRegistry.LIGHT_GRAY_CARPET),
 				EntryStacks.of(BlockRegistry.WHITE_CARPET));
 		registry.group(new Identifier(Ultracraft.MOD_ID, "carpet"), Text.translatable("rei-group.ultracraft.carpet"), entries);
+		entries = List.of(
+				EntryStacks.of(ItemRegistry.PRELUDE1_DISK),
+				EntryStacks.of(ItemRegistry.PRELUDE1_CALM_DISK),
+				EntryStacks.of(ItemRegistry.CERBERUS_DISK),
+				EntryStacks.of(ItemRegistry.CERBERUS_CALM_DISK),
+				EntryStacks.of(ItemRegistry.LIMBO2_DISK),
+				EntryStacks.of(ItemRegistry.LIMBO2_CALM_DISK),
+				EntryStacks.of(ItemRegistry.CYBERGRIND_DISK),
+				EntryStacks.of(ItemRegistry.CLAIR_DE_LUNE_DISK));
+		registry.group(new Identifier(Ultracraft.MOD_ID, "discs"), Text.translatable("rei-group.ultracraft.discs"), entries);
 	}
 }

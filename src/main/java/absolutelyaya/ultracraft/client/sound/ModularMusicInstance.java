@@ -2,46 +2,24 @@ package absolutelyaya.ultracraft.client.sound;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.DeathScreen;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.TickableSoundInstance;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 
-public class ModularMusicInstance extends PositionedSoundInstance implements TickableSoundInstance, INonPausingSoundInstance
+public class ModularMusicInstance extends FadingMusicInstance implements TickableSoundInstance, INonPausingSoundInstance
 {
-	boolean fadingIn = true, fadingOut, wasGamePaused;
-	float fadeInVolume = 0.01f, normalPitch = 1f, normalVolume = 1f, pauseMultiplier = -1f;
+	boolean wasGamePaused;
+	float normalPitch = 1f, normalVolume = 1f, pauseMultiplier = -1f;
 	
 	public ModularMusicInstance(SoundEvent sound)
 	{
-		super(sound.getId(), SoundCategory.MUSIC, 0.01f, 1f, SoundInstance.createRandom(), true, 0,
-				AttenuationType.NONE, 0.0, 0.0, 0.0, true);
-	}
-	
-	public void setVolume(float volume)
-	{
-		this.volume = Math.min(volume, fadingIn ? fadeInVolume : Float.MAX_VALUE);
-	}
-	
-	@Override
-	public boolean isDone()
-	{
-		return false;
+		super(sound, 0.01f);
 	}
 	
 	@Override
 	public void tick()
 	{
+		super.tick();
 		MinecraftClient client = MinecraftClient.getInstance();
-		if(fadingOut && fadingIn)
-			fadingIn = false;
-		if(fadingOut && (volume -= 0.05f) <= 0)
-			client.getSoundManager().stop(this);
-		if(fadingIn && fadeInVolume < 1f)
-			fadeInVolume = Math.min(fadeInVolume + 0.1f, 1f);
-		else
-			fadingIn = false;
 		boolean death = client.currentScreen instanceof DeathScreen;
 		if(shouldLowerPitchWhenPaused())
 		{
@@ -68,12 +46,6 @@ public class ModularMusicInstance extends PositionedSoundInstance implements Tic
 			}
 		}
 		wasGamePaused = client.isPaused() || death;
-	}
-	
-	public void startFadeout()
-	{
-		fadingIn = false;
-		fadingOut = true;
 	}
 	
 	@Override

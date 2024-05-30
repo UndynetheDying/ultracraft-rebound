@@ -3,6 +3,7 @@
   - Prelude 1 - Beyond the Fire by [Triage](https://www.youtube.com/@triageGremlin)
   - Prelude 3 - Wardens of Hell by [Psykomatic](https://www.youtube.com/@psykomatic0)
   - Limbo 2 - untitled by [Efefski](https://www.youtube.com/@efefski)
+  - Cybergrind - cybergrind by [Efefski](https://www.youtube.com/@efefski)
   - All Tracks have Music disks for both their calm and combat version (if applicable)
     - These currently cannot be obtained in survival. I'll think of something for that.
   - Everyone involved has done a fantastic Job and were a joy to work with. If you like their work, please consider supporting them!

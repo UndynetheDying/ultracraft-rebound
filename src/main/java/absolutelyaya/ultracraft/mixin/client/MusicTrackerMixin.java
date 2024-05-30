@@ -2,13 +2,16 @@ package absolutelyaya.ultracraft.mixin.client;
 
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.LevelHUD;
+import absolutelyaya.ultracraft.client.sound.FadingMusicInstance;
 import absolutelyaya.ultracraft.client.sound.ModularLevelMusic;
 import absolutelyaya.ultracraft.client.sound.ModularMusicInstance;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.ILevelStatsComponent;
 import absolutelyaya.ultracraft.data.LevelDataManager;
+import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.*;
+import net.minecraft.sound.MusicSound;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -25,6 +28,7 @@ public abstract class MusicTrackerMixin
 {
 	Identifier curLevelMusic;
 	ModularMusicInstance calm, fight;
+	FadingMusicInstance cybergrind;
 	float action, minAction;
 	
 	@Shadow @Final private MinecraftClient client;
@@ -36,10 +40,28 @@ public abstract class MusicTrackerMixin
 	@Inject(method = "tick", at = @At("HEAD"), cancellable = true)
 	void onTick(CallbackInfo ci)
 	{
-		if (client.getMusicType() != null)
+		MusicSound musicType = client.getMusicType();
+		if (musicType != null)
 		{
 			if(curLevelMusic != null)
 				stopModular(false);
+			if(musicType.equals(SoundRegistry.CYBERGRIND_MUSIC))
+			{
+				if(current != null && !musicType.getSound().value().getId().equals(current.getId()))
+					client.getSoundManager().stop(current);
+				if(!client.getSoundManager().isPlaying(current))
+				{
+					FadingMusicInstance instance = new FadingMusicInstance(musicType.getSound().value(), 1f);
+					if (instance.getSound() != SoundManager.MISSING_SOUND)
+						client.getSoundManager().play(instance);
+					current = instance;
+				}
+			}
+			else if(current instanceof FadingMusicInstance fading && current.getId().equals(SoundRegistry.CYBERGRIND_MUSIC.getSound().value().getId()))
+			{
+				fading.startFadeout();
+				current = null;
+			}
 			return;
 		}
 		ci.cancel();
@@ -73,9 +95,9 @@ public abstract class MusicTrackerMixin
 		if(curLevelMusic == null || !curLevelMusic.equals(level))
 		{
 			if(music.getCalmSound() != null)
-				calm = playModular(music.getCalmSound(), false);
+				calm = playModular(music.getCalmSound());
 			if(music.getCombatSound() != null)
-				fight = playModular(music.getCombatSound(), true);
+				fight = playModular(music.getCombatSound());
 			if(calm == null && fight != null)
 				fight.setVolume(1f);
 			curLevelMusic = level;
@@ -96,7 +118,7 @@ public abstract class MusicTrackerMixin
 			client.getSoundManager().play(fight);
 	}
 	
-	ModularMusicInstance playModular(SoundEvent sound, boolean fight)
+	ModularMusicInstance playModular(SoundEvent sound)
 	{
 		if(sound == null)
 			return null;

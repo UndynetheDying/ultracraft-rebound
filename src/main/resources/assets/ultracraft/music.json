@@ -40,5 +40,10 @@
     "group": "limbo2",
     "author": "Efefski",
     "color": "60ccce"
+  },
+  "ultracraft:music/efefski/cybergrind": {
+    "author": "Efefski",
+    "title": "Cybergrind",
+    "color": "ff0000"
   }
 }

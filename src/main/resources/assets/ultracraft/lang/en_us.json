@@ -133,6 +133,8 @@
   "item.ultracraft.disc.prelude1.desc": "Triage - Beyond the Fire (Intense Mix)",
   "item.ultracraft.disc.prelude1_calm": "Music Disc",
   "item.ultracraft.disc.prelude1_calm.desc": "Triage - Beyond the Fire (Calm Mix)",
+  "item.ultracraft.disc.cybergrind": "Music Disc",
+  "item.ultracraft.disc.cybergrind.desc": "Efefski - Cybergrind",
   "item.ultracraft.knuckleblaster": "Knuckleblaster",
   "item.ultracraft.hell_mass": "Hell Mass",
   "item.ultracraft.florp": "Florp",
@@ -152,7 +154,8 @@
 
   "rei-group.ultracraft.terminals": "Terminal Variants",
   "rei-group.ultracraft.mapping": "Edit Mode Blocks",
-  "rei-group.ultracraft.carpet": "Carpet Variants",
+  "rei-group.ultracraft.carpet": "Fancy Carpet Variants",
+  "rei-group.ultracraft.discs": "Ultracraft OST Discs",
 
   "trinkets.slot.chest.plating": "Plating",
 
