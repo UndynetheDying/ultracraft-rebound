@@ -3,7 +3,10 @@ package absolutelyaya.ultracraft.entity.husk;
 import absolutelyaya.ultracraft.ExplosionHandler;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.Interruptable;
+import absolutelyaya.ultracraft.accessor.MeleeInterruptable;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.damage.DamageSources;
+import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.entity.goal.TargetPlayerGoal;
 import absolutelyaya.ultracraft.entity.other.InterruptableCharge;
 import absolutelyaya.ultracraft.entity.projectile.HellBulletEntity;
@@ -21,6 +24,7 @@ import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
@@ -33,7 +37,7 @@ import mod.azure.azurelib.core.animation.RawAnimation;
 import mod.azure.azurelib.core.object.PlayState;
 import mod.azure.azurelib.util.AzureLibUtil;
 
-public class SchismEntity extends AbstractHuskEntity implements GeoEntity, Interruptable
+public class SchismEntity extends AbstractHuskEntity implements GeoEntity, Interruptable, MeleeInterruptable
 {
 	protected static final TrackedData<Integer> ATTACK_COOLDOWN = DataTracker.registerData(SchismEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
@@ -150,7 +154,7 @@ public class SchismEntity extends AbstractHuskEntity implements GeoEntity, Inter
 		getWorld().playSound(null, interruptor.getBlockPos(), SoundRegistry.GENERIC_INTERRUPT, SoundCategory.PLAYERS, 0.75f, 2f);
 		Ultracraft.freeze((ServerWorld)getWorld(), 10);
 		damage(DamageSources.get(getWorld(), DamageSources.INTERRUPT, interruptor), 5f);
-		ExplosionHandler.explosion(interruptor, getWorld(), new Vec3d(getX(), getY(), getZ()),
+		ExplosionHandler.explosion(interruptor, getWorld(), new Vec3d(getX(), getY() + getHeight() / 2f, getZ()),
 				getDamageSources().explosion(this, interruptor), 5f, 2f, 3f, true);
 	}
 	
@@ -172,6 +176,14 @@ public class SchismEntity extends AbstractHuskEntity implements GeoEntity, Inter
 	private InterruptableCharge addInterruptableCharge()
 	{
 		return InterruptableCharge.spawn(getWorld(), this, 11, 0.5f, 1f);
+	}
+	
+	@Override
+	public void onInterrupt(PlayerEntity interrupter)
+	{
+		damage(DamageSources.get(getWorld(), DamageSources.PARRY), getMaxHealth());
+		UltraComponents.STYLE.get(interrupter).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "parry")));
+		takeKnockback(5f, interrupter.getX() - getX(), interrupter.getZ() - getZ());
 	}
 	
 	static class AttackGoal extends Goal
@@ -218,7 +230,8 @@ public class SchismEntity extends AbstractHuskEntity implements GeoEntity, Inter
 		{
 			schism.navigation.stop();
 			//.7 / 5 = .14 = 2
-			if(++timer > 30 && timer < 44)
+			boolean firing = ++timer > 30 && timer < 44;
+			if(firing)
 			{
 				if((timer / 20f) % 0.14f < 0.05f)
 				{
@@ -231,6 +244,7 @@ public class SchismEntity extends AbstractHuskEntity implements GeoEntity, Inter
 				charge = schism.addInterruptableCharge();
 			else if(timer < 30)
 				schism.getLookControl().lookAt(target.getX(), target.getEyeY(), target.getZ());
+			schism.setAttacking(firing);
 		}
 		
 		@Override
@@ -258,6 +272,7 @@ public class SchismEntity extends AbstractHuskEntity implements GeoEntity, Inter
 			schism.navigation.startMovingTo(schism.getX() + (random.nextDouble() - 0.5) * 6,
 					schism.getY(), schism.getZ() + (random.nextDouble() - 0.5) * 6, 1f);
 			charge.discard();
+			schism.setAttacking(false);
 		}
 	}
 }

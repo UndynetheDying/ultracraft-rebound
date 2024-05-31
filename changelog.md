@@ -58,6 +58,7 @@
   - This only affects IFrames in Hivel Mode
   - The List of detected Damage Types isn't saved; it'll be cleared when the server//world is closed
   - Damage Types that were detected as per tick will use iframes as if the player wasn't in hivel
+- Schisms can now be interrupted by punching them with the feedbacker while they're firing; this kills them instantly
 ## Settings & Config
 - Added Server Config `DisableModificationSuppression` which allows disabling Edit Mode Room Modification Suppression; Default is `false`
   - Or in other Words, it lets you break and place Blocks in otherwise protected Areas, like Levels
@@ -105,6 +106,9 @@
 - Added Band-Aid fix for sky block textures getting messed up when using Sodium
   - Shaders still make the skybox invisible tho unfortunately
 - Finally added some missing Icons to the `/ultracraft config` screen
+- Changed Interruptable Charge rendering
+- Changed Schism Interruption-Explosion positioning slightly
+- Changed Stray Interruption-Explosion positioning slightly
 ## Edit Mode Changes
 - Rooms can now be Parented to Rooms (yay, recursion)
   - Added `/edit config recursiveRooms`, which toggles whether Rooms you place while having another Room focused, will be parented to the selected Room or just be placed as new Root.

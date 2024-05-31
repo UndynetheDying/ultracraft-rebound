@@ -170,7 +170,7 @@ public class StrayEntity extends AbstractHuskEntity implements GeoEntity, Interr
 		getWorld().playSound(null, interruptor.getBlockPos(), SoundRegistry.GENERIC_INTERRUPT, SoundCategory.PLAYERS, 0.75f, 2f);
 		Ultracraft.freeze((ServerWorld)getWorld(), 10);
 		damage(DamageSources.get(getWorld(), DamageSources.INTERRUPT, interruptor), 5f);
-		ExplosionHandler.explosion(interruptor, getWorld(), new Vec3d(getX(), getY(), getZ()), getDamageSources().explosion(this, interruptor), 5f, 2f, 3f, true);
+		ExplosionHandler.explosion(interruptor, getWorld(), new Vec3d(getX(), getY() + getHeight() / 2f, getZ()), getDamageSources().explosion(this, interruptor), 5f, 2f, 3f, true);
 	}
 	
 	@Override
