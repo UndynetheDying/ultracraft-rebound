@@ -10,17 +10,17 @@ public class HarpoonGunRenderer extends GeoItemRenderer<HarpoonGunItem>
 {
 	public HarpoonGunRenderer()
 	{
-		super(new DefaultedItemGeoModel<>(new Identifier(Ultracraft.MOD_ID, "harpoon_gun")));
+		super(new DefaultedItemGeoModel<>(Ultracraft.identifier("harpoon_gun")));
 	}
 	
 	@Override
 	public Identifier getTextureLocation(HarpoonGunItem animatable)
 	{
 		return switch(animatable.texture) {
-			default -> new Identifier(Ultracraft.MOD_ID, "textures/item/harpoon_gun.png");
-			case 1 -> new Identifier(Ultracraft.MOD_ID, "textures/item/harpoon_gun0.png");
-			case 2 -> new Identifier(Ultracraft.MOD_ID, "textures/item/harpoon_gun1.png");
-			case 3 -> new Identifier(Ultracraft.MOD_ID, "textures/item/harpoon_gun2.png");
+			default -> Ultracraft.identifier("textures/item/harpoon_gun.png");
+			case 1 -> Ultracraft.identifier("textures/item/harpoon_gun0.png");
+			case 2 -> Ultracraft.identifier("textures/item/harpoon_gun1.png");
+			case 3 -> Ultracraft.identifier("textures/item/harpoon_gun2.png");
 		};
 	}
 }

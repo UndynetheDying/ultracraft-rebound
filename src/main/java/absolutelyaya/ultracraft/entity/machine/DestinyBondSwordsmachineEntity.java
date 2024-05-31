@@ -300,8 +300,8 @@ public class DestinyBondSwordsmachineEntity extends SwordsmachineEntity implemen
 	@Override
 	protected Identifier getLootTableId()
 	{
-		return getVariant() == 0 ? new Identifier(Ultracraft.MOD_ID, "entities/swordsmachine_tundra_death") :
-					   new Identifier(Ultracraft.MOD_ID, "entities/swordsmachine_agony_death");
+		return getVariant() == 0 ? Ultracraft.identifier("entities/swordsmachine_tundra_death") :
+					   Ultracraft.identifier("entities/swordsmachine_agony_death");
 	}
 	
 	@Override

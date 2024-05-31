@@ -16,7 +16,7 @@ public class SwordsmachineModel extends GeoModel<SwordsmachineEntity>
 	@Override
 	public Identifier getModelResource(SwordsmachineEntity object)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "geo/entities/swordsmachine.geo.json");
+		return Ultracraft.identifier("geo/entities/swordsmachine.geo.json");
 	}
 	
 	@Override
@@ -24,16 +24,16 @@ public class SwordsmachineModel extends GeoModel<SwordsmachineEntity>
 	{
 		if(object instanceof DestinyBondSwordsmachineEntity destinyBondSM)
 		{
-			return destinyBondSM.getVariant() == 0 ? new Identifier(Ultracraft.MOD_ID, "textures/entity/swordsmachine_tundra.png") :
-						   new Identifier(Ultracraft.MOD_ID, "textures/entity/swordsmachine_agony.png");
+			return destinyBondSM.getVariant() == 0 ? Ultracraft.identifier("textures/entity/swordsmachine_tundra.png") :
+						   Ultracraft.identifier("textures/entity/swordsmachine_agony.png");
 		}
-		return new Identifier(Ultracraft.MOD_ID, "textures/entity/swordsmachine.png");
+		return Ultracraft.identifier("textures/entity/swordsmachine.png");
 	}
 	
 	@Override
 	public Identifier getAnimationResource(SwordsmachineEntity animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "animations/entities/swordsmachine.animation.json");
+		return Ultracraft.identifier("animations/entities/swordsmachine.animation.json");
 	}
 	
 	@Override

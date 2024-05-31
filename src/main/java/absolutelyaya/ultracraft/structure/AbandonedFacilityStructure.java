@@ -24,7 +24,7 @@ import java.util.Optional;
 
 public class AbandonedFacilityStructure extends Structure
 {
-	static final Identifier ID = new Identifier(Ultracraft.MOD_ID, "abandoned_facility/1");
+	static final Identifier ID = Ultracraft.identifier("abandoned_facility/1");
 	public static final Codec<AbandonedFacilityStructure> CODEC = AbandonedFacilityStructure.createCodec(AbandonedFacilityStructure::new);
 	
 	protected AbandonedFacilityStructure(Config config)

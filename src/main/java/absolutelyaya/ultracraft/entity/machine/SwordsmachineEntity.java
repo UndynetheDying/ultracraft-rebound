@@ -438,7 +438,7 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 	@Override
 	protected Identifier getLootTableId()
 	{
-		return new Identifier(Ultracraft.MOD_ID, shouldHuntHusks() ? "entities/swordsmachine_dan_death" : "entities/swordsmachine_death");
+		return Ultracraft.identifier(shouldHuntHusks() ? "entities/swordsmachine_dan_death" : "entities/swordsmachine_death");
 	}
 	
 	private void enrage()
@@ -447,7 +447,7 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 		dataTracker.set(ANIMATION, ANIMATION_ENRAGE);
 		playSound(SoundRegistry.SWORDSMACHINE_ENRAGE, 1f, 1f);
 		getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(32), i -> true)
-				.forEach(p -> UltraComponents.STYLE.get(p).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "enrage"))));
+				.forEach(p -> UltraComponents.STYLE.get(p).styleBonusGet(StyleBonusManager.getBonuses().get(Ultracraft.identifier("enrage"))));
 	}
 	
 	private void setCurrentAttackTrail(byte attack)

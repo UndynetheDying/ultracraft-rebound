@@ -9,7 +9,7 @@ public class PoinPlushieRenderer extends AbstractPlushieRenderer<PlushieItem>
 {
 	public PoinPlushieRenderer()
 	{
-		super(new DefaultedItemGeoModel<PlushieItem>(new Identifier(Ultracraft.MOD_ID, "plushie"))
-					  .withAltModel(new Identifier(Ultracraft.MOD_ID, "poin_plushie")));
+		super(new DefaultedItemGeoModel<PlushieItem>(Ultracraft.identifier("plushie"))
+					  .withAltModel(Ultracraft.identifier("poin_plushie")));
 	}
 }

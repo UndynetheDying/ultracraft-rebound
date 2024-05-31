@@ -182,7 +182,7 @@ public class SchismEntity extends AbstractHuskEntity implements GeoEntity, Inter
 	public void onInterrupt(PlayerEntity interrupter)
 	{
 		damage(DamageSources.get(getWorld(), DamageSources.PARRY), getMaxHealth());
-		UltraComponents.STYLE.get(interrupter).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "parry")));
+		UltraComponents.STYLE.get(interrupter).styleBonusGet(StyleBonusManager.getBonuses().get(Ultracraft.identifier("parry")));
 		takeKnockback(5f, interrupter.getX() - getX(), interrupter.getZ() - getZ());
 	}
 	

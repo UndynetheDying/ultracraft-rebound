@@ -113,7 +113,7 @@ public class ServerConfigScreen extends Screen
 		context.fill(0, 0, width, height, 0x44000000);
 		RenderSystem.setShader(GameRenderer::getPositionTexProgram);
 		RenderSystem.setShaderColor(0.25f, 0.25f, 0.25f, 1.0f);
-		context.drawTexture(simplistic.isChecked() ? new Identifier(Ultracraft.MOD_ID, "textures/gui/simplistic_bg.png") : OPTIONS_BACKGROUND_TEXTURE,
+		context.drawTexture(simplistic.isChecked() ? Ultracraft.identifier("textures/gui/simplistic_bg.png") : OPTIONS_BACKGROUND_TEXTURE,
 				width /2 - 125, 0, 0, 0.0f, 0.0f, 250, height, 32, 32);
 		context.fill(width / 2 - 125, -1, width / 2 - 124, height + 1, 0xaaffffff);
 		context.fill(width / 2 + 125, -1, width / 2 + 124, height + 1, 0xaa000000);

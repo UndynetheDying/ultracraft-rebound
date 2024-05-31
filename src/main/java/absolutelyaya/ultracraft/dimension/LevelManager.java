@@ -46,7 +46,7 @@ import static absolutelyaya.ultracraft.data.LevelDataManager.getLevelData;
 public class LevelManager extends DimensionManager
 {
 	public static LevelManager Instance;
-	public static final Identifier ID = new Identifier(Ultracraft.MOD_ID, "levels");
+	public static final Identifier ID = Ultracraft.identifier("levels");
 	public static final RegistryKey<World> WORLD_KEY = RegistryKey.of(RegistryKeys.WORLD, ID);
 	ServerWorld world;
 	

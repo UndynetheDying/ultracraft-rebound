@@ -77,7 +77,7 @@ public abstract class FishingBobberMixin extends ProjectileEntity implements Pro
 	Identifier modifyLootTable(Identifier id)
 	{
 		if(getWorld().getStatesInBoxIfLoaded(getBoundingBox()).anyMatch(state -> state.isOf(BlockRegistry.BLOOD)))
-			return new Identifier(Ultracraft.MOD_ID, "gameplay/blood_fishing");
+			return Ultracraft.identifier("gameplay/blood_fishing");
 		return id;
 	}
 	

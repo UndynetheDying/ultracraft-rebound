@@ -12,13 +12,13 @@ public class MagnetEntityModel extends GeoModel<MagnetEntity>
 	@Override
 	public Identifier getModelResource(MagnetEntity animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "geo/entities/magnet.geo.json");
+		return Ultracraft.identifier("geo/entities/magnet.geo.json");
 	}
 	
 	@Override
 	public Identifier getTextureResource(MagnetEntity animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "textures/entity/magnet.png");
+		return Ultracraft.identifier("textures/entity/magnet.png");
 	}
 	
 	@Override

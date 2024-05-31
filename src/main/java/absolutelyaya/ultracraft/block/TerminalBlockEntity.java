@@ -491,8 +491,8 @@ public class TerminalBlockEntity extends BlockEntity implements GeoBlockEntity
 		if(getTerminalID() == null)
 			terminalID = UUID.randomUUID();
 		if(world != null && world.isClient)
-			ProceduralTextureManager.createHsvMappedTexture(new Identifier(Ultracraft.MOD_ID, "textures/block/terminal/c.png"),
-					Base.YELLOW.getTexture(), new Identifier(Ultracraft.MOD_ID, "procedural/terminal_base/" + getTerminalID().toString()), baseColor);
+			ProceduralTextureManager.createHsvMappedTexture(Ultracraft.identifier("textures/block/terminal/c.png"),
+					Base.YELLOW.getTexture(), Ultracraft.identifier("procedural/terminal_base/" + getTerminalID().toString()), baseColor);
 	}
 	
 	public float getInactivity()
@@ -825,7 +825,7 @@ public class TerminalBlockEntity extends BlockEntity implements GeoBlockEntity
 		
 		public Identifier getTexture()
 		{
-			return new Identifier(Ultracraft.MOD_ID, String.format("textures/block/terminal/%s.png", name().toLowerCase(Locale.ROOT)));
+			return Ultracraft.identifier(String.format("textures/block/terminal/%s.png", name().toLowerCase(Locale.ROOT)));
 		}
 		
 		public int getColor()

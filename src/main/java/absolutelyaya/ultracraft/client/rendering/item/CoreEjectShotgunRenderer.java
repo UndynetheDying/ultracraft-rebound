@@ -23,7 +23,7 @@ public class CoreEjectShotgunRenderer extends GeoItemRenderer<CoreEjectShotgunIt
 	
 	public CoreEjectShotgunRenderer()
 	{
-		super(new DefaultedItemGeoModel<>(new Identifier(Ultracraft.MOD_ID, "shotgun")));
+		super(new DefaultedItemGeoModel<>(Ultracraft.identifier("shotgun")));
 	}
 	
 	@Override
@@ -31,26 +31,26 @@ public class CoreEjectShotgunRenderer extends GeoItemRenderer<CoreEjectShotgunIt
 	{
 		float useTime = 1f - (animatable.getMaxUseTime(null) - animatable.getApproxUseTime()) / (float)(animatable.getMaxUseTime(null));
 		if(useTime > 0.99f)
-			return new Identifier(Ultracraft.MOD_ID, "textures/item/core_shotgun7.png");
+			return Ultracraft.identifier("textures/item/core_shotgun7.png");
 		else if(useTime > 0.79f)
-			return new Identifier(Ultracraft.MOD_ID, "textures/item/core_shotgun6.png");
+			return Ultracraft.identifier("textures/item/core_shotgun6.png");
 		else if(useTime > 0.59f)
-			return new Identifier(Ultracraft.MOD_ID, "textures/item/core_shotgun5.png");
+			return Ultracraft.identifier("textures/item/core_shotgun5.png");
 		else if(useTime > 0.39f)
-			return new Identifier(Ultracraft.MOD_ID, "textures/item/core_shotgun4.png");
+			return Ultracraft.identifier("textures/item/core_shotgun4.png");
 		else if(useTime > 0f)
-			return new Identifier(Ultracraft.MOD_ID, "textures/item/core_shotgun3.png");
+			return Ultracraft.identifier("textures/item/core_shotgun3.png");
 		
 		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		float primaryCD = cdm.getCooldownPercent(animatable, 0);
 		if(primaryCD < 0.3f)
-			return new Identifier(Ultracraft.MOD_ID, "textures/item/core_shotgun2.png");
+			return Ultracraft.identifier("textures/item/core_shotgun2.png");
 		else if(primaryCD < 0.4f)
-			return new Identifier(Ultracraft.MOD_ID, "textures/item/core_shotgun1.png");
+			return Ultracraft.identifier("textures/item/core_shotgun1.png");
 		else if(primaryCD < 0.65f)
-			return new Identifier(Ultracraft.MOD_ID, "textures/item/core_shotgun0.png");
+			return Ultracraft.identifier("textures/item/core_shotgun0.png");
 		
-		return new Identifier(Ultracraft.MOD_ID, "textures/item/core_shotgun.png");
+		return Ultracraft.identifier("textures/item/core_shotgun.png");
 	}
 	
 	@Override

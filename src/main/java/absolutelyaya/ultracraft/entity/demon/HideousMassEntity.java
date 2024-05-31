@@ -269,7 +269,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 			left_arm.enabled = right_arm.enabled = mask.enabled = body3.enabled = false;
 			if(!getWorld().isClient)
 				getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(32), i -> true)
-						.forEach(p -> UltraComponents.STYLE.get(p).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "enrage"))));
+						.forEach(p -> UltraComponents.STYLE.get(p).styleBonusGet(StyleBonusManager.getBonuses().get(Ultracraft.identifier("enrage"))));
 		}
 		if(data.equals(HIDDEN) && !dataTracker.get(HIDDEN))
 			setAllMainPartsEnabled(true);

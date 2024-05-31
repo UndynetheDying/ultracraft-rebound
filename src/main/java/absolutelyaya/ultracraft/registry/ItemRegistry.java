@@ -40,212 +40,212 @@ public class ItemRegistry
 {
 	//Misc
 	public static final SkullItem BLUE_SKULL = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "blue_skull"), new SkullItem(new FabricItemSettings()));
+			Ultracraft.identifier("blue_skull"), new SkullItem(new FabricItemSettings()));
 	public static final SkullItem RED_SKULL = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "red_skull"), new SkullItem(new FabricItemSettings()));
+			Ultracraft.identifier("red_skull"), new SkullItem(new FabricItemSettings()));
 	public static final Item HELL_BULLET = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "hell_bullet"), new HellBulletItem(new FabricItemSettings().fireproof().maxCount(25)));
+			Ultracraft.identifier("hell_bullet"), new HellBulletItem(new FabricItemSettings().fireproof().maxCount(25)));
 	public static final Item CERBERUS_BALL = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "cerberus_ball"), new HellBulletItem(new FabricItemSettings().fireproof().maxCount(21)));
+			Ultracraft.identifier("cerberus_ball"), new HellBulletItem(new FabricItemSettings().fireproof().maxCount(21)));
 	public static final Item CANCER_BULLET = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "cancer_bullet"), new HellBulletItem(new FabricItemSettings().fireproof().maxCount(7)));
+			Ultracraft.identifier("cancer_bullet"), new HellBulletItem(new FabricItemSettings().fireproof().maxCount(7)));
 	public static final Item EJECTED_CORE = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "ejected_core"), new HellBulletItem(new FabricItemSettings().maxCount(0)));
+			Ultracraft.identifier("ejected_core"), new HellBulletItem(new FabricItemSettings().maxCount(0)));
 	public static final Item NAIL = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "nail"), new Item(new FabricItemSettings().maxCount(0)));
+			Ultracraft.identifier("nail"), new Item(new FabricItemSettings().maxCount(0)));
 	public static final Item BLOOD_BUCKET = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "blood_bucket"), new BucketItem(FluidRegistry.STILL_BLOOD,
+			Ultracraft.identifier("blood_bucket"), new BucketItem(FluidRegistry.STILL_BLOOD,
 					new FabricItemSettings().maxCount(1).recipeRemainder(Items.BUCKET)));
 	public static final CoinItem COIN = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "coin"), new CoinItem(new FabricItemSettings()));
+			Ultracraft.identifier("coin"), new CoinItem(new FabricItemSettings()));
 	public static final KillerFishItem KILLERFISH = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "killerfish"), new KillerFishItem(new FabricItemSettings()));
+			Ultracraft.identifier("killerfish"), new KillerFishItem(new FabricItemSettings()));
 	public static final Item BLOOD_RAY = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "bloodray"), new Item(new FabricItemSettings()
+			Ultracraft.identifier("bloodray"), new Item(new FabricItemSettings()
 						.food(new FoodComponent.Builder().hunger(4).alwaysEdible()
 							  .statusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 500, 0), 1f).build())));
 	public static final DroneMaskItem DRONE_MASK = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "drone_mask"), new DroneMaskItem(new FabricItemSettings()));
+			Ultracraft.identifier("drone_mask"), new DroneMaskItem(new FabricItemSettings()));
 	public static final Item MINCED_MEAT = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "mincedmeat"), new SpecialItem(new FabricItemSettings()
+			Ultracraft.identifier("mincedmeat"), new SpecialItem(new FabricItemSettings()
 						.food(new FoodComponent.Builder().hunger(12).saturationModifier(6f).build()))
 								.putLore(new String[] { "item.ultracraft.mincedmeat.lore" }, new String[] { "item.ultracraft.mincedmeat.hiddenlore" }));
 	public static final Item HELL_MASS = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "hell_mass"), new Item(new FabricItemSettings()));
+			Ultracraft.identifier("hell_mass"), new Item(new FabricItemSettings()));
 	public static final Item PLACEHOLDER = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "placeholder"),
+			Ultracraft.identifier("placeholder"),
 			new Item(new FabricItemSettings().food(new FoodComponent.Builder().alwaysEdible().hunger(-1).build())));
 	public static final LumpFishItem LUMPFISH = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "lumpfish"), new LumpFishItem(new FabricItemSettings().maxCount(64)));
+			Ultracraft.identifier("lumpfish"), new LumpFishItem(new FabricItemSettings().maxCount(64)));
 	
 	//Progression Items
 	public static final Item FEEDBACKER = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "feedbacker"), new ProgressionUnlockItem(new FabricItemSettings().maxCount(1), new Identifier(Ultracraft.MOD_ID, "feedbacker")));
+			Ultracraft.identifier("feedbacker"), new ProgressionUnlockItem(new FabricItemSettings().maxCount(1), Ultracraft.identifier("feedbacker")));
 	public static final Item HIVEL_WINGS = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "hivel_wings"), new ProgressionUnlockItem(new FabricItemSettings().maxCount(1), new Identifier(Ultracraft.MOD_ID, "hivel")).markTrinket());
+			Ultracraft.identifier("hivel_wings"), new ProgressionUnlockItem(new FabricItemSettings().maxCount(1), Ultracraft.identifier("hivel")).markTrinket());
 	public static final Item ABSORBANT_PLATING = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "absorbant_plating"), new ProgressionUnlockItem(new FabricItemSettings().maxCount(1), new Identifier(Ultracraft.MOD_ID, "bloodheal")).markTrinket());
+			Ultracraft.identifier("absorbant_plating"), new ProgressionUnlockItem(new FabricItemSettings().maxCount(1), Ultracraft.identifier("bloodheal")).markTrinket());
 	public static final Item VIEW_AUGMENT = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "view_augment"), new ProgressionUnlockItem(new FabricItemSettings().maxCount(1), new Identifier(Ultracraft.MOD_ID, "ultrahud")).markTrinket());
+			Ultracraft.identifier("view_augment"), new ProgressionUnlockItem(new FabricItemSettings().maxCount(1), Ultracraft.identifier("ultrahud")).markTrinket());
 	public static final Item KNUCKLEBLASTER = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "knuckleblaster"), new ProgressionUnlockItem(new FabricItemSettings().maxCount(1), new Identifier(Ultracraft.MOD_ID, "knuckleblaster")));
+			Ultracraft.identifier("knuckleblaster"), new ProgressionUnlockItem(new FabricItemSettings().maxCount(1), Ultracraft.identifier("knuckleblaster")));
 	
 	//Weapons
 	public static final PierceRevolverItem PIERCE_REVOLVER = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "pierce_revolver"), new PierceRevolverItem(new FabricItemSettings().maxCount(1)));
+			Ultracraft.identifier("pierce_revolver"), new PierceRevolverItem(new FabricItemSettings().maxCount(1)));
 	public static final MarksmanRevolverItem MARKSMAN_REVOLVER = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "marksman_revolver"), new MarksmanRevolverItem(new FabricItemSettings().maxCount(1)));
+			Ultracraft.identifier("marksman_revolver"), new MarksmanRevolverItem(new FabricItemSettings().maxCount(1)));
 	public static final SharpshooterRevolverItem SHARPSHOOTER_REVOLVER = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "sharpshooter_revolver"), new SharpshooterRevolverItem(new FabricItemSettings().maxCount(1)));
+			Ultracraft.identifier("sharpshooter_revolver"), new SharpshooterRevolverItem(new FabricItemSettings().maxCount(1)));
 	public static final CoreEjectShotgunItem CORE_SHOTGUN = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "core_shotgun"), new CoreEjectShotgunItem(new FabricItemSettings().maxCount(1)));
+			Ultracraft.identifier("core_shotgun"), new CoreEjectShotgunItem(new FabricItemSettings().maxCount(1)));
 	public static final PumpShotgunItem PUMP_SHOTGUN = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "pump_shotgun"), new PumpShotgunItem(new FabricItemSettings().maxCount(1)));
+			Ultracraft.identifier("pump_shotgun"), new PumpShotgunItem(new FabricItemSettings().maxCount(1)));
 	public static final MachineSwordItem MACHINE_SWORD = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "machinesword"), new MachineSwordItem(ToolMaterials.IRON, 4, -2.4f,
+			Ultracraft.identifier("machinesword"), new MachineSwordItem(ToolMaterials.IRON, 4, -2.4f,
 					new FabricItemSettings().maxCount(1)));
 	public static final FlamethrowerItem FLAMETHROWER = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "flamethrower"), new FlamethrowerItem(new FabricItemSettings().maxCount(1), 0, 0));
+			Ultracraft.identifier("flamethrower"), new FlamethrowerItem(new FabricItemSettings().maxCount(1), 0, 0));
 	public static final Item HARPOON = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "harpoon"), new HarpoonItem(6f, -2.75f,
+			Ultracraft.identifier("harpoon"), new HarpoonItem(6f, -2.75f,
 					new FabricItemSettings().maxDamage(100)));
 	public static final Item HARPOON_GUN = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "harpoon_gun"), new HarpoonGunItem(new FabricItemSettings(), 25, 0f));
+			Ultracraft.identifier("harpoon_gun"), new HarpoonGunItem(new FabricItemSettings(), 25, 0f));
 	public static final SoapItem SOAP = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "soap"), new SoapItem(new FabricItemSettings().maxCount(4).rarity(Rarity.EPIC)));
+			Ultracraft.identifier("soap"), new SoapItem(new FabricItemSettings().maxCount(4).rarity(Rarity.EPIC)));
 	public static final AttractorNailgunItem ATTRACTOR_NAILGUN = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "attractor_nailgun"), new AttractorNailgunItem(new FabricItemSettings().maxCount(1)));
+			Ultracraft.identifier("attractor_nailgun"), new AttractorNailgunItem(new FabricItemSettings().maxCount(1)));
 	public static final OverheatNailgunItem OVERHEAT_NAILGUN = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "overheat_nailgun"), new OverheatNailgunItem(new FabricItemSettings().maxCount(1)));
+			Ultracraft.identifier("overheat_nailgun"), new OverheatNailgunItem(new FabricItemSettings().maxCount(1)));
 	public static final AlternatePiercerItem ALTERNATE_PIERCER = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "alternate_piercer"), new AlternatePiercerItem(new FabricItemSettings().maxCount(1)));
+			Ultracraft.identifier("alternate_piercer"), new AlternatePiercerItem(new FabricItemSettings().maxCount(1)));
 	public static final AlternateMarksmanItem ALTERNATE_MARKSMAN = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "alternate_marksman"), new AlternateMarksmanItem(new FabricItemSettings().maxCount(1)));
+			Ultracraft.identifier("alternate_marksman"), new AlternateMarksmanItem(new FabricItemSettings().maxCount(1)));
 	public static final AlternateSharpshooterItem ALTERNATE_SHARPSHOOTER = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "alternate_sharpshooter"), new AlternateSharpshooterItem(new FabricItemSettings().maxCount(1)));
+			Ultracraft.identifier("alternate_sharpshooter"), new AlternateSharpshooterItem(new FabricItemSettings().maxCount(1)));
 	
 	//Spawn Eggs
 	public static final SpawnEggItem FILTH_SPAWN_EGG = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "filth_spawn_egg"),
+			Ultracraft.identifier("filth_spawn_egg"),
 			new SpawnEggItem(EntityRegistry.FILTH, 0x717038, 0xacaa7a, new FabricItemSettings()));
 	public static final SpawnEggItem STRAY_SPAWN_EGG = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "stray_spawn_egg"),
+			Ultracraft.identifier("stray_spawn_egg"),
 			new SpawnEggItem(EntityRegistry.STRAY, 0xaa6f5e, 0x922923, new FabricItemSettings()));
 	public static final SpawnEggItem SCHISM_SPAWN_EGG = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "schism_spawn_egg"),
+			Ultracraft.identifier("schism_spawn_egg"),
 			new SpawnEggItem(EntityRegistry.SCHISM, 0x572f21, 0xa0938e, new FabricItemSettings()));
 	public static final SpawnEggItem MALICIOUS_SPAWN_EGG = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "malicious_spawn_egg"),
+			Ultracraft.identifier("malicious_spawn_egg"),
 			new SpawnEggItem(EntityRegistry.MALICIOUS_FACE, 0xa0938e, 0x5a5353, new FabricItemSettings()));
 	public static final SpawnEggItem CERBERUS_SPAWN_EGG = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "cerberus_spawn_egg"),
+			Ultracraft.identifier("cerberus_spawn_egg"),
 			new SpawnEggItem(EntityRegistry.CERBERUS, 0xa0938e, 0x5a5353, new FabricItemSettings()));
 	public static final SpecialSpawnEggItem SWORDSMACHINE_SPAWN_EGG = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "swordsmachine_spawn_egg"),
+			Ultracraft.identifier("swordsmachine_spawn_egg"),
 			new SpecialSpawnEggItem(EntityRegistry.SWORDSMACHINE, 0xf4b41b, 0x423d40, new FabricItemSettings()));
 	public static final DestinyBondSpawnEggItem DESTINY_SWORDSMACHINE_SPAWN_EGG = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "destiny_swordsmachine_spawn_egg"),
+			Ultracraft.identifier("destiny_swordsmachine_spawn_egg"),
 			new DestinyBondSpawnEggItem(new FabricItemSettings()));
 	public static final MultiColorSpawnEggItem DRONE_SPAWN_EGG = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "drone_spawn_egg"),
+			Ultracraft.identifier("drone_spawn_egg"),
 			new MultiColorSpawnEggItem(EntityRegistry.DRONE, new int[] {0x813ec6, 0x1b182d, 0xee42ff}, new FabricItemSettings()));
 	public static final SpawnEggItem STREET_CLEANER_SPAWN_EGG = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "streetcleaner_spawn_egg"),
+			Ultracraft.identifier("streetcleaner_spawn_egg"),
 			new SpawnEggItem(EntityRegistry.STREET_CLEANER, 0xb1723a, 0x211c1b, new FabricItemSettings()));
 	public static final SpecialSpawnEggItem HIDEOUS_SPAWN_EGG = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "hideous_spawn_egg"),
+			Ultracraft.identifier("hideous_spawn_egg"),
 			new MultiColorSpawnEggItem(EntityRegistry.HIDEOUS_MASS, new int[] {0xffffff}, new FabricItemSettings()));
 	public static final OrbItem SOUL_ORB = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "soul_orb"), new OrbItem(new FabricItemSettings(), EntityRegistry.SOUL_ORB));
+			Ultracraft.identifier("soul_orb"), new OrbItem(new FabricItemSettings(), EntityRegistry.SOUL_ORB));
 	public static final OrbItem BLOOD_ORB = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "blood_orb"), new OrbItem(new FabricItemSettings(), EntityRegistry.BLOOD_ORB));
+			Ultracraft.identifier("blood_orb"), new OrbItem(new FabricItemSettings(), EntityRegistry.BLOOD_ORB));
 	public static final StainedGlassWindowItem STAINED_GLASS_WINDOW = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "stained_glass_window"), new StainedGlassWindowItem(EntityRegistry.STAINED_GLASS_WINDOW, new FabricItemSettings()));
+			Ultracraft.identifier("stained_glass_window"), new StainedGlassWindowItem(EntityRegistry.STAINED_GLASS_WINDOW, new FabricItemSettings()));
 	public static final SpawnEggItem V2_SPAWN_EGG = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "v2_spawn_egg"),
+			Ultracraft.identifier("v2_spawn_egg"),
 			new SpawnEggItem(EntityRegistry.V2, 0xbd2a22, 0x261e1f, new FabricItemSettings()));
 	public static final SpawnEggItem RODENT_SPAWN_EGG = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "rodent_spawn_egg"),
+			Ultracraft.identifier("rodent_spawn_egg"),
 			new SpawnEggItem(EntityRegistry.RODENT, 0xb6d53c, 0x71aa34, new FabricItemSettings()));
 	public static final SpawnEggItem GREATERFILTH_SPAWN_EGG = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "greaterfilth_spawn_egg"),
+			Ultracraft.identifier("greaterfilth_spawn_egg"),
 			new SpawnEggItem(EntityRegistry.GREATER_FILTH, 0x4c5820, 0x91a25e, new FabricItemSettings()));
 	
 	//Plushies
 	public static final PlushieItem PLUSHIE = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "plushie"), new PlushieItem(new FabricItemSettings()));
+			Ultracraft.identifier("plushie"), new PlushieItem(new FabricItemSettings()));
 	public static final PlushieItem PITR = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "pitr"), new PitrItem(new FabricItemSettings()));
+			Ultracraft.identifier("pitr"), new PitrItem(new FabricItemSettings()));
 	public static final PlushieItem PITR_POIN = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "pitr_poin"), new PitrPoinItem(new FabricItemSettings()));
+			Ultracraft.identifier("pitr_poin"), new PitrPoinItem(new FabricItemSettings()));
 	public static final SwordsmachinePlushieItem SWORDSMACHINE = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "swordsmachine_plushie"), new SwordsmachinePlushieItem(new FabricItemSettings()));
+			Ultracraft.identifier("swordsmachine_plushie"), new SwordsmachinePlushieItem(new FabricItemSettings()));
 	public static final TalonItem TALON = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "talon"), new TalonItem(new FabricItemSettings()));
+			Ultracraft.identifier("talon"), new TalonItem(new FabricItemSettings()));
 	public static final V2Item V2 = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "v2"), new V2Item(new FabricItemSettings()));
+			Ultracraft.identifier("v2"), new V2Item(new FabricItemSettings()));
 	public static final AnthroPlushieItem ASHEN = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "ashenwulf"), new AnthroPlushieItem(new FabricItemSettings()));
+			Ultracraft.identifier("ashenwulf"), new AnthroPlushieItem(new FabricItemSettings()));
 	
 	//Special
 	public static final TerminalItem TERMINAL = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "terminal"),
+			Ultracraft.identifier("terminal"),
 			new TerminalItem(BlockRegistry.TERMINAL, new FabricItemSettings()));
 	public static final FlorpItem FLORP = (FlorpItem)Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "florp"), new FlorpItem(new FabricItemSettings().rarity(Rarity.EPIC).maxCount(1))
+			Ultracraft.identifier("florp"), new FlorpItem(new FabricItemSettings().rarity(Rarity.EPIC).maxCount(1))
 																.putLore(true, new String[] { "item.ultracraft.florp.hiddenlore" }));
 	public static final SkyBlockItem SKY = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "sky_block"), new SkyBlockItem(new FabricItemSettings().rarity(Rarity.EPIC)));
+			Ultracraft.identifier("sky_block"), new SkyBlockItem(new FabricItemSettings().rarity(Rarity.EPIC)));
 	public static final BlockItem PORTAL = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "portal"), new BlockItem(BlockRegistry.PORTAL, new FabricItemSettings().rarity(Rarity.UNCOMMON)));
+			Ultracraft.identifier("portal"), new BlockItem(BlockRegistry.PORTAL, new FabricItemSettings().rarity(Rarity.UNCOMMON)));
 	
 	//music disks
 	public static final MusicDiscItem CLAIR_DE_LUNE_DISK = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "disc/clair_de_lune"),
+			Ultracraft.identifier("disc/clair_de_lune"),
 			new MusicDiscItem(15, SoundRegistry.CLAIR_DE_LUNE.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 231));
 	public static final MusicDiscItem PRELUDE1_DISK = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "disc/prelude1"),
+			Ultracraft.identifier("disc/prelude1"),
 			new MusicDiscItem(15, SoundRegistry.PRELUDE1.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 197));
 	public static final MusicDiscItem PRELUDE1_CALM_DISK = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "disc/prelude1_calm"),
+			Ultracraft.identifier("disc/prelude1_calm"),
 			new MusicDiscItem(15, SoundRegistry.PRELUDE1_CALM.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 197));
 	public static final MusicDiscItem CERBERUS_DISK = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "disc/cerberus"),
+			Ultracraft.identifier("disc/cerberus"),
 			new MusicDiscItem(15, SoundRegistry.CERBERUS.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 135));
 	public static final MusicDiscItem CERBERUS_CALM_DISK = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "disc/cerberus_calm"),
+			Ultracraft.identifier("disc/cerberus_calm"),
 			new MusicDiscItem(15, SoundRegistry.CERBERUS_CALM.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 135));
 	public static final MusicDiscItem LIMBO2_DISK = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "disc/limbo2"),
+			Ultracraft.identifier("disc/limbo2"),
 			new MusicDiscItem(15, SoundRegistry.LIMBO2.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 176));
 	public static final MusicDiscItem LIMBO2_CALM_DISK = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "disc/limbo2_calm"),
+			Ultracraft.identifier("disc/limbo2_calm"),
 			new MusicDiscItem(15, SoundRegistry.LIMBO2_CALM.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 176));
 	public static final MusicDiscItem CYBERGRIND_DISK = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "disc/cybergrind"),
+			Ultracraft.identifier("disc/cybergrind"),
 			new MusicDiscItem(15, SoundRegistry.CYBERGRIND_DISK.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 269));
 	
 	//Animated Blocks
 	public static final HellSpawnerItem HELL_SPAWNER = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "hell_spawner"), new HellSpawnerItem(new FabricItemSettings()));
+			Ultracraft.identifier("hell_spawner"), new HellSpawnerItem(new FabricItemSettings()));
 	
 	//fakes
 	public static final Item FAKE_SHIELD = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "fake_shield"), new Item(new FabricItemSettings().maxCount(0)));
+			Ultracraft.identifier("fake_shield"), new Item(new FabricItemSettings().maxCount(0)));
 	public static final Item FAKE_BANNER = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "fake_banner"), new Item(new FabricItemSettings().maxCount(0)));
+			Ultracraft.identifier("fake_banner"), new Item(new FabricItemSettings().maxCount(0)));
 	public static final Item FAKE_TERMINAL = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "fake_terminal"), new Item(new FabricItemSettings().maxCount(0)));
+			Ultracraft.identifier("fake_terminal"), new Item(new FabricItemSettings().maxCount(0)));
 	public static final Item FAKE_CHEST = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "fake_chest"), new Item(new FabricItemSettings().maxCount(0)));
+			Ultracraft.identifier("fake_chest"), new Item(new FabricItemSettings().maxCount(0)));
 	public static final Item FAKE_ENDER_CHEST = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "fake_ender_chest"), new Item(new FabricItemSettings().maxCount(0)));
+			Ultracraft.identifier("fake_ender_chest"), new Item(new FabricItemSettings().maxCount(0)));
 	public static final Item FAKE_HELL_SPAWNER = Registry.register(Registries.ITEM,
-			new Identifier(Ultracraft.MOD_ID, "fake_hell_spawner"), new Item(new FabricItemSettings().maxCount(0)));
+			Ultracraft.identifier("fake_hell_spawner"), new Item(new FabricItemSettings().maxCount(0)));
 	
-	public static final RegistryKey<ItemGroup> ULTRACRAFT_TAB = RegistryKey.of(RegistryKeys.ITEM_GROUP, new Identifier(Ultracraft.MOD_ID, "item"));
-	public static final RegistryKey<ItemGroup> EDIT_MODE_TAB = RegistryKey.of(RegistryKeys.ITEM_GROUP, new Identifier(Ultracraft.MOD_ID, "edit"));
-	public static final RegistryKey<ItemGroup> MUSIC_TAB = RegistryKey.of(RegistryKeys.ITEM_GROUP, new Identifier(Ultracraft.MOD_ID, "music"));
+	public static final RegistryKey<ItemGroup> ULTRACRAFT_TAB = RegistryKey.of(RegistryKeys.ITEM_GROUP, Ultracraft.identifier("item"));
+	public static final RegistryKey<ItemGroup> EDIT_MODE_TAB = RegistryKey.of(RegistryKeys.ITEM_GROUP, Ultracraft.identifier("edit"));
+	public static final RegistryKey<ItemGroup> MUSIC_TAB = RegistryKey.of(RegistryKeys.ITEM_GROUP, Ultracraft.identifier("music"));
 	
 	public static void register()
 	{

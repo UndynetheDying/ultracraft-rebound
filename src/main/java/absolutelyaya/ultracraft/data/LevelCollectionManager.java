@@ -34,7 +34,7 @@ public  class LevelCollectionManager extends JsonDataLoader
 			@Override
 			public Identifier getFabricId()
 			{
-				return new Identifier(Ultracraft.MOD_ID, "ultracraft/layer");
+				return Ultracraft.identifier("ultracraft/layer");
 			}
 			
 			@Override

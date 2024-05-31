@@ -21,7 +21,7 @@ public class ShockwaveRenderer extends EntityRenderer<ShockwaveEntity>
 	@Override
 	public Identifier getTexture(ShockwaveEntity entity)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "textures/particle/generic_stripe.png");
+		return Ultracraft.identifier("textures/particle/generic_stripe.png");
 	}
 	
 	@Override

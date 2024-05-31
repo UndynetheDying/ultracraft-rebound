@@ -72,7 +72,7 @@ public class LimboDecalStructure extends Structure
 		Identifier[] ids = new Identifier[count];
 		for (int i = 0; i < count; i++)
 		{
-			ids[i] = new Identifier(Ultracraft.MOD_ID, "limbo/" + id + (i + 1));
+			ids[i] = Ultracraft.identifier("limbo/" + id + (i + 1));
 		}
 		return ids;
 	}

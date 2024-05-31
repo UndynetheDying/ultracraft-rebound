@@ -11,7 +11,7 @@ public class ModelPredicateRegistry
 {
 	public static void registerModels()
 	{
-		ModelPredicateProviderRegistry.register(BlockRegistry.PEDESTAL.asItem(), new Identifier(Ultracraft.MOD_ID, "type"),
+		ModelPredicateProviderRegistry.register(BlockRegistry.PEDESTAL.asItem(), Ultracraft.identifier("type"),
 				(stack, world, entity, seed) -> {
 					if(!stack.hasNbt())
 						return 0;
@@ -30,7 +30,7 @@ public class ModelPredicateRegistry
 					}
 					return 0;
 				});
-		ModelPredicateProviderRegistry.register(BlockRegistry.SLAB_BLOCK.asItem(), new Identifier(Ultracraft.MOD_ID, "number"),
+		ModelPredicateProviderRegistry.register(BlockRegistry.SLAB_BLOCK.asItem(), Ultracraft.identifier("number"),
 				(stack, world, entity, seed) -> {
 					if(!stack.hasNbt())
 						return 0;

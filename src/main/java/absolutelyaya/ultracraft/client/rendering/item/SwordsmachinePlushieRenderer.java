@@ -9,8 +9,8 @@ public class SwordsmachinePlushieRenderer extends AbstractPlushieRenderer<Plushi
 {
 	public SwordsmachinePlushieRenderer()
 	{
-		super(new DefaultedItemGeoModel<PlushieItem>(new Identifier(Ultracraft.MOD_ID, "plushie"))
-					  .withAltModel(new Identifier(Ultracraft.MOD_ID, "swordsmachine_plushie"))
-					  .withAltAnimations(new Identifier(Ultracraft.MOD_ID, "swordsmachine_plushie")));
+		super(new DefaultedItemGeoModel<PlushieItem>(Ultracraft.identifier("plushie"))
+					  .withAltModel(Ultracraft.identifier("swordsmachine_plushie"))
+					  .withAltAnimations(Ultracraft.identifier("swordsmachine_plushie")));
 	}
 }

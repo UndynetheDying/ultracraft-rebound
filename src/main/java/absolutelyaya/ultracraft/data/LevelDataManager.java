@@ -23,10 +23,10 @@ import java.util.Map;
 
 public class LevelDataManager extends JsonDataLoader
 {
-	public static final LevelData ERR_DATA = new LevelData(new Identifier(Ultracraft.MOD_ID, "placeholder"),
+	public static final LevelData ERR_DATA = new LevelData(Ultracraft.identifier("placeholder"),
 			"level.ultracraft.error.title", "level.ultracraft.error.description", "", "", null,
-			new Identifier(Ultracraft.MOD_ID, "textures/level/err.png"), BlockPos.ORIGIN, true, true);
-	public static final Identifier PLACEHOLDER_THUMB = new Identifier(Ultracraft.MOD_ID, "textures/level/placeholder.png");
+			Ultracraft.identifier("textures/level/err.png"), BlockPos.ORIGIN, true, true);
+	public static final Identifier PLACEHOLDER_THUMB = Ultracraft.identifier("textures/level/placeholder.png");
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 	public static LevelDataManager Instance;
 	public static Map<Identifier, LevelData> levels = new HashMap<>(), customLevels = new HashMap<>();
@@ -41,7 +41,7 @@ public class LevelDataManager extends JsonDataLoader
 			@Override
 			public Identifier getFabricId()
 			{
-				return new Identifier(Ultracraft.MOD_ID, "ultracraft/level");
+				return Ultracraft.identifier("ultracraft/level");
 			}
 			
 			@Override

@@ -47,7 +47,7 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 		List<EntryStack<?>> entries = new ArrayList<>();
 		for (TerminalBlockEntity.Base base : TerminalBlockEntity.Base.values())
 			entries.add(EntryStacks.of(TerminalItem.getStack(base)));
-		registry.group(new Identifier(Ultracraft.MOD_ID, "terminal-variants"), Text.translatable("rei-group.ultracraft.terminals"), entries);
+		registry.group(Ultracraft.identifier("terminal-variants"), Text.translatable("rei-group.ultracraft.terminals"), entries);
 		entries = List.of(
 				EntryStacks.of(BlockRegistry.MAP_ROOM),
 				EntryStacks.of(BlockRegistry.MAP_TRIGGER),
@@ -73,7 +73,7 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 				EntryStacks.of(BlockRegistry.MAP_GLOBAL_REDSTONE),
 				EntryStacks.of(BlockRegistry.MAP_GLOBAL_RECEIVER),
 				EntryStacks.of(BlockRegistry.MAP_GLOBAL_TITLE));
-		registry.group(new Identifier(Ultracraft.MOD_ID, "mapping"), Text.translatable("rei-group.ultracraft.mapping"), entries);
+		registry.group(Ultracraft.identifier("mapping"), Text.translatable("rei-group.ultracraft.mapping"), entries);
 		entries = List.of(
 				EntryStacks.of(BlockRegistry.RED_CARPET),
 				EntryStacks.of(BlockRegistry.ORANGE_CARPET),
@@ -91,7 +91,7 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 				EntryStacks.of(BlockRegistry.GRAY_CARPET),
 				EntryStacks.of(BlockRegistry.LIGHT_GRAY_CARPET),
 				EntryStacks.of(BlockRegistry.WHITE_CARPET));
-		registry.group(new Identifier(Ultracraft.MOD_ID, "carpet"), Text.translatable("rei-group.ultracraft.carpet"), entries);
+		registry.group(Ultracraft.identifier("carpet"), Text.translatable("rei-group.ultracraft.carpet"), entries);
 		entries = List.of(
 				EntryStacks.of(ItemRegistry.PRELUDE1_DISK),
 				EntryStacks.of(ItemRegistry.PRELUDE1_CALM_DISK),
@@ -101,6 +101,6 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 				EntryStacks.of(ItemRegistry.LIMBO2_CALM_DISK),
 				EntryStacks.of(ItemRegistry.CYBERGRIND_DISK),
 				EntryStacks.of(ItemRegistry.CLAIR_DE_LUNE_DISK));
-		registry.group(new Identifier(Ultracraft.MOD_ID, "discs"), Text.translatable("rei-group.ultracraft.discs"), entries);
+		registry.group(Ultracraft.identifier("discs"), Text.translatable("rei-group.ultracraft.discs"), entries);
 	}
 }

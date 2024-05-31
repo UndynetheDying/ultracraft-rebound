@@ -37,7 +37,7 @@ import java.util.List;
 
 public class ConfigWidget<T extends ConfigEntry<?>> extends ClickableWidget implements Element, Drawable, Selectable
 {
-	static final Identifier ICONS = new Identifier(Ultracraft.MOD_ID, "textures/gui/gamerule_icons.png");
+	static final Identifier ICONS = Ultracraft.identifier("textures/gui/gamerule_icons.png");
 	
 	final String parentId;
 	final T rule;
@@ -116,7 +116,7 @@ public class ConfigWidget<T extends ConfigEntry<?>> extends ClickableWidget impl
 	{
 		alpha = MathHelper.clamp((getY() - 30) / 10f, 0f, 1f);
 		RenderSystem.setShaderColor(0.69f, 0.69f, 0.69f, alpha);
-		RenderSystem.setShaderTexture(0, simplistic ? new Identifier(Ultracraft.MOD_ID, "textures/gui/simplistic_bg.png") : BGTexture);
+		RenderSystem.setShaderTexture(0, simplistic ? Ultracraft.identifier("textures/gui/simplistic_bg.png") : BGTexture);
 		MatrixStack matrices = context.getMatrices();
 		RenderingUtil.drawTexture(matrices.peek().getPositionMatrix(), new Vector4f(getX(), getY(), 200, 36), 0,
 				new Vec2f(16, 16), new Vector4f(0f, 0, 100, 16), alpha);

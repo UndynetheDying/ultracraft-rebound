@@ -113,14 +113,14 @@ public class UltraLevelComponent implements IUltraLevelComponent
 	@Override
 	public void unlockAllDestinations()
 	{
-		unlockDestination(new Identifier(Ultracraft.MOD_ID, "dimension.overworld"));
-		unlockDestination(new Identifier(Ultracraft.MOD_ID, "tutorial"));
-		unlockDestination(new Identifier(Ultracraft.MOD_ID, "prelude1"));
-		unlockDestination(new Identifier(Ultracraft.MOD_ID, "prelude2"));
-		unlockDestination(new Identifier(Ultracraft.MOD_ID, "prelude3"));
-		unlockDestination(new Identifier(Ultracraft.MOD_ID, "limbo1"));
-		unlockDestination(new Identifier(Ultracraft.MOD_ID, "dimension.limbo"));
-		unlockDestination(new Identifier(Ultracraft.MOD_ID, "limbo2"));
+		unlockDestination(Ultracraft.identifier("dimension.overworld"));
+		unlockDestination(Ultracraft.identifier("tutorial"));
+		unlockDestination(Ultracraft.identifier("prelude1"));
+		unlockDestination(Ultracraft.identifier("prelude2"));
+		unlockDestination(Ultracraft.identifier("prelude3"));
+		unlockDestination(Ultracraft.identifier("limbo1"));
+		unlockDestination(Ultracraft.identifier("dimension.limbo"));
+		unlockDestination(Ultracraft.identifier("limbo2"));
 	}
 	
 	@Override
@@ -146,7 +146,7 @@ public class UltraLevelComponent implements IUltraLevelComponent
 	public void resetGlobalProgression()
 	{
 		unlockedDestinations.clear();
-		unlockedDestinations.add(new Identifier(Ultracraft.MOD_ID, "dimension.overworld"));
+		unlockedDestinations.add(Ultracraft.identifier("dimension.overworld"));
 	}
 	
 	@Override
@@ -232,8 +232,8 @@ public class UltraLevelComponent implements IUltraLevelComponent
 	}
 	
 	static {
-		DEFAULT_DESTINATIONS.add(new Identifier(Ultracraft.MOD_ID, "dimension.overworld"));
-		DEFAULT_DESTINATIONS.add(new Identifier(Ultracraft.MOD_ID, "prelude1"));
-		DEFAULT_DESTINATIONS.add(new Identifier(Ultracraft.MOD_ID, "tutorial"));
+		DEFAULT_DESTINATIONS.add(Ultracraft.identifier("dimension.overworld"));
+		DEFAULT_DESTINATIONS.add(Ultracraft.identifier("prelude1"));
+		DEFAULT_DESTINATIONS.add(Ultracraft.identifier("tutorial"));
 	}
 }

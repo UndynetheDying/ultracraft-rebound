@@ -283,7 +283,7 @@ public class EditModeRenderer
 		matrices.scale(1f, 1f, -1f);
 		//POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL
 		Matrix4f matrix = matrices.peek().getPositionMatrix();
-		VertexConsumer consumer = consumerProvider.getBuffer(RenderLayer.getEntityCutout(new Identifier(Ultracraft.MOD_ID, "textures/item/editor/" + texture + ".png")));
+		VertexConsumer consumer = consumerProvider.getBuffer(RenderLayer.getEntityCutout(Ultracraft.identifier("textures/item/editor/" + texture + ".png")));
 		consumer.vertex(matrix, -0.5f, -0.5f, 0f).color(0xffffffff).texture(1f, 1f).overlay(OverlayTexture.DEFAULT_UV)
 				.light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(0f, 1f, 0f).next();
 		consumer.vertex(matrix, -0.5f, 0.5f, 0f).color(0xffffffff).texture(1f, 0f).overlay(OverlayTexture.DEFAULT_UV)

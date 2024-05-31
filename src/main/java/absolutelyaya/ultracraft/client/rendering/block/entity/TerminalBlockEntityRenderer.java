@@ -50,7 +50,7 @@ public class TerminalBlockEntityRenderer extends GeoBlockRenderer<TerminalBlockE
 	{
 		TerminalBlockEntity.Base base = animatable.getBase();
 		if(base.equals(TerminalBlockEntity.Base.RGB))
-			return new Identifier(Ultracraft.MOD_ID, "procedural/terminal_base/" + animatable.getTerminalID().toString());
+			return Ultracraft.identifier("procedural/terminal_base/" + animatable.getTerminalID().toString());
 		return base.getTexture();
 	}
 	

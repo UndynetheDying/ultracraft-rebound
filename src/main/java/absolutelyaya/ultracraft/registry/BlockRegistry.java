@@ -186,12 +186,12 @@ public class BlockRegistry
 	{
 		if(item)
 			registerItem(name, block);
-		return Registry.register(Registries.BLOCK, new Identifier(Ultracraft.MOD_ID, name), block);
+		return Registry.register(Registries.BLOCK, Ultracraft.identifier(name), block);
 	}
 	
 	private static void registerItem(String name, Block block)
 	{
-		Registry.register(Registries.ITEM, new Identifier(Ultracraft.MOD_ID, name),
+		Registry.register(Registries.ITEM, Ultracraft.identifier(name),
 				new BlockItem(block, new FabricItemSettings()));
 	}
 	

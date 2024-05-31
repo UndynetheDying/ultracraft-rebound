@@ -19,7 +19,7 @@ import org.joml.Quaternionf;
 
 public class EnragedFeature<T extends LivingEntity> extends FeatureRenderer<T, EntityModel<T>>
 {
-	static final Identifier TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/entity/enraged.png");
+	static final Identifier TEXTURE = Ultracraft.identifier("textures/entity/enraged.png");
 	static final MinecraftClient client;
 	private final EnragedModel<T> enrage;
 	

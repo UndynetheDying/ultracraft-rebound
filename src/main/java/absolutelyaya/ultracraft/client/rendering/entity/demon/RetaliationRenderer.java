@@ -18,7 +18,7 @@ import org.joml.Quaternionf;
 
 public class RetaliationRenderer extends EntityRenderer<RetaliationEntity>
 {
-	static final Identifier TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/entity/yaya.png");
+	static final Identifier TEXTURE = Ultracraft.identifier("textures/entity/yaya.png");
 	
 	public RetaliationRenderer(EntityRendererFactory.Context ctx)
 	{

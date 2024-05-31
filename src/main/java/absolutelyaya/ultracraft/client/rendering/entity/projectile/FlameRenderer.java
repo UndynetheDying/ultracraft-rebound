@@ -46,6 +46,6 @@ public class FlameRenderer extends EntityRenderer<FlameProjectileEntity>
 	@Override
 	public Identifier getTexture(FlameProjectileEntity entity)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "textures/entity/flame.png");
+		return Ultracraft.identifier("textures/entity/flame.png");
 	}
 }

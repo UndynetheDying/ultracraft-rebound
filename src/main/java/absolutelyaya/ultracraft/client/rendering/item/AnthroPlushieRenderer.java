@@ -9,6 +9,6 @@ public class AnthroPlushieRenderer extends AbstractPlushieRenderer<PlushieItem>
 {
 	public AnthroPlushieRenderer()
 	{
-		super(new DefaultedItemGeoModel<>(new Identifier(Ultracraft.MOD_ID, "anthro_plushie")));
+		super(new DefaultedItemGeoModel<>(Ultracraft.identifier("anthro_plushie")));
 	}
 }

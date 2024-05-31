@@ -28,10 +28,10 @@ public class MagnetEntityRenderer extends GeoEntityRenderer<MagnetEntity>
 	{
 		float strain = entity.getStrain();
 		if(strain > 1f)
-			return new Identifier(Ultracraft.MOD_ID, "textures/entity/magnet2.png");
+			return Ultracraft.identifier("textures/entity/magnet2.png");
 		else if(strain > 0.5f)
-			return new Identifier(Ultracraft.MOD_ID, "textures/entity/magnet1.png");
-		return new Identifier(Ultracraft.MOD_ID, "textures/entity/magnet.png");
+			return Ultracraft.identifier("textures/entity/magnet1.png");
+		return Ultracraft.identifier("textures/entity/magnet.png");
 	}
 	
 	@Override

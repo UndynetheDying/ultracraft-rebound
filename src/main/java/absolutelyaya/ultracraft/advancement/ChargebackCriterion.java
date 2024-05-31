@@ -15,7 +15,7 @@ import net.minecraft.util.Identifier;
 
 public class ChargebackCriterion extends AbstractCriterion<ChargebackCriterion.Conditions>
 {
-	static final Identifier ID = new Identifier(Ultracraft.MOD_ID, "chargeback");
+	static final Identifier ID = Ultracraft.identifier("chargeback");
 	
 	@Override
 	protected Conditions conditionsFromJson(JsonObject obj, LootContextPredicate playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer)

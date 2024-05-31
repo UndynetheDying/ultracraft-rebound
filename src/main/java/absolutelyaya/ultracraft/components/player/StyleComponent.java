@@ -36,16 +36,16 @@ import java.util.Queue;
 
 public class StyleComponent implements IStyleComponent
 {
-	final Identifier KILL_ID = new Identifier(Ultracraft.MOD_ID, "kill");
-	final Identifier OVERKILL_ID = new Identifier(Ultracraft.MOD_ID, "overkill");
-	final Identifier BIG_KILL_ID = new Identifier(Ultracraft.MOD_ID, "big_kill");
-	final Identifier MULTI_KILL_ID = new Identifier(Ultracraft.MOD_ID, "multikill");
-	final Identifier FINISHED_ID = new Identifier(Ultracraft.MOD_ID, "finished");
-	final Identifier AIR_KILL_ID = new Identifier(Ultracraft.MOD_ID, "air_kill");
-	final Identifier FIREWORKS_ID = new Identifier(Ultracraft.MOD_ID, "fireworks");
-	final Identifier AIR_SLAM_ID = new Identifier(Ultracraft.MOD_ID, "air_slam");
-	final Identifier FRIENDLY_FIRE_ID = new Identifier(Ultracraft.MOD_ID, "friendly_fire");
-	final Identifier BIG_FIST_ID = new Identifier(Ultracraft.MOD_ID, "big_fist");
+	final Identifier KILL_ID = Ultracraft.identifier("kill");
+	final Identifier OVERKILL_ID = Ultracraft.identifier("overkill");
+	final Identifier BIG_KILL_ID = Ultracraft.identifier("big_kill");
+	final Identifier MULTI_KILL_ID = Ultracraft.identifier("multikill");
+	final Identifier FINISHED_ID = Ultracraft.identifier("finished");
+	final Identifier AIR_KILL_ID = Ultracraft.identifier("air_kill");
+	final Identifier FIREWORKS_ID = Ultracraft.identifier("fireworks");
+	final Identifier AIR_SLAM_ID = Ultracraft.identifier("air_slam");
+	final Identifier FRIENDLY_FIRE_ID = Ultracraft.identifier("friendly_fire");
+	final Identifier BIG_FIST_ID = Ultracraft.identifier("big_fist");
 	final PlayerEntity provider;
 	Map<Identifier, Integer> stalenessMap = new HashMap<>();
 	Queue<Pair<String, Long>> bonusQueue = new ArrayDeque<>();

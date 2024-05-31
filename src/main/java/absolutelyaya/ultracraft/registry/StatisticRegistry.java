@@ -9,13 +9,13 @@ import net.minecraft.util.Identifier;
 
 public class StatisticRegistry
 {
-	public static final Identifier COLLECT_SOUL_ORB = new Identifier(Ultracraft.MOD_ID, "collect_soul_orb");
-	public static final Identifier COLLECT_BLOOD_ORB = new Identifier(Ultracraft.MOD_ID, "collect_blood_orb");
-	public static final Identifier DASH = new Identifier(Ultracraft.MOD_ID, "dash");
-	public static final Identifier SLIDE = new Identifier(Ultracraft.MOD_ID, "slide");
-	public static final Identifier SLAM = new Identifier(Ultracraft.MOD_ID, "slam");
-	public static final Identifier COIN_PUNCH = new Identifier(Ultracraft.MOD_ID, "coin_punch");
-	public static final Identifier PARRY = new Identifier(Ultracraft.MOD_ID, "parry");
+	public static final Identifier COLLECT_SOUL_ORB = Ultracraft.identifier("collect_soul_orb");
+	public static final Identifier COLLECT_BLOOD_ORB = Ultracraft.identifier("collect_blood_orb");
+	public static final Identifier DASH = Ultracraft.identifier("dash");
+	public static final Identifier SLIDE = Ultracraft.identifier("slide");
+	public static final Identifier SLAM = Ultracraft.identifier("slam");
+	public static final Identifier COIN_PUNCH = Ultracraft.identifier("coin_punch");
+	public static final Identifier PARRY = Ultracraft.identifier("parry");
 	
 	static void register(Identifier id, StatFormatter formatter)
 	{

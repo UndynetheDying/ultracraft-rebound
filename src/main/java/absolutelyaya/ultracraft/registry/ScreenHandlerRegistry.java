@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
 public class ScreenHandlerRegistry
 {
 	public static final ScreenHandlerType<PedestalScreenHandler> PEDESTAL = Registry.register(Registries.SCREEN_HANDLER,
-			new Identifier(Ultracraft.MOD_ID,  "pedestal"), new ScreenHandlerType<>(PedestalScreenHandler::createPedestalHandler, FeatureSet.empty()));
+			Ultracraft.identifier( "pedestal"), new ScreenHandlerType<>(PedestalScreenHandler::createPedestalHandler, FeatureSet.empty()));
 	
 	public static void registerClient()
 	{

@@ -24,12 +24,12 @@ import java.util.Map;
 
 public class ProgressionComponent implements IProgressionComponent, AutoSyncedComponent
 {
-	public static final Identifier FEEDBACKER = new Identifier(Ultracraft.MOD_ID, "feedbacker");
-	public static final Identifier KNUCKLEBLASTER = new Identifier(Ultracraft.MOD_ID, "knuckleblaster");
-	public static final Identifier SLAB = new Identifier(Ultracraft.MOD_ID, "slab");
-	public static final Identifier HIVEL = new Identifier(Ultracraft.MOD_ID, "hivel");
-	public static final Identifier BLOODHEAL = new Identifier(Ultracraft.MOD_ID, "bloodheal");
-	public static final Identifier ULTRAHUD = new Identifier(Ultracraft.MOD_ID, "ultrahud");
+	public static final Identifier FEEDBACKER = Ultracraft.identifier("feedbacker");
+	public static final Identifier KNUCKLEBLASTER = Ultracraft.identifier("knuckleblaster");
+	public static final Identifier SLAB = Ultracraft.identifier("slab");
+	public static final Identifier HIVEL = Ultracraft.identifier("hivel");
+	public static final Identifier BLOODHEAL = Ultracraft.identifier("bloodheal");
+	public static final Identifier ULTRAHUD = Ultracraft.identifier("ultrahud");
 	
 	static final List<Identifier> ENTRIES = new ArrayList<>() {
 		{

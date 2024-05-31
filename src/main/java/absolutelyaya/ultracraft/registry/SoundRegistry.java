@@ -154,13 +154,13 @@ public class SoundRegistry
 	
 	private static RegistryEntry.Reference<SoundEvent> registerReference(String id)
 	{
-		Identifier identifier = new Identifier(Ultracraft.MOD_ID, id);
+		Identifier identifier = Ultracraft.identifier(id);
 		return Registry.registerReference(Registries.SOUND_EVENT, identifier, SoundEvent.of(identifier));
 	}
 	
 	private static SoundEvent register(String id)
 	{
-		Identifier identifier = new Identifier(Ultracraft.MOD_ID, id);
+		Identifier identifier = Ultracraft.identifier(id);
 		return Registry.register(Registries.SOUND_EVENT, identifier, SoundEvent.of(identifier));
 	}
 }

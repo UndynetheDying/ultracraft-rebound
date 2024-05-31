@@ -26,61 +26,61 @@ public class WingPatterns
 	public static void init()
 	{
 		CoreShaderRegistrationCallback.EVENT.register((callback) -> {
-			callback.register(new Identifier(Ultracraft.MOD_ID, "wing-patterns/gamer"), VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, (program) -> {
+			callback.register(Ultracraft.identifier("wing-patterns/gamer"), VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, (program) -> {
 				program.getUniform("MetalColor");
 				program.getUniform("WingColor");
 				program.markUniformsDirty();
 				gamerProgram = program;
 			});
-			callback.register(new Identifier(Ultracraft.MOD_ID, "wing-patterns/sunburst"), VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, (program) -> {
+			callback.register(Ultracraft.identifier("wing-patterns/sunburst"), VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, (program) -> {
 				program.getUniform("MetalColor");
 				program.getUniform("WingColor");
 				program.markUniformsDirty();
 				sunburstProgram = program;
 			});
-			callback.register(new Identifier(Ultracraft.MOD_ID, "wing-patterns/monochrome"), VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, (program) -> {
+			callback.register(Ultracraft.identifier("wing-patterns/monochrome"), VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, (program) -> {
 				program.getUniform("MetalColor");
 				program.getUniform("WingColor");
 				program.markUniformsDirty();
 				monochromeProgram = program;
 			});
-			callback.register(new Identifier(Ultracraft.MOD_ID, "wing-patterns/ripples"), VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, (program) -> {
+			callback.register(Ultracraft.identifier("wing-patterns/ripples"), VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, (program) -> {
 				program.getUniform("MetalColor");
 				program.getUniform("WingColor");
 				program.markUniformsDirty();
 				ripplesProgram = program;
 			});
-			callback.register(new Identifier(Ultracraft.MOD_ID, "wing-patterns/ripples-clr"), VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, (program) -> {
+			callback.register(Ultracraft.identifier("wing-patterns/ripples-clr"), VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, (program) -> {
 				program.getUniform("MetalColor");
 				program.getUniform("WingColor");
 				program.markUniformsDirty();
 				ripplesClrProgram = program;
 			});
-			callback.register(new Identifier(Ultracraft.MOD_ID, "wing-patterns/preview/gamer"), VertexFormats.POSITION_TEXTURE_COLOR, (program) -> {
+			callback.register(Ultracraft.identifier("wing-patterns/preview/gamer"), VertexFormats.POSITION_TEXTURE_COLOR, (program) -> {
 				program.getUniform("MetalColor");
 				program.getUniform("WingColor");
 				program.markUniformsDirty();
 				gamerPreviewProgram = program;
 			});
-			callback.register(new Identifier(Ultracraft.MOD_ID, "wing-patterns/preview/sunburst"), VertexFormats.POSITION_TEXTURE_COLOR, (program) -> {
+			callback.register(Ultracraft.identifier("wing-patterns/preview/sunburst"), VertexFormats.POSITION_TEXTURE_COLOR, (program) -> {
 				program.getUniform("MetalColor");
 				program.getUniform("WingColor");
 				program.markUniformsDirty();
 				sunburstPreviewProgram = program;
 			});
-			callback.register(new Identifier(Ultracraft.MOD_ID, "wing-patterns/preview/monochrome"), VertexFormats.POSITION_TEXTURE_COLOR, (program) -> {
+			callback.register(Ultracraft.identifier("wing-patterns/preview/monochrome"), VertexFormats.POSITION_TEXTURE_COLOR, (program) -> {
 				program.getUniform("MetalColor");
 				program.getUniform("WingColor");
 				program.markUniformsDirty();
 				monochromePreviewProgram = program;
 			});
-			callback.register(new Identifier(Ultracraft.MOD_ID, "wing-patterns/preview/ripples"), VertexFormats.POSITION_TEXTURE_COLOR, (program) -> {
+			callback.register(Ultracraft.identifier("wing-patterns/preview/ripples"), VertexFormats.POSITION_TEXTURE_COLOR, (program) -> {
 				program.getUniform("MetalColor");
 				program.getUniform("WingColor");
 				program.markUniformsDirty();
 				ripplesPreviewProgram = program;
 			});
-			callback.register(new Identifier(Ultracraft.MOD_ID, "wing-patterns/preview/ripples-clr"), VertexFormats.POSITION_TEXTURE_COLOR, (program) -> {
+			callback.register(Ultracraft.identifier("wing-patterns/preview/ripples-clr"), VertexFormats.POSITION_TEXTURE_COLOR, (program) -> {
 				program.getUniform("MetalColor");
 				program.getUniform("WingColor");
 				program.markUniformsDirty();

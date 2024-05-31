@@ -125,7 +125,7 @@ public class ShotgunPelletEntity extends HellBulletEntity implements ProjectileE
 		Vec3d pos = hitResult.getPos();
 		ExplosionHandler.explosion(null, getWorld(), pos, DamageSources.get(getWorld(), DamageSources.PROJBOOST, parrier), 7f, 4.6f, 3f, true);
 		if(hitResult.getType().equals(HitResult.Type.ENTITY) && isParried())
-			UltraComponents.STYLE.get(parrier).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "projboost")));
+			UltraComponents.STYLE.get(parrier).styleBonusGet(StyleBonusManager.getBonuses().get(Ultracraft.identifier("projboost")));
 	}
 	
 	@Override

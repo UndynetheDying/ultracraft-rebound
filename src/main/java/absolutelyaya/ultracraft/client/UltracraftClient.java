@@ -87,10 +87,10 @@ import java.util.UUID;
 @Environment(EnvType.CLIENT)
 public class UltracraftClient implements ClientModInitializer
 {
-	public static final EntityModelLayer WINGS_LAYER = new EntityModelLayer(new Identifier(Ultracraft.MOD_ID, "wings"), "main");
-	public static final EntityModelLayer MALICIOUS_LAYER = new EntityModelLayer(new Identifier(Ultracraft.MOD_ID, "malicious"), "main");
-	public static final EntityModelLayer ENRAGE_LAYER = new EntityModelLayer(new Identifier(Ultracraft.MOD_ID, "enraged"), "main");
-	public static final EntityModelLayer INTERRUPTABLE_CHARGE_LAYER = new EntityModelLayer(new Identifier(Ultracraft.MOD_ID, "interruptable_charge"), "main");
+	public static final EntityModelLayer WINGS_LAYER = new EntityModelLayer(Ultracraft.identifier("wings"), "main");
+	public static final EntityModelLayer MALICIOUS_LAYER = new EntityModelLayer(Ultracraft.identifier("malicious"), "main");
+	public static final EntityModelLayer ENRAGE_LAYER = new EntityModelLayer(Ultracraft.identifier("enraged"), "main");
+	public static final EntityModelLayer INTERRUPTABLE_CHARGE_LAYER = new EntityModelLayer(Ultracraft.identifier("interruptable_charge"), "main");
 	public static String wingPreset = "", wingPattern = "", wingOverlay = "";
 	private static ShaderProgram wingsColoredProgram, wingsColoredUIProgram, texPosFade, flesh, sky;
 	public static ClientHitscanHandler HITSCAN_HANDLER;
@@ -308,42 +308,42 @@ public class UltracraftClient implements ClientModInitializer
 			{
 				RenderSystem.enableBlend();
 				String bloodName = GoopClient.getConfig().censorMature ? "textures/misc/blood_overlay_c" : "textures/misc/blood_overlay";
-				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, new Identifier(Ultracraft.MOD_ID, bloodName + "3.png"),
+				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, Ultracraft.identifier(bloodName + "3.png"),
 						Math.min(screenblood - 1.25f, 0.75f));
-				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, new Identifier(Ultracraft.MOD_ID, bloodName + "2.png"),
+				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, Ultracraft.identifier(bloodName + "2.png"),
 						Math.min(screenblood - 0.25f, Math.max(0.6f - Math.min(screenblood - 0.75f, 0.6f), 0f)));
-				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, new Identifier(Ultracraft.MOD_ID, bloodName + "1.png"),
+				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, Ultracraft.identifier(bloodName + "1.png"),
 						Math.min(screenblood - 0.75f, 0.6f));
 				screenblood = Math.max(0f, screenblood - delta / 120);
 			}
 			if(visualFreezeTicks > 0)
-				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, new Identifier(Ultracraft.MOD_ID, "textures/misc/time_freeze_overlay.png"),
+				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, Ultracraft.identifier("textures/misc/time_freeze_overlay.png"),
 						0.25f);
 		});
 		
 		WingPatterns.init();
 		CoreShaderRegistrationCallback.EVENT.register((callback) -> {
-			callback.register(new Identifier(Ultracraft.MOD_ID, "rendertype_wings_colored"), VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, (program) -> {
+			callback.register(Ultracraft.identifier("rendertype_wings_colored"), VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, (program) -> {
 				program.getUniform("MetalColor");
 				program.getUniform("WingColor");
 				program.getUniform("Pattern");
 				program.markUniformsDirty();
 				wingsColoredProgram = program;
 			});
-			callback.register(new Identifier(Ultracraft.MOD_ID, "wings_colored_ui"), VertexFormats.POSITION_TEXTURE_COLOR, (program) -> {
+			callback.register(Ultracraft.identifier("wings_colored_ui"), VertexFormats.POSITION_TEXTURE_COLOR, (program) -> {
 				program.getUniform("MetalColor");
 				program.getUniform("WingColor");
 				program.getUniform("Pattern");
 				program.markUniformsDirty();
 				wingsColoredUIProgram = program;
 			});
-			callback.register(new Identifier(Ultracraft.MOD_ID, "position_tex_fade"), VertexFormats.POSITION_TEXTURE_COLOR, (program) -> {
+			callback.register(Ultracraft.identifier("position_tex_fade"), VertexFormats.POSITION_TEXTURE_COLOR, (program) -> {
 				program.getUniform("TextureSize");
 				program.markUniformsDirty();
 				texPosFade = program;
 			});
-			callback.register(new Identifier(Ultracraft.MOD_ID, "flesh"), VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL, (program) -> flesh = program);
-			callback.register(new Identifier(Ultracraft.MOD_ID, "sky"), VertexFormats.POSITION_TEXTURE, (program) -> {
+			callback.register(Ultracraft.identifier("flesh"), VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL, (program) -> flesh = program);
+			callback.register(Ultracraft.identifier("sky"), VertexFormats.POSITION_TEXTURE, (program) -> {
 				program.getUniform("RotMat");
 				program.markUniformsDirty();
 				sky = program;
@@ -373,7 +373,7 @@ public class UltracraftClient implements ClientModInitializer
 		});
 		//Block Layers
 		FluidRenderHandlerRegistry.INSTANCE.register(FluidRegistry.STILL_BLOOD, FluidRegistry.Flowing_BLOOD,
-				new SimpleFluidRenderHandler(new Identifier(Ultracraft.MOD_ID, "block/blood_still"), new Identifier(Ultracraft.MOD_ID, "block/blood_flow")));
+				new SimpleFluidRenderHandler(Ultracraft.identifier("block/blood_still"), Ultracraft.identifier("block/blood_flow")));
 		BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(), FluidRegistry.STILL_BLOOD, FluidRegistry.Flowing_BLOOD);
 		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.FLESH, //prevent Sodium from crashing when trying to render Flesh Blocks
 				SODIUM ? RenderLayers.getSolid() : RenderLayers.getFlesh());

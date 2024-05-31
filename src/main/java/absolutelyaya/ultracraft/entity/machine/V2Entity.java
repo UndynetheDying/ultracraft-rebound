@@ -443,7 +443,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 		dataTracker.set(ENRAGED, true);
 		playSound(SoundRegistry.GENERIC_ENRAGE, 10f, 1f);
 		getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(32), i -> true)
-				.forEach(p -> UltraComponents.STYLE.get(p).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "enrage"))));
+				.forEach(p -> UltraComponents.STYLE.get(p).styleBonusGet(StyleBonusManager.getBonuses().get(Ultracraft.identifier("enrage"))));
 	}
 	
 	void setMovementMode(int i)

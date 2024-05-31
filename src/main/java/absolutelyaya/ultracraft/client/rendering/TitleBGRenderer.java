@@ -48,7 +48,7 @@ public class TitleBGRenderer extends RotatingCubeMapRenderer
 		RenderSystem.disableCull();
 		RenderSystem.depthMask(false);
 		RenderSystem.defaultBlendFunc();
-		RenderSystem.setShaderTexture(0, new Identifier(Ultracraft.MOD_ID, "textures/misc/title_bg.png"));
+		RenderSystem.setShaderTexture(0, Ultracraft.identifier("textures/misc/title_bg.png"));
 		
 		for (int i = 0; i < 3; i++)
 		{

@@ -8,11 +8,11 @@ import mod.azure.azurelib.renderer.GeoItemRenderer;
 
 public class AttractorNailgunRenderer extends GeoItemRenderer<AttractorNailgunItem>
 {
-	static final Identifier TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/item/nailgun.png");
+	static final Identifier TEXTURE = Ultracraft.identifier("textures/item/nailgun.png");
 	
 	public AttractorNailgunRenderer()
 	{
-		super(new DefaultedItemGeoModel<>(new Identifier(Ultracraft.MOD_ID, "nailgun")));
+		super(new DefaultedItemGeoModel<>(Ultracraft.identifier("nailgun")));
 	}
 	
 	@Override

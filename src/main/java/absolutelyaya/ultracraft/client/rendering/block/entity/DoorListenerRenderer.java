@@ -14,7 +14,7 @@ import org.joml.Vector3f;
 
 public class DoorListenerRenderer implements BlockEntityRenderer<DoorListenerBlockEntity>
 {
-	static final Identifier TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/block/door_skull.png");
+	static final Identifier TEXTURE = Ultracraft.identifier("textures/block/door_skull.png");
 	
 	@Override
 	public void render(DoorListenerBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay)

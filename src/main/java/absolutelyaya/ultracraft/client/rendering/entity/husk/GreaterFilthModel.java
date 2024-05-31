@@ -16,19 +16,19 @@ public class GreaterFilthModel extends GeoModel<GreaterFilthEntity>
 	@Override
 	public Identifier getModelResource(GreaterFilthEntity object)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "geo/entities/greaterfilth.geo.json");
+		return Ultracraft.identifier("geo/entities/greaterfilth.geo.json");
 	}
 	
 	@Override
 	public Identifier getTextureResource(GreaterFilthEntity object)
 	{
-		return new Identifier(Ultracraft.MOD_ID, object.isRare() ? "textures/entity/blue_filth.png" : "textures/entity/filth.png");
+		return Ultracraft.identifier(object.isRare() ? "textures/entity/blue_filth.png" : "textures/entity/filth.png");
 	}
 	
 	@Override
 	public Identifier getAnimationResource(GreaterFilthEntity animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "animations/entities/greaterfilth.animation.json");
+		return Ultracraft.identifier("animations/entities/greaterfilth.animation.json");
 	}
 	
 	@Override

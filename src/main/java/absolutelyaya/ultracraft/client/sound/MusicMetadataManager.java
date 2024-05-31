@@ -51,7 +51,7 @@ public class MusicMetadataManager implements SimpleSynchronousResourceReloadList
 	@Override
 	public Identifier getFabricId()
 	{
-		return new Identifier(Ultracraft.MOD_ID, "music_metadata");
+		return Ultracraft.identifier("music_metadata");
 	}
 	
 	@Override

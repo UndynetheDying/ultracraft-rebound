@@ -10,14 +10,14 @@ public class TerminalBlockEntityModel extends DefaultedBlockGeoModel<TerminalBlo
 {
 	public TerminalBlockEntityModel()
 	{
-		super(new Identifier(Ultracraft.MOD_ID, "terminal"));
+		super(Ultracraft.identifier("terminal"));
 	}
 	
 	@Override
 	public Identifier getTextureResource(TerminalBlockEntity animatable)
 	{
 		if(animatable.getBase().equals(TerminalBlockEntity.Base.RGB))
-			return new Identifier(Ultracraft.MOD_ID, "procedural/terminal_base/" + animatable.getTerminalID().toString());
+			return Ultracraft.identifier("procedural/terminal_base/" + animatable.getTerminalID().toString());
 		return animatable.getBase().getTexture();
 	}
 	

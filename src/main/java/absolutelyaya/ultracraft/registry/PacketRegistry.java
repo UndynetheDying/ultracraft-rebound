@@ -63,83 +63,83 @@ import java.util.function.Predicate;
 
 public class PacketRegistry
 {
-	public static final Identifier PUNCH_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "parry");
-	public static final Identifier PUNCH_BLOCK_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "punch_block");
-	public static final Identifier PRIMARY_SHOT_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "primary_shot_c2s");
-	public static final Identifier SEND_WING_STATE_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "set_winged_state_c2s");
-	public static final Identifier SEND_WING_DATA_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "set_winged_data_c2s");
-	public static final Identifier DASH_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "dash_c2s");
-	public static final Identifier SLAM_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "slam_c2s");
-	public static final Identifier REQUEST_WINGED_DATA_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "request_wing_data");
-	public static final Identifier SKIM_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "skim_c2s");
-	public static final Identifier THROW_COIN_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "throw_coin");
-	public static final Identifier LOCK_PEDESTAL_ID = new Identifier(Ultracraft.MOD_ID, "lock_pedestal");
-	public static final Identifier ANIMATION_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "animation_c2s");
-	public static final Identifier FISH_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "fish");
-	public static final Identifier TERMINAL_SYNC_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "terminal_c2s");
-	public static final Identifier GRAFFITI_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "graffiti_c2s");
-	public static final Identifier TERMINAL_REDSTONE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "terminal_redstone");
-	public static final Identifier TERMINAL_WEAPON_CRAFT_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "terminal_weapon_craft");
-	public static final Identifier TERMINAL_WEAPON_DISPENSE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "terminal_weapon_dispense");
-	public static final Identifier CYCLE_WEAPON_VARIANT_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "cycle_weapon_variant");
-	public static final Identifier HELL_OBSERVER_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "hell_observer_c2s");
-	public static final Identifier REQUEST_GRAFFITI_WHITELIST_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "request_graffiti_whitelist");
-	public static final Identifier ARM_CYCLE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "arm_cycle");
-	public static final Identifier ARM_VISIBLE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "arm_visible");
-	public static final Identifier PUNCH_PRESSED_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "punch_pressed");
-	public static final Identifier SYNC_CONFIG_C2S_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "sync_config_c2s");
-	public static final Identifier HIVEL_DATA_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "hiveldata");
-	public static final Identifier SLIDE_STATE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "slide_state");
-	public static final Identifier SLAM_STATE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "slam_state");
-	public static final Identifier SYNC_LOADOUT_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "loadout");
-	public static final Identifier TRAVEL_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "travel");
-	public static final Identifier ENTER_LEVEL_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "enter_level");
-	public static final Identifier REQUEST_DESTINATIONS_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "destinations_c2s");
-	public static final Identifier REQUEST_INSTANCES_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "instances_c2s");
-	public static final Identifier REQUEST_FULL_CYBERGRIND_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "request_cybergrind");
-	public static final Identifier SWITCH_SLOT_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "slot_c2s");
-	public static final Identifier SUBMIT_BEST_RANK_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "rank_c2s");
-	public static final Identifier SUBMIT_BEST_TIME_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "time_c2s");
+	public static final Identifier PUNCH_PACKET_ID = Ultracraft.identifier("parry");
+	public static final Identifier PUNCH_BLOCK_PACKET_ID = Ultracraft.identifier("punch_block");
+	public static final Identifier PRIMARY_SHOT_C2S_PACKET_ID = Ultracraft.identifier("primary_shot_c2s");
+	public static final Identifier SEND_WING_STATE_C2S_PACKET_ID = Ultracraft.identifier("set_winged_state_c2s");
+	public static final Identifier SEND_WING_DATA_C2S_PACKET_ID = Ultracraft.identifier("set_winged_data_c2s");
+	public static final Identifier DASH_C2S_PACKET_ID = Ultracraft.identifier("dash_c2s");
+	public static final Identifier SLAM_C2S_PACKET_ID = Ultracraft.identifier("slam_c2s");
+	public static final Identifier REQUEST_WINGED_DATA_PACKET_ID = Ultracraft.identifier("request_wing_data");
+	public static final Identifier SKIM_C2S_PACKET_ID = Ultracraft.identifier("skim_c2s");
+	public static final Identifier THROW_COIN_PACKET_ID = Ultracraft.identifier("throw_coin");
+	public static final Identifier LOCK_PEDESTAL_ID = Ultracraft.identifier("lock_pedestal");
+	public static final Identifier ANIMATION_C2S_PACKET_ID = Ultracraft.identifier("animation_c2s");
+	public static final Identifier FISH_PACKET_ID = Ultracraft.identifier("fish");
+	public static final Identifier TERMINAL_SYNC_C2S_PACKET_ID = Ultracraft.identifier("terminal_c2s");
+	public static final Identifier GRAFFITI_C2S_PACKET_ID = Ultracraft.identifier("graffiti_c2s");
+	public static final Identifier TERMINAL_REDSTONE_PACKET_ID = Ultracraft.identifier("terminal_redstone");
+	public static final Identifier TERMINAL_WEAPON_CRAFT_PACKET_ID = Ultracraft.identifier("terminal_weapon_craft");
+	public static final Identifier TERMINAL_WEAPON_DISPENSE_PACKET_ID = Ultracraft.identifier("terminal_weapon_dispense");
+	public static final Identifier CYCLE_WEAPON_VARIANT_PACKET_ID = Ultracraft.identifier("cycle_weapon_variant");
+	public static final Identifier HELL_OBSERVER_C2S_PACKET_ID = Ultracraft.identifier("hell_observer_c2s");
+	public static final Identifier REQUEST_GRAFFITI_WHITELIST_PACKET_ID = Ultracraft.identifier("request_graffiti_whitelist");
+	public static final Identifier ARM_CYCLE_PACKET_ID = Ultracraft.identifier("arm_cycle");
+	public static final Identifier ARM_VISIBLE_PACKET_ID = Ultracraft.identifier("arm_visible");
+	public static final Identifier PUNCH_PRESSED_PACKET_ID = Ultracraft.identifier("punch_pressed");
+	public static final Identifier SYNC_CONFIG_C2S_PACKET_ID = Ultracraft.identifier("sync_config_c2s");
+	public static final Identifier HIVEL_DATA_PACKET_ID = Ultracraft.identifier("hiveldata");
+	public static final Identifier SLIDE_STATE_PACKET_ID = Ultracraft.identifier("slide_state");
+	public static final Identifier SLAM_STATE_PACKET_ID = Ultracraft.identifier("slam_state");
+	public static final Identifier SYNC_LOADOUT_PACKET_ID = Ultracraft.identifier("loadout");
+	public static final Identifier TRAVEL_PACKET_ID = Ultracraft.identifier("travel");
+	public static final Identifier ENTER_LEVEL_PACKET_ID = Ultracraft.identifier("enter_level");
+	public static final Identifier REQUEST_DESTINATIONS_PACKET_ID = Ultracraft.identifier("destinations_c2s");
+	public static final Identifier REQUEST_INSTANCES_PACKET_ID = Ultracraft.identifier("instances_c2s");
+	public static final Identifier REQUEST_FULL_CYBERGRIND_PACKET_ID = Ultracraft.identifier("request_cybergrind");
+	public static final Identifier SWITCH_SLOT_PACKET_ID = Ultracraft.identifier("slot_c2s");
+	public static final Identifier SUBMIT_BEST_RANK_PACKET_ID = Ultracraft.identifier("rank_c2s");
+	public static final Identifier SUBMIT_BEST_TIME_PACKET_ID = Ultracraft.identifier("time_c2s");
 	
-	public static final Identifier FREEZE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "freeze");
-	public static final Identifier HITSCAN_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "scan");
-	public static final Identifier DASH_S2C_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "dash_s2c");
-	public static final Identifier BLEED_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "bleed");
-	public static final Identifier SET_GUNCD_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "set_gcd");
-	public static final Identifier CATCH_FISH_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "fish");
-	public static final Identifier SYNC_CONFIG_S2C_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "sync_config_s2c");
-	public static final Identifier FINISH_SYNC_CONFIG_S2C_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "finish_sync_config_s2c");
-	public static final Identifier ENTITY_TRAIL_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "entity_trail");
-	public static final Identifier SLAM_S2C_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "slam_s2c");
-	public static final Identifier EXPLOSION_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "explosion");
-	public static final Identifier PRIMARY_SHOT_S2C_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "primary_shot_s2c");
-	public static final Identifier DEBUG_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "debug");
-	public static final Identifier SKIM_S2C_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "skim_s2c");
-	public static final Identifier COIN_PUNCH_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "coinpunch");
-	public static final Identifier WORLD_INFO_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "world_info");
-	public static final Identifier BLOCK_PLAYER_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "block");
-	public static final Identifier UNBLOCK_PLAYER_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "unblock");
-	public static final Identifier OPEN_SERVER_CONFIG_MENU_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "server_config");
-	public static final Identifier RICOCHET_WARNING_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "warn_ricochet");
-	public static final Identifier REPLENISH_STAMINA_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "replenish_stamina");
-	public static final Identifier ANIMATION_S2C_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "animation_s2c");
-	public static final Identifier SOAP_KILL_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "soapkill");
-	public static final Identifier ULTRA_RECIPE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "ultra_recipe");
-	public static final Identifier HIVEL_WHITELIST_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "hivel_whitelist");
-	public static final Identifier GRAFFITI_WHITELIST_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "graffiti_whitelist");
-	public static final Identifier HELL_OBSERVER_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "hell_observer");
-	public static final Identifier SCREENSHAKE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "screenshake");
-	public static final Identifier STYLE_BONUS_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "style");
-	public static final Identifier TRAVEL_SCREEN_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "open_travel_screen");
-	public static final Identifier EDIT_PING_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "edit_ping");
-	public static final Identifier TITLE_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "title");
-	public static final Identifier SEND_DESTINATIONS_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "destinations_s2c");
-	public static final Identifier SEND_LEVELS_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "levels_s2c");
-	public static final Identifier SEND_LEVEL_INSTANCES_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "instances_s2c");
-	public static final Identifier FINISH_TRAVELLING_PACKET_ID = new Identifier(Ultracraft.MOD_ID, "travel_end");
-	public static final Identifier ANNOUNCE_CYBERGRIND_ID = new Identifier(Ultracraft.MOD_ID, "announce_cybergrind");
-	public static final Identifier SYNC_CYBERGRIND_ID = new Identifier(Ultracraft.MOD_ID, "sync_cybergrind");
-	public static final Identifier PICKUP_PROGRESSION_ITEM_ID = new Identifier(Ultracraft.MOD_ID, "pickup_progression");
+	public static final Identifier FREEZE_PACKET_ID = Ultracraft.identifier("freeze");
+	public static final Identifier HITSCAN_PACKET_ID = Ultracraft.identifier("scan");
+	public static final Identifier DASH_S2C_PACKET_ID = Ultracraft.identifier("dash_s2c");
+	public static final Identifier BLEED_PACKET_ID = Ultracraft.identifier("bleed");
+	public static final Identifier SET_GUNCD_PACKET_ID = Ultracraft.identifier("set_gcd");
+	public static final Identifier CATCH_FISH_PACKET_ID = Ultracraft.identifier("fish");
+	public static final Identifier SYNC_CONFIG_S2C_PACKET_ID = Ultracraft.identifier("sync_config_s2c");
+	public static final Identifier FINISH_SYNC_CONFIG_S2C_PACKET_ID = Ultracraft.identifier("finish_sync_config_s2c");
+	public static final Identifier ENTITY_TRAIL_PACKET_ID = Ultracraft.identifier("entity_trail");
+	public static final Identifier SLAM_S2C_PACKET_ID = Ultracraft.identifier("slam_s2c");
+	public static final Identifier EXPLOSION_PACKET_ID = Ultracraft.identifier("explosion");
+	public static final Identifier PRIMARY_SHOT_S2C_PACKET_ID = Ultracraft.identifier("primary_shot_s2c");
+	public static final Identifier DEBUG_PACKET_ID = Ultracraft.identifier("debug");
+	public static final Identifier SKIM_S2C_PACKET_ID = Ultracraft.identifier("skim_s2c");
+	public static final Identifier COIN_PUNCH_PACKET_ID = Ultracraft.identifier("coinpunch");
+	public static final Identifier WORLD_INFO_PACKET_ID = Ultracraft.identifier("world_info");
+	public static final Identifier BLOCK_PLAYER_PACKET_ID = Ultracraft.identifier("block");
+	public static final Identifier UNBLOCK_PLAYER_PACKET_ID = Ultracraft.identifier("unblock");
+	public static final Identifier OPEN_SERVER_CONFIG_MENU_PACKET_ID = Ultracraft.identifier("server_config");
+	public static final Identifier RICOCHET_WARNING_PACKET_ID = Ultracraft.identifier("warn_ricochet");
+	public static final Identifier REPLENISH_STAMINA_PACKET_ID = Ultracraft.identifier("replenish_stamina");
+	public static final Identifier ANIMATION_S2C_PACKET_ID = Ultracraft.identifier("animation_s2c");
+	public static final Identifier SOAP_KILL_PACKET_ID = Ultracraft.identifier("soapkill");
+	public static final Identifier ULTRA_RECIPE_PACKET_ID = Ultracraft.identifier("ultra_recipe");
+	public static final Identifier HIVEL_WHITELIST_PACKET_ID = Ultracraft.identifier("hivel_whitelist");
+	public static final Identifier GRAFFITI_WHITELIST_PACKET_ID = Ultracraft.identifier("graffiti_whitelist");
+	public static final Identifier HELL_OBSERVER_PACKET_ID = Ultracraft.identifier("hell_observer");
+	public static final Identifier SCREENSHAKE_PACKET_ID = Ultracraft.identifier("screenshake");
+	public static final Identifier STYLE_BONUS_PACKET_ID = Ultracraft.identifier("style");
+	public static final Identifier TRAVEL_SCREEN_PACKET_ID = Ultracraft.identifier("open_travel_screen");
+	public static final Identifier EDIT_PING_PACKET_ID = Ultracraft.identifier("edit_ping");
+	public static final Identifier TITLE_PACKET_ID = Ultracraft.identifier("title");
+	public static final Identifier SEND_DESTINATIONS_PACKET_ID = Ultracraft.identifier("destinations_s2c");
+	public static final Identifier SEND_LEVELS_PACKET_ID = Ultracraft.identifier("levels_s2c");
+	public static final Identifier SEND_LEVEL_INSTANCES_PACKET_ID = Ultracraft.identifier("instances_s2c");
+	public static final Identifier FINISH_TRAVELLING_PACKET_ID = Ultracraft.identifier("travel_end");
+	public static final Identifier ANNOUNCE_CYBERGRIND_ID = Ultracraft.identifier("announce_cybergrind");
+	public static final Identifier SYNC_CYBERGRIND_ID = Ultracraft.identifier("sync_cybergrind");
+	public static final Identifier PICKUP_PROGRESSION_ITEM_ID = Ultracraft.identifier("pickup_progression");
 	
 	public static void registerC2S()
 	{
@@ -198,7 +198,7 @@ public class PacketRegistry
 					if(knuckle && target instanceof PlayerEntity hitPlayer && hitPlayer.getActiveItem().getItem() instanceof ShieldItem)
 					{
 						hitPlayer.disableShield(true);
-						UltraComponents.STYLE.get(player).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "shieldbreak")));
+						UltraComponents.STYLE.get(player).styleBonusGet(StyleBonusManager.getBonuses().get(Ultracraft.identifier("shieldbreak")));
 					}
 					
 					boolean fatal = !target.isAlive();
@@ -208,7 +208,7 @@ public class PacketRegistry
 					if(target instanceof ProjectileEntity || (target instanceof LivingEntityAccessor && ((LivingEntityAccessor)target).takePunchKnockback()))
 						target.setVelocity(vel);
 					if(HeavyEntities.isHeavy(target.getType()) && targetDamaged && target.isAlive())
-						UltraComponents.STYLE.get(player).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "disrespect")));
+						UltraComponents.STYLE.get(player).styleBonusGet(StyleBonusManager.getBonuses().get(Ultracraft.identifier("disrespect")));
 					return;
 				}
 				
@@ -254,7 +254,7 @@ public class PacketRegistry
 				else if(!(parried instanceof ThrownCoinEntity))
 				{
 					Ultracraft.freeze(player, 10);
-					UltraComponents.STYLE.get(player).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "parry")));
+					UltraComponents.STYLE.get(player).styleBonusGet(StyleBonusManager.getBonuses().get(Ultracraft.identifier("parry")));
 					player.incrementStat(StatisticRegistry.PARRY);
 				}
 				world.playSound(null, player.getBlockPos(), SoundRegistry.PARRY, SoundCategory.PLAYERS, 0.75f, 2f);

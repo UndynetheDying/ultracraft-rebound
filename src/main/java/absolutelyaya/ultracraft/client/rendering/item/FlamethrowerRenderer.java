@@ -8,11 +8,11 @@ import mod.azure.azurelib.renderer.GeoItemRenderer;
 
 public class FlamethrowerRenderer extends GeoItemRenderer<FlamethrowerItem>
 {
-	static final Identifier TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/item/flamethrower.png");
+	static final Identifier TEXTURE = Ultracraft.identifier("textures/item/flamethrower.png");
 	
 	public FlamethrowerRenderer()
 	{
-		super(new DefaultedItemGeoModel<>(new Identifier(Ultracraft.MOD_ID, "flamethrower")));
+		super(new DefaultedItemGeoModel<>(Ultracraft.identifier("flamethrower")));
 	}
 	
 	@Override

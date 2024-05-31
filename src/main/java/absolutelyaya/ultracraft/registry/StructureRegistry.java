@@ -13,18 +13,18 @@ import net.minecraft.world.gen.structure.StructureType;
 public class StructureRegistry
 {
 	public static final StructureType<LimboRuinStructure> LIMBO_RUIN = Registry.register(Registries.STRUCTURE_TYPE,
-			new Identifier(Ultracraft.MOD_ID, "limbo_ruin"), () -> LimboRuinStructure.CODEC);
+			Ultracraft.identifier("limbo_ruin"), () -> LimboRuinStructure.CODEC);
 	public static final StructureType<LimboDecalStructure> LIMBO_DECAL = Registry.register(Registries.STRUCTURE_TYPE,
-			new Identifier(Ultracraft.MOD_ID, "limbo_decal"), () -> LimboDecalStructure.CODEC);
+			Ultracraft.identifier("limbo_decal"), () -> LimboDecalStructure.CODEC);
 	public static final StructureType<AbandonedFacilityStructure> ABANDONED_FACILITY = Registry.register(Registries.STRUCTURE_TYPE,
-			new Identifier(Ultracraft.MOD_ID, "abandoned_facility"), () -> AbandonedFacilityStructure.CODEC);
+			Ultracraft.identifier("abandoned_facility"), () -> AbandonedFacilityStructure.CODEC);
 	
 	public static final StructurePieceType LIMBO_RUIN_PIECE = Registry.register(Registries.STRUCTURE_PIECE,
-			new Identifier(Ultracraft.MOD_ID, "limbo_ruin"), LimboRuinStructure.Piece::new);
+			Ultracraft.identifier("limbo_ruin"), LimboRuinStructure.Piece::new);
 	public static final StructurePieceType LIMBO_DECAL_PIECE = Registry.register(Registries.STRUCTURE_PIECE,
-			new Identifier(Ultracraft.MOD_ID, "limbo_decal"), LimboDecalStructure.Piece::new);
+			Ultracraft.identifier("limbo_decal"), LimboDecalStructure.Piece::new);
 	public static final StructurePieceType ABANDONED_FACILITY_PIECE = Registry.register(Registries.STRUCTURE_PIECE,
-			new Identifier(Ultracraft.MOD_ID, "abandoned_facility"), AbandonedFacilityStructure.Piece::new);
+			Ultracraft.identifier("abandoned_facility"), AbandonedFacilityStructure.Piece::new);
 	
 	public static void register()
 	{

@@ -184,7 +184,7 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 		dataTracker.set(ENRAGED, true);
 		playSound(SoundRegistry.GENERIC_ENRAGE, 1.5f, 0.9f);
 		getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(32), i -> true)
-				.forEach(p -> UltraComponents.STYLE.get(p).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "enrage"))));
+				.forEach(p -> UltraComponents.STYLE.get(p).styleBonusGet(StyleBonusManager.getBonuses().get(Ultracraft.identifier("enrage"))));
 	}
 	
 	public boolean isEnraged()
@@ -369,7 +369,7 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 	@Override
 	protected Identifier getLootTableId()
 	{
-		return dataTracker.get(DROP_APPLE) ? new Identifier(Ultracraft.MOD_ID, "cerberus_guaranteed_apple") : super.getLootTableId();
+		return dataTracker.get(DROP_APPLE) ? Ultracraft.identifier("cerberus_guaranteed_apple") : super.getLootTableId();
 	}
 	
 	@Override

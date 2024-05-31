@@ -24,7 +24,7 @@ import java.util.List;
 @Mixin(DeathScreen.class)
 public abstract class DeathScreenMixin extends Screen
 {
-	private final static Identifier TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/skull.png");
+	private final static Identifier TEXTURE = Ultracraft.identifier("textures/gui/skull.png");
 	float time;
 	
 	@Shadow @Final private List<ButtonWidget> buttons;

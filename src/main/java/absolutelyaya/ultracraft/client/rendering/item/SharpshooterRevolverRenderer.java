@@ -11,7 +11,7 @@ public class SharpshooterRevolverRenderer extends GeoItemRenderer<SharpshooterRe
 {
 	public SharpshooterRevolverRenderer()
 	{
-		super(new DefaultedItemGeoModel<>(new Identifier(Ultracraft.MOD_ID, "revolver")));
+		super(new DefaultedItemGeoModel<>(Ultracraft.identifier("revolver")));
 	}
 	
 	public SharpshooterRevolverRenderer(GeoModel<SharpshooterRevolverItem> model)
@@ -26,10 +26,10 @@ public class SharpshooterRevolverRenderer extends GeoItemRenderer<SharpshooterRe
 		
 		return switch (charges)
 		{
-			case 0 -> new Identifier(Ultracraft.MOD_ID, "textures/item/sharpshooter_revolver2.png");
-			case 1 -> new Identifier(Ultracraft.MOD_ID, "textures/item/sharpshooter_revolver1.png");
-			case 2 -> new Identifier(Ultracraft.MOD_ID, "textures/item/sharpshooter_revolver0.png");
-			default -> new Identifier(Ultracraft.MOD_ID, "textures/item/sharpshooter_revolver.png");
+			case 0 -> Ultracraft.identifier("textures/item/sharpshooter_revolver2.png");
+			case 1 -> Ultracraft.identifier("textures/item/sharpshooter_revolver1.png");
+			case 2 -> Ultracraft.identifier("textures/item/sharpshooter_revolver0.png");
+			default -> Ultracraft.identifier("textures/item/sharpshooter_revolver.png");
 		};
 	}
 }

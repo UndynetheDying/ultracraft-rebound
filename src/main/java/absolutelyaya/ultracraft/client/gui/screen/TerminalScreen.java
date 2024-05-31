@@ -26,7 +26,7 @@ import java.util.List;
 
 public class TerminalScreen extends Screen
 {
-	public static final Identifier CHECKERS = new Identifier(Ultracraft.MOD_ID, "textures/gui/graffiti_checkers.png");
+	public static final Identifier CHECKERS = Ultracraft.identifier("textures/gui/graffiti_checkers.png");
 	
 	SimpleColorSelectionWidget textColorPicker, baseColorPicker, paletteColorPicker;
 	TerminalBlockEntity terminal;

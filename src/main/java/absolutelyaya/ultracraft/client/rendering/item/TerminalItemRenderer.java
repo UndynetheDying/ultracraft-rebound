@@ -11,7 +11,7 @@ public class TerminalItemRenderer extends GeoItemRenderer<TerminalItem>
 {
 	public TerminalItemRenderer()
 	{
-		super(new DefaultedItemGeoModel<>(new Identifier(Ultracraft.MOD_ID, "terminal")));
+		super(new DefaultedItemGeoModel<>(Ultracraft.identifier("terminal")));
 	}
 	
 	@Override

@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
 
 public class RicochetCriterion extends AbstractCriterion<RicochetCriterion.Conditions>
 {
-	static final Identifier ID = new Identifier(Ultracraft.MOD_ID, "ricochet");
+	static final Identifier ID = Ultracraft.identifier("ricochet");
 	
 	@Override
 	protected Conditions conditionsFromJson(JsonObject obj, LootContextPredicate playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer)

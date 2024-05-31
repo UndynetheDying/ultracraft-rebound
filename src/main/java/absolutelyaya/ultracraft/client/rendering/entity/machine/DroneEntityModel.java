@@ -16,19 +16,19 @@ public class DroneEntityModel extends GeoModel<DroneEntity>
 	@Override
 	public Identifier getModelResource(DroneEntity animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "geo/entities/drone.geo.json");
+		return Ultracraft.identifier("geo/entities/drone.geo.json");
 	}
 	
 	@Override
 	public Identifier getTextureResource(DroneEntity animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "textures/entity/drone" + (animatable.isAttacking() ? "2" : "") + ".png");
+		return Ultracraft.identifier("textures/entity/drone" + (animatable.isAttacking() ? "2" : "") + ".png");
 	}
 	
 	@Override
 	public Identifier getAnimationResource(DroneEntity animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "animations/entities/drone.animation.json");
+		return Ultracraft.identifier("animations/entities/drone.animation.json");
 	}
 	
 	@Override

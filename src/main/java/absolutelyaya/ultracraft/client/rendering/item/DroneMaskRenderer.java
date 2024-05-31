@@ -10,12 +10,12 @@ public class DroneMaskRenderer extends GeoItemRenderer<DroneMaskItem>
 {
 	public DroneMaskRenderer()
 	{
-		super(new DefaultedItemGeoModel<>(new Identifier(Ultracraft.MOD_ID, "drone_mask")));
+		super(new DefaultedItemGeoModel<>(Ultracraft.identifier("drone_mask")));
 	}
 	
 	@Override
 	public Identifier getTextureLocation(DroneMaskItem animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "textures/item/drone_mask.png");
+		return Ultracraft.identifier("textures/item/drone_mask.png");
 	}
 }

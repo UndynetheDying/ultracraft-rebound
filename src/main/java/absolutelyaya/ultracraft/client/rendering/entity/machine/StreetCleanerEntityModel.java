@@ -10,18 +10,18 @@ public class StreetCleanerEntityModel extends GeoModel<StreetCleanerEntity>
 	@Override
 	public Identifier getModelResource(StreetCleanerEntity animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "geo/entities/streetcleaner.geo.json");
+		return Ultracraft.identifier("geo/entities/streetcleaner.geo.json");
 	}
 	
 	@Override
 	public Identifier getTextureResource(StreetCleanerEntity animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "textures/entity/streetcleaner.png");
+		return Ultracraft.identifier("textures/entity/streetcleaner.png");
 	}
 	
 	@Override
 	public Identifier getAnimationResource(StreetCleanerEntity animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "animations/entities/streetcleaner.animation.json");
+		return Ultracraft.identifier("animations/entities/streetcleaner.animation.json");
 	}
 }

@@ -13,7 +13,7 @@ import org.joml.Vector2i;
 public class CybergrindTab extends Tab
 {
 	public static String ID = "CYBERGRIND";
-	public static Identifier TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/terminal/cybergrind.png");
+	public static Identifier TEXTURE = Ultracraft.identifier("textures/gui/terminal/cybergrind.png");
 	
 	Button startButton = new Button(new Sprite(TEXTURE, new Vector2i(), 0.0005f, new Vector2i(52, 16), new Vector2i(24, 74), new Vector2i(100, 100)),
 										new Vector2i(24, 74), "redstone", 15, false);

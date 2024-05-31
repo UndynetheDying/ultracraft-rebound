@@ -123,7 +123,7 @@ public class ClientGraffitiManager
 			return;
 		AbstractTexture texture = new NativeImageBackedTexture(image);
 		if(terminal.getGraffitiTexture() == null)
-			terminal.setGraffitiTexture(new Identifier(Ultracraft.MOD_ID, "procedural/graffiti/" + terminal.getTerminalID().toString()));
+			terminal.setGraffitiTexture(Ultracraft.identifier("procedural/graffiti/" + terminal.getTerminalID().toString()));
 		MinecraftClient.getInstance().getTextureManager().registerTexture(terminal.getGraffitiTexture(), texture);
 	}
 	

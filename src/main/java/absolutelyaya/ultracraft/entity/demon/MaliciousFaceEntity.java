@@ -132,7 +132,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 				if(!getWorld().isClient)
 					getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(32), i -> true)
 							.forEach(p -> UltraComponents.STYLE.get(p)
-												  .styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "enrage"))));
+												  .styleBonusGet(StyleBonusManager.getBonuses().get(Ultracraft.identifier("enrage"))));
 			}
 		}
 		else if(data.equals(LANDED) && dataTracker.get(LANDED))

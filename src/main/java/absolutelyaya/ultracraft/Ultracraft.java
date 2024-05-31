@@ -45,6 +45,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import org.slf4j.Logger;
 
@@ -153,6 +154,11 @@ public class Ultracraft implements ModInitializer
         FabricLoader.getInstance().getModContainer("vivecraft").ifPresent(container -> VIVECRAFT = true);
         FabricLoader.getInstance().getModContainer("trinkets").ifPresent(container -> TRINKETS = true);
         LOGGER.info("Ultracraft initialized.");
+    }
+    
+    public static Identifier identifier(String path)
+    {
+        return new Identifier(Ultracraft.MOD_ID, path);
     }
     
     void loadConfig(MinecraftServer server)

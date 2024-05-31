@@ -268,7 +268,7 @@ public abstract class AbstractWeaponItem extends Item
 	
 	protected void handleAnimSound(SoundKeyframeEvent<? extends AbstractWeaponItem> keyframe)
 	{
-		SoundEvent event = SoundEvent.of(new Identifier(Ultracraft.MOD_ID, keyframe.getKeyframeData().getSound()));
+		SoundEvent event = SoundEvent.of(Ultracraft.identifier(keyframe.getKeyframeData().getSound()));
 		ClientPlayerEntity player = MinecraftClient.getInstance().player;
 		if(player != null && player.getMainHandStack().getItem().equals(keyframe.getAnimatable()))
 			player.playSound(event, SoundCategory.PLAYERS, 1f, 1f + (player.getRandom().nextFloat() - 0.5f) * 0.1f);

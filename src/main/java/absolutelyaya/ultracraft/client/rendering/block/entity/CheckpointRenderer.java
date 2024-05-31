@@ -19,7 +19,7 @@ import org.joml.Vector3f;
 
 public class CheckpointRenderer implements BlockEntityRenderer<CheckpointBlockEntity>
 {
-	final Identifier TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/block/checkpoint.png");
+	final Identifier TEXTURE = Ultracraft.identifier("textures/block/checkpoint.png");
 	
 	@Override
 	public void render(CheckpointBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay)

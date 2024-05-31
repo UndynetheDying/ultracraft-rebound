@@ -22,11 +22,11 @@ public class StatusEffectRegistry
 	
 	public static void register()
 	{
-		Registry.register(Registries.STATUS_EFFECT, new Identifier(Ultracraft.MOD_ID, "chilled"), CHILLED);
-		Registry.register(Registries.STATUS_EFFECT, new Identifier(Ultracraft.MOD_ID, "instant_energy"), INSTANT_ENERGY);
-		Registry.register(Registries.STATUS_EFFECT, new Identifier(Ultracraft.MOD_ID, "impaled"), IMPALED);
-		Registry.register(Registries.STATUS_EFFECT, new Identifier(Ultracraft.MOD_ID, "retaliation"), RETALIATION);
-		Registry.register(Registries.STATUS_EFFECT, new Identifier(Ultracraft.MOD_ID, "cancerous"), CANCEROUS);
-		Registry.register(Registries.STATUS_EFFECT, new Identifier(Ultracraft.MOD_ID, "enraged"), ENRAGED);
+		Registry.register(Registries.STATUS_EFFECT, Ultracraft.identifier("chilled"), CHILLED);
+		Registry.register(Registries.STATUS_EFFECT, Ultracraft.identifier("instant_energy"), INSTANT_ENERGY);
+		Registry.register(Registries.STATUS_EFFECT, Ultracraft.identifier("impaled"), IMPALED);
+		Registry.register(Registries.STATUS_EFFECT, Ultracraft.identifier("retaliation"), RETALIATION);
+		Registry.register(Registries.STATUS_EFFECT, Ultracraft.identifier("cancerous"), CANCEROUS);
+		Registry.register(Registries.STATUS_EFFECT, Ultracraft.identifier("enraged"), ENRAGED);
 	}
 }

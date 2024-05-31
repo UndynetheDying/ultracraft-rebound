@@ -29,7 +29,7 @@ public class MaliciousFaceRenderer extends MobEntityRenderer<MaliciousFaceEntity
 	@Override
 	public Identifier getTexture(MaliciousFaceEntity entity)
 	{
-		return new Identifier(Ultracraft.MOD_ID, entity.isCracked() ? "textures/entity/malicious_face_cracked.png" : "textures/entity/malicious_face.png");
+		return Ultracraft.identifier(entity.isCracked() ? "textures/entity/malicious_face_cracked.png" : "textures/entity/malicious_face.png");
 	}
 	
 	@Override
@@ -48,8 +48,8 @@ public class MaliciousFaceRenderer extends MobEntityRenderer<MaliciousFaceEntity
 	
 	static class MaliciousGlowFeatureRenderer<T extends MaliciousFaceEntity> extends FeatureRenderer<T, MaliciousFaceModel<T>>
 	{
-		private static final RenderLayer NORMAL = RenderLayer.getEntityTranslucent(new Identifier(Ultracraft.MOD_ID, "textures/entity/malicious_face_emissive.png"));
-		private static final RenderLayer ENRAGED = RenderLayer.getEntityTranslucent(new Identifier(Ultracraft.MOD_ID, "textures/entity/malicious_face_cracked_emissive.png"));
+		private static final RenderLayer NORMAL = RenderLayer.getEntityTranslucent(Ultracraft.identifier("textures/entity/malicious_face_emissive.png"));
+		private static final RenderLayer ENRAGED = RenderLayer.getEntityTranslucent(Ultracraft.identifier("textures/entity/malicious_face_cracked_emissive.png"));
 		
 		public MaliciousGlowFeatureRenderer(FeatureRendererContext<T, MaliciousFaceModel<T>> featureRendererContext)
 		{
