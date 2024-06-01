@@ -73,7 +73,7 @@ public class LightBlockEntity extends AbstractListenerBlockEntity
 	}
 	
 	@Override
-	public void setAttribute(String s, String value)
+	public void setAttribute(String s, String value) throws AttributeParseException, NumberFormatException
 	{
 		if(s.equals("level"))
 		{

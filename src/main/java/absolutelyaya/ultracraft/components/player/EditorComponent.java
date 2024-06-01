@@ -18,7 +18,7 @@ public class EditorComponent implements IEditorComponent
 	HashMap<String, BlockPos> focus = new HashMap<>();
 	BlockPos editAreaCore, rebindingParent;
 	int editAreaStep;
-	boolean active, showAreaOwner = true, noClip = true, ghost = false;
+	boolean active, showAreaOwner = true, noClip = true, ghost = false, wasFlyingBeforeEditing = false;
 	float flySpeed = 3f;
 	
 	public EditorComponent(PlayerEntity provider)
@@ -45,12 +45,16 @@ public class EditorComponent implements IEditorComponent
 		
 		if(active)
 		{
-			provider.getAbilities().flying = true;
-			provider.getAbilities().allowFlying = true;
+			wasFlyingBeforeEditing = provider.getAbilities().flying;
+			provider.getAbilities().flying = provider.getAbilities().allowFlying = true;
 			provider.setOnGround(false);
 		}
 		else
-			provider.getAbilities().allowFlying = provider.getAbilities().flying = provider.isCreative() || provider.isSpectator();
+		{
+			provider.getAbilities().flying = (provider.isCreative() && wasFlyingBeforeEditing) || provider.isSpectator();
+			provider.getAbilities().allowFlying = provider.isCreative() || provider.isSpectator();
+		}
+		
 		provider.getAbilities().setFlySpeed(active ? flySpeed / 20f : 0.05f);
 		UltraComponents.EDITOR.sync(provider);
 	}
@@ -229,6 +233,10 @@ public class EditorComponent implements IEditorComponent
 			setFlySpeed(tag.getFloat("flySpeed"));
 		if(tag.contains("ghost", NbtElement.BYTE_TYPE))
 			setGhost(tag.getBoolean("ghost"));
+		if(tag.contains("rebindingParent", NbtElement.LONG_TYPE))
+			rebindingParent = BlockPos.fromLong(tag.getLong("rebindingParent"));
+		else
+			rebindingParent = null;
 	}
 	
 	@Override
@@ -242,5 +250,7 @@ public class EditorComponent implements IEditorComponent
 		tag.putBoolean("noclip", noClip);
 		tag.putFloat("flySpeed", flySpeed);
 		tag.putBoolean("ghost", ghost);
+		if(rebindingParent != null)
+			tag.putLong("rebindingParent", rebindingParent.asLong());
 	}
 }

@@ -88,14 +88,16 @@ public class WingsFeature<T extends PlayerEntity, M extends PlayerEntityModel<T>
 			else
 			{
 				String patternID = wings.getPattern();
-				WingPatterns.WingPattern p = null;
-				if(patternID.length() > 0)
-					p = WingPatterns.getPattern(patternID);
+				String overlayID = wings.getOverlay();
+				WingPatterns.Pattern p = null;
+				if(!patternID.isEmpty())
+					p = WingPatterns.getAnimated(patternID);
 				ShaderProgram wingShader = p == null ? UltracraftClient.getWingsColoredShaderProgram() : p.program().get();
 				wingShader.getUniform("WingColor").set(clrs[0]);
 				wingShader.getUniform("MetalColor").set(clrs[1]);
 				RenderSystem.setShader(p == null ? UltracraftClient::getWingsColoredShaderProgram : p.program());
 				vertexConsumer = vertexConsumers.getBuffer(RenderLayers.getWingsPattern(TEXTURE_CLR, patternID));
+				RenderSystem.setShaderTexture(1, new Identifier(Ultracraft.MOD_ID, "textures/entity/wing_overlay/" + overlayID + ".png"));
 				wingsModel.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 1f, 1f, 1f, 1f);
 			}
 			matrices.pop();

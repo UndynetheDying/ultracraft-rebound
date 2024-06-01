@@ -43,7 +43,7 @@ public class WingColorPresetManager
 		Queue<Path> paths = new ArrayDeque<>();
 		//fetch jar internal presets
 		paths.add(internalPresetsDir.get());
-		while(paths.size() > 0)
+		while(!paths.isEmpty())
 		{
 			Path p = paths.remove();
 			try(Stream<Path> stream = Files.list(p))
@@ -76,7 +76,7 @@ public class WingColorPresetManager
 			Ultracraft.LOGGER.error("Error while getting Resourcepacks", e);
 			return;
 		}
-		while(paths.size() > 0)
+		while(!paths.isEmpty())
 		{
 			Path p = paths.remove();
 			String[] pathSegments = p.toString().split("[\\\\/]");
@@ -160,7 +160,7 @@ public class WingColorPresetManager
 		Queue<Path> paths = new ArrayDeque<>();
 		//fetch presets
 		paths.add(presetDir);
-		while(paths.size() > 0)
+		while(!paths.isEmpty())
 		{
 			Path p = paths.remove();
 			try(Stream<Path> stream = Files.list(p))

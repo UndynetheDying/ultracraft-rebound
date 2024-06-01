@@ -223,9 +223,8 @@ public class HarpoonGunItem extends AbstractWeaponItem implements GeoItem
 	}
 	
 	@Override
-	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
+	protected void appendWeaponInfoTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
 	{
-		super.appendTooltip(stack, world, tooltip, context);
 		tooltip.add(Text.translatable("item.ultracraft.harpoon_gun.lore1"));
 		tooltip.add(Text.translatable("item.ultracraft.harpoon_gun.lore2"));
 	}

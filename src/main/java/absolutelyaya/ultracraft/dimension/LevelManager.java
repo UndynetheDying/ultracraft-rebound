@@ -77,8 +77,6 @@ public class LevelManager extends DimensionManager
 		if(level == null)
 			return null;
 		LevelInstancePool pool = instances.get(level);
-		if(level == null)
-			return null;
 		return pool.get(id);
 	}
 	
@@ -98,12 +96,12 @@ public class LevelManager extends DimensionManager
 		LevelData data = getLevelData(levelId);
 		if(data == null)
 		{
-			Ultracraft.LOGGER.warn("Getting spawnpoint for level '" + instanceId + "' failed; Level wasn't found!");
+			Ultracraft.LOGGER.warn("Getting spawnpoint for level '{}' failed; Level wasn't found!", instanceId);
 			return null;
 		}
 		if(!instances.containsKey(levelId))
 		{
-			Ultracraft.LOGGER.warn("Getting spawnpoint for level '" + instanceId + "' failed; Level wasn't instantiated!");
+			Ultracraft.LOGGER.warn("Getting spawnpoint for level '{}' failed; Level wasn't instantiated!", instanceId);
 			return null;
 		}
 		return instances.get(levelId).get(instanceId).pos.add(data.getSpawnOffset());
@@ -119,18 +117,18 @@ public class LevelManager extends DimensionManager
 	{
 		if(!LevelDataManager.isLevelExists(levelId))
 		{
-			Ultracraft.LOGGER.warn("Level Structure " + levelId + " instantiation failed; level data not found!");
+			Ultracraft.LOGGER.warn("Level Structure {} instantiation failed; level data not found!", levelId);
 			return null;
 		}
 		LevelData data = getLevelData(levelId);
 		Identifier structure = data.getStructure();
 		if(structure == null)
 		{
-			Ultracraft.LOGGER.info("Level Structure " + levelId + " instantiation failed; structure is null");
+			Ultracraft.LOGGER.info("Level Structure {} instantiation failed; structure is null", levelId);
 			return null;
 		}
 		StructureTemplateManager templateManager = world.getStructureTemplateManager();
-		Ultracraft.LOGGER.info("Placing Level Structure " + structure + " at " + pos.toString());
+		Ultracraft.LOGGER.info("Placing Level Structure {} at {}", structure, pos.toString());
 		AtomicReference<Pair<String, LevelInstance>> inst = new AtomicReference<>();
 		templateManager.getTemplate(structure)
 				.ifPresent(i -> {
@@ -158,7 +156,7 @@ public class LevelManager extends DimensionManager
 						newInstance.setPrivate();
 					String newId = levelId.toString() + "_" + idx;
 					levelIdForInstanceId.put(newId, levelId);
-					Ultracraft.LOGGER.info("New Level Instance ID: " + newId);
+					Ultracraft.LOGGER.info("New Level Instance ID: {}", newId);
 					inst.set(new Pair<>(newId, newInstance));
 					pool.put(newId, newInstance);
 					
@@ -167,9 +165,9 @@ public class LevelManager extends DimensionManager
 							world.getChunkManager().setChunkForced(new ChunkPos(new BlockPos(x + box.getMinX(), 0, z + box.getMinZ())), true);
 				});
 		if(inst.get() == null)
-			Ultracraft.LOGGER.warn("Level Structure " + structure + " placement failed; won't teleport Player.");
+			Ultracraft.LOGGER.warn("Level Structure {} placement failed; won't teleport Player.", structure);
 		else
-			Ultracraft.LOGGER.info("Level Structure " + structure + " placed successfully.");
+			Ultracraft.LOGGER.info("Level Structure {} placed successfully.", structure);
 		return inst.get();
 	}
 	
@@ -206,7 +204,7 @@ public class LevelManager extends DimensionManager
 		LevelInstance instance = pool.get(instanceId);
 		if(instance == null)
 		{
-			Ultracraft.LOGGER.warn("Level Structure " + instanceId + " destruction failed; level instance not found!");
+			Ultracraft.LOGGER.warn("Level Structure {} destruction failed; level instance not found!", instanceId);
 			return;
 		}
 		if(!reload)
@@ -214,7 +212,7 @@ public class LevelManager extends DimensionManager
 			List<ServerPlayerEntity> needsRescue = new ArrayList<>(instance.players); //prevent concurrent modification
 			needsRescue.forEach(p -> rescue(p, RescueReason.INSTANCE_DESTROYED));
 		}
-		Ultracraft.LOGGER.info("Destroying Level Instance " + instanceId);
+		Ultracraft.LOGGER.info("Destroying Level Instance {}", instanceId);
 		BlockPos pos = instance.pos;
 		BlockBox box = pool.bounds;
 		Iterable<BlockPos> blocks = BlockPos.iterate(pos, pos.add(box.getBlockCountX(), box.getBlockCountY(), box.getBlockCountZ()));;
@@ -234,7 +232,7 @@ public class LevelManager extends DimensionManager
 				e.remove(Entity.RemovalReason.DISCARDED);
 		});
 		instances.get(levelId).remove(instanceId);
-		Ultracraft.LOGGER.info("Finished Destroying Level Instance " + instanceId);
+		Ultracraft.LOGGER.info("Finished Destroying Level Instance {}", instanceId);
 		
 		for (int x = 0; x < box.getBlockCountX(); x += 16)
 			for (int z = 0; z < box.getBlockCountZ(); z += 16)
@@ -253,11 +251,11 @@ public class LevelManager extends DimensionManager
 	
 	public void reloadInstance(String id, boolean privat)
 	{
-		Ultracraft.LOGGER.info("Re-Placing Level Instance " + id);
+		Ultracraft.LOGGER.info("Re-Placing Level Instance {}", id);
 		LevelInstance old = getInstance(id);
 		if(old == null)
 		{
-			Ultracraft.LOGGER.info("Tried reloading a level instance that didn't exist: (" + id + ")");
+			Ultracraft.LOGGER.info("Tried reloading a level instance that didn't exist: ({})", id);
 			return;
 		}
 		Pair<String, LevelInstance> newInstance = instantiateLevel(levelIdForInstanceId.get(id), privat);
@@ -270,10 +268,13 @@ public class LevelManager extends DimensionManager
 		LevelInstance instance = getInstance(id);
 		if(instance == null)
 			rescue(player, RescueReason.INSTANCE_NULL);
-		if(!instance.players.contains(player))
-			instance.players.add(player);
-		if(instance.getOwner() == null)
-			instance.setOwner(player);
+		else
+		{
+			if(!instance.players.contains(player))
+				instance.players.add(player);
+			if(instance.getOwner() == null)
+				instance.setOwner(player);
+		}
 		//teleport player
 		ServerWorld world = getWorld().getServer().getWorld(LevelManager.WORLD_KEY);
 		BlockPos spawnPos = LevelManager.getSpawnPos(id);

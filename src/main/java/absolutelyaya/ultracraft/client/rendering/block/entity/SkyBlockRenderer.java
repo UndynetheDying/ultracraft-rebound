@@ -35,7 +35,7 @@ public class SkyBlockRenderer implements BlockEntityRenderer<SkyBlockEntity>
 		matrix.rotate(RotationAxis.POSITIVE_X.rotationDegrees(camera.getPitch()));
 		matrix.rotate(RotationAxis.POSITIVE_Y.rotationDegrees(camera.getYaw()));
 		
-		ShaderProgram shader = UltracraftClient.getDaySkyProgram();
+		ShaderProgram shader = UltracraftClient.getSkyProgram();
 		if (shader.getUniform("RotMat") != null)
 			shader.getUniform("RotMat").set(matrix);
 		

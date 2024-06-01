@@ -13,7 +13,9 @@ import io.netty.buffer.Unpooled;
 import mod.azure.azurelib.core.keyframe.event.SoundKeyframeEvent;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -24,11 +26,16 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
+import org.lwjgl.glfw.GLFW;
+
+import java.util.List;
 
 public abstract class AbstractWeaponItem extends Item
 {
@@ -167,8 +174,6 @@ public abstract class AbstractWeaponItem extends Item
 		for (int i = 0; i < ids.length; i++)
 		{
 			Item item = Registries.ITEM.get(ids[i]);
-			if(item == null)
-				continue;
 			variants[i] = item;
 		}
 		int start = -1;
@@ -263,9 +268,9 @@ public abstract class AbstractWeaponItem extends Item
 	
 	protected void handleAnimSound(SoundKeyframeEvent<? extends AbstractWeaponItem> keyframe)
 	{
-		SoundEvent event = Registries.SOUND_EVENT.get(new Identifier(Ultracraft.MOD_ID, keyframe.getKeyframeData().getSound()));
+		SoundEvent event = SoundEvent.of(new Identifier(Ultracraft.MOD_ID, keyframe.getKeyframeData().getSound()));
 		ClientPlayerEntity player = MinecraftClient.getInstance().player;
-		if(player.getMainHandStack().getItem().equals(keyframe.getAnimatable()))
+		if(player != null && player.getMainHandStack().getItem().equals(keyframe.getAnimatable()))
 			player.playSound(event, SoundCategory.PLAYERS, 1f, 1f + (player.getRandom().nextFloat() - 0.5f) * 0.1f);
 	}
 	
@@ -290,5 +295,20 @@ public abstract class AbstractWeaponItem extends Item
 	protected boolean isAlternate()
 	{
 		return false;
+	}
+	
+	@Override
+	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
+	{
+		super.appendTooltip(stack, world, tooltip, context);
+		if(InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_SHIFT) || InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_KEY_RIGHT_SHIFT))
+			appendWeaponInfoTooltip(stack, world, tooltip, context);
+		else
+			tooltip.add(Text.translatable("item.ultracraft.weapon.lore.shift"));
+	}
+	
+	protected void appendWeaponInfoTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
+	{
+	
 	}
 }

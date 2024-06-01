@@ -225,7 +225,7 @@ public class PacketRegistry
 				
 				//The actual Parry Logic
 				IParriable parried;
-				if(parriables.size() > 0)
+				if(!parriables.isEmpty())
 					parried = getNearestParriable(parriables, pos);
 				else
 					return;
@@ -239,8 +239,8 @@ public class PacketRegistry
 					return;
 				if(parried == null || !parried.isParriable())
 					return;
-				boolean heal = true;
-				if(player.equals(parried.getParriableOwner()) && ((Entity)parried).age < 4)
+				boolean heal = !player.equals(parried.getParriableOwner());
+				if(heal && ((Entity)parried).age < 4)
 				{
 					if(((ProjectileEntityAccessor)parried).isBoostable())
 					{
@@ -332,14 +332,14 @@ public class PacketRegistry
 		});
 		ServerPlayNetworking.registerGlobalReceiver(SEND_WING_DATA_C2S_PACKET_ID, (server, player, handler, buf, sender) -> {
 			IWingDataComponent wings = UltraComponents.WING_DATA.get(player);
-			if(wings == null)
-				return;
 			Vector3f wingColor = buf.readVector3f(), metalColor = buf.readVector3f();
-			String pattern = Ultracraft.checkSupporter(player.getUuid(), false) ? buf.readString() : "";
+			String pattern = buf.readString();
+			String overlay = buf.readString();
 			server.execute(() -> {
 				wings.setColor(wingColor, 0);
 				wings.setColor(metalColor, 1);
-				wings.setPattern(pattern);
+				wings.setPattern(Ultracraft.checkSupporter(player.getUuid(), false) ? pattern : "");
+				wings.setOverlay(overlay);
 				wings.sync();
 			});
 		});
@@ -664,7 +664,7 @@ public class PacketRegistry
 				}
 				Pair<String, LevelManager.LevelInstance> instance;
 				ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(player);
-				if(finalInstanceId.length() > 0 && LevelManager.Instance.isInstanceExistant(finalInstanceId))
+				if(!finalInstanceId.isEmpty() && LevelManager.Instance.isInstanceExistant(finalInstanceId))
 				{
 					instance = new Pair<>(finalInstanceId, LevelManager.Instance.getInstance(finalInstanceId));
 					if(levelStats.getCurrentLevelInstance() != null && levelStats.getCurrentLevelInstance().equals(finalInstanceId) &&
@@ -694,7 +694,7 @@ public class PacketRegistry
 			Identifier levelId = buf.readIdentifier();
 			server.execute(() -> {
 				NbtCompound nbt = LevelManager.Instance.serializePool(levelId);
-				if(nbt.getKeys().size() == 0)
+				if(nbt.getKeys().isEmpty())
 					return;
 				PacketByteBuf cbuf = new PacketByteBuf(Unpooled.buffer());
 				cbuf.writeNbt(nbt);

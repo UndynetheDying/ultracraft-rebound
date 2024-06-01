@@ -73,7 +73,7 @@ public abstract class AbstractGlobalListenerBlockEntity extends AbstractMappingB
 	}
 	
 	@Override
-	public void setAttribute(String s, String value)
+	public void setAttribute(String s, String value) throws AttributeParseException, NumberFormatException
 	{
 		if(s.equals("activationValue"))
 			activationValue = Integer.parseInt(value);

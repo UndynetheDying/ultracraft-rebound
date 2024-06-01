@@ -229,7 +229,7 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	}
 	
 	@Override
-	public void setAttribute(String s, String value)
+	public void setAttribute(String s, String value) throws AttributeParseException, NumberFormatException
 	{
 		if(s.equals("resetCooldown"))
 		{

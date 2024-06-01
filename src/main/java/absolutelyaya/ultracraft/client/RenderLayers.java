@@ -89,6 +89,6 @@ public class RenderLayers extends RenderLayer
 	static {
 		FLESH = of("flesh", VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL, VertexFormat.DrawMode.QUADS, 2048, true, false, RenderLayer.MultiPhaseParameters.builder().program(new ShaderProgram(UltracraftClient::getFleshProgram)).texture(RenderPhase.BLOCK_ATLAS_TEXTURE).lightmap(ENABLE_LIGHTMAP).build(true));
 		for (int i = 0; i < SkyBlockEntity.SkyType.values().length; i++)
-			SKIES.add(of("sky", VertexFormats.POSITION, VertexFormat.DrawMode.QUADS, 2048, true, false, RenderLayer.MultiPhaseParameters.builder().program(new ShaderProgram(UltracraftClient::getDaySkyProgram)).build(true)));
+			SKIES.add(of("sky", VertexFormats.POSITION, VertexFormat.DrawMode.QUADS, 2048, true, false, RenderLayer.MultiPhaseParameters.builder().program(new ShaderProgram(UltracraftClient::getSkyProgram)).build(true)));
 	}
 }

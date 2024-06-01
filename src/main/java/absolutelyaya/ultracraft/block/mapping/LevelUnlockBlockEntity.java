@@ -91,10 +91,10 @@ public class LevelUnlockBlockEntity extends AbstractListenerBlockEntity
 	}
 	
 	@Override
-	public void setAttribute(String s, String value)
+	public void setAttribute(String s, String value) throws AttributeParseException, NumberFormatException
 	{
 		if(s.equals("level"))
-			level = Identifier.tryParse(value);
+			level = parseIdentifier(value);
 		super.setAttribute(s, value);
 	}
 	

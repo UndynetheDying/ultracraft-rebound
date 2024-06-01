@@ -250,15 +250,17 @@ public class EditModeCommands
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		String key = context.getArgument("key", String.class);
+		IEditorComponent editor = UltraComponents.EDITOR.get(player);
 		if(key.equals("room"))
 		{
 			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.rebind.room"));
 			return Command.SINGLE_SUCCESS;
 		}
-		BlockPos pos = UltraComponents.EDITOR.get(player).getEditFocus(key);
+		BlockPos pos = editor.getEditFocus(key);
 		if(pos != null && player.getWorld().getBlockEntity(pos) instanceof AbstractMappingBlockEntity entity)
 		{
-			UltraComponents.EDITOR.get(player).setRebindingParent(pos);
+			editor.setRebindingParent(pos);
+			editor.sync();
 			BlockPos lastParent = entity.getParent();
 			entity.setParent(null);
 			if(player.getWorld().getBlockEntity(lastParent) instanceof RoomBlockEntity room)
@@ -336,11 +338,27 @@ public class EditModeCommands
 				context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.attribute.not-found", attribute, key));
 				return Command.SINGLE_SUCCESS;
 			}
-			e.setAttribute(attribute, value);
+			try
+			{
+				e.setAttribute(attribute, value);
+			}
+			catch (AbstractMappingBlockEntity.AttributeParseException exception)
+			{
+				if(exception.getExpectedDataType().equals("identifier"))
+					context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.attribute.identifier-parse-failed"));
+				else
+					context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.attribute.parse-failed", exception.getExpectedDataType()));
+				return Command.SINGLE_SUCCESS;
+			}
+			catch (NumberFormatException exception)
+			{
+				context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.attribute.number-parse-failed"));
+				return Command.SINGLE_SUCCESS;
+			}
 			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.attribute.set", attribute, value, key));
 		}
 		else
-			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.nothing-focused"));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.nothing-focused", key));
 		return Command.SINGLE_SUCCESS;
 	}
 	

@@ -120,7 +120,7 @@ public class CybergrindBlockEntity extends AbstractListenerBlockEntity implement
 	}
 	
 	@Override
-	public void setAttribute(String s, String value)
+	public void setAttribute(String s, String value) throws AttributeParseException, NumberFormatException
 	{
 		super.setAttribute(s, value);
 		switch (s)

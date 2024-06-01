@@ -117,22 +117,22 @@ public class ItemRegistry
 	//Spawn Eggs
 	public static final SpawnEggItem FILTH_SPAWN_EGG = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "filth_spawn_egg"),
-			new SpawnEggItem(EntityRegistry.FILTH, 0x717038, 0xacaa7a, new FabricItemSettings()));
+			new SpawnEggItem(EntityRegistry.FILTH, 0xffffff, 0xacaa7a, new FabricItemSettings()));
 	public static final SpawnEggItem STRAY_SPAWN_EGG = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "stray_spawn_egg"),
-			new SpawnEggItem(EntityRegistry.STRAY, 0xaa6f5e, 0x922923, new FabricItemSettings()));
+			new SpawnEggItem(EntityRegistry.STRAY, 0xffffff, 0x922923, new FabricItemSettings()));
 	public static final SpawnEggItem SCHISM_SPAWN_EGG = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "schism_spawn_egg"),
-			new SpawnEggItem(EntityRegistry.SCHISM, 0x572f21, 0xa0938e, new FabricItemSettings()));
+			new SpawnEggItem(EntityRegistry.SCHISM, 0xffffff, 0xa0938e, new FabricItemSettings()));
 	public static final SpawnEggItem MALICIOUS_SPAWN_EGG = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "malicious_spawn_egg"),
-			new SpawnEggItem(EntityRegistry.MALICIOUS_FACE, 0xa0938e, 0x5a5353, new FabricItemSettings()));
+			new SpawnEggItem(EntityRegistry.MALICIOUS_FACE, 0xffffff, 0x5a5353, new FabricItemSettings()));
 	public static final SpawnEggItem CERBERUS_SPAWN_EGG = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "cerberus_spawn_egg"),
-			new SpawnEggItem(EntityRegistry.CERBERUS, 0xa0938e, 0x5a5353, new FabricItemSettings()));
+			new SpawnEggItem(EntityRegistry.CERBERUS, 0xffffff, 0x5a5353, new FabricItemSettings()));
 	public static final SpecialSpawnEggItem SWORDSMACHINE_SPAWN_EGG = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "swordsmachine_spawn_egg"),
-			new SpecialSpawnEggItem(EntityRegistry.SWORDSMACHINE, 0xf4b41b, 0x423d40, new FabricItemSettings()));
+			new SpecialSpawnEggItem(EntityRegistry.SWORDSMACHINE, 0xffffff, 0x423d40, new FabricItemSettings()));
 	public static final DestinyBondSpawnEggItem DESTINY_SWORDSMACHINE_SPAWN_EGG = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "destiny_swordsmachine_spawn_egg"),
 			new DestinyBondSpawnEggItem(new FabricItemSettings()));
@@ -141,7 +141,7 @@ public class ItemRegistry
 			new MultiColorSpawnEggItem(EntityRegistry.DRONE, new int[] {0x813ec6, 0x1b182d, 0xee42ff}, new FabricItemSettings()));
 	public static final SpawnEggItem STREET_CLEANER_SPAWN_EGG = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "streetcleaner_spawn_egg"),
-			new SpawnEggItem(EntityRegistry.STREET_CLEANER, 0xb1723a, 0x211c1b, new FabricItemSettings()));
+			new SpawnEggItem(EntityRegistry.STREET_CLEANER, 0xffffff, 0x211c1b, new FabricItemSettings()));
 	public static final SpecialSpawnEggItem HIDEOUS_SPAWN_EGG = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "hideous_spawn_egg"),
 			new MultiColorSpawnEggItem(EntityRegistry.HIDEOUS_MASS, new int[] {0xffffff}, new FabricItemSettings()));
@@ -153,7 +153,7 @@ public class ItemRegistry
 			new Identifier(Ultracraft.MOD_ID, "stained_glass_window"), new StainedGlassWindowItem(EntityRegistry.STAINED_GLASS_WINDOW, new FabricItemSettings()));
 	public static final SpawnEggItem V2_SPAWN_EGG = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "v2_spawn_egg"),
-			new SpawnEggItem(EntityRegistry.V2, 0xbd2a22, 0x261e1f, new FabricItemSettings()));
+			new SpawnEggItem(EntityRegistry.V2, 0xffffff, 0x261e1f, new FabricItemSettings()));
 	public static final SpawnEggItem RODENT_SPAWN_EGG = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "rodent_spawn_egg"),
 			new SpawnEggItem(EntityRegistry.RODENT, 0xb6d53c, 0x71aa34, new FabricItemSettings()));
@@ -189,6 +189,8 @@ public class ItemRegistry
 																.putLore(true, new String[] { "item.ultracraft.florp.hiddenlore" }));
 	public static final SkyBlockItem SKY = Registry.register(Registries.ITEM,
 			new Identifier(Ultracraft.MOD_ID, "sky_block"), new SkyBlockItem(new FabricItemSettings().rarity(Rarity.EPIC)));
+	public static final BlockItem PORTAL = Registry.register(Registries.ITEM,
+			new Identifier(Ultracraft.MOD_ID, "portal"), new BlockItem(BlockRegistry.PORTAL, new FabricItemSettings().rarity(Rarity.UNCOMMON)));
 	
 	//Animated Blocks
 	public static final HellSpawnerItem HELL_SPAWNER = Registry.register(Registries.ITEM,
@@ -326,7 +328,7 @@ public class ItemRegistry
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.DAY));
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.EVENING));
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.NIGHT));
-			content.add(BlockRegistry.PORTAL.asItem());
+			content.add(PORTAL);
 		});
 		//Dispenser Behaviors
 		DispenserBlock.registerBehavior(HELL_BULLET, new ProjectileDispenserBehavior(){
