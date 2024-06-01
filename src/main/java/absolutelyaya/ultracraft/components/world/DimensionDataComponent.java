@@ -99,7 +99,7 @@ public class DimensionDataComponent implements IDimensionDataComponent
 	
 	public boolean isPosNotModifiable(PlayerEntity player, BlockPos pos)
 	{
-		if(player.isCreativeLevelTwoOp() || UltraComponents.EDITOR.get(player).isActive())
+		if(player == null || player.isCreativeLevelTwoOp() || UltraComponents.EDITOR.get(player).isActive())
 			return false;
 		IDimensionDataComponent data = UltraComponents.DIMENSION_DATA.get(provider);
 		for (BlockPos roomPos : data.getAllMappingRooms())
