@@ -52,7 +52,7 @@ public class WingDataComponent implements IWingDataComponent, AutoSyncedComponen
 	@Override
 	public String getOverlay()
 	{
-		if(!isOverlayExists(overlay))
+		if(provider.getWorld().isClient && !isOverlayExists(overlay))
 			overlay = "";
 		return overlay;
 	}
@@ -60,7 +60,7 @@ public class WingDataComponent implements IWingDataComponent, AutoSyncedComponen
 	@Override
 	public void setOverlay(String id)
 	{
-		if(!isOverlayExists(id))
+		if(provider.getWorld().isClient && !isOverlayExists(id))
 		{
 			overlay = "";
 			return;
