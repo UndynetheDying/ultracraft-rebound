@@ -27,8 +27,8 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.math.BlockPointer;
 import net.minecraft.util.math.BlockPos;
@@ -441,6 +441,20 @@ public class ItemRegistry
 						SpawnReason.DISPENSER, false, false);
 				if (orb != null)
 					stack.decrement(1);
+				return stack;
+			}
+		});
+		DispenserBlock.registerBehavior(BLOOD_BUCKET, new ItemDispenserBehavior(){
+			@Override
+			protected ItemStack dispenseSilently(BlockPointer pointer, ItemStack stack)
+			{
+				FluidModificationItem item = (FluidModificationItem)stack.getItem();
+				BlockPos blockPos = pointer.getPos().offset(pointer.getBlockState().get(DispenserBlock.FACING));
+				ServerWorld world = pointer.getWorld();
+				if (item.placeFluid(null, world, blockPos, null)) {
+					item.onEmptied(null, world, stack, blockPos);
+					return new ItemStack(Items.BUCKET);
+				}
 				return stack;
 			}
 		});
