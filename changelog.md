@@ -52,6 +52,7 @@
   - The List of detected Damage Types isn't saved; it'll be cleared when the server//world is closed
   - Damage Types that were detected as per tick will use iframes as if the player wasn't in hivel
 - Schisms can now be interrupted by punching them with the feedbacker while they're firing; this kills them instantly
+- Fixed the carryon mod allowing picking up and placing blocks within modification suppressed areas
 ## Settings & Config
 - Added Server Config `DisableModificationSuppression` which allows disabling Edit Mode Room Modification Suppression; Default is `false`
   - Or in other Words, it lets you break and place Blocks in otherwise protected Areas, like Levels
@@ -76,18 +77,9 @@
   - Heatsink Nails against Players (0.3 -> 0.1875)
   - Regular Nails against Players (0.3 -> 0.225)
 ## Minor Changes
-- Changed how Splash Texts work internally to allow for them being translated
-- Changed map level unlock block icon and name back because I have the Stupid
 - Crops now break from slamming//explosions
 - Slam block breaking area was extended upwards by one Block
 - Made Bright Panels actually bright (they now emit Light Level 6)
-- Added `rankingTitleSuffix` Attribute to Force Travel Trigger Mapping Blocks
-  - If this is enabled, the title of the ranking screen will have `.title` suffixed to it
-  - In the built-in Levels this is used to display a different Translation Key on the Ranking Screen than on the Travel Screen mroe easily.
-- Fixed a broken edit mode feedback message (`Nothing focused with key '%s'`)
-- Fixed parrying your own projectiles healing you
-- Weapon Descriptions are now only shown either Shift Key is held
-- Fixed Creative Players defaulting to flying when entering a world
 - Removed Clair de Lune Music Disc from V2s Loot Table
 - Fixed Wing Customization Screen messing up FoV Effect Scale Setting
 - Progression Unlock Items now don't get consumed upon use while in creative
@@ -102,6 +94,8 @@
 - Changed Interruptable Charge rendering
 - Changed Schism Interruption-Explosion positioning slightly
 - Changed Stray Interruption-Explosion positioning slightly
+- Added Dispenser Behavior to Blood Buckets
+  - You'd think that stuff would just kinda work automatically, but I guess not
 ## Edit Mode Changes
 - Rooms can now be Parented to Rooms (yay, recursion)
   - Added `/edit config recursiveRooms`, which toggles whether Rooms you place while having another Room focused, will be parented to the selected Room or just be placed as new Root.
@@ -119,19 +113,17 @@
     - If the Track Key is already playing for the Player, it won't do anything
   - To stop the currently playing music, either set the key to an unused value, or leave it empty
   - When a Track Switches, the last one will fade out and the next one will Fade in to make for a smooth transition
-- Fixed some nullref issues when setting Mapping Block Attributes to values that fail parsing.
 - Added Attribute `forceDestination` to ForceTravelTriggers
   - If this value is set, the player won't get a choice on where they travel
   - If `openRanking` is enabled, they'll still be shown the Ranking Screen; however, the next Level button will always lead to the forced Destination and the Select Level Button is Disabled
   - If `openRanking` is disabled, they'll travel to the forced Destination immediately after the Travel Screen intro Animation finished
   - It takes an Identifier being either a level or layer dimension id (in other words a valid destination) and its Default Value is `none`
   - The Default value can be restored by setting it to any of the following: [`null`, `none`, `default`]
-- Fixed the `/edit reparent` desyncing the user
 ## Resource Changes
 - The Icon for the Sound Listener Mapping Block is now used for Music Listeners instead
 - Changed how Music in the Level Metadata works
   - You can now set multiple Tracks for the same Level
-    - Their Key (value in brackets `""` before the colon `:`) will be their Track ID
+    - Their Key (value in quotes `""` before the colon `:`) will be their Track ID
     - Any String works as a track Key. If you set the key to be `default`, it will start playing immediately upon entering the level
   - Added `title`, `author` and `color` Fields 
     - These will be used for a pop-up that shows up whenever the Track starts playing, IF an author is set

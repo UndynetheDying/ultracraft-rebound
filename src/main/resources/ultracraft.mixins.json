@@ -23,7 +23,9 @@
     "ServerWorldMixin",
     "ThrownEntityMixin",
     "WorldMixin",
-    "client.PlayerInventoryMixin"
+    "client.PlayerInventoryMixin",
+    "compat.carryon.PickupHandlerMixin",
+    "compat.carryon.PlacementHandlerMixin"
   ],
   "client": [
     "client.CameraMixin",
