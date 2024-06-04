@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.client.rendering.entity.projectile;
 
 import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.client.rendering.entity.feature.gecko.MagnetEmissiveLayer;
 import absolutelyaya.ultracraft.entity.projectile.MagnetEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
@@ -15,11 +16,16 @@ import mod.azure.azurelib.renderer.GeoEntityRenderer;
 
 public class MagnetEntityRenderer extends GeoEntityRenderer<MagnetEntity>
 {
+	static final Identifier GREEN = Ultracraft.identifier("textures/entity/magnet.png");
+	static final Identifier YELLOW = Ultracraft.identifier("textures/entity/magnet1.png");
+	static final Identifier RED = Ultracraft.identifier("textures/entity/magnet2.png");
+	
 	final Random random;
 	
 	public MagnetEntityRenderer(EntityRendererFactory.Context context)
 	{
 		super(context, new MagnetEntityModel());
+		addRenderLayer(new MagnetEmissiveLayer(this));
 		random = Random.create();
 	}
 	
@@ -28,10 +34,10 @@ public class MagnetEntityRenderer extends GeoEntityRenderer<MagnetEntity>
 	{
 		float strain = entity.getStrain();
 		if(strain > 1f)
-			return Ultracraft.identifier("textures/entity/magnet2.png");
+			return RED;
 		else if(strain > 0.5f)
-			return Ultracraft.identifier("textures/entity/magnet1.png");
-		return Ultracraft.identifier("textures/entity/magnet.png");
+			return YELLOW;
+		return GREEN;
 	}
 	
 	@Override
