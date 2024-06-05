@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.mixin.compat.carryon;
 
+import absolutelyaya.ultracraft.block.mapping.AbstractMappingBlockEntity;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import net.minecraft.block.BlockState;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -20,6 +21,8 @@ public class PickupHandlerMixin
 	private static void onTryPickupBlock(ServerPlayerEntity player, BlockPos pos, World world, BiFunction<BlockState, BlockPos, Boolean> pickupCallback, CallbackInfoReturnable<Boolean> cir)
 	{
 		if (player != null && UltraComponents.DIMENSION_DATA.get(world).isPosNotModifiable(player, pos))
+			cir.setReturnValue(false);
+		else if(world.getBlockEntity(pos) instanceof AbstractMappingBlockEntity)
 			cir.setReturnValue(false);
 	}
 }
