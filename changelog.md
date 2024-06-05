@@ -52,7 +52,8 @@
   - The List of detected Damage Types isn't saved; it'll be cleared when the server//world is closed
   - Damage Types that were detected as per tick will use iframes as if the player wasn't in hivel
 - Schisms can now be interrupted by punching them with the feedbacker while they're firing; this kills them instantly
-- Fixed the carryon mod allowing picking up and placing blocks within modification suppressed areas
+- Fixed the `carry on` mod allowing picking up and placing blocks within modification suppressed areas
+- Edit Mode Blocks can no longer be picked up using the `carry on` mod
 ## Settings & Config
 - Added Server Config `DisableModificationSuppression` which allows disabling Edit Mode Room Modification Suppression; Default is `false`
   - Or in other Words, it lets you break and place Blocks in otherwise protected Areas, like Levels
@@ -96,6 +97,8 @@
 - Changed Stray Interruption-Explosion positioning slightly
 - Added Dispenser Behavior to Blood Buckets
   - You'd think that stuff would just kinda work automatically, but I guess not
+- Fancy Carpet now doesn't break when placement conditions aren't met anymore
+- Fancy Carpet can now be placed on any Block that isn't Air
 ## Edit Mode Changes
 - Rooms can now be Parented to Rooms (yay, recursion)
   - Added `/edit config recursiveRooms`, which toggles whether Rooms you place while having another Room focused, will be parented to the selected Room or just be placed as new Root.

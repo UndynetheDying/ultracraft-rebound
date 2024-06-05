@@ -44,8 +44,6 @@ public class CarpetBlock extends Block
 	@Override
 	public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos)
 	{
-		if(!canPlaceAt(state, world, pos))
-			world.breakBlock(pos, true);
 		if (direction.getAxis().getType() == Direction.Type.HORIZONTAL)
 			return applyDiagonals(state, world, pos).with(FACING_PROPERTIES.get(direction), neighborState.isOf(this));
 		return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
@@ -60,7 +58,7 @@ public class CarpetBlock extends Block
 	@Override
 	public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos)
 	{
-		return Block.isFaceFullSquare(world.getBlockState(pos.down()).getCollisionShape(world, pos.down()), Direction.UP);
+		return !world.getBlockState(pos.down()).isAir();
 	}
 	
 	@Override
