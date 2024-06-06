@@ -99,6 +99,7 @@
   - You'd think that stuff would just kinda work automatically, but I guess not
 - Fancy Carpet now doesn't break when placement conditions aren't met anymore
 - Fancy Carpet can now be placed on any Block that isn't Air
+- Machinesword is no longer a two-handed weapon when using Better Combat
 ## Edit Mode Changes
 - Rooms can now be Parented to Rooms (yay, recursion)
   - Added `/edit config recursiveRooms`, which toggles whether Rooms you place while having another Room focused, will be parented to the selected Room or just be placed as new Root.
