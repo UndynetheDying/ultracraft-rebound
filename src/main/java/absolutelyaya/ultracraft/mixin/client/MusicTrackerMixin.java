@@ -105,7 +105,7 @@ public abstract class MusicTrackerMixin
 		}
 		else if(calm != null && fight != null)
 		{
-			action = MathHelper.clamp(action + (levelStats.isInFight() ? 0.05f : -0.05f) * client.getTickDelta() *
+			action = MathHelper.clamp(action + (levelStats.isInCombat() ? 0.05f : -0.05f) * UltracraftClient.getDeltaTime() *
 													   UltracraftClient.getConfig().musicTransitionSpeed, 0f, 2.5f);
 			if(music.isNoCalmdown())
 				minAction = action = Math.max(action, minAction);

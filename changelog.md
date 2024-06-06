@@ -100,6 +100,7 @@
 - Fancy Carpet now doesn't break when placement conditions aren't met anymore
 - Fancy Carpet can now be placed on any Block that isn't Air
 - Machinesword is no longer a two-handed weapon when using Better Combat
+- Hideous Mass doesn't contribute to the Music State while it's hidden
 ## Edit Mode Changes
 - Rooms can now be Parented to Rooms (yay, recursion)
   - Added `/edit config recursiveRooms`, which toggles whether Rooms you place while having another Room focused, will be parented to the selected Room or just be placed as new Root.
@@ -145,4 +146,6 @@
 - Clair de Lune (Music Disc) Identifier changed (`ultracraft:clair_de_lune` -> `ultracraft:disc/clair_de_lune`)
 - Changed Progression Item Tooltip color (`item.ultracraft.progression-item.lore` | §8 -> §7)
 - Renamed Fancy Carpet Block (`block.ultracraft.carpet` | `Fancy Carpet` -> `Blue Fancy Carpet`)
+- Added missing translation key for Server-Join-Info (`message.ultracraft.parry-chaining`)
+- Fixed typo in translation key for Server-Join-Info (`message.ultracraft.fall-drowning` -> `message.ultracraft.drowning`)
 ## API Changes

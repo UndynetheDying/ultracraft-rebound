@@ -6,6 +6,7 @@ import absolutelyaya.ultracraft.client.sound.ModularLevelMusic;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.data.LevelDataManager;
 import absolutelyaya.ultracraft.dimension.LevelManager;
+import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.util.TimeUtil;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
@@ -82,12 +83,13 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	}
 	
 	@Override
-	public boolean isInFight()
+	public boolean isInCombat()
 	{
 		if(fightCheckCooldown-- > 0)
 			return fighting;
 		fighting = provider.getWorld().getOtherEntities(provider, provider.getBoundingBox().expand(32f),
-				e -> e instanceof HostileEntity && e.isAlive()).size() > combatThreshold;
+				e -> e instanceof HostileEntity && e.isAlive() &&
+				(!(e instanceof AbstractUltraHostileEntity hostile) || hostile.isCountsForCombatMusic())).size() > combatThreshold;
 		fightCheckCooldown = 5;
 		return fighting;
 	}

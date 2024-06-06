@@ -435,7 +435,7 @@ public class UltracraftClient implements ClientModInitializer
 		}
 		if(!manual)
 			client.player.sendMessage(Text.translatable("message.ultracraft.join-info"));
-		client.player.sendMessage(Text.translatable("========================================="));
+		client.player.sendMessage(Text.of("========================================="));
 		return true;
 	}
 	
@@ -707,5 +707,15 @@ public class UltracraftClient implements ClientModInitializer
 	public static void setTravelling(boolean travelling)
 	{
 		UltracraftClient.travelling = travelling;
+	}
+	
+	/**
+	 * This should be used for rendering effects that need deltaTime instead of tick delta
+	 */
+	public static float getDeltaTime()
+	{
+		if(MinecraftClient.getInstance() == null)
+			return 0f;
+		return MinecraftClient.getInstance().renderTickCounter.lastFrameDuration;
 	}
 }

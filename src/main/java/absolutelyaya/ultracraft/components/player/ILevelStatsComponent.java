@@ -12,7 +12,7 @@ public interface ILevelStatsComponent extends ComponentV3
 	
 	String getCurrentLevelInstance();
 	
-	boolean isInFight();
+	boolean isInCombat();
 	
 	boolean isTimerRunning();
 	

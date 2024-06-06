@@ -691,6 +691,12 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 	}
 	
 	@Override
+	public boolean isCountsForCombatMusic()
+	{
+		return !isHidden() && !(isDead() || isDying());
+	}
+	
+	@Override
 	public void remove(RemovalReason reason)
 	{
 		super.remove(reason);
