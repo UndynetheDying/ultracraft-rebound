@@ -57,6 +57,7 @@
 - Changed how respawning is handled again
 - Fixed the `You're in Grave Danger` Mod still clearing the Inventory and placing a Grave for Players in Levels or with an active Checkpoint
 - When being rescued from a Level (which shouldn't normally be necessary), you now get teleported to your own Spawn Point instead of World Spawn
+- Fixed a soft-lock in prelude1
 ## Settings & Config
 - Added Server Config `DisableModificationSuppression` which allows disabling Edit Mode Room Modification Suppression; Default is `false`
   - Or in other Words, it lets you break and place Blocks in otherwise protected Areas, like Levels
