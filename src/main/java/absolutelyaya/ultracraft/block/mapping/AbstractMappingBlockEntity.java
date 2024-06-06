@@ -279,4 +279,10 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 			throw new AttributeParseException("identifier");
 		return output;
 	}
+	
+	public void onBreakBlock()
+	{
+		if(world != null && getParent() != null && world.getBlockEntity(getParent()) instanceof RoomBlockEntity room)
+			room.removeChild(pos);
+	}
 }

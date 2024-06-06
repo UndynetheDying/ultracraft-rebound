@@ -445,7 +445,6 @@
   "command.ultracraft.edit.ping.orphan-count": "%s Orphans found.",
   "command.ultracraft.edit.ping.clear": "Ping Results cleared.",
   "command.ultracraft.edit.name.success": "Renamed successfully.",
-  "command.ultracraft.edit.name.fail": "Nothing focused with key '%s'",
   "command.ultracraft.edit.area.not-resizeable": "Area of key '%s' is not resizeable",
   "command.ultracraft.edit.area.begin": "Ready to change Area; Right Click 2 Blocks",
   "command.ultracraft.edit.flag.add": "Flag '%s' registered.",

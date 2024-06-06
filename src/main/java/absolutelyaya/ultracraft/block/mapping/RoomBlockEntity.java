@@ -154,6 +154,9 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 		setID(id);
 	}
 	
+	/**
+	 * Takes child pos in <b>World Space</b>
+	 */
 	public void removeChild(BlockPos pos)
 	{
 		children.remove(pos.subtract(getPos()));
@@ -316,10 +319,11 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	}
 	
 	@Override
-	public void markRemoved()
+	public void onBreakBlock()
 	{
-		UltraComponents.DIMENSION_DATA.get(world).removeRoomMappingBlock(pos);
-		super.markRemoved();
+		if(world != null)
+			UltraComponents.DIMENSION_DATA.get(world).removeRoomMappingBlock(pos);
+		children.forEach((pos, entity) -> entity.setParent(null));
 	}
 	
 	static {

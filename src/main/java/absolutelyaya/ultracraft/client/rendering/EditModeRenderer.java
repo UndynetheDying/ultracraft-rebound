@@ -42,10 +42,7 @@ public class EditModeRenderer
 	
 	public void addKnownRoom(BlockPos pos)
 	{
-		PlayerEntity player = MinecraftClient.getInstance().player;
-		IEditorComponent editor = UltraComponents.EDITOR.get(player);
-		if(editor.getEditFocus("room") == null)
-			roomBlocks.add(pos);
+		roomBlocks.add(pos);
 	}
 	
 	public boolean isKnown(BlockPos pos)

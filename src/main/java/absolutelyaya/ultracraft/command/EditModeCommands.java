@@ -90,7 +90,7 @@ public class EditModeCommands
 				{
 					BlockPos pos = center.add(x, y, z);
 					BlockEntity blockEntity = world.getBlockEntity(pos);
-					if(blockEntity instanceof RoomBlockEntity room && room.getParent() == null)
+					if(blockEntity instanceof RoomBlockEntity room)
 					{
 						context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.ping.room-found", room.getID(), x, y, z));
 						roomBlocks.add(pos);
@@ -148,7 +148,7 @@ public class EditModeCommands
 			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.name.success"));
 		}
 		else
-			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.name.fail", key));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.nothing-focused", key));
 		return Command.SINGLE_SUCCESS;
 	}
 	
@@ -262,7 +262,7 @@ public class EditModeCommands
 			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.flag.bind", flag, key));
 		}
 		else
-			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.nothing-focused"));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.nothing-focused", key));
 		
 		return Command.SINGLE_SUCCESS;
 	}
@@ -291,7 +291,7 @@ public class EditModeCommands
 			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.rebind.start", key));
 		}
 		else
-			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.nothing-focused"));
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.nothing-focused", key));
 		return Command.SINGLE_SUCCESS;
 	}
 	

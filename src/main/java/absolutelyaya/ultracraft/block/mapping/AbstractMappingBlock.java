@@ -102,6 +102,11 @@ public abstract class AbstractMappingBlock extends BlockWithEntity
 						player.sendMessage(Text.of("This belongs to a different Room"));
 					return ActionResult.SUCCESS;
 				}
+				else if(!entity.getParent().equals(editor.getEditFocus("room")))
+				{
+					editor.clearEditFocus();
+					editor.setEditFocus("room", entity.getParent());
+				}
 			}
 		}
 		BlockPos rebind = editor.getRebindingParent();
@@ -138,5 +143,13 @@ public abstract class AbstractMappingBlock extends BlockWithEntity
 		}
 		else
 			return ActionResult.PASS;
+	}
+	
+	@Override
+	public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player)
+	{
+		if(world.getBlockEntity(pos) instanceof AbstractMappingBlockEntity entity)
+			entity.onBreakBlock();
+		super.onBreak(world, pos, state, player);
 	}
 }

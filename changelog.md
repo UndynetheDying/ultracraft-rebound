@@ -128,6 +128,8 @@
   - If `openRanking` is disabled, they'll travel to the forced Destination immediately after the Travel Screen intro Animation finished
   - It takes an Identifier being either a level or layer dimension id (in other words a valid destination) and its Default Value is `none`
   - The Default value can be restored by setting it to any of the following: [`null`, `none`, `default`]
+- Improved Edit Mode Block removal handling
+  - In other words, all children // the parent of a broken Block now immediately know that it was removed
 ## Resource Changes
 - The Icon for the Sound Listener Mapping Block is now used for Music Listeners instead
 - Changed how Music in the Level Metadata works
