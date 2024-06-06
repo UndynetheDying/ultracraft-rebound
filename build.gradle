@@ -102,6 +102,9 @@ dependencies {
 
     //Carryon
     modCompileOnlyApi("tschipp.carryon:carryon-fabric-1.20.1:${carryon_version}")
+
+    //yigd
+    modCompileOnlyApi("curse.maven:youre-in-grave-danger-544912:5370734")
 }
 
 processResources {

@@ -280,6 +280,12 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			checkpointRot = checkpoint.getFloat("rot");
 			checkpointDimension = RegistryKey.of(RegistryKeys.WORLD, Identifier.tryParse(checkpoint.getString("dimension")));
 		}
+		else
+		{
+			lastCheckpoint = null;
+			checkpointRot = 0f;
+			checkpointDimension = null;
+		}
 	}
 	
 	@Override

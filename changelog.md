@@ -52,8 +52,11 @@
   - The List of detected Damage Types isn't saved; it'll be cleared when the server//world is closed
   - Damage Types that were detected as per tick will use iframes as if the player wasn't in hivel
 - Schisms can now be interrupted by punching them with the feedbacker while they're firing; this kills them instantly
-- Fixed the `carry on` mod allowing picking up and placing blocks within modification suppressed areas
-- Edit Mode Blocks can no longer be picked up using the `carry on` mod
+- Fixed the `carry on` Mod allowing picking up and placing blocks within modification suppressed areas
+- Edit Mode Blocks can no longer be picked up using the `carry on` Mod
+- Changed how respawning is handled again
+- Fixed the `You're in Grave Danger` Mod still clearing the Inventory and placing a Grave for Players in Levels or with an active Checkpoint
+- When being rescued from a Level (which shouldn't normally be necessary), you now get teleported to your own Spawn Point instead of World Spawn
 ## Settings & Config
 - Added Server Config `DisableModificationSuppression` which allows disabling Edit Mode Room Modification Suppression; Default is `false`
   - Or in other Words, it lets you break and place Blocks in otherwise protected Areas, like Levels
@@ -148,4 +151,5 @@
 - Renamed Fancy Carpet Block (`block.ultracraft.carpet` | `Fancy Carpet` -> `Blue Fancy Carpet`)
 - Added missing translation key for Server-Join-Info (`message.ultracraft.parry-chaining`)
 - Fixed typo in translation key for Server-Join-Info (`message.ultracraft.fall-drowning` -> `message.ultracraft.drowning`)
+- Changed Level Rescue Messages
 ## API Changes

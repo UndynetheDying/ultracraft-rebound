@@ -244,9 +244,21 @@ public class LevelManager extends DimensionManager
 	void rescue(ServerPlayerEntity player, RescueReason reason)
 	{
 		IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
-		winged.sendBoxTitle(Text.translatable(reason.message));
-		ServerWorld overworld = world.getServer().getOverworld();
-		FabricDimensions.teleport(player, overworld, new TeleportTarget(overworld.getSpawnPos().toCenterPos(), Vec3d.ZERO, player.getYaw(), player.getPitch()));
+		winged.setLastCheckpoint(null, null);
+		BlockPos spawnPoint = player.getSpawnPointPosition();
+		RegistryKey<World> spawnDimension = player.getSpawnPointDimension();
+		if(spawnPoint == null || spawnDimension == null || spawnDimension.getValue().equals(ID))
+		{
+			winged.sendBoxTitle(Text.translatable(reason.message, Text.translatable("message.ultracraft.rescue.world-spawn")));
+			ServerWorld overworld = world.getServer().getOverworld();
+			FabricDimensions.teleport(player, overworld, new TeleportTarget(overworld.getSpawnPos().toCenterPos(), Vec3d.ZERO, player.getYaw(), player.getPitch()));
+		}
+		else
+		{
+			winged.sendBoxTitle(Text.translatable(reason.message, Text.translatable("message.ultractaft.rescue.player-spawn")));
+			FabricDimensions.teleport(player, world.getServer().getWorld(spawnDimension),
+					new TeleportTarget(spawnPoint.toCenterPos(), Vec3d.ZERO, player.getYaw(), player.getPitch()));
+		}
 		ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(player);
 		levelStats.enterLevel(null, null);
 	}

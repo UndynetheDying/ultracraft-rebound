@@ -5,9 +5,13 @@ import absolutelyaya.ultracraft.block.mapping.CheckpointBlockEntity;
 import absolutelyaya.ultracraft.components.player.ILevelStatsComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.dimension.LevelManager;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -33,5 +37,38 @@ public class PlayerManagerMixin
 					instance.restoreLastCheckpointKills();
 			}
 		}
+	}
+	
+	@WrapOperation(method = "respawnPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;getSpawnPointPosition()Lnet/minecraft/util/math/BlockPos;"))
+	BlockPos onGetSpawnPointPosition(ServerPlayerEntity player, Operation<BlockPos> original)
+	{
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
+		if(winged.getLastCheckpoint() == null || winged.getCheckpointDimension() == null)
+			return original.call(player);
+		if(player.getWorld().getRegistryKey().equals(winged.getCheckpointDimension()))
+			return winged.getLastCheckpoint();
+		winged.setLastCheckpoint(null, null);
+		return original.call(player);
+	}
+	
+	@WrapOperation(method = "respawnPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;getSpawnPointDimension()Lnet/minecraft/registry/RegistryKey;"))
+	RegistryKey<World> onGetSpawnDimension(ServerPlayerEntity player, Operation<RegistryKey<World>> original)
+	{
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
+		if(winged.getLastCheckpoint() == null || winged.getCheckpointDimension() == null)
+			return original.call(player);
+		if(player.getWorld().getRegistryKey().equals(winged.getCheckpointDimension()))
+			return winged.getCheckpointDimension();
+		winged.setLastCheckpoint(null, null);
+		return original.call(player);
+	}
+	
+	@WrapOperation(method = "respawnPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;getSpawnAngle()F"))
+	float onGetSpawnAngle(ServerPlayerEntity player, Operation<Float> original)
+	{
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
+		if(winged.getLastCheckpoint() != null && winged.getCheckpointDimension() != null)
+			return winged.getCheckpointRotation();
+		return original.call(player);
 	}
 }

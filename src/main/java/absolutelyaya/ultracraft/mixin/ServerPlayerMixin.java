@@ -1,11 +1,9 @@
 package absolutelyaya.ultracraft.mixin;
 
 import absolutelyaya.ultracraft.components.UltraComponents;
-import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.cybergrind.CybergrindGame;
 import absolutelyaya.ultracraft.cybergrind.CybergrindManager;
 import absolutelyaya.ultracraft.dimension.LevelManager;
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.authlib.GameProfile;
@@ -13,7 +11,6 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.stat.Stat;
@@ -44,39 +41,6 @@ public abstract class ServerPlayerMixin extends PlayerEntity
 	@Shadow public abstract void onRecipeCrafted(Recipe<?> recipe, List<ItemStack> ingredients);
 	
 	@Shadow public abstract boolean isCreative();
-	
-	@ModifyReturnValue(method = "getSpawnPointPosition", at = @At("RETURN"))
-	BlockPos onGetSpawnPoint(BlockPos original)
-	{
-		IWingedPlayerComponent winged = UltraComponents.WINGED.get(this);
-		if(winged.getLastCheckpoint() == null || winged.getCheckpointDimension() == null)
-			return original;
-		if(getWorld().getRegistryKey().equals(winged.getCheckpointDimension()))
-			return winged.getLastCheckpoint();
-		winged.setLastCheckpoint(null, null);
-		return original;
-	}
-	
-	@ModifyReturnValue(method = "getSpawnPointDimension", at = @At("RETURN"))
-	RegistryKey<World> onGetSpawnDimension(RegistryKey<World> original)
-	{
-		IWingedPlayerComponent winged = UltraComponents.WINGED.get(this);
-		if(winged.getLastCheckpoint() == null || winged.getCheckpointDimension() == null)
-			return original;
-		if(getWorld().getRegistryKey().equals(winged.getCheckpointDimension()))
-			return winged.getCheckpointDimension();
-		winged.setLastCheckpoint(null, null);
-		return original;
-	}
-	
-	@ModifyReturnValue(method = "getSpawnAngle", at = @At("RETURN"))
-	float onGetSpawnAngle(float original)
-	{
-		IWingedPlayerComponent winged = UltraComponents.WINGED.get(this);
-		if(winged.getLastCheckpoint() != null && winged.getCheckpointDimension() != null)
-			return winged.getCheckpointRotation();
-		return original;
-	}
 	
 	@Inject(method = "worldChanged", at = @At("HEAD"))
 	void onWorldChanged(ServerWorld origin, CallbackInfo ci)

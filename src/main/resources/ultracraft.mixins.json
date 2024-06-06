@@ -25,7 +25,8 @@
     "WorldMixin",
     "client.PlayerInventoryMixin",
     "compat.carryon.PickupHandlerMixin",
-    "compat.carryon.PlacementHandlerMixin"
+    "compat.carryon.PlacementHandlerMixin",
+    "compat.yigd.DeathHandlerMixin"
   ],
   "client": [
     "client.CameraMixin",
