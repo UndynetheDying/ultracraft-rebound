@@ -319,13 +319,12 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	{
 		if((key == null && curLevelSoundTrackKey == null) || (key != null && key.equals(curLevelSoundTrackKey)))
 			return;
+		fighting = false;
 		curLevelSoundTrackKey = key;
 		if(currentLevel != null)
 		{
 			setShouldMusicFade(true);
 			ModularLevelMusic music = LevelDataManager.getLevelData(currentLevel).getMusic(key);
-			if(!provider.getWorld().isClient)
-				return;
 			if(music != null)
 				combatThreshold = music.getCombatThreshold();
 		}

@@ -101,7 +101,7 @@ public abstract class MusicTrackerMixin
 			if(calm == null && fight != null)
 				fight.setVolume(1f);
 			curLevelMusic = level;
-			minAction = 0f;
+			action = minAction = 0f;
 		}
 		else if(calm != null && fight != null)
 		{
