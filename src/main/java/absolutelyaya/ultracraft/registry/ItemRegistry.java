@@ -380,6 +380,7 @@ public class ItemRegistry
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.DAY));
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.EVENING));
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.NIGHT));
+			content.add(BlockRegistry.FAKE_LEAVES.asItem());
 			content.add(PORTAL);
 		});
 		//Dispenser Behaviors

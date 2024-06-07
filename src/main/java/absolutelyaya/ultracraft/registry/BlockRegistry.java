@@ -156,6 +156,8 @@ public class BlockRegistry
 			new SlabBlock(AbstractBlock.Settings.copy(SHEETMETAL).mapColor(MapColor.IRON_GRAY).sounds(BlockSoundGroup.LANTERN)), true);
 	public static final Block SHEETMETAL_SHEET_STAIRS = register("sheetmetal_sheet_stairs",
 			new StairsBlock(SHEETMETAL_SHEET.getDefaultState(), AbstractBlock.Settings.copy(SHEETMETAL).mapColor(MapColor.IRON_GRAY).sounds(BlockSoundGroup.LANTERN)), true);
+	public static final Block FAKE_LEAVES = register("fake_leaves",
+			new FakeLeavesBlock(AbstractBlock.Settings.copy(Blocks.OAK_LEAVES).mapColor(MapColor.GREEN).sounds(BlockSoundGroup.WOOL).breakInstantly()), true);
 	
 	public static final Block MAP_ROOM = register("map_room", new RoomBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_TRIGGER = register("map_trigger", new TriggerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);

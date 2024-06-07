@@ -383,8 +383,9 @@ public class UltracraftClient implements ClientModInitializer
 		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.SKY_BLOCK, RenderLayer.getTranslucent());
 		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.FLOWERBED, RenderLayer.getTranslucent());
 		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.ZOOTYCOONCHAINLINKFENCE, RenderLayer.getCutout());
+		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.FAKE_LEAVES, RenderLayer.getTranslucent());
 		
-		TerminalCodeRegistry.registerCode("florp", t -> t.setTab(new PetTab()));
+		//TerminalCodeRegistry.registerCode("florp", t -> t.setTab(new PetTab()));
 		TerminalCodeRegistry.registerCode("somethingwicked", new TerminalCodeRegistry.Result(t -> {
 			t.setColorOverride(0x460006);
 			MinecraftClient.getInstance().player.sendMessage(Text.of("Something Wicked this way comes"), true);

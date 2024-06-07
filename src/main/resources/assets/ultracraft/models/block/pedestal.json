@@ -79,8 +79,8 @@
 				"east": {"uv": [1, 1, 2, 15], "rotation": 270, "texture": "#1", "tintindex": 0},
 				"south": {"uv": [1, 1, 15, 2], "rotation": 180, "texture": "#1", "tintindex": 0},
 				"west": {"uv": [14, 1, 15, 15], "rotation": 90, "texture": "#1", "tintindex": 0},
-				"up": {"uv": [15, 15, 1, 1], "texture": "#1", "cullface": "up", "tintindex": 0},
-				"down": {"uv": [15, 1, 1, 15], "texture": "#1", "tintindex": 0}
+				"up": {"uv": [15, 15, 1, 1], "texture": "#1", "tintindex": 0},
+				"down": {"uv": [15, 1, 1, 15], "texture": "#1", "cullface": "down", "tintindex": 0}
 			}
 		}
 	],
