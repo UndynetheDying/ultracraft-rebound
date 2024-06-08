@@ -7,6 +7,9 @@
   - All Tracks have Music disks for both their calm and combat version (if applicable)
     - These currently cannot be obtained in survival. I'll think of something for that.
   - Everyone involved has done a fantastic Job and were a joy to work with. If you like their work, please consider supporting them!
+- Remade limbo2
+- Made slight changes to limbo1
+- Fixed a soft-lock in prelude1
 - Major Improvements to the Music System
   - When the Game is paused or the local player is dead, the music will lower in pitch and volume
   - Combat Music is now triggered by all Hostile entities, not just ultracraft enemies
@@ -57,7 +60,6 @@
 - Changed how respawning is handled again
 - Fixed the `You're in Grave Danger` Mod still clearing the Inventory and placing a Grave for Players in Levels or with an active Checkpoint
 - When being rescued from a Level (which shouldn't normally be necessary), you now get teleported to your own Spawn Point instead of World Spawn
-- Fixed a soft-lock in prelude1
 - Added Fake Leaves Block
 ## Settings & Config
 - Added Server Config `DisableModificationSuppression` which allows disabling Edit Mode Room Modification Suppression; Default is `false`

@@ -12,9 +12,9 @@
     "10:00:00"
   ],
     "kills": [
-      81,
-      75,
-      60,
+      70,
+      65,
+      55,
       35
     ],
     "style": [
@@ -25,11 +25,11 @@
     ]
   },
   "spawn-offset":{
-    "x": 3,
-    "y": 48,
-    "z": 76
+    "x": 68,
+    "y": 60,
+    "z": 16
   },
-  "spawn-rot": -90,
+  "spawn-rot": 0,
   "music": {
     "main": {
       "calm": "ultracraft:music.limbo2_calm",
