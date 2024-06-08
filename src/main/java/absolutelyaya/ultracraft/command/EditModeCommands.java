@@ -286,7 +286,7 @@ public class EditModeCommands
 			editor.sync();
 			BlockPos lastParent = entity.getParent();
 			entity.setParent(null);
-			if(player.getWorld().getBlockEntity(lastParent) instanceof RoomBlockEntity room)
+			if(lastParent != null && player.getWorld().getBlockEntity(lastParent) instanceof RoomBlockEntity room)
 				room.removeChild(pos);
 			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.rebind.start", key));
 		}
