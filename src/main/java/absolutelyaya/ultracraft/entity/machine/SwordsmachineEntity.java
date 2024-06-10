@@ -401,7 +401,7 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 		if(dataTracker.get(INTRO_TICKS) > 0 && isOnGround())
 			dataTracker.set(INTRO_TICKS, dataTracker.get(INTRO_TICKS) - 1);
 		if(shouldBeEnraged() && isAlive())
-			addStatusEffect(new StatusEffectInstance(StatusEffectRegistry.ENRAGED, 1, 0, true, false));
+			addStatusEffect(new StatusEffectInstance(StatusEffectRegistry.ENRAGED, 100, 0, true, false));
 	}
 	
 	@Override
