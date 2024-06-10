@@ -6,6 +6,8 @@ import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import org.joml.Vector4f;
@@ -17,7 +19,7 @@ public class MusicTriggerBlockEntity extends AbstractTriggerBlockEntity
 {
 	List<? extends LivingEntity> lastContained = new ArrayList<>();
 	static List<String> attributes = new ArrayList<>();
-	String trackKey;
+	String trackKey = "";
 	
 	public MusicTriggerBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -55,7 +57,7 @@ public class MusicTriggerBlockEntity extends AbstractTriggerBlockEntity
 	void tick()
 	{
 		super.tick();
-		if(world.getBlockEntity(getParent()) instanceof RoomBlockEntity room && !room.checkFlag(flag))
+		if(world.getBlockEntity(getParent()) instanceof RoomBlockEntity room && flag != null && !room.checkFlag(flag))
 			return;
 		containedEntities.forEach(i -> {
 			if(i instanceof PlayerEntity player && !lastContained.contains(player))
@@ -77,8 +79,31 @@ public class MusicTriggerBlockEntity extends AbstractTriggerBlockEntity
 	public String getAttribute(String attribute)
 	{
 		if(attribute.equals("trackKey"))
-				return trackKey;
+			return trackKey;
 		return null;
+	}
+	
+	@Override
+	public void setAttribute(String s, String value) throws AttributeParseException, NumberFormatException
+	{
+		super.setAttribute(s, value);
+		if(s.equals("trackKey"))
+			trackKey = value;
+	}
+	
+	@Override
+	public void readNbt(NbtCompound nbt)
+	{
+		super.readNbt(nbt);
+		if(nbt.contains("trackKey", NbtElement.STRING_TYPE))
+			trackKey = nbt.getString("trackKey");
+	}
+	
+	@Override
+	protected void writeNbt(NbtCompound nbt)
+	{
+		super.writeNbt(nbt);
+		nbt.putString("trackKey", trackKey);
 	}
 	
 	static {
