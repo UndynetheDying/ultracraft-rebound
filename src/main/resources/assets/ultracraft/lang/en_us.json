@@ -545,6 +545,8 @@
   "config.ultracraft.CoinPunchRange.description": "The maximum distance a Coin can be away to punch it.",
   "config.ultracraft.DisableModificationSuppression": "Disable Modification Suppression",
   "config.ultracraft.DisableModificationSuppression.description": "Allows breaking and placing Blocks in any Edit Mode Room, regardless of its 'modificationSuppression' Attribute.",
+  "config.ultracraft.ProtectNature": "Protect Nature",
+  "config.ultracraft.ProtectNature.description": "Whether natural Blocks like Flowers or Leaves should be exempt from being broken by Ultracraft Explosions.",
 
   "stat.ultracraft.collect_soul_orb": "Collected Soul Orbs",
   "stat.ultracraft.collect_blood_orb": "Collected Blood Orbs",

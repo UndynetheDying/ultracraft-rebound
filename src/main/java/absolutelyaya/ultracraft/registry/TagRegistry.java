@@ -11,6 +11,7 @@ import net.minecraft.util.Identifier;
 public class TagRegistry
 {
 	public static final TagKey<Block> FRAGILE = TagKey.of(RegistryKeys.BLOCK, Ultracraft.identifier("fragile"));
+	public static final TagKey<Block> FRAGILE_NATURE = TagKey.of(RegistryKeys.BLOCK, Ultracraft.identifier("fragile_nature"));
 	public static final TagKey<Block> EXPLOSION_BREAKABLE = TagKey.of(RegistryKeys.BLOCK, Ultracraft.identifier("explosion_breakable"));
 	public static final TagKey<Block> PUNCH_BREAKABLE = TagKey.of(RegistryKeys.BLOCK, Ultracraft.identifier("punch_breakable"));
 	public static final TagKey<Block> KNUCKLE_BREAKABLE = TagKey.of(RegistryKeys.BLOCK, Ultracraft.identifier("knuckle_breakable"));

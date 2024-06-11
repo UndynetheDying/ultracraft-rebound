@@ -11,7 +11,6 @@ import net.minecraft.client.gui.widget.CheckboxWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.joml.Vector2i;
 
@@ -67,6 +66,7 @@ public class ServerConfigScreen extends Screen
 		addRule(config.parryRange, ConfigWidget.ValueType.FLOAT, 29);
 		addRule(config.coinPunchRange, ConfigWidget.ValueType.FLOAT, 30);
 		addRule(config.disableModificationSuppression, ConfigWidget.ValueType.BOOL, 31);
+		addRule(config.protectNature, ConfigWidget.ValueType.BOOL, 32);
 		
 		boolean b = false;
 		if(simplistic != null)

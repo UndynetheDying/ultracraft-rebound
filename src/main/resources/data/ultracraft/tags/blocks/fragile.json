@@ -37,10 +37,6 @@
     "minecraft:green_stained_glass_pane",
     "minecraft:red_stained_glass_pane",
     "minecraft:black_stained_glass_pane",
-    "#minecraft:leaves",
-    "#minecraft:flowers",
-    "#minecraft:tall_flowers",
-    "minecraft:grass",
     "ultracraft:vent_cover",
     "minecraft:decorated_pot"
   ]

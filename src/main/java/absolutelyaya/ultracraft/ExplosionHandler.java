@@ -152,7 +152,8 @@ public class ExplosionHandler
 							if(state.isIn(TagRegistry.KNUCKLE_BLAST_BREAKABLE))
 								world.breakBlock(pos1, true, exploder);
 						}
-						else if(state.isIn(damage > 0f ? TagRegistry.EXPLOSION_BREAKABLE : TagRegistry.FRAGILE))
+						else if(state.isIn(damage > 0f ? TagRegistry.EXPLOSION_BREAKABLE : TagRegistry.FRAGILE) ||
+										(!ServerConfig.INSTANCE.protectNature.getValue() && state.isIn(TagRegistry.FRAGILE_NATURE)))
 							world.breakBlock(pos1, true, exploder);
 					}
 				}

@@ -58,6 +58,7 @@
 ## Settings & Config
 - Added Server Config `DisableModificationSuppression` which allows disabling Edit Mode Room Modification Suppression; Default is `false`
   - Or in other Words, it lets you break and place Blocks in otherwise protected Areas, like Levels
+- Added Server Config `ProtectNature` which disables natural blocks like flowers and grass to be broken by ultracraft explosions; Default is `false`
 - Changed default value for `UnlockCustomLevels` Server Config to `false`
   - If your Server//World is set to the old default value, the config will update to reflect this change automatically upon loading next.
 - Added a new Gamerule `ultra-startAsV1`; Default is `true`
@@ -69,7 +70,7 @@
   - Whether the First Person offhand arm is always visible when holding an item and an ultracraft arm is equipped
 - Added Client Setting `hideVanillaHotbar`; Default is `false`
   - Whether the Vanilla Hotbar is hidden; all other HUD elements stay.
-- Due to an Internal name change, your Third Person ultracraft Arm Skin Setting might be reset to its default value 
+- Due to an Internal name change, your Third Person ultracraft Arm Skin Setting might be reset to its default value
 ## Commands
 - Added new Debug Command `/ultracraft debug clearLikelyPerTickDamageTypes`
   - Clears the List of automatically identified per-tick damage types
@@ -146,7 +147,9 @@
 - Added `unlocked` Field to Level Metadata
   - This defines whether a Level should always be unlocked. The default is `false`
 - Changed the order Clair de Lunes Music disc description to be more uniform with minecraft (it's now `Author - Title` and not the other way around)
-- Crops were added to the fragile Block Tag
+- Added `fragile_nature` Block Tag
+  - Fragile Plants like Flowers and Leaves were separated into this tag to allow for nature to be protected from ultracarnage using the new `ProtectNature` Server Config
+- Crops were added to the `fragile_nature` Block Tag
 - Translation Keys for Layer Buttons changed (`screen.ultracraft.travel.layer<index>` -> `layer.ultracraft.<layer-name>`)
 - Clair de Lune (Music Disc) Identifier changed (`ultracraft:clair_de_lune` -> `ultracraft:disc/clair_de_lune`)
 - Changed Progression Item Tooltip color (`item.ultracraft.progression-item.lore` | §8 -> §7)

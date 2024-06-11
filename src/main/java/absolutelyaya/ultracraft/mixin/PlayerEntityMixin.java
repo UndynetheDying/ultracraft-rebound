@@ -9,6 +9,7 @@ import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
 import absolutelyaya.ultracraft.components.player.*;
 import absolutelyaya.ultracraft.config.HivelConfig;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.DamageTypeTags;
 import absolutelyaya.ultracraft.dimension.LevelManager;
@@ -39,7 +40,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
@@ -322,7 +322,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 						BlockPos pos = getSteppingPos().add(new Vec3i(x, y, z));
 						if(!canModifyAt(world, pos))
 							continue;
-						if(world.getBlockState(pos).isIn(TagRegistry.SLAM_BREAKABLE))
+						if(!(ServerConfig.INSTANCE.protectNature.getValue() && world.getBlockState(pos).isIn(TagRegistry.FRAGILE_NATURE)) &&
+								   world.getBlockState(pos).isIn(TagRegistry.SLAM_BREAKABLE))
 							world.breakBlock(pos, true, this);
 					}
 				}
