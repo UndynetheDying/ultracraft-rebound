@@ -12,73 +12,46 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
 import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class DamageBlockEntity extends AbstractTriggerBlockEntity
+public class AbyssBlockEntity extends AbstractTriggerBlockEntity
 {
-	static final List<String> attributes = new ArrayList<>();
+	static List<String> attributes = new ArrayList<>();
 	List<? extends LivingEntity> lastContained = new ArrayList<>();
+	boolean canKill = false;
 	Identifier damagetype = new Identifier("out_of_world");
 	float amount = 1f;
-	boolean perTick;
 	
-	public DamageBlockEntity(BlockPos pos, BlockState state)
+	public AbyssBlockEntity(BlockPos pos, BlockState state)
 	{
-		super(BlockEntityRegistry.MAP_DAMAGE, pos, state);
-		id = "damage";
-	}
-	
-	@Override
-	public Vector4f getColor()
-	{
-		return new Vector4f(0.19f, 0.02f, 0.01f, 1f);
-	}
-	
-	@Override
-	public String getTexture()
-	{
-		return "damage";
-	}
-	
-	@Override
-	public List<String> getAttributes()
-	{
-		return attributes;
-	}
-	
-	@Override
-	public String getAttribute(String attribute)
-	{
-		return switch (attribute)
-		{
-			case "damagetype" -> damagetype.toString();
-			case "amount" -> String.valueOf(amount);
-			case "perTick" -> String.valueOf(perTick);
-			default -> null;
-		};
-	}
-	
-	@Override
-	public void setAttribute(String s, String value) throws AttributeParseException, NumberFormatException
-	{
-		super.setAttribute(s, value);
-		switch (s)
-		{
-			case "damagetype" -> damagetype =  parseIdentifier(value);
-			case "amount" -> amount = Float.parseFloat(value);
-			case "perTick" -> perTick = Boolean.parseBoolean(value);
-		}
+		super(BlockEntityRegistry.MAP_ABYSS, pos, state);
 	}
 	
 	@Override
 	Class<? extends LivingEntity> getTargetClass()
 	{
-		return LivingEntity.class;
+		return PlayerEntity.class;
+	}
+	
+	@Override
+	public Vector4f getColor()
+	{
+		return new Vector4f(0.2f, 0.05f, 0.25f, 1f);
+	}
+	
+	@Override
+	public String getTexture()
+	{
+		return "abyss";
 	}
 	
 	@Override
@@ -94,11 +67,51 @@ public class DamageBlockEntity extends AbstractTriggerBlockEntity
 		{
 			if(living instanceof PlayerEntity player && (player.isSpectator() || player.isCreative()))
 				continue;
-			if(lastContained.contains(living) && !perTick)
+			if(lastContained.contains(living))
 				continue;
-			living.damage(DamageSources.get(world, damageTypeKey.get()), amount);
+			living.damage(DamageSources.get(world, damageTypeKey.get()), canKill ? amount : Math.min(living.getHealth() - 1, amount));
+			BlockPos pos = getPos();
+			BlockHitResult bHit = world.raycast(new RaycastContext(pos.toCenterPos(), pos.down(16).toCenterPos(),
+					RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, living));
+			if(bHit.getType().equals(HitResult.Type.MISS))
+				living.teleport(pos.getX(), pos.getY(), pos.getZ());
+			else
+			{
+				Vec3d hitPos = bHit.getPos();
+				living.teleport(hitPos.x, hitPos.y, hitPos.z);
+			}
 		}
 		lastContained = containedEntities;
+	}
+	
+	@Override
+	public List<String> getAttributes()
+	{
+		return attributes;
+	}
+	
+	@Override
+	public String getAttribute(String attribute)
+	{
+		return switch (attribute)
+		{
+			case "damagetype" -> damagetype.toString();
+			case "amount" -> String.valueOf(amount);
+			case "canKill" -> String.valueOf(canKill);
+			default -> null;
+		};
+	}
+	
+	@Override
+	public void setAttribute(String s, String value) throws AttributeParseException, NumberFormatException
+	{
+		super.setAttribute(s, value);
+		switch (s)
+		{
+			case "damagetype" -> damagetype =  parseIdentifier(value);
+			case "amount" -> amount = Float.parseFloat(value);
+			case "canKill" -> canKill = Boolean.parseBoolean(value);
+		}
 	}
 	
 	@Override
@@ -109,8 +122,8 @@ public class DamageBlockEntity extends AbstractTriggerBlockEntity
 			damagetype = Identifier.tryParse(nbt.getString("damageType"));
 		if(nbt.contains("amount", NbtElement.FLOAT_TYPE))
 			amount = nbt.getFloat("amount");
-		if(nbt.contains("perTick", NbtElement.BYTE_TYPE))
-			perTick = nbt.getBoolean("perTick");
+		if(nbt.contains("canKill", NbtElement.BYTE_TYPE))
+			canKill = nbt.getBoolean("canKill");
 	}
 	
 	@Override
@@ -119,12 +132,12 @@ public class DamageBlockEntity extends AbstractTriggerBlockEntity
 		super.writeNbt(nbt);
 		nbt.putString("damageType", damagetype.toString());
 		nbt.putFloat("amount", amount);
-		nbt.putBoolean("perTick", perTick);
+		nbt.putBoolean("canKill", canKill);
 	}
 	
 	static {
 		attributes.add("damagetype");
 		attributes.add("amount");
-		attributes.add("perTick");
+		attributes.add("canKill");
 	}
 }

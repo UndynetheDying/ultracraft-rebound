@@ -21,15 +21,6 @@
   - For more info on the specifics, refer to the `Resource Changes` Segment
 - Added Music to Cybergrind
   - You can put your own cybergrind playlist in the game using a Resourcepack that replaces the sound `ultracraft:music.cybergrind`
-- Added new Mapping Blocks to control Music in Levels
-  - Music Listener
-    - Changes the currently playing Soundtrack Key of everyone in the Room while the bound **local** flag activates
-    - If `stopOnDisable` is enabled, the currently playing Soundtrack Key of Players will be cleared (meaning the music stops) upon the bound **local** flag deactivating. 
-  - Music Trigger
-    - Changes the currently playing Soundtrack Key of Players that enter its Area IF the bound **local** flag is active
-    - If the Track Key is already playing for the Player, it won't do anything
-  - To stop the currently playing music, either set the key to an unused value, or leave it empty
-  - When a Track Switches, the last one will fade out and the next one will Fade in to make for a smooth transition
 - Added Support for Custom Layers // Level Collections using Datapacks
 - Rage is now a Potion Effect
   - Doesn't alter any stats by itself
@@ -119,7 +110,7 @@
   - Rooms will tick regardless of whether their parent room is active (or in other words, the hierarchy doesn't affect Rooms Ticking)
   - Recoursive Rooms are disabled by default for convenience
 - Changed the Edit Mode Renderer a lot to make rendering the Room Hierarchies easier//possible without more bloat
-- Added new Mapping Blocks to control Music in Levels
+- Added new Edit Mode Blocks to control Music in Levels
   - Music Listener
     - Changes the currently playing Soundtrack Key of everyone in the Room while the bound **local** flag activates
     - If `stopOnDisable` is enabled, the currently playing Soundtrack Key of Players will be cleared (meaning the music stops) upon the bound **local** flag deactivating.
@@ -136,6 +127,8 @@
   - The Default value can be restored by setting it to any of the following: [`null`, `none`, `default`]
 - Improved Edit Mode Block removal handling
   - In other words, all children // the parent of a broken Block now immediately know that it was removed
+- Added new Edit Mode Block "Abyss"
+  - Acts as a Trigger that applies damage and teleports players that enter its Area to its Block Position (or rather the first solid Block below it (in a range of 16 Blocks))
 ## Resource Changes
 - The Icon for the Sound Listener Mapping Block is now used for Music Listeners instead
 - Changed how Music in the Level Metadata works

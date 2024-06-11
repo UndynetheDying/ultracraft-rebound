@@ -42,6 +42,7 @@ public class BlockEntityRegistry
 	public static final BlockEntityType<LightBlockEntity> MAP_LIGHT;
 	public static final BlockEntityType<MusicTriggerBlockEntity> MAP_MUSIC;
 	public static final BlockEntityType<MusicListenerBlockEntity> MAP_MUSIC_LISTENER;
+	public static final BlockEntityType<AbyssBlockEntity> MAP_ABYSS;
 	
 	public static void register() {
 	}
@@ -139,5 +140,8 @@ public class BlockEntityRegistry
 		MAP_MUSIC_LISTENER = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				Ultracraft.identifier("map_music_listener"),
 				FabricBlockEntityTypeBuilder.create(MusicListenerBlockEntity::new, BlockRegistry.MAP_MUSIC_LISTENER).build());
+		MAP_ABYSS = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				Ultracraft.identifier("map_abyss"),
+				FabricBlockEntityTypeBuilder.create(AbyssBlockEntity::new, BlockRegistry.MAP_ABYSS).build());
 	}
 }
