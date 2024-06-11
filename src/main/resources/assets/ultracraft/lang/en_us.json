@@ -121,6 +121,8 @@
   "item.ultracraft.stained_glass_window": "Stained Glass Window",
   "item.ultracraft.disc.clair_de_lune": "Music Disc",
   "item.ultracraft.disc.clair_de_lune.desc": "Debussy - Clair de Lune (Noteblock Cover)",
+  "item.ultracraft.disc.fire_is_gone": "Music Disc",
+  "item.ultracraft.disc.fire_is_gone.desc": "Heaven Pierce Her - The Fire is Gone (Noteblock Cover)",
   "item.ultracraft.disc.limbo2": "Music Disc",
   "item.ultracraft.disc.limbo2.desc": "Efefski - untitled (Combat Mix)",
   "item.ultracraft.disc.limbo2_calm": "Music Disc",
@@ -790,6 +792,8 @@
 
   "music.ultracraft.prelude1": "Beyond the Fire",
   "music.ultracraft.cerberus": "Wardens of Hell",
+  "music.ultracraft.clair_de_lune": "Clair de Lune (Noteblock Cover)",
+  "music.ultracraft.fire_is_gone": "The Fire is Gone (Noteblock Cover)",
 
   "terminal.coming-soon": "Coming Soon",
   "terminal.button": "Button",

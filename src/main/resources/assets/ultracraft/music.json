@@ -1,11 +1,13 @@
 {
   "ultracraft:music/the_fire_is_gone": {
-    "title": "The Fire is Gone (Noteblock Cover)",
-    "author": "Heaven Pierce Her"
+    "title": "music.ultracraft.fire_is_gone",
+    "author": "Heaven Pierce Her",
+    "color": "ff0000"
   },
   "ultracraft:music/clair_de_lune": {
-    "title": "Clair de Lune (Noteblock Cover)",
-    "author": "Claude Debussy"
+    "title": "music.ultracraft.clair_de_lune",
+    "author": "Claude Debussy",
+    "color": "60ccce"
   },
   "ultracraft:music/triage/beyondthefire": {
     "group": "prelude1",

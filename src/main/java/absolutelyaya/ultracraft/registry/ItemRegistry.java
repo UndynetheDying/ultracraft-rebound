@@ -203,6 +203,9 @@ public class ItemRegistry
 	public static final MusicDiscItem CLAIR_DE_LUNE_DISK = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("disc/clair_de_lune"),
 			new MusicDiscItem(15, SoundRegistry.CLAIR_DE_LUNE.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 231));
+	public static final MusicDiscItem FIRE_IS_GONE_DISK = Registry.register(Registries.ITEM,
+			Ultracraft.identifier("disc/fire_is_gone"),
+			new MusicDiscItem(15, SoundRegistry.THE_FIRE_IS_GONE.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 109));
 	public static final MusicDiscItem PRELUDE1_DISK = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("disc/prelude1"),
 			new MusicDiscItem(15, SoundRegistry.PRELUDE1.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 197));
@@ -490,6 +493,7 @@ public class ItemRegistry
 		Registry.register(Registries.ITEM_GROUP, MUSIC_TAB,
 				FabricItemGroup.builder().displayName(Text.translatable("itemGroup.ultracraft.music")).icon(() -> new ItemStack(ItemRegistry.CLAIR_DE_LUNE_DISK)).build());
 		ItemGroupEvents.modifyEntriesEvent(MUSIC_TAB).register(content -> {
+			content.add(ItemRegistry.FIRE_IS_GONE_DISK);
 			content.add(ItemRegistry.PRELUDE1_CALM_DISK);
 			content.add(ItemRegistry.PRELUDE1_DISK);
 			content.add(ItemRegistry.CERBERUS_CALM_DISK);
