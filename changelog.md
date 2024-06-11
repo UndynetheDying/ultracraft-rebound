@@ -62,6 +62,8 @@
 - When being rescued from a Level (which shouldn't normally be necessary), you now get teleported to your own Spawn Point instead of World Spawn
 - Added Fake Leaves Block
 - Fixed Swordsmachine seething with rage so hard that it doesn't actually do anything
+- Replaced all leaves and.. "leaves" in limbo dimension and structures belonging there with Fake Leaves
+  - This change doesn't change old worlds retrospectively ofc
 ## Settings & Config
 - Added Server Config `DisableModificationSuppression` which allows disabling Edit Mode Room Modification Suppression; Default is `false`
   - Or in other Words, it lets you break and place Blocks in otherwise protected Areas, like Levels
