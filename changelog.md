@@ -11,6 +11,7 @@
 - Remade limbo2
 - Made slight changes to limbo1
 - Fixed a soft-lock in prelude1
+- Fixed the Level Unlock Trigger in prelude1 being too big
 - Major Improvements to the Music System
   - When the Game is paused or the local player is dead, the music will lower in pitch and volume
   - Combat Music is now triggered by all Hostile entities, not just ultracraft enemies
@@ -56,6 +57,8 @@
 - Fixed Swordsmachine seething with rage so hard that it doesn't actually do anything
 - Replaced all leaves and.. "leaves" in limbo dimension and structures belonging there with Fake Leaves
   - This change doesn't change old worlds retrospectively ofc
+- Replaced all Levels kill planes with the new Edit Mode Abyss Triggers
+  - aside from the abyss at the end of prelude3 because funi
 ## Settings & Config
 - Added Server Config `DisableModificationSuppression` which allows disabling Edit Mode Room Modification Suppression; Default is `false`
   - Or in other Words, it lets you break and place Blocks in otherwise protected Areas, like Levels

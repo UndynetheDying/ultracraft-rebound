@@ -11,6 +11,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -34,6 +35,7 @@ public class AbyssBlockEntity extends AbstractTriggerBlockEntity
 	public AbyssBlockEntity(BlockPos pos, BlockState state)
 	{
 		super(BlockEntityRegistry.MAP_ABYSS, pos, state);
+		id = "abyss";
 	}
 	
 	@Override
