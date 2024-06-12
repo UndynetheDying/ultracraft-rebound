@@ -549,6 +549,16 @@
       "ultracraft:music/triage/beyondthefire_calm"
     ]
   },
+  "music.prelude2": {
+    "sounds": [
+      "ultracraft:music/efefski/prelude2"
+    ]
+  },
+  "music.prelude2_calm": {
+    "sounds": [
+      "ultracraft:music/efefski/prelude2_calm"
+    ]
+  },
   "music.cerberus": {
     "sounds": [
       "ultracraft:music/psykomatic/cerbfight"

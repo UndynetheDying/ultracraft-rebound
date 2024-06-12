@@ -21,6 +21,18 @@
     "title": "music.ultracraft.prelude1",
     "color": "ff0000"
   },
+  "ultracraft:music/efefski/prelude2": {
+    "group": "prelude2",
+    "author": "Efefski",
+    "title": "music.ultracraft.prelude2",
+    "color": "ff0000"
+  },
+  "ultracraft:music/efefski/prelude2_calm": {
+    "group": "prelude2",
+    "author": "Efefski",
+    "title": "music.ultracraft.prelude2",
+    "color": "ff0000"
+  },
   "ultracraft:music/psykomatic/cerbcalm": {
     "group": "prelude3",
     "author": "Psykomatic",
@@ -36,16 +48,18 @@
   "ultracraft:music/efefski/limbo2": {
     "group": "limbo2",
     "author": "Efefski",
+    "title": "music.ultracraft.limbo2",
     "color": "60ccce"
   },
   "ultracraft:music/efefski/limbo2_calm": {
     "group": "limbo2",
     "author": "Efefski",
+    "title": "music.ultracraft.limbo2",
     "color": "60ccce"
   },
   "ultracraft:music/efefski/cybergrind": {
     "author": "Efefski",
-    "title": "Cybergrind",
+    "title": "music.ultracraft.cybergrind",
     "color": "ff0000"
   }
 }

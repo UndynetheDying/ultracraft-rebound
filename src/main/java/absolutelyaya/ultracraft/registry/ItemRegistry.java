@@ -212,6 +212,12 @@ public class ItemRegistry
 	public static final MusicDiscItem PRELUDE1_CALM_DISK = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("disc/prelude1_calm"),
 			new MusicDiscItem(15, SoundRegistry.PRELUDE1_CALM.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 197));
+	public static final MusicDiscItem PRELUDE2_DISK = Registry.register(Registries.ITEM,
+			Ultracraft.identifier("disc/prelude2"),
+			new MusicDiscItem(15, SoundRegistry.PRELUDE2.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 181));
+	public static final MusicDiscItem PRELUDE2_CALM_DISK = Registry.register(Registries.ITEM,
+			Ultracraft.identifier("disc/prelude2_calm"),
+			new MusicDiscItem(15, SoundRegistry.PRELUDE2_CALM.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 181));
 	public static final MusicDiscItem CERBERUS_DISK = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("disc/cerberus"),
 			new MusicDiscItem(15, SoundRegistry.CERBERUS.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 135));
@@ -472,6 +478,7 @@ public class ItemRegistry
 			content.add(BlockRegistry.MAP_PROGRESSION);
 			content.add(BlockRegistry.MAP_TIMER);
 			content.add(BlockRegistry.MAP_TRAVEL);
+			content.add(BlockRegistry.MAP_ABYSS);
 			content.add(BlockRegistry.MAP_TITLE);
 			content.add(BlockRegistry.MAP_TITLE_LISTENER);
 			content.add(BlockRegistry.MAP_MUSIC);
@@ -496,6 +503,8 @@ public class ItemRegistry
 			content.add(ItemRegistry.FIRE_IS_GONE_DISK);
 			content.add(ItemRegistry.PRELUDE1_CALM_DISK);
 			content.add(ItemRegistry.PRELUDE1_DISK);
+			content.add(ItemRegistry.PRELUDE2_CALM_DISK);
+			content.add(ItemRegistry.PRELUDE2_DISK);
 			content.add(ItemRegistry.CERBERUS_CALM_DISK);
 			content.add(ItemRegistry.CERBERUS_DISK);
 			content.add(ItemRegistry.LIMBO2_CALM_DISK);
