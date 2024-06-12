@@ -175,6 +175,13 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 		list.forEach(i -> unlocked.add(Identifier.tryParse(i.asString())));
 		list = tag.getList("owned", NbtElement.STRING_TYPE);
 		list.forEach(i -> owned.add(Identifier.tryParse(i.asString())));
+		if(!tag.contains("patch") && provider.getWorld().getGameRules().getBoolean(GameruleRegistry.START_AS_V1))
+		{
+			unlock(FEEDBACKER);
+			unlock(HIVEL);
+			unlock(BLOODHEAL);
+			unlock(ULTRAHUD);
+		}
 	}
 	
 	@Override
@@ -188,6 +195,7 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 		for (Identifier id : this.owned)
 			owned.add(NbtString.of(id.toString()));
 		tag.put("owned", owned);
+		tag.putInt("patch", 1);
 	}
 	
 	@Override
