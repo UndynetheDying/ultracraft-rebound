@@ -210,7 +210,7 @@ public class WeaponsTab extends Tab
 		{
 			if (!progression.isUnlocked(selectedWeaponTypeIds[idx]))
 			{
-				if (!selectedWeaponTypeIds[idx].equals(Weapon.REVOLVER.ids[0]))
+				if (!selectedWeaponTypeIds[idx].equals(selectedCategory.ids[0]))
 					refreshTab();
 				craftButton.setClickable(selectedRecipe != null);
 				return true;

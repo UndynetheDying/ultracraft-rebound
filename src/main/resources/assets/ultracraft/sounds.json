@@ -569,6 +569,21 @@
       "ultracraft:music/psykomatic/cerbcalm"
     ]
   },
+  "music.limbo1_illusion": {
+    "sounds": [
+      "ultracraft:music/oxblood/limbo1_illusion"
+    ]
+  },
+  "music.limbo1": {
+    "sounds": [
+      "ultracraft:music/oxblood/limbo1"
+    ]
+  },
+  "music.limbo1_calm": {
+    "sounds": [
+      "ultracraft:music/oxblood/limbo1_calm"
+    ]
+  },
   "music.limbo2": {
     "sounds": [
       "ultracraft:music/efefski/limbo2"

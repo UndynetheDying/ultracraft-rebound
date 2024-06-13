@@ -224,6 +224,15 @@ public class ItemRegistry
 	public static final MusicDiscItem CERBERUS_CALM_DISK = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("disc/cerberus_calm"),
 			new MusicDiscItem(15, SoundRegistry.CERBERUS_CALM.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 135));
+	public static final MusicDiscItem LIMBO1_ILLUSION_DISK = Registry.register(Registries.ITEM,
+			Ultracraft.identifier("disc/limbo1_illusion"),
+			new MusicDiscItem(15, SoundRegistry.LIMBO1_ILLUSION.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 116));
+	public static final MusicDiscItem LIMBO1_DISK = Registry.register(Registries.ITEM,
+			Ultracraft.identifier("disc/limbo1"),
+			new MusicDiscItem(15, SoundRegistry.LIMBO1.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 114));
+	public static final MusicDiscItem LIMBO1_CALM_DISK = Registry.register(Registries.ITEM,
+			Ultracraft.identifier("disc/limbo1_calm"),
+			new MusicDiscItem(15, SoundRegistry.LIMBO1_CALM.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 114));
 	public static final MusicDiscItem LIMBO2_DISK = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("disc/limbo2"),
 			new MusicDiscItem(15, SoundRegistry.LIMBO2.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 176));
@@ -507,6 +516,9 @@ public class ItemRegistry
 			content.add(ItemRegistry.PRELUDE2_DISK);
 			content.add(ItemRegistry.CERBERUS_CALM_DISK);
 			content.add(ItemRegistry.CERBERUS_DISK);
+			content.add(ItemRegistry.LIMBO1_ILLUSION_DISK);
+			content.add(ItemRegistry.LIMBO1_CALM_DISK);
+			content.add(ItemRegistry.LIMBO1_DISK);
 			content.add(ItemRegistry.LIMBO2_CALM_DISK);
 			content.add(ItemRegistry.LIMBO2_DISK);
 			content.add(ItemRegistry.CLAIR_DE_LUNE_DISK);

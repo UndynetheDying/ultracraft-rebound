@@ -30,6 +30,16 @@
     "z": 48
   },
   "spawn-rot": -90,
+  "music": {
+    "illusion": {
+      "calm": "ultracraft:music.limbo1_illusion",
+      "combat": "ultracraft:music.limbo1_illusion"
+    },
+    "main": {
+      "calm": "ultracraft:music.limbo1_calm",
+      "combat": "ultracraft:music.limbo1"
+    }
+  },
   "version": 4,
   "next-level": "ultracraft:limbo2"
 }

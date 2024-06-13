@@ -142,6 +142,9 @@ public class SoundRegistry
 	public static final RegistryEntry.Reference<SoundEvent> PRELUDE2_CALM = registerReference("music.prelude2_calm");
 	public static final RegistryEntry.Reference<SoundEvent> CERBERUS = registerReference("music.cerberus");
 	public static final RegistryEntry.Reference<SoundEvent> CERBERUS_CALM = registerReference("music.cerberus_calm");
+	public static final RegistryEntry.Reference<SoundEvent> LIMBO1_ILLUSION = registerReference("music.limbo1_illusion");
+	public static final RegistryEntry.Reference<SoundEvent> LIMBO1 = registerReference("music.limbo1");
+	public static final RegistryEntry.Reference<SoundEvent> LIMBO1_CALM = registerReference("music.limbo1_calm");
 	public static final RegistryEntry.Reference<SoundEvent> LIMBO2 = registerReference("music.limbo2");
 	public static final RegistryEntry.Reference<SoundEvent> LIMBO2_CALM = registerReference("music.limbo2_calm");
 	public static final RegistryEntry.Reference<SoundEvent> CYBERGRIND = registerReference("music.cybergrind");

@@ -45,6 +45,23 @@
     "title": "music.ultracraft.cerberus",
     "color": "ff0000"
   },
+  "ultracraft:music/oxblood/limbo1_illusion": {
+    "author": "Oxblood",
+    "title": "music.ultracraft.limbo1_illusion",
+    "color": "60ccce"
+  },
+  "ultracraft:music/oxblood/limbo1": {
+    "group": "limbo1",
+    "author": "Oxblood",
+    "title": "music.ultracraft.limbo1",
+    "color": "60ccce"
+  },
+  "ultracraft:music/oxblood/limbo1_calm": {
+    "group": "limbo1",
+    "author": "Oxblood",
+    "title": "music.ultracraft.limbo1",
+    "color": "60ccce"
+  },
   "ultracraft:music/efefski/limbo2": {
     "group": "limbo2",
     "author": "Efefski",
