@@ -323,11 +323,11 @@ public class DestinyBondSwordsmachineEntity extends SwordsmachineEntity implemen
 	{
 		byte anim = dataTracker.get(ANIMATION);
 		AnimationController<?> controller = event.getController();
-		super.predicate(event);
 		switch (anim)
 		{
 			case ANIMATION_STUN_START -> controller.setAnimation(STUN_START_ANIM);
 			case ANIMATION_STUN_STOP -> controller.setAnimation(STUN_STOP_ANIM);
+			default -> super.predicate(event);
 		}
 		return PlayState.CONTINUE;
 	}
