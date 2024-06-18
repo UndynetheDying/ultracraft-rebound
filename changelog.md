@@ -62,6 +62,7 @@
 - Replaced all Levels kill planes with the new Edit Mode Abyss Triggers
   - aside from the abyss at the end of prelude3 because funi
 - Fixed Tundra//Agony stun animation not playing
+- Fixed Thrown Machineswords not saving Sword Item data
 ## Settings & Config
 - Added Server Config `DisableModificationSuppression` which allows disabling Edit Mode Room Modification Suppression; Default is `false`
   - Or in other Words, it lets you break and place Blocks in otherwise protected Areas, like Levels

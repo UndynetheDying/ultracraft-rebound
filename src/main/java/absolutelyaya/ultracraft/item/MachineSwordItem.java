@@ -96,7 +96,7 @@ public class MachineSwordItem extends SwordItem implements GeoItem, IOverrideMel
 			dir = dir.rotateX((float)Math.toRadians(-user.getPitch()));
 			dir = dir.rotateY((float)Math.toRadians(-user.getYaw()));
 			thrown.setVelocity(dir.x, dir.y, dir.z, 1f, 0.0f);
-			if(user instanceof PlayerEntity p && !p.isCreative())
+			if(user instanceof PlayerEntity p && !p.isCreative() && !world.isClient)
 				stack.decrement(1);
 		}
 	}
