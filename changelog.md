@@ -1,11 +1,11 @@
 ## Major Changes
 - Added an OST composed by various Ultrakill Fan//UST Composers
   - Prelude 1 - Beyond the Fire by [Triage](https://www.youtube.com/@triageGremlin)
-  - Prelude 2 - untitled by [Efefski](https://www.youtube.com/@efefski)
+  - Prelude 2 - Inferno by [Efefski](https://www.youtube.com/@efefski)
   - Prelude 3 - Wardens of Hell by [Psykomatic](https://www.youtube.com/@psykomatic0)
   - Limbo 1 - untitled by [Oxblood](https://www.youtube.com/@OxbloodXIX)
-  - Limbo 2 - untitled by [Efefski](https://www.youtube.com/@efefski)
-  - Cybergrind - cybergrind by [Efefski](https://www.youtube.com/@efefski)
+  - Limbo 2 - Blameless by [Efefski](https://www.youtube.com/@efefski)
+  - Cybergrind - Infinite by [Efefski](https://www.youtube.com/@efefski)
   - And more Tracks to come!! (very exciting)
   - All Tracks have Music disks for both their calm and combat version (if applicable)
     - These currently cannot be obtained in survival. I'll think of something for that.
