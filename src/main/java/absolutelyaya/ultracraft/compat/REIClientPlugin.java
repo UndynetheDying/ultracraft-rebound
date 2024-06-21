@@ -53,6 +53,7 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 				EntryStacks.of(BlockRegistry.MAP_TRIGGER),
 				EntryStacks.of(BlockRegistry.MAP_ENEMY_TRIGGER),
 				EntryStacks.of(BlockRegistry.MAP_CHECKPOINT),
+				EntryStacks.of(BlockRegistry.MAP_ABYSS),
 				EntryStacks.of(BlockRegistry.MAP_REDSTONE),
 				EntryStacks.of(BlockRegistry.MAP_RECEIVER),
 				EntryStacks.of(BlockRegistry.MAP_DOOR),
@@ -93,10 +94,16 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 				EntryStacks.of(BlockRegistry.WHITE_CARPET));
 		registry.group(Ultracraft.identifier("carpet"), Text.translatable("rei-group.ultracraft.carpet"), entries);
 		entries = List.of(
+				EntryStacks.of(ItemRegistry.FIRE_IS_GONE_DISK),
 				EntryStacks.of(ItemRegistry.PRELUDE1_DISK),
 				EntryStacks.of(ItemRegistry.PRELUDE1_CALM_DISK),
+				EntryStacks.of(ItemRegistry.PRELUDE2_DISK),
+				EntryStacks.of(ItemRegistry.PRELUDE2_CALM_DISK),
 				EntryStacks.of(ItemRegistry.CERBERUS_DISK),
 				EntryStacks.of(ItemRegistry.CERBERUS_CALM_DISK),
+				EntryStacks.of(ItemRegistry.LIMBO1_ILLUSION_DISK),
+				EntryStacks.of(ItemRegistry.LIMBO1_DISK),
+				EntryStacks.of(ItemRegistry.LIMBO1_CALM_DISK),
 				EntryStacks.of(ItemRegistry.LIMBO2_DISK),
 				EntryStacks.of(ItemRegistry.LIMBO2_CALM_DISK),
 				EntryStacks.of(ItemRegistry.CYBERGRIND_DISK),
