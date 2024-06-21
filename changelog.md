@@ -35,6 +35,7 @@
   - If applicable, Enemies Enraged Behavior will be used while having the Effect, regardless of other requirements like Health
 - Added Emissive Layer to Hideous Mass Enraged and Dying Textures
 - Added separate Emissive Texture for Enraged Swordsmachine
+- Changed Pixel [42,45] of the Uncracked Cerberus Entity Texture from #7c7c7c to #7d7d7d
 - Added New Progression Unlock Items
   - Feedbacker - Unlocks the Feedbacker Arm
   - Hivel Wings - Unlocks Ability to toggle High Velocity Mode
@@ -64,6 +65,7 @@
   - aside from the abyss at the end of prelude3 because funi
 - Fixed Tundra//Agony stun animation not playing
 - Fixed Thrown Machineswords not saving Sword Item data
+- Fixed Swordsmachine getting stuck in a interruptible state when interrupted
 ## Settings & Config
 - Added Server Config `DisableModificationSuppression` which allows disabling Edit Mode Room Modification Suppression; Default is `false`
   - Or in other Words, it lets you break and place Blocks in otherwise protected Areas, like Levels
