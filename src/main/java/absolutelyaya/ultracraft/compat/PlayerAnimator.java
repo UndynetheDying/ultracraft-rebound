@@ -60,12 +60,12 @@ public class PlayerAnimator
 	
 	public static void init()
 	{
-		PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(new Identifier(Ultracraft.MOD_ID, "animation"), 42, (player) -> new ModifierLayer<>());
+		PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(Ultracraft.identifier("animation"), 42, (player) -> new ModifierLayer<>());
 		
 		PlayerAnimationAccess.REGISTER_ANIMATION_EVENT.register((player, animationStack) -> {
 			ModifierLayer<IAnimation> layer = new ModifierLayer<>();
 			animationStack.addAnimLayer(69, layer);
-			PlayerAnimationAccess.getPlayerAssociatedData(player).set(new Identifier(Ultracraft.MOD_ID, "modify"), layer);
+			PlayerAnimationAccess.getPlayerAssociatedData(player).set(Ultracraft.identifier("modify"), layer);
 		});
 		
 		Optional<ModContainer> optionalContainer = FabricLoader.getInstance().getModContainer(Ultracraft.MOD_ID);
@@ -75,7 +75,7 @@ public class PlayerAnimator
 		{
 			@Override
 			public Identifier getFabricId() {
-				return new Identifier(Ultracraft.MOD_ID, "player_anim");
+				return Ultracraft.identifier("player_anim");
 			}
 			
 			@Override
@@ -83,7 +83,7 @@ public class PlayerAnimator
 			{
 				try
 				{
-					Optional<Resource> r = manager.getResource(new Identifier(Ultracraft.MOD_ID, "player_animation/player.animation.json"));
+					Optional<Resource> r = manager.getResource(Ultracraft.identifier("player_animation/player.animation.json"));
 					if(r.isEmpty())
 						throw new Exception("Internal player Animation File wasn't found.");
 					ANIMATIONS = new AnimationJson().deserialize(JsonHelper.deserialize(new InputStreamReader(r.get().getInputStream())), null, null);
@@ -122,7 +122,7 @@ public class PlayerAnimator
 		if(!(player instanceof AbstractClientPlayerEntity clientPlayer))
 			return;
 		ModifierLayer<IAnimation> animationLayer = (ModifierLayer<IAnimation>)PlayerAnimationAccess.getPlayerAssociatedData(clientPlayer)
-															   .get(new Identifier(Ultracraft.MOD_ID, "animation"));
+															   .get(Ultracraft.identifier("animation"));
 		
 		KeyframeAnimation anim;
 		if(animID >= 0)

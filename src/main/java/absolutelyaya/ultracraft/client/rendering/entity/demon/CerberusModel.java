@@ -15,19 +15,19 @@ public class CerberusModel extends GeoModel<CerberusEntity>
 	@Override
 	public Identifier getModelResource(CerberusEntity object)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "geo/entities/cerberus.geo.json");
+		return Ultracraft.identifier("geo/entities/cerberus.geo.json");
 	}
 	
 	@Override
 	public Identifier getTextureResource(CerberusEntity object)
 	{
-		return new Identifier(Ultracraft.MOD_ID, object.isCracked() ? "textures/entity/cerberus_cracked.png" : "textures/entity/cerberus.png");
+		return Ultracraft.identifier(object.isCracked() ? "textures/entity/cerberus_cracked.png" : "textures/entity/cerberus.png");
 	}
 	
 	@Override
 	public Identifier getAnimationResource(CerberusEntity animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "animations/entities/cerberus.animation.json");
+		return Ultracraft.identifier("animations/entities/cerberus.animation.json");
 	}
 	
 	@Override

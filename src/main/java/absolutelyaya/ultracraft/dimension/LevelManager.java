@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.block.mapping.AbstractMappingBlockEntity;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.ILevelStatsComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.data.LevelCollectionManager;
 import absolutelyaya.ultracraft.data.LevelData;
 import absolutelyaya.ultracraft.data.LevelDataManager;
 import absolutelyaya.ultracraft.entity.demon.MaliciousFaceEntity;
@@ -45,7 +46,7 @@ import static absolutelyaya.ultracraft.data.LevelDataManager.getLevelData;
 public class LevelManager extends DimensionManager
 {
 	public static LevelManager Instance;
-	public static final Identifier ID = new Identifier(Ultracraft.MOD_ID, "levels");
+	public static final Identifier ID = Ultracraft.identifier("levels");
 	public static final RegistryKey<World> WORLD_KEY = RegistryKey.of(RegistryKeys.WORLD, ID);
 	ServerWorld world;
 	
@@ -57,6 +58,7 @@ public class LevelManager extends DimensionManager
 	{
 		Instance = this;
 		new LevelDataManager();
+		new LevelCollectionManager();
 	}
 	
 	public void init(ServerWorld world)
@@ -242,9 +244,21 @@ public class LevelManager extends DimensionManager
 	void rescue(ServerPlayerEntity player, RescueReason reason)
 	{
 		IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
-		winged.sendBoxTitle(Text.translatable(reason.message));
-		ServerWorld overworld = world.getServer().getOverworld();
-		FabricDimensions.teleport(player, overworld, new TeleportTarget(overworld.getSpawnPos().toCenterPos(), Vec3d.ZERO, player.getYaw(), player.getPitch()));
+		winged.setLastCheckpoint(null, null);
+		BlockPos spawnPoint = player.getSpawnPointPosition();
+		RegistryKey<World> spawnDimension = player.getSpawnPointDimension();
+		if(spawnPoint == null || spawnDimension == null || spawnDimension.getValue().equals(ID))
+		{
+			winged.sendBoxTitle(Text.translatable(reason.message, Text.translatable("message.ultracraft.rescue.world-spawn")));
+			ServerWorld overworld = world.getServer().getOverworld();
+			FabricDimensions.teleport(player, overworld, new TeleportTarget(overworld.getSpawnPos().toCenterPos(), Vec3d.ZERO, player.getYaw(), player.getPitch()));
+		}
+		else
+		{
+			winged.sendBoxTitle(Text.translatable(reason.message, Text.translatable("message.ultractaft.rescue.player-spawn")));
+			FabricDimensions.teleport(player, world.getServer().getWorld(spawnDimension),
+					new TeleportTarget(spawnPoint.toCenterPos(), Vec3d.ZERO, player.getYaw(), player.getPitch()));
+		}
 		ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(player);
 		levelStats.enterLevel(null, null);
 	}

@@ -9,13 +9,13 @@ public class AlternateSharpshooterRevolverRenderer extends SharpshooterRevolverR
 {
 	public AlternateSharpshooterRevolverRenderer()
 	{
-		super(new DefaultedItemGeoModel<SharpshooterRevolverItem>(new Identifier(Ultracraft.MOD_ID, "alternate_revolver"))
-					  .withAltAnimations(new Identifier(Ultracraft.MOD_ID, "revolver")));
+		super(new DefaultedItemGeoModel<SharpshooterRevolverItem>(Ultracraft.identifier("alternate_revolver"))
+					  .withAltAnimations(Ultracraft.identifier("revolver")));
 	}
 	
 	@Override
 	public Identifier getTextureLocation(SharpshooterRevolverItem animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "textures/item/alternate_sharpshooter.png");
+		return Ultracraft.identifier("textures/item/alternate_sharpshooter.png");
 	}
 }

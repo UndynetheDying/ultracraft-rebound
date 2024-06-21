@@ -10,7 +10,7 @@ public class MachineSwordRenderer extends GeoItemRenderer<MachineSwordItem>
 {
 	public MachineSwordRenderer()
 	{
-		super(new DefaultedItemGeoModel<>(new Identifier(Ultracraft.MOD_ID, "machinesword")));
+		super(new DefaultedItemGeoModel<>(Ultracraft.identifier("machinesword")));
 	}
 	
 	@Override
@@ -18,9 +18,9 @@ public class MachineSwordRenderer extends GeoItemRenderer<MachineSwordItem>
 	{
 		return switch(MachineSwordItem.getType(getCurrentItemStack()))
 		{
-			case NORMAL -> new Identifier(Ultracraft.MOD_ID, "textures/item/machinesword.png");
-			case TUNDRA -> new Identifier(Ultracraft.MOD_ID, "textures/item/machinesword_tundra.png");
-			case AGONY -> new Identifier(Ultracraft.MOD_ID, "textures/item/machinesword_agony.png");
+			case NORMAL -> Ultracraft.identifier("textures/item/machinesword.png");
+			case TUNDRA -> Ultracraft.identifier("textures/item/machinesword_tundra.png");
+			case AGONY -> Ultracraft.identifier("textures/item/machinesword_agony.png");
 		};
 	}
 }

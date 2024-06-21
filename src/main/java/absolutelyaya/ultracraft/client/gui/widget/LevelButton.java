@@ -36,27 +36,28 @@ import java.util.function.Consumer;
 public class LevelButton extends ClickableWidget
 {
 	final static String[] RANKS = new String[] { "P", "§4S", "§6A", "§eB", "§aC", "§bD", "§9E", "§8F" };
-	static final Identifier UPDATE_MARKER_TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/particle/shock.png");
+	static final Identifier UPDATE_MARKER_TEXTURE = Ultracraft.identifier("textures/particle/shock.png");
 	static final TextRenderer tRenderer;
 	public final Identifier preview, destination;
 	final Text description, author;
 	final String authorLink;
 	final Consumer<Identifier> action;
 	final int version;
-	boolean isUnlocked, isUnimplemented, isHidden, hasMusic, hasRankingData;
+	boolean isBuiltin, isUnlocked, isUnimplemented, isHidden, hasMusic, hasRankingData;
 	float hoverAnim, animTime;
 	
 	public LevelButton(int x, int y, LevelData data, Consumer<Identifier> action)
 	{
 		super(x, y, 96, 64, data.getTitleText());
 		description = data.getDescriptionText();
-		if(data.getBuiltin())
+		isBuiltin = data.isBuiltin();
+		if(isBuiltin)
 			author = Text.of("");
 		else
 			author = Text.translatable("screen.ultracraft.level.author",
 					data.getAuthorText().getString().length() > 0 ? data.getAuthorText() : Text.translatable("level.ultracaft.author.unknown"));
 		String authorLink = data.getAuthorLink();
-		if(authorLink.length() > 0)
+		if(!authorLink.isEmpty())
 		{
 			try
 			{
@@ -93,6 +94,7 @@ public class LevelButton extends ClickableWidget
 	public LevelButton(int x, int y, Text title, Identifier preview, Identifier destination, Consumer<Identifier> action)
 	{
 		super(x, y, 96, 64, title);
+		isBuiltin = true;
 		description = author = Text.of("");
 		authorLink = "";
 		this.preview = preview;
@@ -115,7 +117,7 @@ public class LevelButton extends ClickableWidget
 	void calcDimensions()
 	{
 		width = Math.max(96, Math.max(tRenderer.getWidth(getMessage()), tRenderer.getWidth(author))) + 8; // min == 104
-		height = 64 + (author.getString().length() > 0 ? tRenderer.fontHeight : 0) + (authorLink.length() > 0 ? 2 : 0);
+		height = 64 + (!author.getString().isEmpty() ? tRenderer.fontHeight : 0) + (!authorLink.isEmpty() ? 2 : 0);
 	}
 	
 	public void selfCenter()
@@ -185,7 +187,7 @@ public class LevelButton extends ClickableWidget
 			{
 				matrices.push();
 				int descBoxWidth = 128;
-				descBoxHeight = tRenderer.getWrappedLinesHeight(description, descBoxWidth) + 8;
+				descBoxHeight = tRenderer.getWrappedLinesHeight(description, descBoxWidth) + 7;
 				matrices.translate((width + 8) * hoverAnim, 0f, 0f);
 				context.fill(0, 0, descBoxWidth, descBoxHeight, 0xff000000);
 				context.drawBorder(0, 0, descBoxWidth, descBoxHeight, 0xffffffff);
@@ -197,7 +199,7 @@ public class LevelButton extends ClickableWidget
 				matrices.pop();
 			}
 			//music hint
-			if(hasMusic)
+			if(hasMusic && !isBuiltin)
 			{
 				matrices.push();
 				if(descBoxHeight > 0)
@@ -214,14 +216,14 @@ public class LevelButton extends ClickableWidget
 			RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		}
 		List<Text> t = getMessage().getWithStyle(Style.EMPTY.withUnderline(true));
-		if(t.size() > 0)
+		if(!t.isEmpty())
 			context.drawText(tRenderer, t.get(0),
 					(width - tRenderer.getWidth(t.get(0))) / 2, 2, 0xffffffff, true);
 		RenderSystem.setShaderTexture(0, isUnlocked ? preview : LevelDataManager.PLACEHOLDER_THUMB);
 		RenderingUtil.drawTexture(matrices.peek().getPositionMatrix(), new Vector4f(width / 2f - 36, 14, 72, 48), 0,
 				new Vec2f(480, 320), new Vector4f(0, 0, 480, -320), alpha);
-		t = Text.of(author.getString()).getWithStyle(Style.EMPTY.withUnderline(authorLink.length() > 0));
-		if(t.size() > 0)
+		t = Text.of(author.getString()).getWithStyle(Style.EMPTY.withUnderline(!authorLink.isEmpty()));
+		if(!t.isEmpty())
 		{
 			context.drawText(tRenderer, t.get(0),
 					(width - tRenderer.getWidth(t.get(0))) / 2, 64,

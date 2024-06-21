@@ -1,7 +1,7 @@
 package absolutelyaya.ultracraft.client.rendering.entity.demon;
 
 import absolutelyaya.ultracraft.client.UltracraftClient;
-import absolutelyaya.ultracraft.client.rendering.entity.feature.gecko.HideousMassRageLayer;
+import absolutelyaya.ultracraft.client.rendering.entity.feature.gecko.HideousMassEmissiveLayer;
 import absolutelyaya.ultracraft.entity.demon.HideousMassEntity;
 import mod.azure.azurelib.cache.object.BakedGeoModel;
 import net.minecraft.client.render.RenderLayer;
@@ -17,7 +17,7 @@ public class HideousMassRenderer extends GeoEntityRenderer<HideousMassEntity>
 	public HideousMassRenderer(EntityRendererFactory.Context renderManager)
 	{
 		super(renderManager, new HideousMassModel());
-		addRenderLayer(new HideousMassRageLayer(this));
+		addRenderLayer(new HideousMassEmissiveLayer(this));
 	}
 	
 	@Override

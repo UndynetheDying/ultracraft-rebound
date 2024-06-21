@@ -93,7 +93,8 @@ public class Commands
 						.then(literal("rank").executes(Commands::executeDebugResetBestRank)))
 					.then(literal("all")
 						.then(literal("time").executes(Commands::executeDebugResetAllBestTimes))
-						.then(literal("rank").executes(Commands::executeDebugResetAllBestRanks)))))))
+						.then(literal("rank").executes(Commands::executeDebugResetAllBestRanks))))))
+				.then(literal("clearLikelyPerTickDamageTypes").executes(Commands::executeDebugClearLikelyPerTickDamageTypes)))
 			.then(literal("progression").requires(source -> source.hasPermissionLevel(2))
 				.then(argument("list", string()).suggests(Commands::progressionListTypeProvider)
 					.then(literal("list").then(argument("target", player()).executes(Commands::executeProgressionList)))
@@ -600,5 +601,12 @@ public class Commands
 		builder.suggest("ultracraft:dimension.prelude");
 		builder.suggest("ultracraft:dimension.limbo");
 		return builder.buildFuture();
+	}
+	
+	private static int executeDebugClearLikelyPerTickDamageTypes(CommandContext<ServerCommandSource> context)
+	{
+		Ultracraft.clearLikelyPerTickDamageTypes();
+		context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.debug.clear-likely-per-tick-damage-types.success"), true);
+		return Command.SINGLE_SUCCESS;
 	}
 }

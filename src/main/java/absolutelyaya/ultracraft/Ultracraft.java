@@ -36,6 +36,7 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.network.PacketByteBuf;
@@ -44,15 +45,14 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class Ultracraft implements ModInitializer
 {
@@ -60,11 +60,12 @@ public class Ultracraft implements ModInitializer
     public static final Logger LOGGER = LogUtils.getLogger();
     static final String SUPPORTER_LIST = "https://raw.githubusercontent.com/absolutelyaya/absolutelyaya/main/cool-people.json";
     public static String VERSION;
-	public static boolean DYN_LIGHTS, SERVER_SIDE, VIVECRAFT;
+	public static boolean DYN_LIGHTS, SERVER_SIDE, VIVECRAFT, TRINKETS;
 	static int freezeTicks;
     static Map<UUID, Integer> supporterCache = new HashMap<>(), supporterCacheAdditions = new HashMap<>();
     static ServerConfig config;
     static HivelConfig hivelConfig;
+    static List<DamageType> likelyPerTickDamageTypes = new ArrayList<>();
     
     @Override
     public void onInitialize()
@@ -78,6 +79,7 @@ public class Ultracraft implements ModInitializer
         PacketRegistry.registerC2S();
         TagRegistry.register();
         SoundRegistry.register();
+        GameruleRegistry.register();
         RecipeSerializers.register();
         CriteriaRegistry.register();
         StatusEffectRegistry.register();
@@ -150,7 +152,13 @@ public class Ultracraft implements ModInitializer
         FabricLoader.getInstance().getModContainer(MOD_ID).ifPresent(modContainer -> VERSION = modContainer.getMetadata().getVersion().getFriendlyString());
         FabricLoader.getInstance().getModContainer("lambdynlights").ifPresent(container -> DYN_LIGHTS = true);
         FabricLoader.getInstance().getModContainer("vivecraft").ifPresent(container -> VIVECRAFT = true);
+        FabricLoader.getInstance().getModContainer("trinkets").ifPresent(container -> TRINKETS = true);
         LOGGER.info("Ultracraft initialized.");
+    }
+    
+    public static Identifier identifier(String path)
+    {
+        return new Identifier(Ultracraft.MOD_ID, path);
     }
     
     void loadConfig(MinecraftServer server)
@@ -294,5 +302,21 @@ public class Ultracraft implements ModInitializer
             else if (item instanceof AbstractNailgunItem nailgun && nailgun.getNbt(stack, "nails") < 100)
                 nailgun.setNbt(stack, "nails", 100);
         });
+    }
+    
+    public static boolean isLikelyPerTickDamageType(DamageType type)
+    {
+        return likelyPerTickDamageTypes.contains(type);
+    }
+    
+    public static void addLikelyPerTickDamageType(DamageType type)
+    {
+        likelyPerTickDamageTypes.add(type);
+        LOGGER.info("Identified Damage Type '{}' as potential per-tick Damage Type", type.msgId());
+    }
+    
+    public static void clearLikelyPerTickDamageTypes()
+    {
+        likelyPerTickDamageTypes.clear();
     }
 }

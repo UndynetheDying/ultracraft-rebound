@@ -23,7 +23,10 @@
     "ServerWorldMixin",
     "ThrownEntityMixin",
     "WorldMixin",
-    "client.PlayerInventoryMixin"
+    "client.PlayerInventoryMixin",
+    "compat.carryon.PickupHandlerMixin",
+    "compat.carryon.PlacementHandlerMixin",
+    "compat.yigd.DeathHandlerMixin"
   ],
   "client": [
     "client.CameraMixin",
@@ -36,14 +39,15 @@
     "client.MinecraftClientMixin",
     "client.MusicTrackerMixin",
     "client.OtherClientPlayerMixin",
+    "client.SoundSystemMixin",
     "client.gui.AccessibilityScreenMixin",
     "client.gui.BossbarHudMixin",
     "client.gui.ClickableWidgetMixin",
     "client.gui.DeathScreenMixin",
     "client.gui.DownloadingTerrainScreenMixin",
+    "client.gui.GameMenuScreenMixin",
     "client.gui.IngameHudMixin",
     "client.gui.ItemOverlayMixin",
-    "client.gui.GameMenuScreenMixin",
     "client.gui.SkinOptionsScreenMixin",
     "client.gui.TitleScreenMixin",
     "client.render.BackgroundRendererMixin",

@@ -7,3 +7,4 @@ splash.ultracraft.srimp
 splash.ultracraft.sizetwo
 splash.ultracraft.crazy
 splash.ultracraft.corecore
+splash.ultracraft.music

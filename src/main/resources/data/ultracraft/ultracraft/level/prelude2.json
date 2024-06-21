@@ -31,6 +31,12 @@
     "z": 86
   },
   "spawn-rot": -90,
-  "version": 1,
+  "music": {
+    "main": {
+      "calm": "ultracraft:music.prelude2_calm",
+      "combat": "ultracraft:music.prelude2"
+    }
+  },
+  "version": 2,
   "next-level": "ultracraft:prelude3"
 }

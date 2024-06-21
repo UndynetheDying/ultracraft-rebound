@@ -1,35 +1,43 @@
 package absolutelyaya.ultracraft.client.sound;
 
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
 public class ModularLevelMusic
 {
-	final RegistryEntry<SoundEvent> calm, combat;
+	final Identifier calmID, combatID;
+	final int combatThreshold;
+	final boolean noCalmdown;
 	
-	public ModularLevelMusic(Identifier calm, Identifier combat)
+	public ModularLevelMusic(Identifier calmID, Identifier combatID, int combatThreshold, boolean noCalmdown)
 	{
-		Registry<SoundEvent> registry = Registries.SOUND_EVENT;
-		this.calm = registry.getEntry(registry.get(calm));
-		this.combat = registry.getEntry(registry.get(combat));
+		this.calmID = calmID;
+		this.combatID = combatID;
+		this.combatThreshold = combatThreshold;
+		this.noCalmdown = noCalmdown;
 	}
 	
-	public ModularLevelMusic(RegistryEntry<SoundEvent> calm, RegistryEntry<SoundEvent> combat)
+	public SoundEvent getCalmSound()
 	{
-		this.calm = calm;
-		this.combat = combat;
+		if(calmID == null)
+			return null;
+		return SoundEvent.of(calmID);
 	}
 	
-	public RegistryEntry<SoundEvent> getCalmSound()
+	public SoundEvent getCombatSound()
 	{
-		return calm;
+		if(combatID == null)
+			return null;
+		return SoundEvent.of(combatID);
 	}
 	
-	public RegistryEntry<SoundEvent> getCombatSound()
+	public int getCombatThreshold()
 	{
-		return combat;
+		return combatThreshold;
+	}
+	
+	public boolean isNoCalmdown()
+	{
+		return noCalmdown;
 	}
 }

@@ -10,18 +10,18 @@ public class HellSpawnerItemModel extends GeoModel<HellSpawnerItem>
 	@Override
 	public Identifier getModelResource(HellSpawnerItem animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "geo/block/hell_spawner.geo.json");
+		return Ultracraft.identifier("geo/block/hell_spawner.geo.json");
 	}
 	
 	@Override
 	public Identifier getTextureResource(HellSpawnerItem animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "textures/block/hell_spawner.png");
+		return Ultracraft.identifier("textures/block/hell_spawner.png");
 	}
 	
 	@Override
 	public Identifier getAnimationResource(HellSpawnerItem animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "animations/block/hell_spawner.animation.json");
+		return Ultracraft.identifier("animations/block/hell_spawner.animation.json");
 	}
 }

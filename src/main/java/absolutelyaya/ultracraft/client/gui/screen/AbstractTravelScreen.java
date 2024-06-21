@@ -7,6 +7,8 @@ import absolutelyaya.ultracraft.client.gui.TitleHUD;
 import absolutelyaya.ultracraft.client.gui.widget.LevelInstanceButton;
 import absolutelyaya.ultracraft.client.rendering.TitleBGRenderer;
 import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.data.LevelCollection;
+import absolutelyaya.ultracraft.data.LevelCollectionManager;
 import absolutelyaya.ultracraft.data.LevelDataManager;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -19,8 +21,12 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.text.OrderedText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
@@ -30,35 +36,41 @@ import java.util.*;
 
 public abstract class AbstractTravelScreen extends Screen
 {
-	protected static final Identifier TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/travel.png");
-	public static final TitleBGRenderer BG = new TitleBGRenderer(new CubeMapRenderer(new Identifier(Ultracraft.MOD_ID, "aaa")));
+	protected static final Identifier TEXTURE = Ultracraft.identifier("textures/gui/travel.png");
+	public static final TitleBGRenderer BG = new TitleBGRenderer(new CubeMapRenderer(Ultracraft.identifier("aaa")));
 	protected float openAnimTime, closeAnimTime;
 	protected boolean shouldClose, awaitingFeedback;
 	protected long waitingSince;
-	protected Layer curLayer, selectedLayer;
+	protected Identifier curLayer, selectedLayer;
 	protected Identifier selectedLevel;
+	protected final Identifier forcedDestination;
 	Map<String, UUID> instanceMap = new HashMap<>();
 	List<ClickableWidget> instanceButtons = new ArrayList<>();
 	
-	protected AbstractTravelScreen(Text title)
+	protected AbstractTravelScreen(Text title, Identifier forcedDestination)
 	{
 		super(title);
+		this.forcedDestination = forcedDestination;
 	}
 	
 	@Override
 	protected void init()
 	{
 		super.init();
-		curLayer = Layer.fromRegistryKey(MinecraftClient.getInstance().world.getRegistryKey());
+		if(MinecraftClient.getInstance().world != null)
+			curLayer = MinecraftClient.getInstance().world.getRegistryKey().getValue();
 		ClientPlayNetworking.send(PacketRegistry.REQUEST_DESTINATIONS_PACKET_ID, new PacketByteBuf(Unpooled.buffer()));
 		if(selectedLevel != null)
 			instanceButtons = initInstanceButtons();
 	}
 	
-	protected ButtonWidget layerButton(int layer)
+	protected ButtonWidget layerButton(Identifier layer, int idx)
 	{
-		return new LayerButton(width / 2 - 50, height / 2 + (layer - 2) * 30, 100, 20,
-				Text.translatable("screen.ultracraft.travel.layer" + layer), b -> selectLayer(layer));
+		LevelCollection collection = LevelCollectionManager.getLevelCollection(layer);
+		if(collection == null)
+			return null;
+		return new LayerButton(width / 2 - 50, height / 2 + (idx - 2) * 30, 100, 20,
+				collection.getTitleText(), collection.getAuthorText(), collection.getDescriptionText(), b -> selectLayer(layer));
 	}
 	
 	@Override
@@ -112,7 +124,7 @@ public abstract class AbstractTravelScreen extends Screen
 	
 	protected void travel(Layer layer)
 	{
-		if(curLayer != null && layer.worldKey.equals(curLayer.worldKey))
+		if(layer.id.equals(curLayer))
 		{
 			setShouldClose();
 			return;
@@ -159,9 +171,9 @@ public abstract class AbstractTravelScreen extends Screen
 		UltraComponents.LEVEL_STATS.get(client.player).stopTimer(true);
 	}
 	
-	protected void selectLayer(int layer)
+	protected void selectLayer(Identifier layer)
 	{
-		selectedLayer =	Layer.values()[layer];
+		selectedLayer =	layer;
 	}
 	
 	@Override
@@ -177,9 +189,14 @@ public abstract class AbstractTravelScreen extends Screen
 	
 	protected static class LayerButton extends ButtonWidget
 	{
-		protected LayerButton(int x, int y, int width, int height, Text message, PressAction onPress)
+		final Text author, description;
+		float hoverAnim;
+		
+		protected LayerButton(int x, int y, int width, int height, Text message, Text author, Text description, PressAction onPress)
 		{
 			super(x, y, width, height, message, onPress, DEFAULT_NARRATION_SUPPLIER);
+			this.author = author;
+			this.description = description;
 		}
 		
 		@Override
@@ -198,6 +215,40 @@ public abstract class AbstractTravelScreen extends Screen
 					(MathHelper.ceil(alpha * 255f) << 24) + (hover ? 0xffffff : 0), false);
 			if(!active)
 				context.drawTexture(TEXTURE, getX(), getY(), 0, 40, getWidth(), getHeight(), 128, 128);
+			
+			boolean noAuthor;
+			if((noAuthor = author.getString().isEmpty()) && description.getString().isEmpty())
+				return;
+			if(hover && hoverAnim < 1f)
+				hoverAnim = MathHelper.lerp(delta / 5f, hoverAnim, 1f);
+			else if(!hover && hoverAnim > 0f)
+				hoverAnim = MathHelper.lerp(delta / 5f, hoverAnim, 0f);
+			if(hoverAnim < 0.05f)
+				return;
+			RenderSystem.setShaderColor(1f, 1f, 1f, (hoverAnim - 0.5f) * 2f);
+			MatrixStack matrices = context.getMatrices();
+			TextRenderer tRenderer = client.textRenderer;
+			int descBoxWidth = (int)(client.getWindow().getScaledWidth() * 0.33f);
+			int descBoxHeight = tRenderer.getWrappedLinesHeight(description, descBoxWidth) + 8;
+			List<OrderedText> lines = new ArrayList<>(tRenderer.wrapLines(description, descBoxWidth - 6));
+			matrices.push();
+			matrices.translate(getX(), getY(), -5);
+			if(!noAuthor)
+			{
+				descBoxHeight += tRenderer.fontHeight - 1;
+				lines.add(Text.translatable("screen.ultracraft.level.author",
+						author.getString()).setStyle(Style.EMPTY.withColor(Formatting.GOLD)).asOrderedText());
+			}
+			matrices.translate((width + 8) * hoverAnim, 0f, 0f);
+			context.fill(0, 0, descBoxWidth, descBoxHeight, 0xff000000);
+			context.drawBorder(0, 0, descBoxWidth, descBoxHeight, 0xffffffff);
+			for (OrderedText line : lines)
+			{
+				context.drawText(tRenderer, line, 3, 3, 0xffffffff, true);
+				matrices.translate(0, tRenderer.fontHeight + 1, 0f);
+			}
+			matrices.pop();
+			RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		}
 	}
 	

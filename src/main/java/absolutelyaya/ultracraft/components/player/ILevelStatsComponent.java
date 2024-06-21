@@ -12,7 +12,7 @@ public interface ILevelStatsComponent extends ComponentV3
 	
 	String getCurrentLevelInstance();
 	
-	boolean isInFight();
+	boolean isInCombat();
 	
 	boolean isTimerRunning();
 	
@@ -65,4 +65,14 @@ public interface ILevelStatsComponent extends ComponentV3
 	void setInvalid();
 	
 	boolean isInvalid();
+	
+	void setCurLevelSoundTrackKey(String id);
+	
+	String getCurLevelSoundTrackKey();
+	
+	void setShouldMusicFade(boolean val);
+	
+	boolean shouldLevelMusicFade();
+	
+	void onFinishLevel();
 }

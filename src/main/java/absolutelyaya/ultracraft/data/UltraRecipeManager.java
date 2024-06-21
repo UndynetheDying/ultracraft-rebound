@@ -35,7 +35,7 @@ public class UltraRecipeManager extends JsonDataLoader
 			@Override
 			public Identifier getFabricId()
 			{
-				return new Identifier(Ultracraft.MOD_ID, "ultracraft/recipe");
+				return Ultracraft.identifier("ultracraft/recipe");
 			}
 			
 			@Override

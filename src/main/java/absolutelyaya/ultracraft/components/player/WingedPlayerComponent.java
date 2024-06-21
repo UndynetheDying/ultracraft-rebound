@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.components.player;
 
+import absolutelyaya.ultracraft.client.gui.TitleHUD;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
@@ -7,6 +8,7 @@ import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.cybergrind.CybergrindData;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
+import absolutelyaya.ultracraft.registry.SoundRegistry;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -212,6 +214,8 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			buf.writeFloat(delay);
 			ServerPlayNetworking.send((ServerPlayerEntity)provider, PacketRegistry.TITLE_PACKET_ID, buf);
 		}
+		else
+			TitleHUD.Instance.setBigTitle(text, delay);
 	}
 	
 	public void sendBigTitle(Text text)
@@ -228,6 +232,11 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			buf.writeText(text);
 			buf.writeFloat(duration);
 			ServerPlayNetworking.send((ServerPlayerEntity)provider, PacketRegistry.TITLE_PACKET_ID, buf);
+		}
+		else
+		{
+			TitleHUD.Instance.setBoxTitle(text, duration);
+			provider.playSound(SoundRegistry.RECEIVE_BOX_TITLE, 1f, 1f);
 		}
 	}
 	
@@ -270,6 +279,12 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			lastCheckpoint = new BlockPos(pos.getInt("x"), pos.getInt("y"), pos.getInt("z"));
 			checkpointRot = checkpoint.getFloat("rot");
 			checkpointDimension = RegistryKey.of(RegistryKeys.WORLD, Identifier.tryParse(checkpoint.getString("dimension")));
+		}
+		else
+		{
+			lastCheckpoint = null;
+			checkpointRot = 0f;
+			checkpointDimension = null;
 		}
 	}
 	

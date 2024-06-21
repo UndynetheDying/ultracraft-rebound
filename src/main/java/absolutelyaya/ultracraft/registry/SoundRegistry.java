@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.Ultracraft;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.sound.MusicSound;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
@@ -135,6 +136,21 @@ public class SoundRegistry
 	//MUSIC
 	public static final RegistryEntry.Reference<SoundEvent> THE_FIRE_IS_GONE = registerReference("music.the_fire_is_gone");
 	public static final RegistryEntry.Reference<SoundEvent> CLAIR_DE_LUNE = registerReference("music.clair_de_lune");
+	public static final RegistryEntry.Reference<SoundEvent> PRELUDE1 = registerReference("music.prelude1");
+	public static final RegistryEntry.Reference<SoundEvent> PRELUDE1_CALM = registerReference("music.prelude1_calm");
+	public static final RegistryEntry.Reference<SoundEvent> PRELUDE2 = registerReference("music.prelude2");
+	public static final RegistryEntry.Reference<SoundEvent> PRELUDE2_CALM = registerReference("music.prelude2_calm");
+	public static final RegistryEntry.Reference<SoundEvent> CERBERUS = registerReference("music.cerberus");
+	public static final RegistryEntry.Reference<SoundEvent> CERBERUS_CALM = registerReference("music.cerberus_calm");
+	public static final RegistryEntry.Reference<SoundEvent> LIMBO1_ILLUSION = registerReference("music.limbo1_illusion");
+	public static final RegistryEntry.Reference<SoundEvent> LIMBO1 = registerReference("music.limbo1");
+	public static final RegistryEntry.Reference<SoundEvent> LIMBO1_CALM = registerReference("music.limbo1_calm");
+	public static final RegistryEntry.Reference<SoundEvent> LIMBO2 = registerReference("music.limbo2");
+	public static final RegistryEntry.Reference<SoundEvent> LIMBO2_CALM = registerReference("music.limbo2_calm");
+	public static final RegistryEntry.Reference<SoundEvent> CYBERGRIND = registerReference("music.cybergrind");
+	public static final RegistryEntry.Reference<SoundEvent> CYBERGRIND_DISK = registerReference("music.efefski_cybergrind");
+	
+	public static final MusicSound CYBERGRIND_MUSIC = new MusicSound(CYBERGRIND, 0, 0, true);
 	
 	public static void register()
 	{
@@ -143,13 +159,13 @@ public class SoundRegistry
 	
 	private static RegistryEntry.Reference<SoundEvent> registerReference(String id)
 	{
-		Identifier identifier = new Identifier(Ultracraft.MOD_ID, id);
+		Identifier identifier = Ultracraft.identifier(id);
 		return Registry.registerReference(Registries.SOUND_EVENT, identifier, SoundEvent.of(identifier));
 	}
 	
 	private static SoundEvent register(String id)
 	{
-		Identifier identifier = new Identifier(Ultracraft.MOD_ID, id);
+		Identifier identifier = Ultracraft.identifier(id);
 		return Registry.register(Registries.SOUND_EVENT, identifier, SoundEvent.of(identifier));
 	}
 }

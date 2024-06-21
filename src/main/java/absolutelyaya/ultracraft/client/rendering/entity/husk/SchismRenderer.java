@@ -19,7 +19,7 @@ public class SchismRenderer extends GeoEntityRenderer<SchismEntity>
 	@Override
 	public Identifier getTexture(SchismEntity object)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "textures/entity/schism.png");
+		return Ultracraft.identifier("textures/entity/schism.png");
 	}
 	
 	@Override

@@ -121,7 +121,7 @@ public class CybergrindGame
 		if(!participants.contains(player))
 			return;
 		participants.remove(player);
-		if(participants.size() == 0)
+		if(participants.isEmpty())
 			end();
 	}
 	
@@ -158,17 +158,17 @@ public class CybergrindGame
 		{
 			if (!spawnRandomEnemy())
 			{
-				Ultracraft.LOGGER.warn("Couldn't afford any enemy with the remaining wave Budget; Spawning " + budget + " Filths instead :D");
+				Ultracraft.LOGGER.warn("Couldn't afford any enemy with the remaining wave Budget; Spawning {} Filths instead :D", budget);
 				while (budget-- > 0)
 					spawn(EntityRegistry.FILTH); //Safeguard in case there's a remainder that can't be spent on any of the candidates.
 			}
 			return;
 		}
-		if (enemies.size() == 0)
+		if (enemies.isEmpty())
 		{
-			if (currentWave < waves && budget <= 0)
+			if (currentWave < waves)
 				startWave();
-			else if (currentWave >= waves)
+			else
 			{
 				win = true;
 				end();
@@ -180,7 +180,7 @@ public class CybergrindGame
 			enemies.removeIf(e -> e.isDead() || e.isRemoved());
 			if(count != enemies.size())
 			{
-				if(enemies.size() == 0)
+				if(enemies.isEmpty())
 				{
 					delay = 60;
 					participants.forEach(p -> {
@@ -198,7 +198,7 @@ public class CybergrindGame
 		{
 			addAllPlayersInBounds();
 			removeAllParticipantsOutOfBounds();
-			if(getParticipants().size() == 0)
+			if(getParticipants().isEmpty())
 				end();
 		}
 		if(shouldSync())
@@ -212,8 +212,8 @@ public class CybergrindGame
 			return;
 		this.world = owner.getServerWorld();
 		this.owner = owner;
-		Layer curLayer = Layer.fromRegistryKey(world.getRegistryKey());
-		for (Map.Entry<EntityType<? extends HostileEntity>, IntegerEntry> entry : config.getCosts(curLayer).entrySet())
+		Layer curLayer = Layer.fromIdentifier(world.getRegistryKey().getValue());
+		for (Map.Entry<EntityType<? extends HostileEntity>, IntegerEntry> entry : config.getCosts(curLayer != null ? curLayer : Layer.OVERWORLD).entrySet())
 			spawnCosts.put(entry.getKey(), entry.getValue().getValue());
 		float difficulty = world.getDifficulty().getId();
 		if(waves == 0)
@@ -237,7 +237,7 @@ public class CybergrindGame
 		if(owner != null && !owner.isRemoved())
 			return owner;
 		List<ServerPlayerEntity> candidates = CybergrindManager.getPlayersInUltracraftDimensions(server);
-		if(candidates.size() == 0)
+		if(candidates.isEmpty())
 		{
 			server.getPlayerManager().broadcast(Text.translatable("message.ultracraft.cybergrind.announce-cancel"), false);
 			initialized = true;
@@ -307,7 +307,7 @@ public class CybergrindGame
 		for (Map.Entry<EntityType<? extends HostileEntity>, Integer> entry : spawnCosts.entrySet())
 			if (entry.getValue() <= budget)
 				candidates.add(entry.getKey());
-		if (candidates.size() == 0)
+		if (candidates.isEmpty())
 			return false;
 		EntityType<? extends HostileEntity> winner = candidates.get(rand.nextInt(candidates.size()));
 		if(spawn(winner))

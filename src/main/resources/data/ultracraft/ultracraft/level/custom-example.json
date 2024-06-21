@@ -31,8 +31,11 @@
     "z": 9
   },
   "music": {
-    "calm": "minecraft:music_disc.cat",
-    "combat": "minecraft:music_disc.ward"
+    "default": {
+      "calm": "minecraft:music_disc.cat",
+      "combat": "minecraft:music_disc.ward"
+    }
   },
-  "version": 1
+  "version": 1,
+  "unlocked": true
 }

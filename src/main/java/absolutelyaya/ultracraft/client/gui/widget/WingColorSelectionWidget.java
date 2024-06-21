@@ -118,7 +118,7 @@ public class WingColorSelectionWidget implements Element, Drawable, Selectable, 
 		wingShader.getUniform("WingColor").set((float)red.getValue(), (float)green.getValue(), (float)blue.getValue());
 		wingShader.getUniform("MetalColor").set((float)red.getValue(), (float)green.getValue(), (float)blue.getValue());
 		RenderSystem.setShader(UltracraftClient::getWingsColoredUIShaderProgram);
-		RenderSystem.setShaderTexture(0, new Identifier(Ultracraft.MOD_ID, "textures/gui/clr_preview.png"));
+		RenderSystem.setShaderTexture(0, Ultracraft.identifier("textures/gui/clr_preview.png"));
 		RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
 		RenderingUtil.drawTexture(new Matrix4f(matrices.peek().getPositionMatrix()), new Vector4f(x + 112, y + 15, 40, 40), new Vec2f(32, 64),
 				new Vector4f(type ? 16f : 0f, 0f, 16f, 16f));

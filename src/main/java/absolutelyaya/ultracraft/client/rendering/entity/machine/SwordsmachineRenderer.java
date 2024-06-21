@@ -2,7 +2,6 @@ package absolutelyaya.ultracraft.client.rendering.entity.machine;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.rendering.entity.feature.gecko.SwordsmachineEmissiveLayer;
-import absolutelyaya.ultracraft.client.rendering.entity.feature.gecko.SwordsmachineRageLayer;
 import absolutelyaya.ultracraft.entity.machine.DestinyBondSwordsmachineEntity;
 import absolutelyaya.ultracraft.entity.machine.SwordsmachineEntity;
 import net.minecraft.client.render.RenderLayer;
@@ -48,7 +47,6 @@ public class SwordsmachineRenderer extends GeoEntityRenderer<SwordsmachineEntity
 				poseStack.pop();
 			}
 		});
-		addRenderLayer(new SwordsmachineRageLayer(this));
 	}
 	
 	@Override
@@ -56,10 +54,10 @@ public class SwordsmachineRenderer extends GeoEntityRenderer<SwordsmachineEntity
 	{
 		if(object instanceof DestinyBondSwordsmachineEntity destinyBondSM)
 		{
-			return destinyBondSM.getVariant() == 0 ? new Identifier(Ultracraft.MOD_ID, "textures/entity/swordsmachine_tundra.png") :
-						   new Identifier(Ultracraft.MOD_ID, "textures/entity/swordsmachine_agony.png");
+			return destinyBondSM.getVariant() == 0 ? Ultracraft.identifier("textures/entity/swordsmachine_tundra.png") :
+						   Ultracraft.identifier("textures/entity/swordsmachine_agony.png");
 		}
-		return new Identifier(Ultracraft.MOD_ID, "textures/entity/swordsmachine.png");
+		return Ultracraft.identifier("textures/entity/swordsmachine.png");
 	}
 	
 	@Override

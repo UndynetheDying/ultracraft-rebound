@@ -15,19 +15,19 @@ public class StrayModel extends GeoModel<StrayEntity>
 	@Override
 	public Identifier getModelResource(StrayEntity object)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "geo/entities/stray.geo.json");
+		return Ultracraft.identifier("geo/entities/stray.geo.json");
 	}
 	
 	@Override
 	public Identifier getTextureResource(StrayEntity object)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "textures/entity/stray.png");
+		return Ultracraft.identifier("textures/entity/stray.png");
 	}
 	
 	@Override
 	public Identifier getAnimationResource(StrayEntity animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "animations/entities/stray.animation.json");
+		return Ultracraft.identifier("animations/entities/stray.animation.json");
 	}
 	
 	@Override

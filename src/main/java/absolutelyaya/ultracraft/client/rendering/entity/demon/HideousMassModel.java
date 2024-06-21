@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.client.rendering.entity.demon;
 
 import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.entity.demon.HideousMassEntity;
 import net.minecraft.util.Identifier;
 import mod.azure.azurelib.core.animatable.model.CoreGeoBone;
@@ -9,14 +10,14 @@ import mod.azure.azurelib.model.GeoModel;
 
 public class HideousMassModel extends GeoModel<HideousMassEntity>
 {
-	final Identifier NORMAL = new Identifier(Ultracraft.MOD_ID, "textures/entity/hideous_mass.png");
-	final Identifier ENRAGED = new Identifier(Ultracraft.MOD_ID, "textures/entity/hideous_mass_enraged.png");
-	final Identifier DYING = new Identifier(Ultracraft.MOD_ID, "textures/entity/hideous_mass_dying.png");
+	final Identifier NORMAL = Ultracraft.identifier("textures/entity/hideous_mass.png");
+	final Identifier ENRAGED = Ultracraft.identifier("textures/entity/hideous_mass_enraged.png");
+	final Identifier DYING = Ultracraft.identifier("textures/entity/hideous_mass_dying.png");
 	
 	@Override
 	public Identifier getModelResource(HideousMassEntity animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "geo/entities/hideous_mass.geo.json");
+		return Ultracraft.identifier("geo/entities/hideous_mass.geo.json");
 	}
 	
 	@Override
@@ -24,13 +25,13 @@ public class HideousMassModel extends GeoModel<HideousMassEntity>
 	{
 		if(animatable.isDying() || animatable.isDead())
 			return DYING;
-		return animatable.isEnraged() ? ENRAGED : NORMAL;
+		return UltraComponents.LIVING.get(animatable).isEnraged() ? ENRAGED : NORMAL;
 	}
 	
 	@Override
 	public Identifier getAnimationResource(HideousMassEntity animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "animations/entities/hideous_mass.animation.json");
+		return Ultracraft.identifier("animations/entities/hideous_mass.animation.json");
 	}
 	
 	@Override

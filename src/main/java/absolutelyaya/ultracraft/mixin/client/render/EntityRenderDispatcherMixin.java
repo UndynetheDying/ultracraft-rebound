@@ -54,11 +54,4 @@ public class EntityRenderDispatcherMixin
 			}
 		}
 	}
-	
-	//@Inject(method = "render", at = @At("HEAD"))
-	//<E extends Entity> void onRender(E entity, double x, double y, double z, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci)
-	//{
-	//	if(entity instanceof LivingEntity living && living.hasStatusEffect(StatusEffectRegistry.CANCEROUS))
-	//		RenderSystem.setShaderColor(0.2f, 1f, 0.3f, 1f);
-	//}
 }

@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.client.rendering;
 
+import absolutelyaya.ultracraft.compat.TrinketUtil;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
@@ -8,6 +9,7 @@ import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
 import absolutelyaya.ultracraft.components.player.IStyleComponent;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
+import absolutelyaya.ultracraft.components.player.ProgressionComponent;
 import absolutelyaya.ultracraft.item.*;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.util.RenderingUtil;
@@ -46,10 +48,10 @@ public class UltraHudRenderer
 {
 	private static final Vector3f[] STYLE_OFFSETS = new Vector3f[] { new Vector3f(-43, -5, 40), new Vector3f(-2, -5, 20), new Vector3f(2, 0, 0) };
 	private static final ClientConfig config = UltracraftClient.getConfig();
-	final Identifier GUI_TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/ultrahud.png");
-	final Identifier STYLE_TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/style.png");
-	final Identifier WEAPONS_TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/weapon_icons.png");
-	final Identifier CROSSHAIR_TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/crosshair_stats.png");
+	final Identifier GUI_TEXTURE = Ultracraft.identifier("textures/gui/ultrahud.png");
+	final Identifier STYLE_TEXTURE = Ultracraft.identifier("textures/gui/style.png");
+	final Identifier WEAPONS_TEXTURE = Ultracraft.identifier("textures/gui/weapon_icons.png");
+	final Identifier CROSSHAIR_TEXTURE = Ultracraft.identifier("textures/gui/crosshair_stats.png");
 	float healthPercent, staminaPercent, absorptionPercent, yOffset;
 	static float fishTimer, coinTimer, coinRot = 0, coinRotDest = 0, wingHintDisplayTimer, whitelistHintDisplayTimer, styleTimer;
 	static ItemStack lastCatch;
@@ -64,6 +66,9 @@ public class UltraHudRenderer
 		MinecraftClient client = MinecraftClient.getInstance();
 		ClientPlayerEntity player = client.player;
 		if(player == null || player.isSpectator())
+			return;
+		if(!(UltraComponents.PROGRESSION.get(player).isUnlocked(ProgressionComponent.ULTRAHUD) ||
+				   (Ultracraft.TRINKETS && TrinketUtil.isHasTrinketEquipped(player, ItemRegistry.VIEW_AUGMENT))))
 			return;
 		if(player instanceof WingedPlayerEntity winged && winged.getFocusedTerminal() != null)
 			return;

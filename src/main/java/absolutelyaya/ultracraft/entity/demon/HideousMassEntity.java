@@ -19,6 +19,7 @@ import absolutelyaya.ultracraft.entity.projectile.HideousMortarEntity;
 import absolutelyaya.ultracraft.particle.ParryIndicatorParticleEffect;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
+import absolutelyaya.ultracraft.registry.StatusEffectRegistry;
 import mod.azure.azurelib.animatable.GeoEntity;
 import mod.azure.azurelib.core.animatable.GeoAnimatable;
 import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
@@ -43,6 +44,7 @@ import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -267,7 +269,7 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 			left_arm.enabled = right_arm.enabled = mask.enabled = body3.enabled = false;
 			if(!getWorld().isClient)
 				getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(32), i -> true)
-						.forEach(p -> UltraComponents.STYLE.get(p).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "enrage"))));
+						.forEach(p -> UltraComponents.STYLE.get(p).styleBonusGet(StyleBonusManager.getBonuses().get(Ultracraft.identifier("enrage"))));
 		}
 		if(data.equals(HIDDEN) && !dataTracker.get(HIDDEN))
 			setAllMainPartsEnabled(true);
@@ -426,6 +428,8 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		if(!getWorld().isClient && prevYaw != getYaw() && age % 8 == 0 && random.nextFloat() <= 0.75f)
 			playSound(SoundRegistry.HIDEOUS_MASS_TURN, 0.3f, 1f);
 		setBodyYaw(headYaw);
+		if(shouldBeEnraged() && isAlive())
+			addStatusEffect(new StatusEffectInstance(StatusEffectRegistry.ENRAGED, 1, 0, true, false));
 	}
 	
 	void positionPart(HideousPart part, Vec3d relative)
@@ -620,8 +624,12 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 		dataTracker.set(ATTACK_COOLDOWN, 10 + random.nextInt(5));
 	}
 	
-	@Override
 	public boolean isEnraged()
+	{
+		return hasStatusEffect(StatusEffectRegistry.ENRAGED);
+	}
+	
+	public boolean shouldBeEnraged()
 	{
 		return dataTracker.get(ENRAGED);
 	}
@@ -639,13 +647,13 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 	@Override
 	public Vec3d getEnrageFeatureSize()
 	{
-		return new Vec3d(7f, -7f, -7f);
+		return new Vec3d(7f, 7f, 7f);
 	}
 	
 	@Override
 	public Vec3d getEnragedFeatureOffset()
 	{
-		return new Vec3d(0, -0.5f, 0);
+		return new Vec3d(0, 0.5f, 0);
 	}
 	
 	public boolean shouldEnrage()
@@ -680,6 +688,12 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 			Vec3d pos = tail.getPos().add(getRotationVector().multiply(2f));
 			getWorld().addParticle(new ParryIndicatorParticleEffect(false), pos.x, pos.y, pos.z, 0, 0, 0);
 		}
+	}
+	
+	@Override
+	public boolean isCountsForCombatMusic()
+	{
+		return !isHidden() && !(isDead() || isDying());
 	}
 	
 	@Override

@@ -35,10 +35,10 @@ public abstract class SkinOptionsScreenMixin extends GameOptionsScreen
 	{
 		ClientConfig config = UltracraftClient.getConfig();
 		addDrawableChild(
-				CyclingButtonWidget.onOffBuilder(config.armVisible).build(width / 2 - 155, height / 6 + 24 * ((i - 2) >> 1), 150, 20,
+				CyclingButtonWidget.onOffBuilder(config.armSkinThirdPerson).build(width / 2 - 155, height / 6 + 24 * ((i - 2) >> 1), 150, 20,
 						Text.translatable("screen.ultracraft.arm-visibility"),
 						(b, v) -> {
-							config.armVisible = v;
+							config.armSkinThirdPerson = v;
 							PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 							buf.writeBoolean(v);
 							ClientPlayNetworking.send(PacketRegistry.ARM_VISIBLE_PACKET_ID, buf);

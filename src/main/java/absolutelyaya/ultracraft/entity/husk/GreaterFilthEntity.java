@@ -8,6 +8,7 @@ import absolutelyaya.ultracraft.damage.DamageTypeTags;
 import absolutelyaya.ultracraft.entity.goal.TargetPlayerGoal;
 import absolutelyaya.ultracraft.entity.goal.TimedAttackGoal;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
+import absolutelyaya.ultracraft.registry.StatusEffectRegistry;
 import mod.azure.azurelib.animatable.GeoEntity;
 import mod.azure.azurelib.core.animatable.GeoAnimatable;
 import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
@@ -29,6 +30,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -181,6 +183,8 @@ public class GreaterFilthEntity extends AbstractHuskEntity implements GeoEntity,
 			dataTracker.set(FRUSTRATION_TICKS, dataTracker.get(FRUSTRATION_TICKS) + 1);
 		if(dataTracker.get(FRUSTRATION_TICKS) > 400 && !isEnraged())
 			enrage();
+		if(shouldBeEnraged() && isAlive())
+			addStatusEffect(new StatusEffectInstance(StatusEffectRegistry.ENRAGED, 1, 0, true, false));
 	}
 	
 	void enrage()
@@ -270,8 +274,12 @@ public class GreaterFilthEntity extends AbstractHuskEntity implements GeoEntity,
 	
 	}
 	
-	@Override
 	public boolean isEnraged()
+	{
+		return hasStatusEffect(StatusEffectRegistry.ENRAGED);
+	}
+	
+	public boolean shouldBeEnraged()
 	{
 		return dataTracker.get(ENRAGE_TICKS) > 0;
 	}
@@ -279,13 +287,13 @@ public class GreaterFilthEntity extends AbstractHuskEntity implements GeoEntity,
 	@Override
 	public Vec3d getEnrageFeatureSize()
 	{
-		return new Vec3d(1f, -1f, -1f);
+		return new Vec3d(1f, 1f, 1f);
 	}
 	
 	@Override
 	public Vec3d getEnragedFeatureOffset()
 	{
-		return new Vec3d(0f, -1.7f, 0f);
+		return new Vec3d(0f, 1.7f, 0f);
 	}
 	
 	static class ApproachTargetGoal extends Goal

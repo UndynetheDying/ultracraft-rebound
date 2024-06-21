@@ -32,7 +32,7 @@ public class HarpoonEntityRenderer extends ProjectileEntityRenderer<HarpoonEntit
 	@Override
 	public Identifier getTexture(HarpoonEntity entity)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "textures/item/harpoon_long.png");
+		return Ultracraft.identifier("textures/item/harpoon_long.png");
 	}
 	
 	@Override

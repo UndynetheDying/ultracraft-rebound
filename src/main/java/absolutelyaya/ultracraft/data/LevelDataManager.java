@@ -23,14 +23,13 @@ import java.util.Map;
 
 public class LevelDataManager extends JsonDataLoader
 {
-	public static final LevelData ERR_DATA = new LevelData(new Identifier(Ultracraft.MOD_ID, "placeholder"),
+	public static final LevelData ERR_DATA = new LevelData(Ultracraft.identifier("placeholder"),
 			"level.ultracraft.error.title", "level.ultracraft.error.description", "", "", null,
-			new Identifier(Ultracraft.MOD_ID, "textures/level/err.png"), BlockPos.ORIGIN, true);
-	public static final Identifier PLACEHOLDER_THUMB = new Identifier(Ultracraft.MOD_ID, "textures/level/placeholder.png");
+			Ultracraft.identifier("textures/level/err.png"), BlockPos.ORIGIN, true, true);
+	public static final Identifier PLACEHOLDER_THUMB = Ultracraft.identifier("textures/level/placeholder.png");
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 	public static LevelDataManager Instance;
-	public static Map<Identifier, LevelData> levels = new HashMap<>();
-	public static Map<Identifier, LevelData> customLevels = new HashMap<>();
+	public static Map<Identifier, LevelData> levels = new HashMap<>(), customLevels = new HashMap<>();
 	
 	public LevelDataManager()
 	{
@@ -42,7 +41,7 @@ public class LevelDataManager extends JsonDataLoader
 			@Override
 			public Identifier getFabricId()
 			{
-				return new Identifier(Ultracraft.MOD_ID, "ultracraft/level");
+				return Ultracraft.identifier("ultracraft/level");
 			}
 			
 			@Override
@@ -61,14 +60,14 @@ public class LevelDataManager extends JsonDataLoader
 	@Override
 	protected void apply(Map<Identifier, JsonElement> prepared, ResourceManager manager, Profiler profiler)
 	{
-		ImmutableMap.Builder<Identifier, LevelData> builtinBuilder = ImmutableMap.builder();
-		ImmutableMap.Builder<Identifier, LevelData> customBuilder = ImmutableMap.builder();
+		ImmutableMap.Builder<Identifier, LevelData> builtinBuilder = ImmutableMap.builder(), customBuilder = ImmutableMap.builder();
 		prepared.forEach((id, element) -> {
 			JsonObject json = element.getAsJsonObject();
 			boolean builtin = JsonHelper.getBoolean(json, "builtin", false);
+			boolean defaultUnlocked = JsonHelper.getBoolean(json, "unlocked", false);
 			if(!json.has("structure"))
 			{
-				Ultracraft.LOGGER.warn((builtin ? "Level '" : "Custom Level '") + id + "' does not have a structure parameter!");
+				Ultracraft.LOGGER.warn("{} '{}' does not have a structure parameter!", builtin ? "Level" : "Custom Level", id);
 				return;
 			}
 			String author = JsonHelper.getString(json, "author", "level.author.unknown");
@@ -87,7 +86,7 @@ public class LevelDataManager extends JsonDataLoader
 						JsonHelper.getInt(pos, "y", 0),
 						JsonHelper.getInt(pos, "z", 0));
 			}
-			LevelData level = new LevelData(id, title, description, author, authorlink, structure, thumbnail, spawnOffset, builtin);
+			LevelData level = new LevelData(id, title, description, author, authorlink, structure, thumbnail, spawnOffset, builtin, defaultUnlocked);
 			if(json.has("ranking"))
 			{
 				JsonObject ranking = json.getAsJsonObject("ranking");
@@ -119,12 +118,22 @@ public class LevelDataManager extends JsonDataLoader
 			if(json.has("music"))
 			{
 				JsonObject music = json.getAsJsonObject("music");
-				Identifier calm = null, combat = null;
-				if(music.has("calm"))
-					calm = Identifier.tryParse(JsonHelper.getString(music, "calm"));
-				if(music.has("combat"))
-					combat = Identifier.tryParse(JsonHelper.getString(music, "combat"));
-				level.setMusic(calm, combat);
+				for (Map.Entry<String, JsonElement> entry : music.entrySet())
+				{
+					Identifier calm = null, combat = null;
+					int combatThreshold = 0;
+					boolean noCalmdown = false;
+					JsonObject elementt = entry.getValue().getAsJsonObject();
+					if(elementt.has("calm"))
+						calm = Identifier.tryParse(JsonHelper.getString(elementt, "calm"));
+					if(elementt.has("combat"))
+						combat = Identifier.tryParse(JsonHelper.getString(elementt, "combat"));
+					if(elementt.has("combat-threshold"))
+						combatThreshold = JsonHelper.getInt(elementt, "combat-threshold");
+					if(elementt.has("no-calmdown"))
+						noCalmdown = JsonHelper.getBoolean(elementt, "no-calmdown");
+					level.putMusic(entry.getKey(), calm, combat, combatThreshold, noCalmdown);
+				}
 			}
 			if(json.has("unimplemented"))
 				level.setUnimplemented(JsonHelper.getBoolean(json, "unimplemented"));
@@ -143,7 +152,7 @@ public class LevelDataManager extends JsonDataLoader
 		});
 		setLevels(builtinBuilder.build(), true);
 		setLevels(customBuilder.build(), false);
-		Ultracraft.LOGGER.info("Loaded " + levels.size() + " Builtin Levels and " + customLevels.size() + " Custom Levels");
+		Ultracraft.LOGGER.info("Loaded {} Builtin Levels and {} Custom Levels", levels.size(), customLevels.size());
 	}
 	
 	public static LevelData getLevelData(Identifier id)
@@ -154,7 +163,7 @@ public class LevelDataManager extends JsonDataLoader
 			return customLevels.get(id);
 		else
 		{
-			Ultracraft.LOGGER.warn("Couldn't find Level '" + id + "' in loaded lists!");
+			Ultracraft.LOGGER.warn("Couldn't find Level '{}' in loaded lists!", id);
 			return ERR_DATA;
 		}
 	}
@@ -187,7 +196,7 @@ public class LevelDataManager extends JsonDataLoader
 	
 	public static boolean isCustomLevelsPresent()
 	{
-		return customLevels.size() > 0;
+		return !customLevels.isEmpty();
 	}
 	
 	public static void sync(ServerPlayerEntity player)
@@ -195,6 +204,8 @@ public class LevelDataManager extends JsonDataLoader
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeCollection(levels.entrySet(), LevelData::serialize);
 		buf.writeCollection(customLevels.entrySet(), LevelData::serialize);
+		buf.writeCollection(LevelCollectionManager.layers.entrySet(), LevelCollection::serialize);
+		buf.writeCollection(LevelCollectionManager.customLayers.entrySet(), LevelCollection::serialize);
 		ServerPlayNetworking.send(player, PacketRegistry.SEND_LEVELS_PACKET_ID, buf);
 	}
 }

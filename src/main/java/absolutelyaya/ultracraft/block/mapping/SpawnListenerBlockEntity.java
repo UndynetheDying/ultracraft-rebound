@@ -28,7 +28,7 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 {
 	static List<String> attributes = new ArrayList<>();
 	List<Entity> entities = new ArrayList<>();
-	Identifier entityType = new Identifier(Ultracraft.MOD_ID, "stray");
+	Identifier entityType = Ultracraft.identifier("stray");
 	float yaw;
 	
 	public SpawnListenerBlockEntity(BlockPos pos, BlockState state)

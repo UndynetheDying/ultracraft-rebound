@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.block.mapping.AbstractMappingBlockEntity;
 import absolutelyaya.ultracraft.block.mapping.RoomBlockEntity;
 import absolutelyaya.ultracraft.components.player.IEditorComponent;
+import absolutelyaya.ultracraft.util.ColorUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -14,13 +15,16 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
+import net.minecraft.world.World;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 public class EditModeRenderer
 {
@@ -29,6 +33,7 @@ public class EditModeRenderer
 	public List<BlockPos> newRoomBlocks, newOrphans, resolvedOrphans = new ArrayList<>();
 	private List<BlockPos> roomBlocks = new ArrayList<>(), orphans = new ArrayList<>();
 	float pingTime, pulseTime;
+	List<BlockPos> drawn = new ArrayList<>();
 	
 	public EditModeRenderer()
 	{
@@ -65,7 +70,7 @@ public class EditModeRenderer
 			newOrphans = null;
 			pingTime = 10f;
 		}
-		if(resolvedOrphans.size() > 0)
+		if(!resolvedOrphans.isEmpty())
 		{
 			orphans.removeAll(resolvedOrphans);
 			resolvedOrphans.clear();
@@ -78,51 +83,38 @@ public class EditModeRenderer
 		RenderSystem.disableDepthTest();
 		
 		List<BlockPos> blocks = new ArrayList<>(roomBlocks);
-		BlockPos focusRoom = editor.getEditFocus("room");
-		if(focusRoom != null && (player.getWorld().getBlockEntity(focusRoom) instanceof RoomBlockEntity room))
-			blocks.addAll(room.getChildren());
-		
-		Vec3d camPos = cam.getPos();
-		for (BlockPos pos : blocks)
+		BlockPos focusRoomPos = editor.getEditFocus("room");
+		RoomBlockEntity focusRoomEntity = null;
+		if(focusRoomPos != null && (player.getWorld().getBlockEntity(focusRoomPos) instanceof RoomBlockEntity room))
 		{
-			Vec3d targetPos = pos.toCenterPos();
-			if(!(player.getWorld().getBlockEntity(pos) instanceof AbstractMappingBlockEntity blockEntity))
-				continue;
-			matrices.push();
-			matrices.translate(targetPos.x, targetPos.y, targetPos.z);
-			matrices.translate(-camPos.x, -camPos.y, -camPos.z);
-			Vector4f col = new Vector4f(blockEntity.getColor());
-			if(pingTime > col.w)
-				col.set(Math.min(pingTime, 1f));
-			boolean focused = pos.equals(editor.getEditFocus(blockEntity.getFocusKey()));
-			if(focused || blockEntity.alwaysShowArea())
+			blocks.addAll(room.getChildren());
+			if(!blocks.contains(focusRoomPos))
+				blocks.add(focusRoomPos);
+			focusRoomEntity = room;
+			RoomBlockEntity cur = focusRoomEntity;
+			while(cur.getParent() != null)
 			{
-				if(blockEntity.getMin() != null && blockEntity.getMax() != null)
-				{
-					Box box = blockEntity.getAreaBox().offset(-pos.getX() - 0.5, -pos.getY() - 0.5, -pos.getZ() - 0.5);
-					Vector4f areaColor = blockEntity.getAreaColor();
-					WorldRenderer.drawBox(matrices, lines, box, areaColor.x, areaColor.y, areaColor.z, areaColor.w);
-					if(focused && editor.isShowAreaOwner())
-						drawLinesBetweenBoxes(lines, matrices, new Box(new BlockPos(0, 0, 0)).offset(-0.5f, -0.5f, -0.5f), box,
-								new Vector4f(areaColor).mul(1f, 1f, 1f, 0.5f));
-					drawFloatingText(textRenderer, matrices, textImmediate, box.getCenter().toVector3f().add(0f, 0.25f, 0f), blockEntity.getAreaLabelSize(),
-							blockEntity.getAreaLabel(), 0xffffffff, cam);
-				}
+				if(!(player.getWorld().getBlockEntity(cur.getParent()) instanceof RoomBlockEntity parent))
+					break;
+				blocks.remove(cur.getParent());
+				cur = parent;
 			}
-			if(focused)
-				col = col.lerp(new Vector4f(0f, 1f, 0f, 1f), pulse);
-			WorldRenderer.drawBox(matrices, lines, new Box(new BlockPos(0, 0, 0)).expand(-0.01).offset(-0.5, -0.5, -0.5),
-					col.x, col.y, col.z, col.w);
-			matrices.push();
-			matrices.translate(0f, 1f, 0f);
-			drawFloatingText(textRenderer, matrices, textImmediate, new Vector3f(), 1f, blockEntity.getAreaLabel(), 0xffffffff, cam);
-			matrices.pop();
-			drawSprite(matrices, new Vector3f(0, 0, 0), textImmediate, blockEntity.getTexture(), cam);
-			matrices.pop();
-			if(blockEntity.showCamLine())
-				drawLineToCam(lines, matrices, targetPos.toVector3f(), cam, col);
 		}
 		
+		if(focusRoomEntity != null)
+		{
+			drawn.clear();
+			drawRecursively(editor, matrices, textRenderer, textImmediate, lines, cam, focusRoomPos, pulse, 0);
+		}
+		
+		//Render known Rooms
+		for (BlockPos pos : blocks)
+		{
+			if(!drawn.contains(pos))
+				drawMappingBlock(editor, matrices, textRenderer, textImmediate, lines, cam, pos, pulse, 0, false);
+		}
+		
+		Vec3d camPos = cam.getPos();
 		blocks = new ArrayList<>(orphans);
 		for (BlockPos pos : blocks)
 		{
@@ -156,6 +148,118 @@ public class EditModeRenderer
 		RenderSystem.enableDepthTest();
 	}
 	
+	void drawRecursively(IEditorComponent editor, MatrixStack matrices, TextRenderer tRenderer, VertexConsumerProvider.Immediate textImmediate, VertexConsumer lines, Camera cam, BlockPos pos, float pulse, int depth)
+	{
+		//drawn.add(pos);
+		if(!(MinecraftClient.getInstance().world.getBlockEntity(pos) instanceof RoomBlockEntity entity))
+			return;
+		drawRecursivelyDown(editor, matrices, tRenderer, textImmediate, lines, cam, pos, pulse, depth - 1);
+		if(entity.getParent() != null)
+			drawRecursivelyUp(editor, matrices, tRenderer, textImmediate, lines, cam, entity.getParent(), pulse, depth + 1);
+		drawMappingBlock(editor, matrices, tRenderer, textImmediate, lines, cam, pos, pulse, depth, entity.getParent() != null);
+	}
+	
+	void drawRecursivelyDown(IEditorComponent editor, MatrixStack matrices, TextRenderer tRenderer, VertexConsumerProvider.Immediate textImmediate, VertexConsumer lines, Camera cam, BlockPos pos, float pulse, int depth)
+	{
+		World world = MinecraftClient.getInstance().world;
+		if(drawn.contains(pos) || !(world.getBlockEntity(pos) instanceof RoomBlockEntity room))
+			return;
+		Queue<BlockPos> node = new ArrayDeque<>(room.getChildren());
+		while(!node.isEmpty())
+		{
+			BlockPos block = node.remove();
+			if(drawn.contains(block))
+				continue;
+			boolean isRoom = world.getBlockEntity(block) instanceof RoomBlockEntity;
+			if(isRoom)
+				drawRecursivelyDown(editor, matrices, tRenderer, textImmediate, lines, cam, block, pulse, depth - 1);
+			drawn.add(block);
+			drawMappingBlock(editor, matrices, tRenderer, textImmediate, lines, cam, block, pulse, isRoom ? depth : depth + 1, true);
+		}
+	}
+	
+	void drawRecursivelyUp(IEditorComponent editor, MatrixStack matrices, TextRenderer tRenderer, VertexConsumerProvider.Immediate textImmediate, VertexConsumer lines, Camera cam, BlockPos pos, float pulse, int depth)
+	{
+		World world = MinecraftClient.getInstance().world;
+		if(drawn.contains(pos) || !(world.getBlockEntity(pos) instanceof RoomBlockEntity room))
+			return;
+		if(room.getParent() != null && world.getBlockEntity(room.getParent()) instanceof RoomBlockEntity && !drawn.contains(room.getParent()))
+			drawRecursivelyUp(editor, matrices, tRenderer, textImmediate, lines, cam, room.getParent(), pulse, depth + 1);
+		else
+		{
+			drawRecursivelyDown(editor, matrices, tRenderer, textImmediate, lines, cam, pos, pulse, depth - 1);
+			drawMappingBlock(editor, matrices, tRenderer, textImmediate, lines, cam, pos, pulse, depth, false);
+		}
+		Queue<BlockPos> node = new ArrayDeque<>(room.getChildren());
+		while(!node.isEmpty())
+		{
+			BlockPos block = node.remove();
+			if(drawn.contains(block))
+				continue;
+			drawn.add(block);
+			drawMappingBlock(editor, matrices, tRenderer, textImmediate, lines, cam, block, pulse, depth, true);
+		}
+	}
+	
+	void drawMappingBlock(IEditorComponent editor, MatrixStack matrices, TextRenderer tRenderer, VertexConsumerProvider.Immediate textImmediate, VertexConsumer lines, Camera cam, BlockPos pos, float pulse, int depth, boolean connectToParent)
+	{
+		Vec3d targetPos = pos.toCenterPos();
+		if(!(MinecraftClient.getInstance().world.getBlockEntity(pos) instanceof AbstractMappingBlockEntity entity))
+			return;
+		float alpha = 1f / (Math.abs(depth) + 1);
+		if(editor.getEditFocus("room") != null && !editor.getEditFocus("room").equals(entity.getParent()))
+			alpha *= 0.66f;
+		RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
+		Text label = (entity instanceof RoomBlockEntity && depth > 0) ? Text.of("SuperRoom-" + entity.getID()) : entity.getAreaLabel();
+		if(entity instanceof RoomBlockEntity && depth == 0 && (editor.getEditFocus("room") != null && !editor.getEditFocus("room").equals(pos)))
+			label = Text.of("SiblingRoom-" + entity.getID());
+		matrices.push();
+		matrices.translate(targetPos.x, targetPos.y, targetPos.z);
+		Vec3d camPos = cam.getPos();
+		matrices.translate(-camPos.x, -camPos.y, -camPos.z);
+		Vector4f col = new Vector4f(entity.getColor()).mul(1f, 1f, 1f, alpha);
+		if(pingTime > col.w)
+			col.set(Math.min(pingTime, 1f));
+		boolean focused = pos.equals(editor.getEditFocus(entity.getFocusKey()));
+		if(focused || entity.alwaysShowArea())
+		{
+			if(entity.getMin() != null && entity.getMax() != null)
+			{
+				Box box = entity.getAreaBox().offset(-pos.getX() - 0.5, -pos.getY() - 0.5, -pos.getZ() - 0.5);
+				Vector4f areaColor = entity.getAreaColor().mul(1f, 1f, 1f, 1f / Math.abs(depth));
+				WorldRenderer.drawBox(matrices, lines, box, areaColor.x, areaColor.y, areaColor.z, areaColor.w);
+				if(focused && editor.isShowAreaOwner())
+					drawLinesBetweenBoxes(lines, matrices, new Box(new BlockPos(0, 0, 0)).offset(-0.5f, -0.5f, -0.5f), box,
+							new Vector4f(areaColor).mul(1f, 1f, 1f, 0.5f));
+				drawFloatingText(tRenderer, matrices, textImmediate, box.getCenter().toVector3f().add(0f, 0.25f, 0f), entity.getAreaLabelSize(),
+						label, 0xffffffff, cam);
+			}
+		}
+		if(focused)
+			col = col.lerp(new Vector4f(0f, 1f, 0f, 1f), pulse);
+		WorldRenderer.drawBox(matrices, lines, new Box(new BlockPos(0, 0, 0)).expand(-0.01).offset(-0.5, -0.5, -0.5),
+				col.x, col.y, col.z, col.w);
+		matrices.push();
+		matrices.translate(0f, 1f, 0f);
+		drawFloatingText(tRenderer, matrices, textImmediate, new Vector3f(), 1f, label, 0xffffffff, cam);
+		matrices.pop();
+		drawSprite(matrices, new Vector3f(0, 0, 0), textImmediate, entity.getTexture(), cam);
+		
+		BlockPos parent = entity.getParent();
+		if(editor.isShowRelations() && parent != null && !parent.equals(pos) && connectToParent)
+		{
+			matrices.translate(-0.5, -0.5, -0.5);
+			col = new Vector4f(ColorUtil.hsv2rgb(new Vector3f(((parent.getX() + parent.getY() + parent.getZ()) / 16f) % 1f, 1f, 1f)), 1f / Math.abs(depth));
+			drawLineBetween(lines, matrices, new Vector3f(0.5f), parent.subtract(pos).toCenterPos().toVector3f(), col);
+		}
+		matrices.pop();
+		if(entity.showCamLine())
+		{
+			col = new Vector4f(ColorUtil.hsv2rgb(new Vector3f(((pos.getX() + pos.getY() + pos.getZ()) / 16f) % 1f, 1f, 1f)), alpha);
+			drawLineToCam(lines, matrices, targetPos.toVector3f(), cam, col);
+		}
+	}
+	
 	void drawFloatingText(TextRenderer renderer, MatrixStack matrices, VertexConsumerProvider.Immediate immediate, Vector3f tPos, float size, Text text,
 						  int col, Camera cam)
 	{
@@ -176,7 +280,7 @@ public class EditModeRenderer
 		matrices.scale(1f, 1f, -1f);
 		//POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL
 		Matrix4f matrix = matrices.peek().getPositionMatrix();
-		VertexConsumer consumer = consumerProvider.getBuffer(RenderLayer.getEntityCutout(new Identifier(Ultracraft.MOD_ID, "textures/item/editor/" + texture + ".png")));
+		VertexConsumer consumer = consumerProvider.getBuffer(RenderLayer.getEntityCutout(Ultracraft.identifier("textures/item/editor/" + texture + ".png")));
 		consumer.vertex(matrix, -0.5f, -0.5f, 0f).color(0xffffffff).texture(1f, 1f).overlay(OverlayTexture.DEFAULT_UV)
 				.light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(0f, 1f, 0f).next();
 		consumer.vertex(matrix, -0.5f, 0.5f, 0f).color(0xffffffff).texture(1f, 0f).overlay(OverlayTexture.DEFAULT_UV)

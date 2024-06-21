@@ -19,7 +19,7 @@ public class StrayRenderer extends GeoEntityRenderer<StrayEntity>
 	@Override
 	public Identifier getTexture(StrayEntity object)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "textures/entity/stray.png");
+		return Ultracraft.identifier("textures/entity/stray.png");
 	}
 	
 	@Override

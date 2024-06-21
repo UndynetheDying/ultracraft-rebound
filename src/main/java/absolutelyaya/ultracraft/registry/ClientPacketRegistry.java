@@ -6,6 +6,7 @@ import absolutelyaya.goop.particles.GoopDropParticleEffect;
 import absolutelyaya.ultracraft.ExplosionHandler;
 import absolutelyaya.ultracraft.client.gui.CybergrindHUD;
 import absolutelyaya.ultracraft.client.gui.screen.*;
+import absolutelyaya.ultracraft.compat.TrinketUtil;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.ITrailEnjoyer;
@@ -17,10 +18,9 @@ import absolutelyaya.ultracraft.client.rendering.UltraHudRenderer;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.level.IUltraLevelComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.components.player.ProgressionComponent;
 import absolutelyaya.ultracraft.cybergrind.CybergrindData;
-import absolutelyaya.ultracraft.data.LevelDataManager;
-import absolutelyaya.ultracraft.data.UltraRecipeManager;
-import absolutelyaya.ultracraft.data.LevelData;
+import absolutelyaya.ultracraft.data.*;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
 import absolutelyaya.ultracraft.particle.ParryIndicatorParticleEffect;
 import absolutelyaya.ultracraft.recipe.UltraRecipe;
@@ -122,13 +122,17 @@ public class ClientPacketRegistry
 								pos.x + (rand.nextDouble() - 0.5) * 0.5, pos.y + halfheight + (rand.nextDouble() - 0.5) * halfheight * 1.5, pos.z + (rand.nextDouble() - 0.5) * 0.5,
 								(rand.nextDouble() - 0.5) * 0.05, (rand.nextDouble() - 0.5) * 0.05, (rand.nextDouble() - 0.5) * 0.05);
 				}
-				if(client.player.squaredDistanceTo(pos) < 10 && !water)
+				PlayerEntity player = client.player;
+				if(!(UltraComponents.PROGRESSION.get(player).isUnlocked(ProgressionComponent.BLOODHEAL) ||
+							 (Ultracraft.TRINKETS && TrinketUtil.isHasTrinketEquipped(player, ItemRegistry.ABSORBANT_PLATING))))
+					return;
+				if(player.squaredDistanceTo(pos) < 10 && !water)
 				{
 					UltracraftClient.addBlood(amount / (shotgun ? 10f : 30f));
 					IWingedPlayerComponent winged = UltraComponents.WINGED.get(client.player);
 					if(!winged.isJustPlayedBloodhealNoise())
 					{
-						client.player.playSound(SoundRegistry.BLOOD_HEAL, SoundCategory.PLAYERS, 0.6f * Math.min(1f, amount * 2), 1.7f);
+						player.playSound(SoundRegistry.BLOOD_HEAL, SoundCategory.PLAYERS, 0.6f * Math.min(1f, amount * 2), 1.7f);
 						winged.setJustPlayedBloodhealNoise();
 					}
 				}
@@ -368,8 +372,9 @@ public class ClientPacketRegistry
 			boolean forced = buf.readBoolean();
 			boolean ranking = buf.readBoolean() && UltraComponents.LEVEL_STATS.get(client.player).getCurrentLevelInstance() != null;
 			boolean titleSuffix = buf.readBoolean();
+			Identifier forcedDestination = buf.readNullable(PacketByteBuf::readIdentifier);
 			client.execute(() -> {
-				client.setScreen(ranking ? new LevelRankingScreen(titleSuffix) : new TravelScreen(false, forced));
+				client.setScreen(ranking ? new LevelRankingScreen(titleSuffix, forcedDestination) : new TravelScreen(false, forced, forcedDestination));
 			});
 		})));
 		ClientPlayNetworking.registerGlobalReceiver(EDIT_PING_PACKET_ID, (((client, handler, buf, responseSender) -> {
@@ -420,13 +425,21 @@ public class ClientPacketRegistry
 			});
 		})));
 		ClientPlayNetworking.registerGlobalReceiver(SEND_LEVELS_PACKET_ID, (((client, handler, buf, responseSender) -> {
-			for (int i = 0; i <= 1; i++) //execute twice; once to get levels and again to get custom levels
+			for (int i = 0; i <= 1; i++) //execute twice; once to get builtin levels and again to get custom levels
 			{
 				List<LevelData> list = buf.readList(LevelData::deserialize);
 				ImmutableMap.Builder<Identifier, LevelData> builder = ImmutableMap.builder();
 				for(LevelData level : list)
 					builder.put(level.getID(), level);
 				LevelDataManager.setLevels(builder.build(), i == 0);
+			}
+			for (int i = 0; i <= 1; i++) //execute twice as well; once to get builtin layers and again to get custom layers
+			{
+				List<LevelCollection> list = buf.readList(LevelCollection::deserialize);
+				ImmutableMap.Builder<Identifier, LevelCollection> builder = ImmutableMap.builder();
+				for(LevelCollection layer : list)
+					builder.put(layer.getID(), layer);
+				LevelCollectionManager.setLayers(builder.build(), i == 0);
 			}
 		})));
 		ClientPlayNetworking.registerGlobalReceiver(SEND_LEVEL_INSTANCES_PACKET_ID, (((client, handler, buf, responseSender) -> {

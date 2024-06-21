@@ -1,0 +1,12 @@
+{
+  "title": "layer.ultracraft.prelude",
+  "builtin": true,
+  "levels": [
+    "ultracraft:prelude1",
+    "ultracraft:prelude2",
+    "ultracraft:prelude3"
+  ],
+  "extra-destinations": [
+    "ultracraft:dimension.overworld"
+  ]
+}

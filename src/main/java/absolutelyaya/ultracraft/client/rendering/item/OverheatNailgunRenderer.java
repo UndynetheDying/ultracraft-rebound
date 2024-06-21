@@ -9,11 +9,11 @@ import net.minecraft.util.Identifier;
 
 public class OverheatNailgunRenderer extends GeoItemRenderer<OverheatNailgunItem>
 {
-	static final Identifier TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/item/overheat_nailgun.png");
+	static final Identifier TEXTURE = Ultracraft.identifier("textures/item/overheat_nailgun.png");
 	
 	public OverheatNailgunRenderer()
 	{
-		super(new DefaultedItemGeoModel<>(new Identifier(Ultracraft.MOD_ID, "nailgun")));
+		super(new DefaultedItemGeoModel<>(Ultracraft.identifier("nailgun")));
 	}
 	
 	@Override

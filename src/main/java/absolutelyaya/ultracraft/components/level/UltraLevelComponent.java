@@ -2,6 +2,8 @@ package absolutelyaya.ultracraft.components.level;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.config.ServerConfig;
+import absolutelyaya.ultracraft.data.LevelCollection;
+import absolutelyaya.ultracraft.data.LevelCollectionManager;
 import absolutelyaya.ultracraft.data.LevelDataManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -79,16 +81,25 @@ public class UltraLevelComponent implements IUltraLevelComponent
 	@Override
 	public boolean isDestinationUnlocked(Identifier id)
 	{
-		return unlockedDestinations.contains(id) || (!LevelDataManager.getLevelData(id).getBuiltin() && ServerConfig.INSTANCE.customLevelsUnlocked.getValue());
+		return unlockedDestinations.contains(id) || (!LevelDataManager.getLevelData(id).isBuiltin() && ServerConfig.INSTANCE.customLevelsUnlocked.getValue())
+					   || LevelDataManager.getLevelData(id).isDefaultUnlocked();
 	}
 	
 	@Override
-	public boolean isAnyLimboDestinationUnlocked()
+	public boolean isAnyDestinationInLayerUnlocked(Identifier layer)
 	{
-		return isDestinationUnlocked(new Identifier(Ultracraft.MOD_ID, "limbo1")) ||
-					   isDestinationUnlocked(new Identifier(Ultracraft.MOD_ID, "limbo2")) ||
-					   isDestinationUnlocked(new Identifier(Ultracraft.MOD_ID, "limbo3")) ||
-					   isDestinationUnlocked(new Identifier(Ultracraft.MOD_ID, "dimension.limbo"));
+		LevelCollection collection = LevelCollectionManager.getLevelCollection(layer);
+		if(collection == null)
+		{
+			Ultracraft.LOGGER.warn("Tried to check if any destination is unlocked in a Layer that doesn't exist ({})", layer);
+			return false;
+		}
+		for (Identifier i : collection.getAllDestinations())
+		{
+			if (isDestinationUnlocked(i))
+				return true;
+		}
+		return false;
 	}
 	
 	@Override
@@ -102,14 +113,14 @@ public class UltraLevelComponent implements IUltraLevelComponent
 	@Override
 	public void unlockAllDestinations()
 	{
-		unlockDestination(new Identifier(Ultracraft.MOD_ID, "dimension.overworld"));
-		unlockDestination(new Identifier(Ultracraft.MOD_ID, "tutorial"));
-		unlockDestination(new Identifier(Ultracraft.MOD_ID, "prelude1"));
-		unlockDestination(new Identifier(Ultracraft.MOD_ID, "prelude2"));
-		unlockDestination(new Identifier(Ultracraft.MOD_ID, "prelude3"));
-		unlockDestination(new Identifier(Ultracraft.MOD_ID, "limbo1"));
-		unlockDestination(new Identifier(Ultracraft.MOD_ID, "dimension.limbo"));
-		unlockDestination(new Identifier(Ultracraft.MOD_ID, "limbo2"));
+		unlockDestination(Ultracraft.identifier("dimension.overworld"));
+		unlockDestination(Ultracraft.identifier("tutorial"));
+		unlockDestination(Ultracraft.identifier("prelude1"));
+		unlockDestination(Ultracraft.identifier("prelude2"));
+		unlockDestination(Ultracraft.identifier("prelude3"));
+		unlockDestination(Ultracraft.identifier("limbo1"));
+		unlockDestination(Ultracraft.identifier("dimension.limbo"));
+		unlockDestination(Ultracraft.identifier("limbo2"));
 	}
 	
 	@Override
@@ -135,7 +146,7 @@ public class UltraLevelComponent implements IUltraLevelComponent
 	public void resetGlobalProgression()
 	{
 		unlockedDestinations.clear();
-		unlockedDestinations.add(new Identifier(Ultracraft.MOD_ID, "dimension.overworld"));
+		unlockedDestinations.add(Ultracraft.identifier("dimension.overworld"));
 	}
 	
 	@Override
@@ -221,8 +232,8 @@ public class UltraLevelComponent implements IUltraLevelComponent
 	}
 	
 	static {
-		DEFAULT_DESTINATIONS.add(new Identifier(Ultracraft.MOD_ID, "dimension.overworld"));
-		DEFAULT_DESTINATIONS.add(new Identifier(Ultracraft.MOD_ID, "prelude1"));
-		DEFAULT_DESTINATIONS.add(new Identifier(Ultracraft.MOD_ID, "tutorial"));
+		DEFAULT_DESTINATIONS.add(Ultracraft.identifier("dimension.overworld"));
+		DEFAULT_DESTINATIONS.add(Ultracraft.identifier("prelude1"));
+		DEFAULT_DESTINATIONS.add(Ultracraft.identifier("tutorial"));
 	}
 }

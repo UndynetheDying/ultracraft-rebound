@@ -29,8 +29,8 @@ public class CreditsScreen extends Screen
 {
 	static final Style ROLE_STYLE = Style.EMPTY.withUnderline(true);
 	static final Style NAME_STYLE = Style.EMPTY.withColor(Formatting.GOLD);
-	static final Identifier TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/credits.png");
-	static final Identifier BG = new Identifier(Ultracraft.MOD_ID, "textures/block/flesh1.png");
+	static final Identifier TEXTURE = Ultracraft.identifier("textures/gui/credits.png");
+	static final Identifier BG = Ultracraft.identifier("textures/block/flesh1.png");
 	static final List<Text> supporters = new ArrayList<>();
 	static boolean initializedSupporters;
 	final Screen parent;
@@ -46,6 +46,7 @@ public class CreditsScreen extends Screen
 		contributors.add(new ContributorElement("build", "Talon_MC", "AshenWulf", "Marmalude"));
 		contributors.add(new ContributorElement("sound", "8BitBunny"));
 		contributors.add(new ContributorElement("test", "Talon_MC", "AshenWulf", "Athanes", "Marmalude"));
+		contributors.add(new ContributorElement("music", "Efefski", "Psykomatic", "Triage", "Oxblood"));
 		HashMap<String, List<String>> localizerMap = new HashMap<>();
 		localizerMap.put("LOLCAT", new ArrayList<>() { { add("Doggochleb"); } });
 		localizerMap.put("Russian", new ArrayList<>() { { add("closet748"); } });

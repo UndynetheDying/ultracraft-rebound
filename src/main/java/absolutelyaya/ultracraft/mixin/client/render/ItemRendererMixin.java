@@ -36,6 +36,6 @@ public abstract class ItemRendererMixin
 	}
 	
 	static {
-		HARPOON_LONG = new ModelIdentifier(new Identifier(Ultracraft.MOD_ID, "harpoon_long"), "inventory");
+		HARPOON_LONG = new ModelIdentifier(Ultracraft.identifier("harpoon_long"), "inventory");
 	}
 }

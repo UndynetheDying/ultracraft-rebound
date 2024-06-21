@@ -2,7 +2,9 @@ package absolutelyaya.ultracraft.components.player;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.gui.LevelHUD;
+import absolutelyaya.ultracraft.client.sound.ModularLevelMusic;
 import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.data.LevelDataManager;
 import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
@@ -10,6 +12,7 @@ import absolutelyaya.ultracraft.util.TimeUtil;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -31,9 +34,9 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	HashMap<Identifier, Integer> lastPlayedVersion = new HashMap<>();
 	HashMap<Identifier, Integer> bestRanks = new HashMap<>();
 	Identifier currentLevel;
-	String currentLevelInstance;
-	boolean fighting, undamaged, invalid;
-	int fightCheckCooldown, deaths, kills;
+	String currentLevelInstance, curLevelSoundTrackKey = "default";
+	boolean fighting, undamaged, invalid, shouldMusicFade;
+	int fightCheckCooldown, deaths, kills, combatThreshold;
 	float style;
 	long timerStart = -1, lastStoppedTimer = -1, timerPause = -1;
 	
@@ -55,6 +58,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 		currentLevelInstance = instance;
 		if(!provider.getWorld().isClient && lastInstance != null)
 			LevelManager.Instance.leaveInstance((ServerPlayerEntity)provider, lastInstance);
+		setShouldMusicFade(currentLevel != null);
 		currentLevel = levelId;
 		if(levelId != null)
 		{
@@ -62,6 +66,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 			Ultracraft.rechargeWeapons(provider);
 			provider.setHealth(provider.getMaxHealth());
 		}
+		setCurLevelSoundTrackKey("default");
 		UltraComponents.LEVEL_STATS.sync(provider);
 	}
 	
@@ -78,13 +83,14 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	}
 	
 	@Override
-	public boolean isInFight()
+	public boolean isInCombat()
 	{
 		if(fightCheckCooldown-- > 0)
 			return fighting;
 		fighting = provider.getWorld().getOtherEntities(provider, provider.getBoundingBox().expand(32f),
-				e -> e instanceof AbstractUltraHostileEntity && e.isAlive()).size() > 0;
-		fightCheckCooldown = 10;
+				e -> e instanceof HostileEntity && e.isAlive() &&
+				(!(e instanceof AbstractUltraHostileEntity hostile) || hostile.isCountsForCombatMusic())).size() > combatThreshold;
+		fightCheckCooldown = 5;
 		return fighting;
 	}
 	
@@ -309,10 +315,59 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	}
 	
 	@Override
+	public void setCurLevelSoundTrackKey(String key)
+	{
+		if((key == null && curLevelSoundTrackKey == null) || (key != null && key.equals(curLevelSoundTrackKey)))
+			return;
+		fighting = false;
+		curLevelSoundTrackKey = key;
+		if(currentLevel != null)
+		{
+			setShouldMusicFade(true);
+			ModularLevelMusic music = LevelDataManager.getLevelData(currentLevel).getMusic(key);
+			if(music != null)
+				combatThreshold = music.getCombatThreshold();
+		}
+		UltraComponents.LEVEL_STATS.sync(provider);
+	}
+	
+	@Override
+	public String getCurLevelSoundTrackKey()
+	{
+		return curLevelSoundTrackKey;
+	}
+	
+	@Override
+	public void setShouldMusicFade(boolean val)
+	{
+		shouldMusicFade = val;
+	}
+	
+	@Override
+	public boolean shouldLevelMusicFade()
+	{
+		return shouldMusicFade;
+	}
+	
+	@Override
+	public void onFinishLevel()
+	{
+		if(currentLevel != null)
+		{
+			combatThreshold = 0;
+			setShouldMusicFade(true);
+			curLevelSoundTrackKey = null;
+			UltraComponents.LEVEL_STATS.sync(provider);
+		}
+	}
+	
+	@Override
 	public void readFromNbt(NbtCompound tag)
 	{
 		if(tag.contains("level", NbtElement.STRING_TYPE))
 			currentLevel = new Identifier(tag.getString("level"));
+		else
+			currentLevel = null;
 		if(tag.contains("timerStart", NbtElement.LONG_TYPE))
 			timerStart = tag.getLong("timerStart");
 		if(tag.contains("lastStoppedTime", NbtElement.LONG_TYPE))
@@ -323,8 +378,12 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 			deaths = tag.getInt("deaths");
 		if(tag.contains("kills", NbtElement.INT_TYPE))
 			kills = tag.getInt("kills");
+		if(tag.contains("combatThreshold", NbtElement.INT_TYPE))
+			combatThreshold = tag.getInt("combatThreshold");
 		invalid = tag.contains("invalid", NbtElement.BYTE_TYPE);
 		undamaged = tag.contains("undamaged", NbtElement.BYTE_TYPE);
+		if(tag.contains("shouldMusicFade", NbtElement.BYTE_TYPE))
+			setShouldMusicFade(true);
 		if(tag.contains("bestTimes", NbtElement.COMPOUND_TYPE))
 		{
 			bestTimes.clear();
@@ -350,6 +409,10 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 		}
 		if(tag.contains("currentLevelInstance", NbtElement.STRING_TYPE))
 			currentLevelInstance = tag.getString("currentLevelInstance");
+		if(tag.contains("soundtrackKey", NbtElement.STRING_TYPE))
+			curLevelSoundTrackKey = tag.getString("soundtrackKey");
+		else
+			curLevelSoundTrackKey = null;
 	}
 	
 	@Override
@@ -363,7 +426,13 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 		if(invalid)
 			tag.putBoolean("invalid", true);
 		if(undamaged)
-			tag.putBoolean("undamaged", undamaged);
+			tag.putBoolean("undamaged", true);
+		if(shouldMusicFade)
+		{
+			tag.putBoolean("shouldMusicFade", true);
+			shouldMusicFade = false;
+		}
+		tag.putInt("combatThreshold", combatThreshold);
 		if(bestTimes != null)
 		{
 			NbtCompound records = new NbtCompound();
@@ -383,7 +452,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 				records.putInt(e.getKey().toString(), e.getValue());
 			tag.put("bestRanks", records);
 		}
-		if(lastPlayedVersion.size() > 0)
+		if(!lastPlayedVersion.isEmpty())
 		{
 			NbtCompound records = new NbtCompound();
 			for (Map.Entry<Identifier, Integer> e : lastPlayedVersion.entrySet())
@@ -391,10 +460,10 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 			tag.put("versions", records);
 		}
 		if(getCurrentLevel() != null)
-		{
 			tag.putString("level", getCurrentLevel().toString());
-		}
 		if(currentLevelInstance != null && !currentLevelInstance.isEmpty())
 			tag.putString("currentLevelInstance", currentLevelInstance);
+		if(curLevelSoundTrackKey != null)
+			tag.putString("soundtrackKey", curLevelSoundTrackKey);
 	}
 }

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "glitch=false": {
+      "model": "ultracraft:block/fake_leaves"
+    },
+    "glitch=true": {
+      "model": "ultracraft:block/fake_leaves_glitch"
+    }
+  }
+}

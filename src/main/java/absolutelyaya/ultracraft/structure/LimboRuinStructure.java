@@ -22,8 +22,8 @@ import java.util.Optional;
 
 public class LimboRuinStructure extends Structure
 {
-	static final Identifier CHAPEL = new Identifier(Ultracraft.MOD_ID, "limbo/ruin1");
-	static final Identifier CASTLE = new Identifier(Ultracraft.MOD_ID, "limbo/ruin2");
+	static final Identifier CHAPEL = Ultracraft.identifier("limbo/ruin1");
+	static final Identifier CASTLE = Ultracraft.identifier("limbo/ruin2");
 	static final Identifier[] PIECES = new Identifier[] { CHAPEL, CASTLE };
 	public static final Codec<LimboRuinStructure> CODEC = LimboRuinStructure.createCodec(LimboRuinStructure::new);
 	

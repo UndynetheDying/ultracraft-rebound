@@ -30,7 +30,7 @@ import java.util.Map;
 
 public class WeaponsTab extends Tab
 {
-	static final Identifier TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/gui/weapon_icons.png");
+	static final Identifier TEXTURE = Ultracraft.identifier("textures/gui/weapon_icons.png");
 	static final Vector2i TEXTURE_SIZE = new Vector2i(384, 384);
 	
 	Button returnButton = new Button(Button.RETURN_LABEL,
@@ -210,7 +210,7 @@ public class WeaponsTab extends Tab
 		{
 			if (!progression.isUnlocked(selectedWeaponTypeIds[idx]))
 			{
-				if (!selectedWeaponTypeIds[idx].equals(Weapon.REVOLVER.ids[0]))
+				if (!selectedWeaponTypeIds[idx].equals(selectedCategory.ids[0]))
 					refreshTab();
 				craftButton.setClickable(selectedRecipe != null);
 				return true;

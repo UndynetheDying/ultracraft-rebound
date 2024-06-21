@@ -9,13 +9,13 @@ public class AlternatePierceRevolverRenderer extends PierceRevolverRenderer
 {
 	public AlternatePierceRevolverRenderer()
 	{
-		super(new DefaultedItemGeoModel<PierceRevolverItem>(new Identifier(Ultracraft.MOD_ID, "alternate_revolver"))
-					  .withAltAnimations(new Identifier(Ultracraft.MOD_ID, "revolver")));
+		super(new DefaultedItemGeoModel<PierceRevolverItem>(Ultracraft.identifier("alternate_revolver"))
+					  .withAltAnimations(Ultracraft.identifier("revolver")));
 	}
 	
 	@Override
 	public Identifier getTextureLocation(PierceRevolverItem animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "textures/item/alternate_piercer.png");
+		return Ultracraft.identifier("textures/item/alternate_piercer.png");
 	}
 }

@@ -23,7 +23,7 @@ public class PierceRevolverRenderer extends GeoItemRenderer<PierceRevolverItem>
 	
 	public PierceRevolverRenderer()
 	{
-		super(new DefaultedItemGeoModel<>(new Identifier(Ultracraft.MOD_ID, "revolver")));
+		super(new DefaultedItemGeoModel<>(Ultracraft.identifier("revolver")));
 	}
 	
 	public PierceRevolverRenderer(GeoModel<PierceRevolverItem> model)
@@ -40,19 +40,19 @@ public class PierceRevolverRenderer extends GeoItemRenderer<PierceRevolverItem>
 			cooldown = player.getItemCooldownManager().getCooldownProgress(animatable, 0f);
 		
 		if (cooldown > 0.5f)
-			return new Identifier(Ultracraft.MOD_ID, "textures/item/pierce_revolver0.png");
+			return Ultracraft.identifier("textures/item/pierce_revolver0.png");
 		else if (cooldown > 0f)
-			return new Identifier(Ultracraft.MOD_ID, "textures/item/pierce_revolver1.png");
+			return Ultracraft.identifier("textures/item/pierce_revolver1.png");
 		
 		float useTime = 1f - (animatable.getMaxUseTime(null) - animatable.getApproxUseTime()) / (float)(animatable.getMaxUseTime(null));
 		if(useTime > 0.99f)
-			return new Identifier(Ultracraft.MOD_ID, "textures/item/pierce_revolver4.png");
+			return Ultracraft.identifier("textures/item/pierce_revolver4.png");
 		else if(useTime > 0.5f)
-			return new Identifier(Ultracraft.MOD_ID, "textures/item/pierce_revolver3.png");
+			return Ultracraft.identifier("textures/item/pierce_revolver3.png");
 		else if(useTime > 0f)
-			return new Identifier(Ultracraft.MOD_ID, "textures/item/pierce_revolver2.png");
+			return Ultracraft.identifier("textures/item/pierce_revolver2.png");
 		
-		return new Identifier(Ultracraft.MOD_ID, "textures/item/pierce_revolver.png");
+		return Ultracraft.identifier("textures/item/pierce_revolver.png");
 	}
 	
 	@Override

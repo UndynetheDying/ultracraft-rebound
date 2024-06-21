@@ -1,6 +1,8 @@
 package absolutelyaya.ultracraft.mixin.client.gui;
 
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
+import absolutelyaya.ultracraft.client.UltracraftClient;
+import absolutelyaya.ultracraft.client.gui.EditModeHUD;
 import absolutelyaya.ultracraft.client.gui.TitleHUD;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -28,5 +30,13 @@ public class IngameHudMixin
 	void beforeRenderChat(DrawContext context, float tickDelta, CallbackInfo ci)
 	{
 		TitleHUD.Instance.render(context, tickDelta);
+		EditModeHUD.Instance.render(context, tickDelta);
+	}
+	
+	@Inject(method="renderHotbar", at = @At("HEAD"), cancellable = true)
+	void onRenderHotbar(float tickDelta, DrawContext context, CallbackInfo ci)
+	{
+		if(UltracraftClient.getConfig().hideVanillaHotbar)
+			ci.cancel();
 	}
 }

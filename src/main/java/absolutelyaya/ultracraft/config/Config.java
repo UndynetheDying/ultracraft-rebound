@@ -97,7 +97,7 @@ public abstract class Config
 				}
 				catch (Exception e)
 				{
-					Ultracraft.LOGGER.error("An Exception occurred trying to read Server Config Entry '" + segments[0] + "'.");
+					Ultracraft.LOGGER.error("An Exception occurred trying to read Server Config Entry '{}'.", segments[0]);
 					e.printStackTrace();
 				}
 			}
@@ -217,7 +217,7 @@ public abstract class Config
 				}
 				catch (Exception e)
 				{
-					Ultracraft.LOGGER.error("Exception encountered when trying to set Config Value '" + id + "'");
+					Ultracraft.LOGGER.error("Exception encountered when trying to set Config Value '{}'", id);
 					e.printStackTrace();
 				}
 			}

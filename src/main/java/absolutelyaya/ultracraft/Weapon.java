@@ -10,20 +10,20 @@ import java.util.Locale;
 public enum Weapon
 {
 	REVOLVER(new Identifier[] {
-			new Identifier(Ultracraft.MOD_ID, "pierce_revolver"),
-			new Identifier(Ultracraft.MOD_ID, "marksman_revolver"),
-			new Identifier(Ultracraft.MOD_ID, "sharpshooter_revolver"),
-			new Identifier(Ultracraft.MOD_ID, "alternate_piercer"),
-			new Identifier(Ultracraft.MOD_ID, "alternate_marksman"),
-			new Identifier(Ultracraft.MOD_ID, "alternate_sharpshooter")
-	}, new Identifier(Ultracraft.MOD_ID, "slab")),
+			Ultracraft.identifier("pierce_revolver"),
+			Ultracraft.identifier("marksman_revolver"),
+			Ultracraft.identifier("sharpshooter_revolver"),
+			Ultracraft.identifier("alternate_piercer"),
+			Ultracraft.identifier("alternate_marksman"),
+			Ultracraft.identifier("alternate_sharpshooter")
+	}, Ultracraft.identifier("slab")),
 	SHOTGUN(new Identifier[] {
-			new Identifier(Ultracraft.MOD_ID, "core_shotgun"),
-			new Identifier(Ultracraft.MOD_ID, "pump_shotgun")
+			Ultracraft.identifier("core_shotgun"),
+			Ultracraft.identifier("pump_shotgun")
 	}, null),
 	NAILGUN(new Identifier[]{
-			new Identifier(Ultracraft.MOD_ID, "attractor_nailgun"),
-			new Identifier(Ultracraft.MOD_ID, "overheat_nailgun")
+			Ultracraft.identifier("attractor_nailgun"),
+			Ultracraft.identifier("overheat_nailgun")
 	}, null),
 	RAILCANNON(null, null),
 	ROCKET_LAUNCHER(null, null),

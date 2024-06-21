@@ -12,7 +12,7 @@ public class MarksmanRevolverRenderer extends GeoItemRenderer<MarksmanRevolverIt
 {
 	public MarksmanRevolverRenderer()
 	{
-		super(new DefaultedItemGeoModel<>(new Identifier(Ultracraft.MOD_ID, "revolver")));
+		super(new DefaultedItemGeoModel<>(Ultracraft.identifier("revolver")));
 	}
 	
 	public MarksmanRevolverRenderer(GeoModel<MarksmanRevolverItem> model)
@@ -26,14 +26,14 @@ public class MarksmanRevolverRenderer extends GeoItemRenderer<MarksmanRevolverIt
 		int coins = animatable.getNbt(currentItemStack, "coins");
 		
 		if (coins == 3)
-			return new Identifier(Ultracraft.MOD_ID, "textures/item/marksman_revolver3.png");
+			return Ultracraft.identifier("textures/item/marksman_revolver3.png");
 		else if (coins == 2)
-			return new Identifier(Ultracraft.MOD_ID, "textures/item/marksman_revolver2.png");
+			return Ultracraft.identifier("textures/item/marksman_revolver2.png");
 		else if (coins == 1)
-			return new Identifier(Ultracraft.MOD_ID, "textures/item/marksman_revolver1.png");
+			return Ultracraft.identifier("textures/item/marksman_revolver1.png");
 		else if (coins == 0)
-			return new Identifier(Ultracraft.MOD_ID, "textures/item/marksman_revolver0.png");
+			return Ultracraft.identifier("textures/item/marksman_revolver0.png");
 		
-		return new Identifier(Ultracraft.MOD_ID, "textures/item/marksman_revolver.png");
+		return Ultracraft.identifier("textures/item/marksman_revolver.png");
 	}
 }

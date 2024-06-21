@@ -1,7 +1,6 @@
 package absolutelyaya.ultracraft.client.rendering.entity.machine;
 
 import absolutelyaya.ultracraft.client.rendering.entity.feature.gecko.V2EmissiveLayer;
-import absolutelyaya.ultracraft.client.rendering.entity.feature.gecko.V2RageLayer;
 import absolutelyaya.ultracraft.entity.machine.V2Entity;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -45,7 +44,6 @@ public class V2Renderer extends GeoEntityRenderer<V2Entity>
 				poseStack.pop();
 			}
 		});
-		addRenderLayer(new V2RageLayer(this));
 		addRenderLayer(new V2EmissiveLayer(this));
 	}
 	

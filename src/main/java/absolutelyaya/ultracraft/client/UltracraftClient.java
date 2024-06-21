@@ -3,6 +3,7 @@ package absolutelyaya.ultracraft.client;
 import absolutelyaya.goop.client.GoopClient;
 import absolutelyaya.ultracraft.client.gui.*;
 import absolutelyaya.ultracraft.client.rendering.CybergrindArenaRenderer;
+import absolutelyaya.ultracraft.compat.TrinketUtil;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
@@ -29,8 +30,8 @@ import absolutelyaya.ultracraft.client.rendering.entity.projectile.*;
 import absolutelyaya.ultracraft.client.sound.*;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
+import absolutelyaya.ultracraft.components.player.ProgressionComponent;
 import absolutelyaya.ultracraft.config.*;
-import absolutelyaya.ultracraft.dimension.UltraDimensions;
 import absolutelyaya.ultracraft.entity.husk.AbstractHuskEntity;
 import absolutelyaya.ultracraft.entity.machine.SwordsmachineEntity;
 import absolutelyaya.ultracraft.entity.projectile.IHomingProjectile;
@@ -71,6 +72,7 @@ import net.minecraft.client.sound.SoundManager;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -85,10 +87,10 @@ import java.util.UUID;
 @Environment(EnvType.CLIENT)
 public class UltracraftClient implements ClientModInitializer
 {
-	public static final EntityModelLayer WINGS_LAYER = new EntityModelLayer(new Identifier(Ultracraft.MOD_ID, "wings"), "main");
-	public static final EntityModelLayer MALICIOUS_LAYER = new EntityModelLayer(new Identifier(Ultracraft.MOD_ID, "malicious"), "main");
-	public static final EntityModelLayer ENRAGE_LAYER = new EntityModelLayer(new Identifier(Ultracraft.MOD_ID, "enraged"), "main");
-	public static final EntityModelLayer INTERRUPTABLE_CHARGE_LAYER = new EntityModelLayer(new Identifier(Ultracraft.MOD_ID, "interruptable_charge"), "main");
+	public static final EntityModelLayer WINGS_LAYER = new EntityModelLayer(Ultracraft.identifier("wings"), "main");
+	public static final EntityModelLayer MALICIOUS_LAYER = new EntityModelLayer(Ultracraft.identifier("malicious"), "main");
+	public static final EntityModelLayer ENRAGE_LAYER = new EntityModelLayer(Ultracraft.identifier("enraged"), "main");
+	public static final EntityModelLayer INTERRUPTABLE_CHARGE_LAYER = new EntityModelLayer(Ultracraft.identifier("interruptable_charge"), "main");
 	public static String wingPreset = "", wingPattern = "", wingOverlay = "";
 	private static ShaderProgram wingsColoredProgram, wingsColoredUIProgram, texPosFade, flesh, sky;
 	public static ClientHitscanHandler HITSCAN_HANDLER;
@@ -178,7 +180,6 @@ public class UltracraftClient implements ClientModInitializer
 		EntityModelLayerRegistry.registerModelLayer(WINGS_LAYER, WingsModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(MALICIOUS_LAYER, MaliciousFaceModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(ENRAGE_LAYER, EnragedModel::getTexturedModelData);
-		EntityModelLayerRegistry.registerModelLayer(INTERRUPTABLE_CHARGE_LAYER, InterruptableChargeModel::getTexturedModelData);
 		//BlockEntityRenderers
 		BlockEntityRendererFactories.register(BlockEntityRegistry.PEDESTAL, PedestalBlockEntityRenderer::new);
 		BlockEntityRendererFactories.register(BlockEntityRegistry.CERBERUS, context -> new CerberusBlockRenderer());
@@ -195,6 +196,8 @@ public class UltracraftClient implements ClientModInitializer
 		ScreenHandlerRegistry.registerClient();
 		
 		WingColorPresetManager.restoreDefaults();
+		
+		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new MusicMetadataManager());
 		
 		HITSCAN_HANDLER = new ClientHitscanHandler();
 		TRAIL_RENDERER = new TrailRenderer();
@@ -219,7 +222,6 @@ public class UltracraftClient implements ClientModInitializer
 		cybergrindHUD = new CybergrindHUD();
 		HudRenderCallback.EVENT.register((context, delta) -> {
 			weaponInfoHUD.render(context, delta);
-			editModeHUD.render(context, delta);
 			levelHUD.render(context, delta);
 			cybergrindHUD.render(context);
 		});
@@ -246,7 +248,7 @@ public class UltracraftClient implements ClientModInitializer
 			buf.writeString(wings.getOverlay());
 			ClientPlayNetworking.send(PacketRegistry.SEND_WING_DATA_C2S_PACKET_ID, buf);
 			buf = new PacketByteBuf(Unpooled.buffer());
-			buf.writeBoolean(config.get().armVisible);
+			buf.writeBoolean(config.get().armSkinThirdPerson);
 			ClientPlayNetworking.send(PacketRegistry.ARM_VISIBLE_PACKET_ID, buf);
 			if(config.get().showEpilepsyWarning)
 				MinecraftClient.getInstance().setScreen(new EpilepsyPopupScreen(null));
@@ -279,8 +281,7 @@ public class UltracraftClient implements ClientModInitializer
 		});
 		
 		LivingEntityFeatureRendererRegistrationCallback.EVENT.register((type, renderer, helper, context) -> {
-			if(type.equals(EntityRegistry.MALICIOUS_FACE))
-				helper.register(new EnragedFeature<>(context.getModelLoader()));
+			helper.register(new EnragedFeature<>(context.getModelLoader()));
 			if(type.equals(EntityType.PLAYER))
 			{
 				helper.register(new WingsFeature<>((PlayerEntityRenderer)renderer, context.getModelLoader()));
@@ -307,42 +308,42 @@ public class UltracraftClient implements ClientModInitializer
 			{
 				RenderSystem.enableBlend();
 				String bloodName = GoopClient.getConfig().censorMature ? "textures/misc/blood_overlay_c" : "textures/misc/blood_overlay";
-				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, new Identifier(Ultracraft.MOD_ID, bloodName + "3.png"),
+				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, Ultracraft.identifier(bloodName + "3.png"),
 						Math.min(screenblood - 1.25f, 0.75f));
-				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, new Identifier(Ultracraft.MOD_ID, bloodName + "2.png"),
+				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, Ultracraft.identifier(bloodName + "2.png"),
 						Math.min(screenblood - 0.25f, Math.max(0.6f - Math.min(screenblood - 0.75f, 0.6f), 0f)));
-				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, new Identifier(Ultracraft.MOD_ID, bloodName + "1.png"),
+				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, Ultracraft.identifier(bloodName + "1.png"),
 						Math.min(screenblood - 0.75f, 0.6f));
 				screenblood = Math.max(0f, screenblood - delta / 120);
 			}
 			if(visualFreezeTicks > 0)
-				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, new Identifier(Ultracraft.MOD_ID, "textures/misc/time_freeze_overlay.png"),
+				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, Ultracraft.identifier("textures/misc/time_freeze_overlay.png"),
 						0.25f);
 		});
 		
 		WingPatterns.init();
 		CoreShaderRegistrationCallback.EVENT.register((callback) -> {
-			callback.register(new Identifier(Ultracraft.MOD_ID, "rendertype_wings_colored"), VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, (program) -> {
+			callback.register(Ultracraft.identifier("rendertype_wings_colored"), VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, (program) -> {
 				program.getUniform("MetalColor");
 				program.getUniform("WingColor");
 				program.getUniform("Pattern");
 				program.markUniformsDirty();
 				wingsColoredProgram = program;
 			});
-			callback.register(new Identifier(Ultracraft.MOD_ID, "wings_colored_ui"), VertexFormats.POSITION_TEXTURE_COLOR, (program) -> {
+			callback.register(Ultracraft.identifier("wings_colored_ui"), VertexFormats.POSITION_TEXTURE_COLOR, (program) -> {
 				program.getUniform("MetalColor");
 				program.getUniform("WingColor");
 				program.getUniform("Pattern");
 				program.markUniformsDirty();
 				wingsColoredUIProgram = program;
 			});
-			callback.register(new Identifier(Ultracraft.MOD_ID, "position_tex_fade"), VertexFormats.POSITION_TEXTURE_COLOR, (program) -> {
+			callback.register(Ultracraft.identifier("position_tex_fade"), VertexFormats.POSITION_TEXTURE_COLOR, (program) -> {
 				program.getUniform("TextureSize");
 				program.markUniformsDirty();
 				texPosFade = program;
 			});
-			callback.register(new Identifier(Ultracraft.MOD_ID, "flesh"), VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL, (program) -> flesh = program);
-			callback.register(new Identifier(Ultracraft.MOD_ID, "sky"), VertexFormats.POSITION_TEXTURE, (program) -> {
+			callback.register(Ultracraft.identifier("flesh"), VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL, (program) -> flesh = program);
+			callback.register(Ultracraft.identifier("sky"), VertexFormats.POSITION_TEXTURE, (program) -> {
 				program.getUniform("RotMat");
 				program.markUniformsDirty();
 				sky = program;
@@ -354,22 +355,25 @@ public class UltracraftClient implements ClientModInitializer
 		ClientTickEvents.END_WORLD_TICK.register(minecraft -> {
 			Ultracraft.tickFreeze();
 			UltracraftClient.TRAIL_RENDERER.tick();
+			if(joinInfoPending)
+				serverSyncFinished();
+			PlayerEntity player = MinecraftClient.getInstance().player;
+			if(player == null)
+				return;
 			if(!wasMovementSoundsEnabled && config.get().movementSounds)
 			{
-				PlayerEntity player = MinecraftClient.getInstance().player;
-				if(player == null)
-					return;
 				SoundManager sound = MinecraftClient.getInstance().getSoundManager();
 				sound.play(new MovingSlideSoundInstance(player));
 				sound.play(new MovingWindSoundInstance(player));
 			}
 			wasMovementSoundsEnabled = config.get().movementSounds;
-			if(joinInfoPending)
-				serverSyncFinished();
+			if(UltraComponents.WING_DATA.get(player).isActive() && !(UltraComponents.PROGRESSION.get(player).isUnlocked(ProgressionComponent.HIVEL) ||
+						 (Ultracraft.TRINKETS && TrinketUtil.isHasTrinketEquipped(player, ItemRegistry.HIVEL_WINGS))))
+				setHiVel(false, false);
 		});
 		//Block Layers
 		FluidRenderHandlerRegistry.INSTANCE.register(FluidRegistry.STILL_BLOOD, FluidRegistry.Flowing_BLOOD,
-				new SimpleFluidRenderHandler(new Identifier(Ultracraft.MOD_ID, "block/blood_still"), new Identifier(Ultracraft.MOD_ID, "block/blood_flow")));
+				new SimpleFluidRenderHandler(Ultracraft.identifier("block/blood_still"), Ultracraft.identifier("block/blood_flow")));
 		BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(), FluidRegistry.STILL_BLOOD, FluidRegistry.Flowing_BLOOD);
 		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.FLESH, //prevent Sodium from crashing when trying to render Flesh Blocks
 				SODIUM ? RenderLayers.getSolid() : RenderLayers.getFlesh());
@@ -379,8 +383,9 @@ public class UltracraftClient implements ClientModInitializer
 		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.SKY_BLOCK, RenderLayer.getTranslucent());
 		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.FLOWERBED, RenderLayer.getTranslucent());
 		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.ZOOTYCOONCHAINLINKFENCE, RenderLayer.getCutout());
+		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.FAKE_LEAVES, RenderLayer.getTranslucent());
 		
-		TerminalCodeRegistry.registerCode("florp", t -> t.setTab(new PetTab()));
+		//TerminalCodeRegistry.registerCode("florp", t -> t.setTab(new PetTab()));
 		TerminalCodeRegistry.registerCode("somethingwicked", new TerminalCodeRegistry.Result(t -> {
 			t.setColorOverride(0x460006);
 			MinecraftClient.getInstance().player.sendMessage(Text.of("Something Wicked this way comes"), true);
@@ -431,7 +436,7 @@ public class UltracraftClient implements ClientModInitializer
 		}
 		if(!manual)
 			client.player.sendMessage(Text.translatable("message.ultracraft.join-info"));
-		client.player.sendMessage(Text.translatable("========================================="));
+		client.player.sendMessage(Text.of("========================================="));
 		return true;
 	}
 	
@@ -454,6 +459,14 @@ public class UltracraftClient implements ClientModInitializer
 		Setting option = ServerConfig.INSTANCE.hivel.getValue();
 		if(option.equals(Setting.FREE))
 		{
+			if(!(UltraComponents.PROGRESSION.get(player).isUnlocked(ProgressionComponent.HIVEL) ||
+						 (Ultracraft.TRINKETS && TrinketUtil.isHasTrinketEquipped(player, ItemRegistry.HIVEL_WINGS))))
+			{
+				UltraComponents.WINGED.get(player).sendBoxTitle(Text.translatable("message.ultracraft.hivel-not-unlocked"), 2.5f);
+				if(wings.isActive())
+					setHiVel(!wings.isActive(), false);
+				return;
+			}
 			setHiVel(!wings.isActive(), false);
 			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 			buf.writeBoolean(wings.isActive());
@@ -462,8 +475,7 @@ public class UltracraftClient implements ClientModInitializer
 			config.save();
 		}
 		else
-			player.sendMessage(
-					Text.translatable("message.ultracraft.hi-vel-forced",
+			player.sendMessage(Text.translatable("message.ultracraft.hi-vel-forced",
 									Text.translatable(option.equals(Setting.FORCE_ON) ? "options.on" : "options.off")), true);
 	}
 	
@@ -696,5 +708,15 @@ public class UltracraftClient implements ClientModInitializer
 	public static void setTravelling(boolean travelling)
 	{
 		UltracraftClient.travelling = travelling;
+	}
+	
+	/**
+	 * This should be used for rendering effects that need deltaTime instead of tick delta
+	 */
+	public static float getDeltaTime()
+	{
+		if(MinecraftClient.getInstance() == null)
+			return 0f;
+		return MinecraftClient.getInstance().renderTickCounter.lastFrameDuration;
 	}
 }

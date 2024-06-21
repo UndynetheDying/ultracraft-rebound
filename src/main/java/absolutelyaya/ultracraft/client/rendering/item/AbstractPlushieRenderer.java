@@ -19,16 +19,16 @@ public abstract class AbstractPlushieRenderer<P extends PlushieItem & GeoAnimata
 	{
 		return switch(animatable.getType())
 		{
-			default -> new Identifier(Ultracraft.MOD_ID, "textures/item/plushie/v1.png");
-			case YAYA -> new Identifier(Ultracraft.MOD_ID, "textures/item/plushie/yaya.png");
-			case HAKITA -> new Identifier(Ultracraft.MOD_ID, "textures/item/plushie/hakita.png");
-			case PITR, PITRPOIN -> new Identifier(Ultracraft.MOD_ID, "textures/item/plushie/pitr.png");
-			case SWORDSMACHINE -> new Identifier(Ultracraft.MOD_ID, "textures/item/plushie/swordsmachine.png");
-			case SWORDSMACHINE_TUNDRA -> new Identifier(Ultracraft.MOD_ID, "textures/item/plushie/swordsmachine_tundra.png");
-			case SWORDSMACHINE_AGONY -> new Identifier(Ultracraft.MOD_ID, "textures/item/plushie/swordsmachine_agony.png");
-			case TALON -> new Identifier(Ultracraft.MOD_ID, "textures/item/plushie/talon.png");
-			case V2 -> new Identifier(Ultracraft.MOD_ID, "textures/item/plushie/v2.png");
-			case ASHEN -> new Identifier(Ultracraft.MOD_ID, "textures/item/plushie/ashenwulf.png");
+			default -> Ultracraft.identifier("textures/item/plushie/v1.png");
+			case YAYA -> Ultracraft.identifier("textures/item/plushie/yaya.png");
+			case HAKITA -> Ultracraft.identifier("textures/item/plushie/hakita.png");
+			case PITR, PITRPOIN -> Ultracraft.identifier("textures/item/plushie/pitr.png");
+			case SWORDSMACHINE -> Ultracraft.identifier("textures/item/plushie/swordsmachine.png");
+			case SWORDSMACHINE_TUNDRA -> Ultracraft.identifier("textures/item/plushie/swordsmachine_tundra.png");
+			case SWORDSMACHINE_AGONY -> Ultracraft.identifier("textures/item/plushie/swordsmachine_agony.png");
+			case TALON -> Ultracraft.identifier("textures/item/plushie/talon.png");
+			case V2 -> Ultracraft.identifier("textures/item/plushie/v2.png");
+			case ASHEN -> Ultracraft.identifier("textures/item/plushie/ashenwulf.png");
 		};
 	}
 }

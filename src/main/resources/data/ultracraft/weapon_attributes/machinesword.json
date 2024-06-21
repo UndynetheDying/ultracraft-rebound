@@ -3,7 +3,7 @@
   "attributes": {
     "attack_range": 3.5,
     "hitbox": "VERTICAL_PLANE",
-    "two_handed": true,
+    "two_handed": false,
     "pose": "bettercombat:pose_two_handed_sword",
     "attacks": [
       {

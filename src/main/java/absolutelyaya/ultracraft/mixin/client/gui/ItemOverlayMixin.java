@@ -38,7 +38,7 @@ public abstract class ItemOverlayMixin
 			RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
 			RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 			int i = weapon.getHUDTexture().x;
-			drawTexture(new Identifier(Ultracraft.MOD_ID, "textures/gui/weapon_border.png"), x, y, 0,
+			drawTexture(Ultracraft.identifier("textures/gui/weapon_border.png"), x, y, 0,
 					16 * (i % 2), 16 * (int)Math.floor(i / 2f), 16, 16, 32, 32);
 			matrices.pop();
 		}

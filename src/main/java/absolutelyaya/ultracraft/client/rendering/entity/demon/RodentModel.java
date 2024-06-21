@@ -10,18 +10,18 @@ public class RodentModel extends GeoModel<RodentEntity>
 	@Override
 	public Identifier getModelResource(RodentEntity animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "geo/entities/rodent.geo.json");
+		return Ultracraft.identifier("geo/entities/rodent.geo.json");
 	}
 	
 	@Override
 	public Identifier getTextureResource(RodentEntity animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "textures/entity/rodent.png");
+		return Ultracraft.identifier("textures/entity/rodent.png");
 	}
 	
 	@Override
 	public Identifier getAnimationResource(RodentEntity animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "animations/entities/rodent.animation.json");
+		return Ultracraft.identifier("animations/entities/rodent.animation.json");
 	}
 }

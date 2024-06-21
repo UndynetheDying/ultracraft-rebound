@@ -20,7 +20,7 @@ import java.util.List;
 public class CybergrindHUD
 {
 	public static CybergrindHUD Instance;
-	static final Identifier ROULETTE_TEX = new Identifier(Ultracraft.MOD_ID, "textures/gui/sacrificial_roulette.png");
+	static final Identifier ROULETTE_TEX = Ultracraft.identifier("textures/gui/sacrificial_roulette.png");
 	final Random rand = Random.create();
 	final MinecraftClient client;
 	final String[] fakeNames = new String[] { "AbsoluteZaza", "SomethingWicked", "Flowerman", "Interloper", "Maurice", "xX_TheSize2_Xx", "Querbert", "MagnumOpos" };

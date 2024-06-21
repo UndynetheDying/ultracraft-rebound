@@ -1,11 +1,11 @@
 #version 150
 
-uniform sampler2D Sampler0;
-uniform sampler2D Sampler1;
-uniform sampler2D Sampler2;
 uniform sampler2D Sampler3;
 uniform sampler2D Sampler4;
 uniform sampler2D Sampler5;
+uniform sampler2D Sampler6;
+uniform sampler2D Sampler7;
+uniform sampler2D Sampler8;
 
 uniform mat4 ProjMat;
 uniform mat4 ModelViewMat;
@@ -47,22 +47,22 @@ void main() {
     switch(faceIndex)
     {
         case 0:
-            color = textureProj(Sampler0, texPos);
-            break;
-        case 1:
-            color = textureProj(Sampler1, texPos);
-            break;
-        case 2:
-            color = textureProj(Sampler2, texPos);
-            break;
-        case 3:
             color = textureProj(Sampler3, texPos);
             break;
-        case 4:
+        case 1:
             color = textureProj(Sampler4, texPos);
             break;
-        case 5:
+        case 2:
             color = textureProj(Sampler5, texPos);
+            break;
+        case 3:
+            color = textureProj(Sampler6, texPos);
+            break;
+        case 4:
+            color = textureProj(Sampler7, texPos);
+            break;
+        case 5:
+            color = textureProj(Sampler8, texPos);
             break;
     }
     fragColor = color;

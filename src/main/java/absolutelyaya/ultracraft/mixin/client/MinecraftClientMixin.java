@@ -103,6 +103,8 @@ public abstract class MinecraftClientMixin
 	{
 		if(player != null)
 		{
+			if(UltraComponents.WINGED.get(player).getCybergrindData() != null)
+				return SoundRegistry.CYBERGRIND_MUSIC;
 			Identifier level = UltraComponents.LEVEL_STATS.get(player).getCurrentLevel();
 			if(level != null)
 				return null;

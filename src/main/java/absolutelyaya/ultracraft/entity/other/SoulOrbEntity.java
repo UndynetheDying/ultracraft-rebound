@@ -22,7 +22,7 @@ public class SoulOrbEntity extends AbstractOrbEntity
 	@Override
 	public Identifier getTexture()
 	{
-		return new Identifier(Ultracraft.MOD_ID, "textures/item/soul_orb.png");
+		return Ultracraft.identifier("textures/item/soul_orb.png");
 	}
 	
 	@Override

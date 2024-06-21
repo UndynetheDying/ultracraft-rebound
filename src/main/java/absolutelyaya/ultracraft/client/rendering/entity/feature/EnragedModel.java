@@ -74,7 +74,7 @@ public class EnragedModel<T extends LivingEntity> extends AnimalModel<T>
 		
 		for (int i = 0; i < 2; i++)
 		{
-			lightningOpacities[i] -= 0.01;
+			lightningOpacities[i] -= 0.01f;
 			float a = MathHelper.clamp(lightningOpacities[i], 0f, 1f);
 			if(a > 0f)
 			{

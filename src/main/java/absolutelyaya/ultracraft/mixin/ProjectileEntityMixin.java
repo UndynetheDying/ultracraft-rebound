@@ -172,7 +172,7 @@ public abstract class ProjectileEntityMixin extends Entity implements Projectile
 		if(hitResult.getType().equals(HitResult.Type.ENTITY))
 			hit = ((EntityHitResult)hitResult).getEntity();
 		if(boosted && hit != null && parrier instanceof PlayerEntity)
-			UltraComponents.STYLE.get(parrier).styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "projboost")));
+			UltraComponents.STYLE.get(parrier).styleBonusGet(StyleBonusManager.getBonuses().get(Ultracraft.identifier("projboost")));
 		if(owner == null)
 		{
 			ExplosionHandler.explosion(null, getWorld(), pos, DamageSources.get(getWorld(), DamageSources.PARRYAOE, parrier),

@@ -323,4 +323,9 @@ public abstract class AbstractUltraHostileEntity extends HostileEntity
 			});
 		}
 	}
+	
+	public boolean isCountsForCombatMusic()
+	{
+		return true;
+	}
 }

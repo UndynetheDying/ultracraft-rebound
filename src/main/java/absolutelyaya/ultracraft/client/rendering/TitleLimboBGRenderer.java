@@ -13,7 +13,7 @@ import org.joml.Matrix4f;
 
 public class TitleLimboBGRenderer extends RotatingCubeMapRenderer
 {
-	final Identifier TEXTURE = new Identifier(Ultracraft.MOD_ID, "textures/misc/limbo.png");
+	final Identifier TEXTURE = Ultracraft.identifier("textures/misc/limbo.png");
 	
 	private final MinecraftClient client;
 	float time;

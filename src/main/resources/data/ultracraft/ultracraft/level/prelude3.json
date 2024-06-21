@@ -31,6 +31,14 @@
     "z": 115
   },
   "spawn-rot": -90,
-  "version": 1,
+  "music": {
+    "fight": {
+      "calm": "ultracraft:music.cerberus_calm",
+      "combat": "ultracraft:music.cerberus",
+      "combat-threshold": 1,
+      "no-calmdown": true
+    }
+  },
+  "version": 2,
   "next-level": "ultracraft:limbo1"
 }

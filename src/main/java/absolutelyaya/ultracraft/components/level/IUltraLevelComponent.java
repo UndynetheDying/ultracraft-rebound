@@ -28,7 +28,7 @@ public interface IUltraLevelComponent extends ComponentV3
 	
 	boolean isDestinationUnlocked(Identifier id);
 	
-	boolean isAnyLimboDestinationUnlocked();
+	boolean isAnyDestinationInLayerUnlocked(Identifier layer);
 	
 	boolean unlockDestination(Identifier id);
 	

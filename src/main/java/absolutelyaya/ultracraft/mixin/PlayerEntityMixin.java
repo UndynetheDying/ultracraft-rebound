@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.mixin;
 
+import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.block.mapping.CheckpointBlockEntity;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.accessor.EntityAccessor;
@@ -8,6 +9,7 @@ import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
 import absolutelyaya.ultracraft.components.player.*;
 import absolutelyaya.ultracraft.config.HivelConfig;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.DamageTypeTags;
 import absolutelyaya.ultracraft.dimension.LevelManager;
@@ -28,6 +30,7 @@ import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
@@ -40,6 +43,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.*;
@@ -50,10 +54,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements WingedPlayerEntity
@@ -76,9 +77,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	
 	@Shadow public abstract void disableShield(boolean sprinting);
 	
+	@Shadow public abstract void sendMessage(Text message, boolean overlay);
+	
 	Multimap<EntityAttribute, EntityAttributeModifier> curSpeedMod;
 	BackTank backtank;
-	int parryIFrames;
+	int parryIFrames, damageTypeChain;
+	long lastDamageAge = 0;
+	DamageType lastDamageType;
 	
 	private final Vec3d[] curWingPose = new Vec3d[] {new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f)};
 	
@@ -163,14 +168,29 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	@Inject(method = "damage", at = @At("TAIL"))
 	void afterDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir)
 	{
-		if(isWingsActive() && !source.isIn(DamageTypeTags.IS_PER_TICK) && !source.isOf(DamageTypes.OUT_OF_WORLD))
+		if(!isWingsActive() || source.isIn(DamageTypeTags.IS_PER_TICK) || source.isOf(DamageTypes.OUT_OF_WORLD) || Ultracraft.isLikelyPerTickDamageType(source.getType()))
 		{
-			if(source.isOf(DamageSources.GUN) || source.isOf(DamageSources.SHOTGUN))
-				timeUntilRegen = 9;
-			else
-				timeUntilRegen = 11 + HivelConfig.INSTANCE.iFrames.getValue();
+			UltraComponents.WINGED.get(this).setBloodHealCooldown(4);
+			return;
 		}
-		UltraComponents.WINGED.get(this).setBloodHealCooldown(4);
+		if(source.isOf(DamageSources.GUN) || source.isOf(DamageSources.SHOTGUN))
+			timeUntilRegen = 9;
+		else
+			timeUntilRegen = 11 + HivelConfig.INSTANCE.iFrames.getValue();
+		
+		if(!source.isOf(DamageSources.NAIL) && lastDamageType != null && lastDamageType.equals(source.getType()))
+		{
+			if(age - lastDamageAge < 2)
+				damageTypeChain++;
+			else if(damageTypeChain > 0)
+				damageTypeChain = 0;
+			if(damageTypeChain > 5)
+				Ultracraft.addLikelyPerTickDamageType(source.getType());
+		}
+		else if(damageTypeChain > 0)
+			damageTypeChain = 0;
+		lastDamageAge = age;
+		lastDamageType = source.getType();
 	}
 	
 	@ModifyReturnValue(method="findRespawnPosition", at = @At("RETURN"))
@@ -194,6 +214,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	{
 		if(getWorld().getRegistryKey().equals(LevelManager.WORLD_KEY) || UltraComponents.WINGED.get(this).getLastCheckpoint() != null)
 			ci.cancel();
+	}
+	
+	@Inject(method="getXpToDrop", at = @At("HEAD"), cancellable = true)
+	void onGetXpToDrop(CallbackInfoReturnable<Integer> cir)
+	{
+		if(getWorld().getRegistryKey().equals(LevelManager.WORLD_KEY) || UltraComponents.WINGED.get(this).getLastCheckpoint() != null)
+			cir.setReturnValue(0);
 	}
 	
 	@ModifyReturnValue(method = "isSwimming", at = @At("RETURN"))
@@ -286,15 +313,19 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 		World world = getWorld();
 		if(!world.isClient)
 		{
-			for (int x = -1; x <= 1; x++)
+			for (int y = 0; y <= 1; y++)
 			{
-				for (int z = -1; z <= 1; z++)
+				for (int x = -1; x <= 1; x++)
 				{
-					BlockPos pos = getSteppingPos().add(new Vec3i(x, 0, z));
-					if(!canModifyAt(world, pos))
-						continue;
-					if(world.getBlockState(pos).isIn(TagRegistry.SLAM_BREAKABLE))
-						world.breakBlock(pos, true, this);
+					for (int z = -1; z <= 1; z++)
+					{
+						BlockPos pos = getSteppingPos().add(new Vec3i(x, y, z));
+						if(!canModifyAt(world, pos))
+							continue;
+						if(!(ServerConfig.INSTANCE.protectNature.getValue() && world.getBlockState(pos).isIn(TagRegistry.FRAGILE_NATURE)) &&
+								   world.getBlockState(pos).isIn(TagRegistry.SLAM_BREAKABLE))
+							world.breakBlock(pos, true, this);
+					}
 				}
 			}
 		}

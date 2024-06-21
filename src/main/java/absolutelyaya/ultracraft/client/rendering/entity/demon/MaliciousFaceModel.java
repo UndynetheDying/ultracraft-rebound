@@ -1,5 +1,7 @@
 package absolutelyaya.ultracraft.client.rendering.entity.demon;
 
+import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.entity.demon.MaliciousFaceEntity;
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.VertexConsumer;
@@ -39,7 +41,7 @@ public class MaliciousFaceModel<T extends MaliciousFaceEntity> extends EntityMod
 		Root.setAngles((float)Math.toRadians(headPitch), (float)Math.toRadians(headYaw), 0f);
 		charge = entity.getChargePercent();
 		cracked = entity.isCracked();
-		enraged = entity.isEnraged();
+		enraged = UltraComponents.LIVING.get(entity).isEnraged();
 	}
 	
 	@Override

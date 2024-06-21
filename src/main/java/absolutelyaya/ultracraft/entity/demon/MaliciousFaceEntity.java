@@ -18,6 +18,7 @@ import absolutelyaya.ultracraft.entity.projectile.HellBulletEntity;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.ParticleRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
+import absolutelyaya.ultracraft.registry.StatusEffectRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
@@ -131,7 +132,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 				if(!getWorld().isClient)
 					getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(32), i -> true)
 							.forEach(p -> UltraComponents.STYLE.get(p)
-												  .styleBonusGet(StyleBonusManager.getBonuses().get(new Identifier(Ultracraft.MOD_ID, "enrage"))));
+												  .styleBonusGet(StyleBonusManager.getBonuses().get(Ultracraft.identifier("enrage"))));
 			}
 		}
 		else if(data.equals(LANDED) && dataTracker.get(LANDED))
@@ -327,6 +328,8 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		}
 		if(!dataTracker.get(DEAD) && dataTracker.get(DECORATIVE))
 			dataTracker.set(DEAD, true);
+		if(shouldBeEnraged() && isAlive())
+			addStatusEffect(new StatusEffectInstance(StatusEffectRegistry.ENRAGED, 1, 0, true, false));
 	}
 	
 	@Override
@@ -469,19 +472,24 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	
 	public boolean isEnraged()
 	{
+		return hasStatusEffect(StatusEffectRegistry.ENRAGED);
+	}
+	
+	public boolean shouldBeEnraged()
+	{
 		return isCracked() && (getWorld().getDifficulty().equals(Difficulty.HARD) || ServerConfig.INSTANCE.effectivelyViolent.getValue());
 	}
 	
 	@Override
 	public Vec3d getEnrageFeatureSize()
 	{
-		return new Vec3d(2.75f, -2.75f, -2.75f);
+		return new Vec3d(2.75f, 2.75f, 2.75f);
 	}
 	
 	@Override
 	public Vec3d getEnragedFeatureOffset()
 	{
-		return new Vec3d(0f, -0.5f, 0f);
+		return new Vec3d(0f, 0.5f, 0f);
 	}
 	
 	public void shootBullet(LivingEntity target)

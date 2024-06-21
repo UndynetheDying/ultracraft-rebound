@@ -31,7 +31,7 @@ public class StyleBonusManager extends JsonDataLoader
 			@Override
 			public Identifier getFabricId()
 			{
-				return new Identifier(Ultracraft.MOD_ID, "ultracraft/style");
+				return Ultracraft.identifier("ultracraft/style");
 			}
 			
 			@Override

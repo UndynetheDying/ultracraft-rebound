@@ -2,7 +2,7 @@
   "multipart": [
     {
       "apply": {
-        "model": "ultracraft:block/carpet_edge"
+        "model": "ultracraft:block/carpet/edge"
       },
       "when": {
         "north": "false",
@@ -11,7 +11,7 @@
     },
     {
       "apply": {
-        "model": "ultracraft:block/carpet_edge_inverted"
+        "model": "ultracraft:block/carpet/edge_inverted"
       },
       "when": {
         "north": "true",
@@ -20,7 +20,7 @@
     },
     {
       "apply": {
-        "model": "ultracraft:block/carpet_line"
+        "model": "ultracraft:block/carpet/line"
       },
       "when": {
         "north": "true",
@@ -29,7 +29,7 @@
     },
     {
       "apply": {
-        "model": "ultracraft:block/carpet_line_alt"
+        "model": "ultracraft:block/carpet/line_alt"
       },
       "when": {
         "north": "false",
@@ -38,7 +38,7 @@
     },
     {
       "apply": {
-        "model": "ultracraft:block/carpet_fill"
+        "model": "ultracraft:block/carpet/fill"
       },
       "when": {
         "north": "true",
@@ -48,7 +48,7 @@
     },
     {
       "apply": {
-        "model": "ultracraft:block/carpet_edge",
+        "model": "ultracraft:block/carpet/edge",
         "y": 90
       },
       "when": {
@@ -58,7 +58,7 @@
     },
     {
       "apply": {
-        "model": "ultracraft:block/carpet_edge_inverted",
+        "model": "ultracraft:block/carpet/edge_inverted",
         "y": 90
       },
       "when": {
@@ -68,7 +68,7 @@
     },
     {
       "apply": {
-        "model": "ultracraft:block/carpet_line",
+        "model": "ultracraft:block/carpet/line",
         "y": 90
       },
       "when": {
@@ -78,7 +78,7 @@
     },
     {
       "apply": {
-        "model": "ultracraft:block/carpet_line_alt",
+        "model": "ultracraft:block/carpet/line_alt",
         "y": 90
       },
       "when": {
@@ -88,7 +88,7 @@
     },
     {
       "apply": {
-        "model": "ultracraft:block/carpet_fill",
+        "model": "ultracraft:block/carpet/fill",
         "y": 90
       },
       "when": {
@@ -99,7 +99,7 @@
     },
     {
       "apply": {
-        "model": "ultracraft:block/carpet_edge",
+        "model": "ultracraft:block/carpet/edge",
         "y": 180
       },
       "when": {
@@ -109,7 +109,7 @@
     },
     {
       "apply": {
-        "model": "ultracraft:block/carpet_edge_inverted",
+        "model": "ultracraft:block/carpet/edge_inverted",
         "y": 180
       },
       "when": {
@@ -119,7 +119,7 @@
     },
     {
       "apply": {
-        "model": "ultracraft:block/carpet_line",
+        "model": "ultracraft:block/carpet/line",
         "y": 180
       },
       "when": {
@@ -129,7 +129,7 @@
     },
     {
       "apply": {
-        "model": "ultracraft:block/carpet_line_alt",
+        "model": "ultracraft:block/carpet/line_alt",
         "y": 180
       },
       "when": {
@@ -139,7 +139,7 @@
     },
     {
       "apply": {
-        "model": "ultracraft:block/carpet_fill",
+        "model": "ultracraft:block/carpet/fill",
         "y": 180
       },
       "when": {
@@ -150,7 +150,7 @@
     },
     {
       "apply": {
-        "model": "ultracraft:block/carpet_edge",
+        "model": "ultracraft:block/carpet/edge",
         "y": 270
       },
       "when": {
@@ -160,7 +160,7 @@
     },
     {
       "apply": {
-        "model": "ultracraft:block/carpet_edge_inverted",
+        "model": "ultracraft:block/carpet/edge_inverted",
         "y": 270
       },
       "when": {
@@ -170,7 +170,7 @@
     },
     {
       "apply": {
-        "model": "ultracraft:block/carpet_line",
+        "model": "ultracraft:block/carpet/line",
         "y": 270
       },
       "when": {
@@ -180,7 +180,7 @@
     },
     {
       "apply": {
-        "model": "ultracraft:block/carpet_line_alt",
+        "model": "ultracraft:block/carpet/line_alt",
         "y": 270
       },
       "when": {
@@ -190,7 +190,7 @@
     },
     {
       "apply": {
-        "model": "ultracraft:block/carpet_fill",
+        "model": "ultracraft:block/carpet/fill",
         "y": 270
       },
       "when": {

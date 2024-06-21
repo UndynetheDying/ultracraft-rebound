@@ -538,5 +538,70 @@
     "sounds": [
       "ultracraft:music/clair_de_lune"
     ]
+  },
+  "music.prelude1": {
+    "sounds": [
+      "ultracraft:music/triage/beyondthefire"
+    ]
+  },
+  "music.prelude1_calm": {
+    "sounds": [
+      "ultracraft:music/triage/beyondthefire_calm"
+    ]
+  },
+  "music.prelude2": {
+    "sounds": [
+      "ultracraft:music/efefski/prelude2"
+    ]
+  },
+  "music.prelude2_calm": {
+    "sounds": [
+      "ultracraft:music/efefski/prelude2_calm"
+    ]
+  },
+  "music.cerberus": {
+    "sounds": [
+      "ultracraft:music/psykomatic/cerbfight"
+    ]
+  },
+  "music.cerberus_calm": {
+    "sounds": [
+      "ultracraft:music/psykomatic/cerbcalm"
+    ]
+  },
+  "music.limbo1_illusion": {
+    "sounds": [
+      "ultracraft:music/oxblood/limbo1_illusion"
+    ]
+  },
+  "music.limbo1": {
+    "sounds": [
+      "ultracraft:music/oxblood/limbo1"
+    ]
+  },
+  "music.limbo1_calm": {
+    "sounds": [
+      "ultracraft:music/oxblood/limbo1_calm"
+    ]
+  },
+  "music.limbo2": {
+    "sounds": [
+      "ultracraft:music/efefski/limbo2"
+    ]
+  },
+  "music.limbo2_calm": {
+    "sounds": [
+      "ultracraft:music/efefski/limbo2_calm"
+    ]
+  },
+  "music.efefski_cybergrind": {
+    "sounds": [
+      "ultracraft:music/efefski/cybergrind"
+    ]
+  },
+  "music.cybergrind": {
+    "sounds": [
+      "ultracraft:music/efefski/cybergrind"
+    ]
   }
 }

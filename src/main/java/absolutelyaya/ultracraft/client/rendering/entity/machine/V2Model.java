@@ -14,15 +14,15 @@ import mod.azure.azurelib.model.data.EntityModelData;
 
 public class V2Model extends GeoModel<V2Entity>
 {
-	static final Identifier YELLOW = new Identifier(Ultracraft.MOD_ID, "textures/entity/v2/yellow.png");
-	static final Identifier GREEN = new Identifier(Ultracraft.MOD_ID, "textures/entity/v2/green.png");
-	static final Identifier RED = new Identifier(Ultracraft.MOD_ID, "textures/entity/v2/red.png");
-	static final Identifier BLUE = new Identifier(Ultracraft.MOD_ID, "textures/entity/v2/blue.png");
+	static final Identifier YELLOW = Ultracraft.identifier("textures/entity/v2/yellow.png");
+	static final Identifier GREEN = Ultracraft.identifier("textures/entity/v2/green.png");
+	static final Identifier RED = Ultracraft.identifier("textures/entity/v2/red.png");
+	static final Identifier BLUE = Ultracraft.identifier("textures/entity/v2/blue.png");
 	
 	@Override
 	public Identifier getModelResource(V2Entity object)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "geo/entities/v2.geo.json");
+		return Ultracraft.identifier("geo/entities/v2.geo.json");
 	}
 	
 	@Override
@@ -40,7 +40,7 @@ public class V2Model extends GeoModel<V2Entity>
 	@Override
 	public Identifier getAnimationResource(V2Entity animatable)
 	{
-		return new Identifier(Ultracraft.MOD_ID, "animations/entities/v2.animation.json");
+		return Ultracraft.identifier("animations/entities/v2.animation.json");
 	}
 	
 	@Override

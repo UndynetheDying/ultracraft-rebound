@@ -54,7 +54,7 @@ public class SupporterPopupScreen extends InfoPopupScreen
 	{
 		context.fill(0, 0, width, height, 0xbb000000);
 		super.render(context, mouseX, mouseY, delta);
-		RenderSystem.setShaderTexture(0, new Identifier(Ultracraft.MOD_ID, "textures/gui/urepic.png"));
+		RenderSystem.setShaderTexture(0, Ultracraft.identifier("textures/gui/urepic.png"));
 		RenderSystem.setShader(GameRenderer::getPositionTexProgram);
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		RenderingUtil.drawTexture(context.getMatrices().peek().getPositionMatrix(), new Vector4f(width / 2f - 174 / 2f, height / 2f + 5, 175, 43),

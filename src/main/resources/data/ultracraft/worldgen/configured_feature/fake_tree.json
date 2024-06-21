@@ -30,13 +30,16 @@
         {
           "weight": 4,
           "data": {
-            "Name": "minecraft:moss_block"
+            "Name": "ultracraft:fake_leaves"
           }
         },
         {
-          "weight": 2,
+          "weight": 1,
           "data": {
-            "Name": "minecraft:green_wool"
+            "Name": "ultracraft:fake_leaves",
+            "Properties": {
+              "glitch": "true"
+            }
           }
         }
       ]

@@ -72,7 +72,7 @@ public class DamageBlockEntity extends AbstractTriggerBlockEntity
 			case "damagetype" -> damagetype =  parseIdentifier(value);
 			case "amount" -> amount = Float.parseFloat(value);
 			case "perTick" -> perTick = Boolean.parseBoolean(value);
-		};
+		}
 	}
 	
 	@Override

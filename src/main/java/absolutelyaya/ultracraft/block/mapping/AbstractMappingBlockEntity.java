@@ -163,6 +163,25 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 			parent = pos.subtract(getPos());
 	}
 	
+	/**
+	 * Searches Parent Rooms recursively for the most top level room in the Hierarchy
+	 * @return The top level Parent Room Position in <b>World Space</b>
+	 */
+	public BlockPos getTopLevelParent()
+	{
+		if(parent == null || !(world.getBlockEntity(parent) instanceof RoomBlockEntity r))
+			return null;
+		RoomBlockEntity top = r;
+		while(r.getParent() != null)
+		{
+			if(r.getParent() != null && (world.getBlockEntity(r.getParent()) instanceof RoomBlockEntity r2))
+				top = r2;
+			else
+				break;
+		}
+		return top.getPos();
+	}
+	
 	public boolean isAreaModifiable()
 	{
 		return true;
@@ -259,5 +278,11 @@ public abstract class AbstractMappingBlockEntity extends BlockEntity
 		if(output == null)
 			throw new AttributeParseException("identifier");
 		return output;
+	}
+	
+	public void onBreakBlock()
+	{
+		if(world != null && getParent() != null && world.getBlockEntity(getParent()) instanceof RoomBlockEntity room)
+			room.removeChild(pos);
 	}
 }

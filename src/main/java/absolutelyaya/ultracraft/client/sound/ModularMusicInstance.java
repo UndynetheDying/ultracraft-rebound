@@ -1,34 +1,62 @@
 package absolutelyaya.ultracraft.client.sound;
 
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.sound.SoundInstance;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.DeathScreen;
 import net.minecraft.client.sound.TickableSoundInstance;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.math.random.Random;
 
-public class ModularMusicInstance extends PositionedSoundInstance implements TickableSoundInstance
+public class ModularMusicInstance extends FadingMusicInstance implements TickableSoundInstance, INonPausingSoundInstance
 {
-	public ModularMusicInstance(SoundEvent sound, boolean battle)
-	{
-		super(sound.getId(), SoundCategory.MUSIC, battle ? 1f : 0f, 1f, SoundInstance.createRandom(), true, 0,
-				AttenuationType.NONE, 0.0, 0.0, 0.0, true);
-	}
+	boolean wasGamePaused;
+	float normalPitch = 1f, normalVolume = 1f, pauseMultiplier = -1f;
 	
-	public void setVolume(float volume)
+	public ModularMusicInstance(SoundEvent sound)
 	{
-		this.volume = volume;
-	}
-	
-	@Override
-	public boolean isDone()
-	{
-		return false;
+		super(sound, 0.01f);
 	}
 	
 	@Override
 	public void tick()
 	{
+		super.tick();
+		MinecraftClient client = MinecraftClient.getInstance();
+		boolean death = client.currentScreen instanceof DeathScreen;
+		if(shouldLowerPitchWhenPaused())
+		{
+			if(client.isPaused() || death)
+			{
+				if(!wasGamePaused)
+				{
+					normalPitch = pitch;
+					normalVolume = volume;
+					if(pauseMultiplier == -1f)
+						pauseMultiplier = 0.99f;
+				}
+				else if(pauseMultiplier > 0.7f)
+					pauseMultiplier = Math.max(pauseMultiplier - 0.1f / (death ? 100f : 5f), 0.7f);
+			}
+			else if(pauseMultiplier >= 0f && pauseMultiplier < 1f)
+				pauseMultiplier = Math.min(pauseMultiplier + 0.2f / 5f, 1f);
+			if(pauseMultiplier >= 0f)
+			{
+				pitch = normalPitch * pauseMultiplier;
+				setVolume(normalVolume - (0.75f * ((1f - pauseMultiplier) / 0.3f)));
+				if(pauseMultiplier == 1f)
+					pauseMultiplier = -1f;
+			}
+		}
+		wasGamePaused = client.isPaused() || death;
+	}
 	
+	@Override
+	public boolean shouldLowerPitchWhenPaused()
+	{
+		return !fadingOut;
+	}
+	
+	@Override
+	public boolean shouldAlwaysPlay()
+	{
+		return true;
 	}
 }

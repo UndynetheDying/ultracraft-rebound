@@ -18,7 +18,7 @@ public class EditorComponent implements IEditorComponent
 	HashMap<String, BlockPos> focus = new HashMap<>();
 	BlockPos editAreaCore, rebindingParent;
 	int editAreaStep;
-	boolean active, showAreaOwner = true, noClip = true, ghost = false, wasFlyingBeforeEditing = false;
+	boolean active, showAreaOwner = true, noClip = true, ghost = false, wasFlyingBeforeEditing = false, recursiveRooms = false, showRelations = true;
 	float flySpeed = 3f;
 	
 	public EditorComponent(PlayerEntity provider)
@@ -211,6 +211,42 @@ public class EditorComponent implements IEditorComponent
 	}
 	
 	@Override
+	public void setAllowRecursiveRooms(boolean v)
+	{
+		recursiveRooms = v;
+	}
+	
+	@Override
+	public boolean isAllowRecursiveRooms()
+	{
+		return recursiveRooms;
+	}
+	
+	@Override
+	public boolean toggleRecursiveRooms()
+	{
+		return recursiveRooms = !recursiveRooms;
+	}
+	
+	@Override
+	public void setShowRelations(boolean v)
+	{
+		showRelations = v;
+	}
+	
+	@Override
+	public boolean isShowRelations()
+	{
+		return showRelations;
+	}
+	
+	@Override
+	public boolean toggleShowRelations()
+	{
+		return showRelations = !showRelations;
+	}
+	
+	@Override
 	public void sync()
 	{
 		UltraComponents.EDITOR.sync(provider);
@@ -233,6 +269,10 @@ public class EditorComponent implements IEditorComponent
 			setFlySpeed(tag.getFloat("flySpeed"));
 		if(tag.contains("ghost", NbtElement.BYTE_TYPE))
 			setGhost(tag.getBoolean("ghost"));
+		if(tag.contains("recursiveRooms", NbtElement.BYTE_TYPE))
+			setAllowRecursiveRooms(tag.getBoolean("recursiveRooms"));
+		if(tag.contains("showRelations", NbtElement.BYTE_TYPE))
+			setShowRelations(tag.getBoolean("showRelations"));
 		if(tag.contains("rebindingParent", NbtElement.LONG_TYPE))
 			rebindingParent = BlockPos.fromLong(tag.getLong("rebindingParent"));
 		else
@@ -250,6 +290,8 @@ public class EditorComponent implements IEditorComponent
 		tag.putBoolean("noclip", noClip);
 		tag.putFloat("flySpeed", flySpeed);
 		tag.putBoolean("ghost", ghost);
+		tag.putBoolean("recursiveRooms", recursiveRooms);
+		tag.putBoolean("showRelations", showRelations);
 		if(rebindingParent != null)
 			tag.putLong("rebindingParent", rebindingParent.asLong());
 	}

@@ -31,7 +31,7 @@ public class TerminalScreensaverManager extends JsonDataLoader
 			@Override
 			public Identifier getFabricId()
 			{
-				return new Identifier(Ultracraft.MOD_ID, "ultracraft/screensavers");
+				return Ultracraft.identifier("ultracraft/screensavers");
 			}
 			
 			@Override

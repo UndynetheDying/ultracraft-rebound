@@ -15,7 +15,7 @@ public class WingDataComponent implements IWingDataComponent, AutoSyncedComponen
 {
 	Vector3f[] colors = new Vector3f[] { new Vector3f(247f / 255f, 1f, 154f / 255f), new Vector3f(117f / 255f, 154f / 255f, 1f) };
 	String pattern = "", overlay = "";
-	boolean visible;
+	boolean active;
 	PlayerEntity provider;
 	
 	public WingDataComponent(PlayerEntity entity)
@@ -77,13 +77,13 @@ public class WingDataComponent implements IWingDataComponent, AutoSyncedComponen
 	@Override
 	public boolean isActive()
 	{
-		return visible;
+		return active;
 	}
 	
 	@Override
 	public void setActive(boolean b)
 	{
-		visible = b;
+		active = b;
 		if(provider.isMainPlayer())
 			UltraHudRenderer.onUpdateWingsActive();
 		if(provider instanceof WingedPlayerEntity winged)
@@ -118,7 +118,7 @@ public class WingDataComponent implements IWingDataComponent, AutoSyncedComponen
 		this.colors[1] = deserializeColor(colors.getCompound("metal"));
 		pattern = Ultracraft.checkSupporter(provider.getUuid(), provider.getWorld().isClient) ? tag.getString("pattern") : "";
 		overlay = tag.getString("overlay");
-		visible = tag.getBoolean("visible");
+		active = tag.getBoolean("visible");
 	}
 	
 	@Override
@@ -130,6 +130,6 @@ public class WingDataComponent implements IWingDataComponent, AutoSyncedComponen
 		tag.put("colors", colors);
 		tag.putString("pattern", pattern);
 		tag.putString("overlay", overlay);
-		tag.putBoolean("visible", visible);
+		tag.putBoolean("visible", active);
 	}
 }

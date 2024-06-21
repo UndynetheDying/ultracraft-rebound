@@ -51,6 +51,7 @@ public class PortalBlock extends Block
 			buf.writeBoolean(false);
 			buf.writeBoolean(false);
 			buf.writeBoolean(false);
+			buf.writeNullable(null, PacketByteBuf::writeIdentifier);
 			ServerPlayNetworking.send((ServerPlayerEntity)player, PacketRegistry.TRAVEL_SCREEN_PACKET_ID, buf);
 			return ActionResult.CONSUME;
 		}

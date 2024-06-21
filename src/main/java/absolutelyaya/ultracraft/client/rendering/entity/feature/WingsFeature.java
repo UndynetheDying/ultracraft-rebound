@@ -28,9 +28,9 @@ import org.joml.Vector3f;
 
 public class WingsFeature<T extends PlayerEntity, M extends PlayerEntityModel<T>> extends FeatureRenderer<T, M>
 {
-	private static final Identifier TEXTURE_CLR = new Identifier(Ultracraft.MOD_ID, "textures/entity/wings_clr.png");
-	private static final Identifier TEXTURE_WNG = new Identifier(Ultracraft.MOD_ID, "textures/entity/wings_wing.png");
-	private static final Identifier TEXTURE_MTL = new Identifier(Ultracraft.MOD_ID, "textures/entity/wings_metal.png");
+	private static final Identifier TEXTURE_CLR = Ultracraft.identifier("textures/entity/wings_clr.png");
+	private static final Identifier TEXTURE_WNG = Ultracraft.identifier("textures/entity/wings_wing.png");
+	private static final Identifier TEXTURE_MTL = Ultracraft.identifier("textures/entity/wings_metal.png");
 	private final WingsModel<T> wingsModel;
 	
 	public WingsFeature(FeatureRendererContext<T, M> context, EntityModelLoader loader)
@@ -97,7 +97,7 @@ public class WingsFeature<T extends PlayerEntity, M extends PlayerEntityModel<T>
 				wingShader.getUniform("MetalColor").set(clrs[1]);
 				RenderSystem.setShader(p == null ? UltracraftClient::getWingsColoredShaderProgram : p.program());
 				vertexConsumer = vertexConsumers.getBuffer(RenderLayers.getWingsPattern(TEXTURE_CLR, patternID));
-				RenderSystem.setShaderTexture(1, new Identifier(Ultracraft.MOD_ID, "textures/entity/wing_overlay/" + overlayID + ".png"));
+				RenderSystem.setShaderTexture(1, Ultracraft.identifier("textures/entity/wing_overlay/" + overlayID + ".png"));
 				wingsModel.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 1f, 1f, 1f, 1f);
 			}
 			matrices.pop();

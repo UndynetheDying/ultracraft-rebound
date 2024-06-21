@@ -23,7 +23,7 @@ import java.util.List;
 public class ProgressionTriggerBlockEntity extends AbstractTriggerBlockEntity
 {
 	static List<String> attributes = new ArrayList<>();
-	Identifier progressionEntry = new Identifier(Ultracraft.MOD_ID, "pierce_revolver");
+	Identifier progressionEntry = Ultracraft.identifier("pierce_revolver");
 	boolean giveAsItem, obtain;
 	String message = "";
 	

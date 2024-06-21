@@ -42,7 +42,7 @@ public class CybergrindConfig extends Config
 		String id = Registries.ENTITY_TYPE.getId(type).toString().replace(':', '$');
 		if(frozen)
 		{
-			Ultracraft.LOGGER.error("Tried registering spawn cost for entity " + id + " too late. Please use the entrypoint 'cybergrind'");
+			Ultracraft.LOGGER.error("Tried registering spawn cost for entity {} too late. Please use the entrypoint 'cybergrind'", id);
 			return;
 		}
 		IntegerEntry entry = new IntegerEntry(id, cost);
@@ -103,7 +103,7 @@ public class CybergrindConfig extends Config
 	public static void freeze()
 	{
 		frozen = true;
-		Ultracraft.LOGGER.info("Froze Cybergrind Data with " + costs.size() + " registered enemy spawn Costs.");
+		Ultracraft.LOGGER.info("Froze Cybergrind Data with {} registered enemy spawn Costs.", costs.size());
 	}
 	
 	@Override

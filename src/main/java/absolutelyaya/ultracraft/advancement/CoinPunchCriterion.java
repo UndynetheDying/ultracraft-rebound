@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
 
 public class CoinPunchCriterion extends AbstractCriterion<CoinPunchCriterion.Conditions>
 {
-	static final Identifier ID = new Identifier(Ultracraft.MOD_ID, "coin_punching");
+	static final Identifier ID = Ultracraft.identifier("coin_punching");
 	
 	@Override
 	protected Conditions conditionsFromJson(JsonObject obj, LootContextPredicate playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer)

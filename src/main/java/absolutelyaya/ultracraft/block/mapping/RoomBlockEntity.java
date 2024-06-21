@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.block.mapping;
 
 import absolutelyaya.ultracraft.block.CerberusBlock;
 import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.config.ServerConfig;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.entity.IFlagger;
 import absolutelyaya.ultracraft.entity.demon.CerberusEntity;
@@ -36,7 +37,7 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	{
 		super(BlockEntityRegistry.MAP_ROOM, pos, state);
 		id = "room-" + i;
-		i++;
+		i++; //this is completely useless, but a little funny so I'll leave it in
 	}
 	
 	public static <T extends BlockEntity> void tick(World world, BlockPos ignored1, BlockState ignored2, T instance)
@@ -52,7 +53,7 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 			{
 				for (BlockPos pos : room.getChildren())
 				{
-					if(world.getBlockEntity(pos) instanceof AbstractMappingBlockEntity block && !(block instanceof RoomBlockEntity) &&
+					if(world.getBlockEntity(pos) instanceof AbstractMappingBlockEntity block &&
 							   block.getParent() != null && block.getParent().equals(room.getPos()))
 						room.registerChild(pos, block);
 					else
@@ -92,7 +93,7 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	void tick()
 	{
 		boolean lastActive = active;
-		active = getContainedPlayers().size() > 0;
+		active = !getContainedPlayers().isEmpty();
 		
 		world.getEntitiesByType(TypeFilter.instanceOf(AbstractUltraHostileEntity.class), getAreaBox(),
 						i -> i instanceof IFlagger flagger && !flagger.isRoomListener(pos))
@@ -153,6 +154,9 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 		setID(id);
 	}
 	
+	/**
+	 * Takes child pos in <b>World Space</b>
+	 */
 	public void removeChild(BlockPos pos)
 	{
 		children.remove(pos.subtract(getPos()));
@@ -253,6 +257,11 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 		return null;
 	}
 	
+	public boolean isSuppressModifications()
+	{
+		return suppressModifications && !ServerConfig.INSTANCE.disableModificationSuppression.getValue();
+	}
+	
 	public boolean resetIfEmpty()
 	{
 		if(!active)
@@ -284,7 +293,7 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 						children.put(pos, null);
 				}
 			}
-			if(list.size() > 0)
+			if(!list.isEmpty())
 				childCheckPending = true;
 		}
 		if(nbt.contains("resetCooldown", NbtElement.INT_TYPE))
@@ -310,15 +319,11 @@ public class RoomBlockEntity extends AbstractMappingBlockEntity
 	}
 	
 	@Override
-	public void markRemoved()
+	public void onBreakBlock()
 	{
-		UltraComponents.DIMENSION_DATA.get(world).removeRoomMappingBlock(pos);
-		super.markRemoved();
-	}
-	
-	public boolean isSuppressModifications()
-	{
-		return suppressModifications;
+		if(world != null)
+			UltraComponents.DIMENSION_DATA.get(world).removeRoomMappingBlock(pos);
+		children.forEach((pos, entity) -> entity.setParent(null));
 	}
 	
 	static {

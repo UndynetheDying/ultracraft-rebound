@@ -5,17 +5,13 @@ import absolutelyaya.ultracraft.util.TimeUtil;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class LevelData
 {
@@ -23,17 +19,17 @@ public final class LevelData
 	final String title, description, author, authorLink;
 	final Identifier thumbnail, structure;
 	final BlockPos spawnOffset;
-	final boolean builtin;
+	final boolean builtin, defaultUnlocked;
 	String[] timeStrings;
 	long[] timeRanks;
 	int[] killRanks, styleRanks;
-	ModularLevelMusic music;
+	Map<String, ModularLevelMusic> music = new HashMap<>();
 	boolean unimplemented, hidden;
 	float spawnRot;
 	int version;
 	Identifier nextLevel;
 	
-	public LevelData(Identifier id, String title, String description, String author, String authorLink, Identifier structure, Identifier thumbnail, BlockPos spawnOffset, boolean builtin)
+	public LevelData(Identifier id, String title, String description, String author, String authorLink, Identifier structure, Identifier thumbnail, BlockPos spawnOffset, boolean builtin, boolean defaultUnlocked)
 	{
 		this.id = id;
 		this.title = title;
@@ -44,6 +40,7 @@ public final class LevelData
 		this.thumbnail = thumbnail;
 		this.spawnOffset = spawnOffset;
 		this.builtin = builtin;
+		this.defaultUnlocked = defaultUnlocked;
 	}
 	
 	public Identifier getID()
@@ -128,17 +125,17 @@ public final class LevelData
 	
 	public boolean hasMusic()
 	{
-		return music != null;
+		return !music.isEmpty();
 	}
 	
-	public void setMusic(Identifier calm, Identifier fight)
+	public void putMusic(String id, Identifier calm, Identifier fight, int combatThreshold, boolean noCalmdown)
 	{
-		music = new ModularLevelMusic(calm, fight);
+		music.put(id, new ModularLevelMusic(calm, fight, combatThreshold, noCalmdown));
 	}
 	
-	public ModularLevelMusic getMusic()
+	public ModularLevelMusic getMusic(String id)
 	{
-		return music;
+		return music.getOrDefault(id, null);
 	}
 	
 	public void setTimeRanks(String[] strings)
@@ -177,9 +174,14 @@ public final class LevelData
 		styleRanks = ranks;
 	}
 	
-	public boolean getBuiltin()
+	public boolean isBuiltin()
 	{
 		return builtin;
+	}
+	
+	public boolean isDefaultUnlocked()
+	{
+		return defaultUnlocked;
 	}
 	
 	public void setUnimplemented(boolean unimplemented)
@@ -291,6 +293,7 @@ public final class LevelData
 		spawnOffset.putInt("z", this.spawnOffset.getZ());
 		nbt.put("spawnOffset", spawnOffset);
 		nbt.putBoolean("builtin", builtin);
+		nbt.putBoolean("defaultUnlocked", defaultUnlocked);
 		nbt.putBoolean("unimplemented", unimplemented);
 		nbt.putBoolean("hidden", hidden);
 		if(hasFullRankingData())
@@ -304,12 +307,21 @@ public final class LevelData
 		if(hasMusic())
 		{
 			NbtCompound music = new NbtCompound();
-			RegistryEntry<SoundEvent> calm = this.music.getCalmSound();
-			if(calm != null && calm.value() != null)
-				music.putString("calm", calm.value().getId().toString());
-			RegistryEntry<SoundEvent> combat = this.music.getCombatSound();
-			if(combat != null && combat.value() != null)
-				music.putString("combat", combat.value().getId().toString());
+			this.music.forEach((key, val) -> {
+				NbtCompound entry = new NbtCompound();
+				SoundEvent calm = val.getCalmSound();
+				if(calm != null)
+					entry.putString("calm", calm.getId().toString());
+				SoundEvent combat = val.getCombatSound();
+				if(combat != null)
+					entry.putString("combat", combat.getId().toString());
+				int combatThreshold = val.getCombatThreshold();
+				if(combatThreshold > 0)
+					entry.putInt("combatThreshold", combatThreshold);
+				if(val.isNoCalmdown())
+					entry.putBoolean("noCalmdown", true);
+				music.put(key, entry);
+			});
 			nbt.put("music", music);
 		}
 		nbt.putFloat("spawnRot", spawnRot);
@@ -331,8 +343,9 @@ public final class LevelData
 		NbtCompound spawnOffsetNbt = nbt.getCompound("spawnOffset");
 		BlockPos spawnOffset = new BlockPos(spawnOffsetNbt.getInt("x"), spawnOffsetNbt.getInt("y"), spawnOffsetNbt.getInt("z"));
 		boolean builtin = nbt.getBoolean("builtin");
+		boolean defaultUnlocked = nbt.getBoolean("defaultUnlocked");
 		LevelData data = new LevelData(Identifier.tryParse(id), title, description, author, authorLink,
-				Identifier.tryParse(structure), Identifier.tryParse(thumbnail), spawnOffset, builtin);
+				Identifier.tryParse(structure), Identifier.tryParse(thumbnail), spawnOffset, builtin, defaultUnlocked);
 		if(nbt.contains("rankingData", NbtElement.COMPOUND_TYPE))
 		{
 			NbtCompound ranking = nbt.getCompound("rankingData");
@@ -343,12 +356,22 @@ public final class LevelData
 		if(nbt.contains("music", NbtElement.COMPOUND_TYPE))
 		{
 			NbtCompound music = nbt.getCompound("music");
-			Identifier calm = null, combat = null;
-			if(music.contains("calm", NbtElement.STRING_TYPE))
-				calm = Identifier.tryParse(music.getString("calm"));
-			if(music.contains("combat", NbtElement.STRING_TYPE))
-				combat = Identifier.tryParse(music.getString("combat"));
-			data.setMusic(calm, combat);
+			for (String key : music.getKeys())
+			{
+				NbtCompound entry = music.getCompound(key);
+				Identifier calm = null, combat = null;
+				int combatThreshold = 0;
+				boolean noCalmdown = false;
+				if (entry.contains("calm", NbtElement.STRING_TYPE))
+					calm = Identifier.tryParse(entry.getString("calm"));
+				if (entry.contains("combat", NbtElement.STRING_TYPE))
+					combat = Identifier.tryParse(entry.getString("combat"));
+				if (entry.contains("combatThreshold", NbtElement.INT_TYPE))
+					combatThreshold = entry.getInt("combatThreshold");
+				if (entry.contains("noCalmdown", NbtElement.BYTE_TYPE))
+					noCalmdown = entry.getBoolean("noCalmdown");
+				data.putMusic(key,  calm, combat, combatThreshold, noCalmdown);
+			}
 		}
 		data.setUnimplemented(nbt.getBoolean("unimplemented"));
 		data.setHidden(nbt.getBoolean("hidden"));

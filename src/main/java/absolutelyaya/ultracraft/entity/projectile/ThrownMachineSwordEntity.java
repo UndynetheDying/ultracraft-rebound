@@ -264,6 +264,9 @@ public class 	ThrownMachineSwordEntity extends PersistentProjectileEntity implem
 		nbt.putDouble("spawnX", spawnPos.x);
 		nbt.putDouble("spawnY", spawnPos.y);
 		nbt.putDouble("spawnZ", spawnPos.z);
+		NbtCompound swordCompound = new NbtCompound();
+		dataTracker.get(SWORD).writeNbt(swordCompound);
+		nbt.put("swordItem", swordCompound);
 	}
 	
 	@Override
@@ -272,6 +275,11 @@ public class 	ThrownMachineSwordEntity extends PersistentProjectileEntity implem
 		super.readCustomDataFromNbt(nbt);
 		if(nbt.contains("spawnX", NbtElement.DOUBLE_TYPE) && nbt.contains("spawnY", NbtElement.DOUBLE_TYPE) && nbt.contains("spawnZ", NbtElement.DOUBLE_TYPE))
 			spawnPos = new Vec3d(nbt.getDouble("spawnX"), nbt.getDouble("spawnY"), nbt.getDouble("spawnZ"));
+		if(nbt.contains("swordItem", NbtElement.COMPOUND_TYPE))
+		{
+			NbtCompound swordCompound = nbt.getCompound("swordItem");
+			dataTracker.set(SWORD, ItemStack.fromNbt(swordCompound));
+		}
 	}
 	
 	@Override

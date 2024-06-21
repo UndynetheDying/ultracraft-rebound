@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.mixin.client.render;
 
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.entity.ILivingComponent;
+import absolutelyaya.ultracraft.registry.EntityRegistry;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -12,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(LivingEntityRenderer.class)
-public class LivingEntityRendererMixin<T extends LivingEntity>
+public abstract class LivingEntityRendererMixin<T extends LivingEntity>
 {
 	@ModifyArgs(method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V"))
 	void modifyRenderColor(Args args, T livingEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i)
@@ -24,6 +25,12 @@ public class LivingEntityRendererMixin<T extends LivingEntity>
 			args.set(4, 0.2f);
 			args.set(5, 1f);
 			args.set(6, 0.3f);
+		}
+		if(living.isEnraged() && !livingEntity.getType().isIn(EntityRegistry.NO_RAGE_TINT))
+		{
+			args.set(4, 1f);
+			args.set(5, 0.25f);
+			args.set(6, 0.25f);
 		}
 	}
 }

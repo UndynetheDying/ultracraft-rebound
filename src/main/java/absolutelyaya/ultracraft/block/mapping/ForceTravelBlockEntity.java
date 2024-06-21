@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.block.mapping;
 
+import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import io.netty.buffer.Unpooled;
@@ -12,6 +13,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.joml.Vector4f;
 
@@ -23,6 +25,7 @@ public class ForceTravelBlockEntity extends AbstractTriggerBlockEntity
 	List<? extends LivingEntity> lastContained = new ArrayList<>();
 	static List<String> attributes = new ArrayList<>();
 	boolean openRanking = true, rankingTitleSuffix = true;
+	Identifier forceDestination = null;
 	
 	public ForceTravelBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -57,20 +60,29 @@ public class ForceTravelBlockEntity extends AbstractTriggerBlockEntity
 	@Override
 	public String getAttribute(String attribute)
 	{
-		if(attribute.equals("openRanking"))
-			return String.valueOf(openRanking);
-		else if(attribute.equals("rankingTitleSuffix"))
-			return String.valueOf(rankingTitleSuffix);
-		return null;
+		return switch (attribute)
+		{
+			case "openRanking" -> String.valueOf(openRanking);
+			case "rankingTitleSuffix" -> String.valueOf(rankingTitleSuffix);
+			case "forceDestination" -> forceDestination == null ? "none" : forceDestination.toString();
+			default -> null;
+		};
 	}
 	
 	@Override
 	public void setAttribute(String s, String value) throws AttributeParseException, NumberFormatException
 	{
-		if(s.equals("openRanking"))
-			openRanking = Boolean.parseBoolean(value);
-		else if(s.equals("rankingTitleSuffix"))
-			rankingTitleSuffix = Boolean.parseBoolean(value);
+		switch (s)
+		{
+			case "openRanking" -> openRanking = Boolean.parseBoolean(value);
+			case "rankingTitleSuffix" -> rankingTitleSuffix = Boolean.parseBoolean(value);
+			case "forceDestination" -> {
+				if(value.equalsIgnoreCase("none") || value.equalsIgnoreCase("null") || value.equalsIgnoreCase("default"))
+					forceDestination = null;
+				else
+					forceDestination = Identifier.tryParse(value);
+			}
+		}
 		super.setAttribute(s, value);
 	}
 	
@@ -88,7 +100,9 @@ public class ForceTravelBlockEntity extends AbstractTriggerBlockEntity
 					buf.writeBoolean(true);
 					buf.writeBoolean(openRanking);
 					buf.writeBoolean(rankingTitleSuffix);
+					buf.writeNullable(forceDestination, PacketByteBuf::writeIdentifier);
 					ServerPlayNetworking.send(player, PacketRegistry.TRAVEL_SCREEN_PACKET_ID, buf);
+					UltraComponents.LEVEL_STATS.get(player).onFinishLevel();
 				}
 			}
 			lastContained = containedEntities;
@@ -103,6 +117,14 @@ public class ForceTravelBlockEntity extends AbstractTriggerBlockEntity
 			openRanking = nbt.getBoolean("openRanking");
 		if(nbt.contains("rankingTitleSuffix", NbtElement.BYTE_TYPE))
 			rankingTitleSuffix = nbt.getBoolean("rankingTitleSuffix");
+		if(nbt.contains("forceDestination", NbtElement.STRING_TYPE))
+		{
+			String val = nbt.getString("forceDestination");
+			if(val.equals("none"))
+				forceDestination = null;
+			else
+				forceDestination = Identifier.tryParse(val);
+		}
 	}
 	
 	@Override
@@ -111,6 +133,7 @@ public class ForceTravelBlockEntity extends AbstractTriggerBlockEntity
 		super.writeNbt(nbt);
 		nbt.putBoolean("openRanking", openRanking);
 		nbt.putBoolean("rankingTitleSuffix", rankingTitleSuffix);
+		nbt.putString("forceDestination", forceDestination != null ? forceDestination.toString() : "none");
 	}
 	
 	@Override
@@ -122,5 +145,6 @@ public class ForceTravelBlockEntity extends AbstractTriggerBlockEntity
 	static {
 		attributes.add("openRanking");
 		attributes.add("rankingTitleSuffix");
+		attributes.add("forceDestination");
 	}
 }

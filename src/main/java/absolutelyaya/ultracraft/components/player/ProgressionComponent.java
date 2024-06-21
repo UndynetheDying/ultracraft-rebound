@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.gui.terminal.WeaponsTab;
+import absolutelyaya.ultracraft.registry.GameruleRegistry;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,9 +24,12 @@ import java.util.Map;
 
 public class ProgressionComponent implements IProgressionComponent, AutoSyncedComponent
 {
-	static final Identifier FEEDBACKER = new Identifier(Ultracraft.MOD_ID, "feedbacker");
-	static final Identifier KNUCKLEBLASTER = new Identifier(Ultracraft.MOD_ID, "knuckleblaster");
-	static final Identifier SLAB = new Identifier(Ultracraft.MOD_ID, "slab");
+	public static final Identifier FEEDBACKER = Ultracraft.identifier("feedbacker");
+	public static final Identifier KNUCKLEBLASTER = Ultracraft.identifier("knuckleblaster");
+	public static final Identifier SLAB = Ultracraft.identifier("slab");
+	public static final Identifier HIVEL = Ultracraft.identifier("hivel");
+	public static final Identifier BLOODHEAL = Ultracraft.identifier("bloodheal");
+	public static final Identifier ULTRAHUD = Ultracraft.identifier("ultrahud");
 	
 	static final List<Identifier> ENTRIES = new ArrayList<>() {
 		{
@@ -63,7 +67,7 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 	public ProgressionComponent(PlayerEntity provider)
 	{
 		this.provider = provider;
-		unlocked.add(FEEDBACKER);
+		reset();
 	}
 	
 	@Override
@@ -141,8 +145,13 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 		unlocked = new ArrayList<>();
 		owned = new ArrayList<>();
 		
-		unlocked.add(new Identifier(Ultracraft.MOD_ID, "feedbacker"));
-		owned.add(new Identifier(Ultracraft.MOD_ID, "feedbacker"));
+		if(provider.getWorld().getGameRules().getBoolean(GameruleRegistry.START_AS_V1))
+		{
+			unlocked.add(FEEDBACKER);
+			unlocked.add(HIVEL);
+			unlocked.add(BLOODHEAL);
+			unlocked.add(ULTRAHUD);
+		}
 	}
 	
 	@Override
@@ -166,6 +175,13 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 		list.forEach(i -> unlocked.add(Identifier.tryParse(i.asString())));
 		list = tag.getList("owned", NbtElement.STRING_TYPE);
 		list.forEach(i -> owned.add(Identifier.tryParse(i.asString())));
+		if(!tag.contains("patch") && provider.getWorld().getGameRules().getBoolean(GameruleRegistry.START_AS_V1))
+		{
+			unlock(FEEDBACKER);
+			unlock(HIVEL);
+			unlock(BLOODHEAL);
+			unlock(ULTRAHUD);
+		}
 	}
 	
 	@Override
@@ -179,6 +195,7 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 		for (Identifier id : this.owned)
 			owned.add(NbtString.of(id.toString()));
 		tag.put("owned", owned);
+		tag.putInt("patch", 1);
 	}
 	
 	@Override

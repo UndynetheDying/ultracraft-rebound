@@ -23,34 +23,34 @@ import net.minecraft.util.Identifier;
 public final class UltraComponents implements EntityComponentInitializer, LevelComponentInitializer, WorldComponentInitializer
 {
 	public static final ComponentKey<IWingDataComponent> WING_DATA =
-			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "wing_data"), IWingDataComponent.class);
+			ComponentRegistry.getOrCreate(Ultracraft.identifier("wing_data"), IWingDataComponent.class);
 	public static final ComponentKey<IWingedPlayerComponent> WINGED =
-			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "winged"), IWingedPlayerComponent.class);
+			ComponentRegistry.getOrCreate(Ultracraft.identifier("winged"), IWingedPlayerComponent.class);
 	public static final ComponentKey<IProgressionComponent> PROGRESSION =
-			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "progression"), IProgressionComponent.class);
+			ComponentRegistry.getOrCreate(Ultracraft.identifier("progression"), IProgressionComponent.class);
 	public static final ComponentKey<IEasterComponent> EASTER =
-			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "easter"), IEasterComponent.class);
+			ComponentRegistry.getOrCreate(Ultracraft.identifier("easter"), IEasterComponent.class);
 	public static final ComponentKey<IArmComponent> ARMS =
-			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "arms"), IArmComponent.class);
+			ComponentRegistry.getOrCreate(Ultracraft.identifier("arms"), IArmComponent.class);
 	public static final ComponentKey<IStyleComponent> STYLE =
-			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "style"), IStyleComponent.class);
+			ComponentRegistry.getOrCreate(Ultracraft.identifier("style"), IStyleComponent.class);
 	public static final ComponentKey<IHivelComponent> HIVEL =
-			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "hivel"), IHivelComponent.class);
+			ComponentRegistry.getOrCreate(Ultracraft.identifier("hivel"), IHivelComponent.class);
 	public static final ComponentKey<ILoadoutComponent> LOADOUT =
-			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "loadout"), ILoadoutComponent.class);
+			ComponentRegistry.getOrCreate(Ultracraft.identifier("loadout"), ILoadoutComponent.class);
 	public static final ComponentKey<IEditorComponent> EDITOR =
-			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "editor"), IEditorComponent.class);
+			ComponentRegistry.getOrCreate(Ultracraft.identifier("editor"), IEditorComponent.class);
 	public static final ComponentKey<ILevelStatsComponent> LEVEL_STATS =
-			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "level"), ILevelStatsComponent.class);
+			ComponentRegistry.getOrCreate(Ultracraft.identifier("level"), ILevelStatsComponent.class);
 	
 	public static final ComponentKey<ILivingComponent> LIVING =
-			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "living"), ILivingComponent.class);
+			ComponentRegistry.getOrCreate(Ultracraft.identifier("living"), ILivingComponent.class);
 	
 	public static final ComponentKey<IUltraLevelComponent> GLOBAL =
-			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "global_data"), IUltraLevelComponent.class);
+			ComponentRegistry.getOrCreate(Ultracraft.identifier("global_data"), IUltraLevelComponent.class);
 	
 	public static final ComponentKey<IDimensionDataComponent> DIMENSION_DATA =
-			ComponentRegistry.getOrCreate(new Identifier(Ultracraft.MOD_ID, "dimension_data"), IDimensionDataComponent.class);
+			ComponentRegistry.getOrCreate(Ultracraft.identifier("dimension_data"), IDimensionDataComponent.class);
 	
 	@Override
 	public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry)

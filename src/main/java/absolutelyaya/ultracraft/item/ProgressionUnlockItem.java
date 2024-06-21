@@ -1,6 +1,8 @@
 package absolutelyaya.ultracraft.item;
 
+import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.components.player.IProgressionComponent;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -26,17 +28,28 @@ public class ProgressionUnlockItem extends SpecialItem
 	@Override
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand)
 	{
-		UltraComponents.PROGRESSION.get(user).obtain(progressionEntry);
+		if(isTrinket() && Ultracraft.TRINKETS)
+			return TypedActionResult.fail(user.getStackInHand(hand));
+		IProgressionComponent progression = UltraComponents.PROGRESSION.get(user);
+		if(progression.isUnlocked(progressionEntry))
+			return TypedActionResult.fail(user.getStackInHand(hand));
+		UltraComponents.PROGRESSION.get(user).unlock(progressionEntry);
 		if(world.isClient)
-			user.sendMessage(Text.translatable("message.ultracraft.progression.unlock", getName().getString()), true);
-		user.setStackInHand(hand, ItemStack.EMPTY);
-		return TypedActionResult.success(user.getStackInHand(hand));
+			UltraComponents.WINGED.get(user).sendBoxTitle(Text.translatable("message.ultracraft.progression.unlock", getName().getString()), 10f);
+		TypedActionResult<ItemStack> result = TypedActionResult.success(user.getStackInHand(hand));
+		if(!user.isCreative())
+			user.getStackInHand(hand).decrement(1);
+		return result;
 	}
 	
 	@Override
 	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
 	{
 		super.appendTooltip(stack, world, tooltip, context);
+		if(isTrinket() && Ultracraft.TRINKETS)
+			return;
 		tooltip.add(Text.translatable("item.ultracraft.progression-item.lore"));
+		if(context.isAdvanced() && context.isCreative())
+			tooltip.add(Text.translatable("item.ultracraft.progression-item.hidden-lore", "§8" + progressionEntry.toString()));
 	}
 }

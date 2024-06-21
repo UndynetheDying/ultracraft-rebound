@@ -6,21 +6,21 @@
   "thumbnail": "ultracraft:textures/level/1_1.png",
   "ranking": {
     "time": [
-      "4:20:00",
+      "4:30:00",
       "5:00:00",
       "6:00:00",
       "7:00:00"
     ],
     "kills": [
-      51,
-      42,
-      33,
-      24
+      69,
+      56,
+      50,
+      42
     ],
     "style": [
-      2500,
+      4000,
+      3000,
       2000,
-      1500,
       1000
     ]
   },
@@ -30,6 +30,16 @@
     "z": 48
   },
   "spawn-rot": -90,
-  "version": 3,
+  "music": {
+    "illusion": {
+      "calm": "ultracraft:music.limbo1_illusion",
+      "combat": "ultracraft:music.limbo1_illusion"
+    },
+    "main": {
+      "calm": "ultracraft:music.limbo1_calm",
+      "combat": "ultracraft:music.limbo1"
+    }
+  },
+  "version": 4,
   "next-level": "ultracraft:limbo2"
 }
