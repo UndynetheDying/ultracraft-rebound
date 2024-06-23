@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.item.AbstractNailgunItem;
 import absolutelyaya.ultracraft.item.AbstractWeaponItem;
+import absolutelyaya.ultracraft.item.BlahajItem;
 import absolutelyaya.ultracraft.item.SwordsmachinePlushieItem;
 import com.chocohead.mm.api.ClassTinkerers;
 import net.minecraft.client.MinecraftClient;
@@ -76,7 +77,8 @@ public abstract class BipedModelMixin<T extends LivingEntity> extends AnimalMode
 			return;
 		}
 		Item heldItem = living.getMainHandStack().getItem();
-		if(living.getOffHandStack().getItem() instanceof SwordsmachinePlushieItem)
+		Item offhandItem = living.getOffHandStack().getItem();
+		if(offhandItem instanceof SwordsmachinePlushieItem || offhandItem instanceof BlahajItem)
 		{
 			Vector3f angles;
 			boolean rightHanded = living.getMainArm().equals(Arm.RIGHT);

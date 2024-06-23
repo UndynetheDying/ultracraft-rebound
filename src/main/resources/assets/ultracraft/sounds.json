@@ -452,6 +452,12 @@
       "ultracraft:item/lumpfish3"
     ]
   },
+  "item.blahaj.use": {
+    "sounds": [
+      "ultracraft:item/toy_squeak1",
+      "ultracraft:item/toy_squeak2"
+    ]
+  },
   "entity.orb.ambient": {
     "sounds": [
       {"name": "block.beacon.ambient", "type": "event"}

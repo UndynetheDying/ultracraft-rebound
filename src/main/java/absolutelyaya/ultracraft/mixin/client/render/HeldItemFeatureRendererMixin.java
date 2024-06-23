@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.mixin.client.render;
 
+import absolutelyaya.ultracraft.item.BlahajItem;
 import absolutelyaya.ultracraft.item.SwordsmachinePlushieItem;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -40,7 +41,7 @@ public abstract class HeldItemFeatureRendererMixin<T extends LivingEntity, M ext
 	@WrapOperation(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/feature/HeldItemFeatureRenderer;renderItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/render/model/json/ModelTransformationMode;Lnet/minecraft/util/Arm;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V"))
 	void applyPlushieHugOffset(HeldItemFeatureRenderer<T, M> instance, LivingEntity entity, ItemStack stack, ModelTransformationMode transformationMode, Arm arm, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, Operation<Void> original)
 	{
-		if((!entity.getMainArm().equals(arm) && stack.getItem() instanceof SwordsmachinePlushieItem &&
+		if((!entity.getMainArm().equals(arm) && (stack.getItem() instanceof SwordsmachinePlushieItem || stack.getItem() instanceof BlahajItem) &&
 				   !(entity.getMainArm().equals(Arm.LEFT) && !entity.getStackInHand(Hand.MAIN_HAND).isEmpty())) &&
 				   (entity.getPose().equals(EntityPose.CROUCHING) || entity.getPose().equals(EntityPose.STANDING)))
 		{

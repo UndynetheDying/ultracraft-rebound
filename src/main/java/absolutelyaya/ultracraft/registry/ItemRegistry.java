@@ -77,6 +77,8 @@ public class ItemRegistry
 			new Item(new FabricItemSettings().food(new FoodComponent.Builder().alwaysEdible().hunger(-1).build())));
 	public static final LumpFishItem LUMPFISH = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("lumpfish"), new LumpFishItem(new FabricItemSettings().maxCount(64)));
+	public static final BlahajItem BLAHAJ = Registry.register(Registries.ITEM,
+			Ultracraft.identifier("blahaj"), new BlahajItem(new FabricItemSettings().maxCount(1)));
 	
 	//Progression Items
 	public static final Item FEEDBACKER = Registry.register(Registries.ITEM,

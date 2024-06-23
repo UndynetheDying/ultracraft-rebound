@@ -117,6 +117,7 @@ public class SoundRegistry
 	public static final SoundEvent LUMPFISH_SELECT = register("item.lumpfish.select");
 	public static final SoundEvent LUMPFISH_UNSELECT = register("item.lumpfish.unselect");
 	public static final SoundEvent LUMPFISH_USE = register("item.lumpfish.use");
+	public static final SoundEvent BLAHAJ_USE = register("item.blahaj.use");
 	public static final SoundEvent ORB_AMBIENT = register("entity.orb.ambient");
 	public static final SoundEvent BARRIER_BREAK = register("entity.barrier_break");
 	public static final SoundEvent BLOOD_HEAL = register("entity.blood_heal");
