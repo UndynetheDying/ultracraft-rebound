@@ -26,6 +26,7 @@ public class SoundRegistry
 	public static final SoundEvent MAURICE_BEAM_TELL = register("entity.malicious_face.tell.beam");
 	
 	public static final SoundEvent CERB_RISE = register("entity.cerberus.rise");
+	public static final SoundEvent CERB_CRACK = register("entity.cerberus.crack");
 	public static final SoundEvent CERB_RAM_TELL = register("entity.cerberus.tell.ram");
 	public static final SoundEvent CERB_THROW_TELL = register("entity.cerberus.tell.throw");
 	public static final SoundEvent CERB_STOMP_TELL = register("entity.cerberus.tell.stomp");

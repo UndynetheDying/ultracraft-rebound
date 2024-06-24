@@ -15,8 +15,15 @@
 					"name": "Pedestal",
 					"pivot": [0, 0, 0],
 					"cubes": [
-						{"origin": [-8, 0, 0], "size": [16, 16, 8], "uv": [8, 40]},
-						{"origin": [0, 0, -8], "size": [8, 8, 8], "uv": [8, 48]}
+						{"origin": [-8, 0, 0], "size": [16, 16, 8], "uv": [8, 40]}
+					]
+				},
+				{
+					"name": "step",
+					"parent": "Pedestal",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{"origin": [0, 0, -8], "size": [8, 8, 8], "uv": [8, 48], "mirror": true}
 					]
 				},
 				{
@@ -57,7 +64,7 @@
 					]
 				},
 				{
-					"name": "ball",
+					"name": "ball1",
 					"parent": "right_arm_lower",
 					"pivot": [-6, 12.5, -16],
 					"cubes": [
@@ -79,6 +86,15 @@
 					"pivot": [6, 18, -12],
 					"cubes": [
 						{"origin": [4, 12, -16], "size": [4, 6, 4], "uv": [48, 10]}
+					]
+				},
+				{
+					"name": "ball3",
+					"parent": "left_arm_lower",
+					"pivot": [6, 12.5, -16],
+					"cubes": [
+						{"origin": [4.5, 11, -19], "size": [3, 3, 3], "uv": [24, 20]},
+						{"origin": [4.5, 11, -19], "size": [3, 3, 3], "inflate": 0.25, "uv": [36, 20]}
 					]
 				},
 				{

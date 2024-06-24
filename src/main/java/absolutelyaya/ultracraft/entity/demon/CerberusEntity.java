@@ -19,6 +19,7 @@ import absolutelyaya.ultracraft.registry.SoundRegistry;
 import absolutelyaya.ultracraft.registry.StatusEffectRegistry;
 import mod.azure.azurelib.animatable.GeoEntity;
 import mod.azure.azurelib.util.AzureLibUtil;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
@@ -31,6 +32,8 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.particle.BlockStateParticleEffect;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
@@ -71,6 +74,7 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 	private static final byte ANIMATION_RAM = 2;
 	private static final byte ANIMATION_STOMP = 3;
 	private final List<BlockPos> listenerRooms = new ArrayList<>();
+	boolean wasCracked;
 	
 	public CerberusEntity(EntityType<? extends AbstractUltraHostileEntity> entityType, World world)
 	{
@@ -291,6 +295,13 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 		super.tickMovement();
 		if(isHeadFixed())
 			bodyYaw = headYaw;
+		if(!wasCracked && isCracked())
+		{
+			playSound(SoundRegistry.CERB_CRACK, 1f, 0.9f + random.nextFloat() * 0.2f);
+			for (int i = 0; i < 64; i++)
+				addBreakParticle();
+		}
+		wasCracked = isCracked();
 	}
 	
 	@Override
@@ -353,6 +364,17 @@ public class CerberusEntity extends AbstractUltraHostileEntity implements GeoEnt
 		super.onDeath(damageSource);
 		getWorld().getEntitiesByType(TypeFilter.instanceOf(CerberusEntity.class), getBoundingBox().expand(64),
 						e -> !e.isEnraged() && e != this).forEach(CerberusEntity::enrage);
+		for (int i = 0; i < 128; i++)
+			addBreakParticle();
+	}
+	
+	void addBreakParticle()
+	{
+		Vec3d pos = new Vec3d(getX() + (random.nextFloat() - 0.5) * getWidth(),
+				getY() + getHeight() / 2f + (random.nextFloat() - 0.5) * getHeight(),
+				getZ() + (random.nextFloat() - 0.5) * getWidth());
+		Vec3d vel = Vec3d.ZERO.addRandom(random, 0.25f);
+		getWorld().addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, Blocks.STONE.getDefaultState()), pos.x, pos.y, pos.z, vel.x, vel.y, vel.z);
 	}
 	
 	@Override

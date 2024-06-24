@@ -61,6 +61,11 @@
       {"name":"ultracraft:placeholder","type":"event"}
     ]
   },
+  "entity.cerberus.crack": {
+    "sounds": [
+      {"name":"block.deepslate.break","type":"event"}
+    ]
+  },
   "entity.cerberus.tell.ram": {
     "sounds": [
       {"name":"ultracraft:placeholder","type":"event"}
