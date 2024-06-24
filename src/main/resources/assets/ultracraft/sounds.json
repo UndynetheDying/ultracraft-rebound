@@ -533,6 +533,12 @@
       "ultracraft:misc/spin"
     ]
   },
+  "misc.sacrifice": {
+    "sounds": [
+      "minecraft:mob/evocation_illager/fangs"
+    ],
+    "pitch": 0.4273
+  },
   "placeholder": {
     "sounds": [
       "ultracraft:placeholder"

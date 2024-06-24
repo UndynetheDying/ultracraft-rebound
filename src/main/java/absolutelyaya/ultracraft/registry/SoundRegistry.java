@@ -133,6 +133,7 @@ public class SoundRegistry
 	public static final SoundEvent RECEIVE_BOX_TITLE = register("misc.box-title");
 	public static final SoundEvent HUSK_SCREAM_LOOP = register("misc.husk_scream");
 	public static final SoundEvent SPIN = register("misc.spin");
+	public static final SoundEvent SACRIFICE = register("misc.sacrifice");
 	public static final SoundEvent PLACEHOLDER = register("placeholder");
 	
 	//MUSIC

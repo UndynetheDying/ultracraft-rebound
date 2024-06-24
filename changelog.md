@@ -5,6 +5,7 @@
 - Removed Proximity Blockstate from Cerberus Block
   - Proximity triggered Cerberi now use the nbt tag `proximity` instead
 - Added Flipped state to Cerberus Block
+- Added `sacrificial` nbt tag to Pedestals
 ## Settings & Config
 ## Commands
 ## Tweaks

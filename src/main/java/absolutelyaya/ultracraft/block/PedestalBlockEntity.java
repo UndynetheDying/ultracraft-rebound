@@ -2,7 +2,11 @@ package absolutelyaya.ultracraft.block;
 
 import absolutelyaya.ultracraft.client.gui.screen.PedestalScreenHandler;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
+import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.ScreenHandlerRegistry;
+import absolutelyaya.ultracraft.registry.SoundRegistry;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -13,20 +17,27 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
+import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class PedestalBlockEntity extends BlockEntity implements NamedScreenHandlerFactory
 {
 	Inventory inventory;
 	String type;
-	boolean decorative;
+	boolean decorative, sacrificial, sacrificePending, sacrificeSuccess;
 	
 	public PedestalBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -37,6 +48,8 @@ public class PedestalBlockEntity extends BlockEntity implements NamedScreenHandl
 	public boolean onPunch(PlayerEntity player, boolean mainHand)
 	{
 		if(decorative)
+			return false;
+		if(sacrificial && sacrificePending)
 			return false;
 		markDirty();
 		PlayerInventory playerInventory = player.getInventory();
@@ -56,6 +69,12 @@ public class PedestalBlockEntity extends BlockEntity implements NamedScreenHandl
 			inventory.setStack(0, mainHand ? player.getMainHandStack().copy() : player.getOffHandStack().copy());
 			if(!player.isCreative())
 				(mainHand ? playerInventory.main : playerInventory.offHand).set(mainHand ? playerInventory.selectedSlot : 0, ItemStack.EMPTY);
+		}
+		if(world != null && sacrificial && !getKey().isEmpty() && getHeld().getItem().equals(getKey().getItem()))
+		{
+			sacrificePending = true;
+			if(world.getBlockState(getPos()).getBlock() instanceof PedestalBlock pedestalBlock)
+				world.scheduleBlockTick(getPos(), pedestalBlock, 20);
 		}
 		if(world != null)
 			world.updateListeners(pos, getCachedState(), getCachedState(), Block.NOTIFY_ALL);
@@ -85,6 +104,10 @@ public class PedestalBlockEntity extends BlockEntity implements NamedScreenHandl
 			type = "none";
 		if(nbt.contains("decorative", NbtElement.BYTE_TYPE))
 			decorative = nbt.getBoolean("decorative");
+		if(nbt.contains("sacrificial", NbtElement.BYTE_TYPE))
+			sacrificial = nbt.getBoolean("sacrificial");
+		if(nbt.contains("sacrificeSuccess", NbtElement.BYTE_TYPE))
+			sacrificeSuccess = nbt.getBoolean("sacrificeSuccess");
 	}
 	
 	protected void writeNbt(NbtCompound nbt)
@@ -96,6 +119,8 @@ public class PedestalBlockEntity extends BlockEntity implements NamedScreenHandl
 		nbt.putBoolean("fancy", getCachedState().get(PedestalBlock.FANCY));
 		nbt.putBoolean("locked", getCachedState().get(PedestalBlock.LOCKED));
 		nbt.putBoolean("decorative", decorative);
+		nbt.putBoolean("sacrificial", sacrificial);
+		nbt.putBoolean("sacrificeSuccess", sacrificeSuccess);
 	}
 	
 	@Override
@@ -125,10 +150,38 @@ public class PedestalBlockEntity extends BlockEntity implements NamedScreenHandl
 		return getCachedState().get(PedestalBlock.FANCY);
 	}
 	
+	public boolean isSacrificeSuccess()
+	{
+		return sacrificeSuccess;
+	}
+	
+	public void sacrifice()
+	{
+		if(world == null)
+			return;
+		if(!world.isClient)
+		{
+			List<PlayerEntity> nearby = getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), new Box(getPos()).expand(32), e -> true);
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			buf.writeFloat(20f);
+			buf.writeDouble(getPos().getX() + 0.5f);
+			buf.writeDouble(getPos().up().getY());
+			buf.writeDouble(getPos().getZ() + 0.5f);
+			buf.writeDouble(0f);
+			buf.writeBoolean(false);
+			for (PlayerEntity player : nearby)
+				ServerPlayNetworking.send((ServerPlayerEntity)player, PacketRegistry.BLEED_PACKET_ID, buf);
+		}
+		world.playSound(null, getPos(), SoundRegistry.SACRIFICE, SoundCategory.HOSTILE, 1f, 1f);
+		inventory.setStack(0, ItemStack.EMPTY);
+		world.updateListeners(pos, getCachedState(), getCachedState(), Block.NOTIFY_ALL);
+		sacrificeSuccess = true;
+	}
+	
 	@Override
 	public Text getDisplayName()
 	{
-		return Text.translatable("screen.ultracraft.pedestal");
+		return Text.translatable("screen.ultracraft.pedestal.title");
 	}
 	
 	@Nullable

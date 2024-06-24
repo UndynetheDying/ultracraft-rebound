@@ -13,6 +13,7 @@ import net.minecraft.item.Items;
 import net.minecraft.item.PickaxeItem;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.screen.NamedScreenHandlerFactory;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
@@ -50,7 +51,8 @@ public class PedestalBlock extends BlockWithEntity implements IPunchableBlock, B
 	public PedestalBlock(Settings settings)
 	{
 		super(settings);
-		setDefaultState(getDefaultState().with(TYPE, Type.NONE).with(FACING, Direction.NORTH).with(FANCY, false).with(LOCKED, false));
+		setDefaultState(getDefaultState().with(TYPE, Type.NONE).with(FACING, Direction.NORTH).with(FANCY, false)
+								.with(LOCKED, false));
 	}
 	
 	@Nullable
@@ -133,8 +135,12 @@ public class PedestalBlock extends BlockWithEntity implements IPunchableBlock, B
 		BlockEntity blockEntity = world.getBlockEntity(pos);
 		if(blockEntity instanceof PedestalBlockEntity pedestal)
 		{
+			if(pedestal.isSacrificeSuccess())
+				return 15;
 			ItemStack key = pedestal.getKey();
 			ItemStack held = pedestal.getHeld();
+			if(pedestal.sacrificial)
+				return 0;
 			if(key.isEmpty())
 			{
 				boolean b = state.get(TYPE).equals(Type.BLUE) && held.getItem().equals(ItemRegistry.BLUE_SKULL) ||
@@ -243,6 +249,17 @@ public class PedestalBlock extends BlockWithEntity implements IPunchableBlock, B
 	public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context)
 	{
 		return getCollisionShape(state, world, pos, context);
+	}
+	
+	@Override
+	public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random)
+	{
+		super.scheduledTick(state, world, pos, random);
+		if(world != null && world.getBlockEntity(pos) instanceof PedestalBlockEntity pedestal)
+		{
+			pedestal.sacrifice();
+			updateNeighbors(world, pos);
+		}
 	}
 	
 	public enum Type implements StringIdentifiable

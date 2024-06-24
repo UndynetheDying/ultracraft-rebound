@@ -189,17 +189,15 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	{
 		List<PlayerEntity> nearby = getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(32), e -> !e.equals(this));
 		List<PlayerEntity> heal = getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(4), e -> !e.equals(this));
+		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeFloat(amount);
+		buf.writeDouble(pos.x);
+		buf.writeDouble(pos.y);
+		buf.writeDouble(pos.z);
+		buf.writeDouble(halfheight);
+		buf.writeBoolean(source.isOf(DamageSources.SHOTGUN));
 		for (PlayerEntity player : nearby)
-		{
-			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-			buf.writeFloat(amount);
-			buf.writeDouble(pos.x);
-			buf.writeDouble(pos.y);
-			buf.writeDouble(pos.z);
-			buf.writeDouble(halfheight);
-			buf.writeBoolean(source.isOf(DamageSources.SHOTGUN));
 			ServerPlayNetworking.send((ServerPlayerEntity)player, PacketRegistry.BLEED_PACKET_ID, buf);
-		}
 		RegenSetting healRule = ServerConfig.INSTANCE.bloodHeal.getValue();
 		if(!healRule.equals(RegenSetting.NEVER))
 		{
