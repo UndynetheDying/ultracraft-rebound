@@ -266,6 +266,7 @@
   "block.ultracraft.concrete_tile_stairs": "Industrial Concrete Tile Stairs",
   "block.ultracraft.portal": "Elevator Panel",
   "block.ultracraft.fake_leaves": "Fake Leaves",
+  "block.ultracraft.hank": "Hank",
 
   "entity.ultracraft.filth": "Filth",
   "entity.ultracraft.stray": "Stray",
@@ -693,6 +694,7 @@
   "screen.ultracraft.pedestal.title": "Pedestal",
   "screen.ultracraft.pedestal.lock": "Locking the Pedestal will prevent right click from opening this menu.",
   "screen.ultracraft.pedestal.key": "Key ->",
+  "screen.ultracraft.hank.title": "Hank",
   "screen.ultracraft.terminal.unfocus": "Press ESC to unfocus the Terminal.",
   "screen.ultracraft.terminal.owner": "Owner: %s",
   "screen.ultracraft.terminal.graffiti.edit-palette": "Edit Palette",

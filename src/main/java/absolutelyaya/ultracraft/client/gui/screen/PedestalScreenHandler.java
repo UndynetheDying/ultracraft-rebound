@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.client.gui.screen;
 
-import absolutelyaya.ultracraft.block.PedestalBlock;
+import absolutelyaya.ultracraft.block.AbstractPedestalBlock;
 import absolutelyaya.ultracraft.registry.ScreenHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -43,7 +43,7 @@ public class PedestalScreenHandler extends ScreenHandler
 	public ItemStack quickMove(PlayerEntity player, int slot)
 	{
 		Slot itemSlot = slots.get(slot);
-		if(itemSlot == null || !itemSlot.hasStack())
+		if(!itemSlot.hasStack())
 			return ItemStack.EMPTY;
 		return itemSlot.getStack();
 	}
@@ -83,7 +83,7 @@ public class PedestalScreenHandler extends ScreenHandler
 	public void updatePedestalBlock(PlayerEntity p)
 	{
 		World world = p.getWorld();
-		if(!world.isClient && p.getWorld().getBlockState(origin).getBlock() instanceof PedestalBlock pedestal)
+		if(!world.isClient && p.getWorld().getBlockState(origin).getBlock() instanceof AbstractPedestalBlock pedestal)
 		{
 			world.updateNeighbors(origin, pedestal);
 			world.updateNeighbors(origin.down(), pedestal);

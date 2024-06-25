@@ -1,5 +1,6 @@
 ## Major Changes
 - Added new ████
+- Added Hank
 - Removed "glitched" Blockstate from Fake Leaves
   - The Glitch visuals still appear, but it's random now
 - Removed Proximity Blockstate from Cerberus Block

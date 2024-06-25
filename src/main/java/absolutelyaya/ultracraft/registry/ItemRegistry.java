@@ -193,6 +193,9 @@ public class ItemRegistry
 	public static final TerminalItem TERMINAL = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("terminal"),
 			new TerminalItem(BlockRegistry.TERMINAL, new FabricItemSettings()));
+	public static final HankItem HANK = Registry.register(Registries.ITEM,
+			Ultracraft.identifier("hank"),
+			new HankItem(BlockRegistry.HANK, new FabricItemSettings().rarity(Rarity.EPIC)));
 	public static final FlorpItem FLORP = (FlorpItem)Registry.register(Registries.ITEM,
 			Ultracraft.identifier("florp"), new FlorpItem(new FabricItemSettings().rarity(Rarity.EPIC).maxCount(1))
 																.putLore(true, new String[] { "item.ultracraft.florp.hiddenlore" }));
@@ -401,6 +404,7 @@ public class ItemRegistry
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.EVENING));
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.NIGHT));
 			content.add(BlockRegistry.FAKE_LEAVES.asItem());
+			content.add(HANK);
 			content.add(PORTAL);
 		});
 		//Dispenser Behaviors

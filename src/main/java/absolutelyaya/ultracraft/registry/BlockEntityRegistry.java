@@ -7,11 +7,11 @@ import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityT
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
 
 public class BlockEntityRegistry
 {
 	public static final BlockEntityType<PedestalBlockEntity> PEDESTAL;
+	public static final BlockEntityType<HankBlockEntity> HANK;
 	public static final BlockEntityType<CerberusBlockEntity> CERBERUS;
 	public static final BlockEntityType<TerminalBlockEntity> TERMINAL;
 	public static final BlockEntityType<HellObserverBlockEntity> HELL_OBSERVER;
@@ -52,6 +52,9 @@ public class BlockEntityRegistry
 		PEDESTAL = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				Ultracraft.identifier("pedestal"),
 				FabricBlockEntityTypeBuilder.create(PedestalBlockEntity::new, BlockRegistry.PEDESTAL).build());
+		HANK = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				Ultracraft.identifier("hank"),
+				FabricBlockEntityTypeBuilder.create(HankBlockEntity::new, BlockRegistry.HANK).build());
 		CERBERUS = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				Ultracraft.identifier("cerberus_block"),
 				FabricBlockEntityTypeBuilder.create(CerberusBlockEntity::new, BlockRegistry.CERBERUS).build());

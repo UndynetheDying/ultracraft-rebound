@@ -5,7 +5,7 @@ import absolutelyaya.ultracraft.accessor.*;
 import absolutelyaya.ultracraft.api.HeavyEntities;
 import absolutelyaya.ultracraft.block.HellObserverBlockEntity;
 import absolutelyaya.ultracraft.block.IPunchableBlock;
-import absolutelyaya.ultracraft.block.PedestalBlock;
+import absolutelyaya.ultracraft.block.AbstractPedestalBlock;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
 import absolutelyaya.ultracraft.compat.TrinketUtil;
 import absolutelyaya.ultracraft.components.UltraComponents;
@@ -432,8 +432,8 @@ public class PacketRegistry
 			BlockPos pos = buf.readBlockPos();
 			Boolean b = buf.readBoolean();
 			server.execute(() -> {
-				if(player.getWorld().getBlockState(pos).isOf(BlockRegistry.PEDESTAL))
-					player.getWorld().setBlockState(pos, player.getWorld().getBlockState(pos).with(PedestalBlock.LOCKED, b));
+				if(player.getWorld().getBlockState(pos).getBlock() instanceof AbstractPedestalBlock)
+					player.getWorld().setBlockState(pos, player.getWorld().getBlockState(pos).with(AbstractPedestalBlock.LOCKED, b));
 			});
 		});
 		ServerPlayNetworking.registerGlobalReceiver(ANIMATION_C2S_PACKET_ID, (server, player, handler, buf, sender) -> {

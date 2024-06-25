@@ -1,11 +1,10 @@
 package absolutelyaya.ultracraft.registry;
 
 import absolutelyaya.ultracraft.Ultracraft;
-import absolutelyaya.ultracraft.block.PedestalBlock;
+import absolutelyaya.ultracraft.block.AbstractPedestalBlock;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.util.Identifier;
 
 public class ModelPredicateRegistry
 {
@@ -22,10 +21,10 @@ public class ModelPredicateRegistry
 						state = stack.getNbt().getCompound("BlockEntityTag");
 					if(state == null || !state.contains("type", NbtElement.STRING_TYPE))
 						return 0;
-					PedestalBlock.Type type = PedestalBlock.Type.valueOf(state.getString("type").toUpperCase());
-					for (int i = 0; i < PedestalBlock.Type.values().length; i++)
+					AbstractPedestalBlock.Type type = AbstractPedestalBlock.Type.valueOf(state.getString("type").toUpperCase());
+					for (int i = 0; i < AbstractPedestalBlock.Type.values().length; i++)
 					{
-						if(type.equals(PedestalBlock.Type.values()[i]))
+						if(type.equals(AbstractPedestalBlock.Type.values()[i]))
 							return i / 10f;
 					}
 					return 0;

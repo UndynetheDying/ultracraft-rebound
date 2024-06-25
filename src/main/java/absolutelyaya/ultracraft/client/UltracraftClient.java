@@ -10,7 +10,6 @@ import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.api.terminal.TerminalCodeRegistry;
 import absolutelyaya.ultracraft.client.gui.screen.EpilepsyPopupScreen;
 import absolutelyaya.ultracraft.client.gui.screen.ServerConfigScreen;
-import absolutelyaya.ultracraft.client.gui.terminal.PetTab;
 import absolutelyaya.ultracraft.client.rendering.EditModeRenderer;
 import absolutelyaya.ultracraft.client.rendering.TrailRenderer;
 import absolutelyaya.ultracraft.client.rendering.UltraHudRenderer;
@@ -90,7 +89,6 @@ public class UltracraftClient implements ClientModInitializer
 	public static final EntityModelLayer WINGS_LAYER = new EntityModelLayer(Ultracraft.identifier("wings"), "main");
 	public static final EntityModelLayer MALICIOUS_LAYER = new EntityModelLayer(Ultracraft.identifier("malicious"), "main");
 	public static final EntityModelLayer ENRAGE_LAYER = new EntityModelLayer(Ultracraft.identifier("enraged"), "main");
-	public static final EntityModelLayer INTERRUPTABLE_CHARGE_LAYER = new EntityModelLayer(Ultracraft.identifier("interruptable_charge"), "main");
 	public static String wingPreset = "", wingPattern = "", wingOverlay = "";
 	private static ShaderProgram wingsColoredProgram, wingsColoredUIProgram, texPosFade, flesh, sky;
 	public static ClientHitscanHandler HITSCAN_HANDLER;
@@ -189,6 +187,7 @@ public class UltracraftClient implements ClientModInitializer
 		BlockEntityRendererFactories.register(BlockEntityRegistry.SKY, context -> new SkyBlockRenderer());
 		BlockEntityRendererFactories.register(BlockEntityRegistry.MAP_CHECKPOINT, context -> new CheckpointRenderer());
 		BlockEntityRendererFactories.register(BlockEntityRegistry.MAP_DOOR, context -> new DoorListenerRenderer());
+		BlockEntityRendererFactories.register(BlockEntityRegistry.HANK, context -> new HankBlockEntityRenderer());
 		//Player Animations
 		PlayerAnimator.init();
 		

@@ -16,7 +16,6 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.util.Identifier;
 
 public class BlockRegistry
 {
@@ -158,6 +157,8 @@ public class BlockRegistry
 			new StairsBlock(SHEETMETAL_SHEET.getDefaultState(), AbstractBlock.Settings.copy(SHEETMETAL).mapColor(MapColor.IRON_GRAY).sounds(BlockSoundGroup.LANTERN)), true);
 	public static final Block FAKE_LEAVES = register("fake_leaves",
 			new FakeLeavesBlock(AbstractBlock.Settings.copy(Blocks.OAK_LEAVES).mapColor(MapColor.GREEN).sounds(BlockSoundGroup.WOOL).breakInstantly()), true);
+	public static final Block HANK = register("hank",
+			new HankBlock(AbstractBlock.Settings.copy(Blocks.SKELETON_SKULL).mapColor(MapColor.WHITE_GRAY).sounds(BlockSoundGroup.BONE)), false);
 	
 	public static final Block MAP_ROOM = register("map_room", new RoomBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_TRIGGER = register("map_trigger", new TriggerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);

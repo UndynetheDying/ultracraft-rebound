@@ -1,6 +1,6 @@
 package absolutelyaya.ultracraft.client.rendering.block.entity;
 
-import absolutelyaya.ultracraft.block.PedestalBlock;
+import absolutelyaya.ultracraft.block.AbstractPedestalBlock;
 import absolutelyaya.ultracraft.block.PedestalBlockEntity;
 import absolutelyaya.ultracraft.item.*;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
@@ -36,7 +36,7 @@ public class PedestalBlockEntityRenderer implements BlockEntityRenderer<Pedestal
 			matrices.push();
 			matrices.translate(0.5f, 1.25f, 0.5f);
 			matrices.multiply(new Quaternionf(new AxisAngle4f((float)Math.toRadians(
-					entity.getCachedState().get(PedestalBlock.FACING).getOpposite().asRotation()), 0f, -1f, 0f)));
+					entity.getCachedState().get(AbstractPedestalBlock.FACING).getOpposite().asRotation()), 0f, -1f, 0f)));
 			if(entity.isFancy())
 				applyFloatTransformation(matrices);
 			applyCustomTransformations(stack.getItem(), matrices);
@@ -79,7 +79,7 @@ public class PedestalBlockEntityRenderer implements BlockEntityRenderer<Pedestal
 			matrices.scale(1.75f, 1.75f, 1.75f);
 			matrices.translate(0f, -0.1f, 0f);
 		}
-		else if ((item instanceof BlockItem block) && block.getBlock() instanceof PedestalBlock)
+		else if ((item instanceof BlockItem block) && block.getBlock() instanceof AbstractPedestalBlock)
 			matrices.scale(0.6f, 0.6f, 0.6f);
 		else if (!(item instanceof BlockItem) && !(item.equals(ItemRegistry.BLUE_SKULL) || item.equals(ItemRegistry.RED_SKULL)))
 		{

@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.mixin.client;
 
+import absolutelyaya.ultracraft.block.AbstractPedestalBlock;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.block.TerminalBlock;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
@@ -74,6 +75,7 @@ public abstract class MinecraftClientMixin
 	
 	@Shadow @Nullable public abstract IntegratedServer getServer();
 	
+	@Shadow private static MinecraftClient instance;
 	boolean isShooting, wasBreaking;
 	
 	@WrapOperation(method = "handleInputEvents()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V"))
@@ -136,7 +138,8 @@ public abstract class MinecraftClientMixin
 		if(currentScreen == null && mouse.isCursorLocked())
 		{
 			if(options.attackKey.isPressed() != isShooting && player.getInventory().getMainHandStack().getItem() instanceof AbstractWeaponItem w &&
-					   !(crosshairTarget instanceof BlockHitResult bHit && world.getBlockState(bHit.getBlockPos()).isOf(BlockRegistry.PEDESTAL) && !isShooting))
+					   !(crosshairTarget instanceof BlockHitResult bHit &&
+								 world.getBlockState(bHit.getBlockPos()).getBlock() instanceof AbstractPedestalBlock && !isShooting))
 			{
 				PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 				buf.writeByte(options.attackKey.isPressed() ? 1 : 0);
@@ -175,7 +178,7 @@ public abstract class MinecraftClientMixin
 		if(player == null || player.isSpectator())
 			return;
 		HitResult hit = crosshairTarget;
-		boolean pedestal = hit instanceof BlockHitResult bhit && player.getWorld().getBlockState(bhit.getBlockPos()).isOf(BlockRegistry.PEDESTAL);
+		boolean pedestal = hit instanceof BlockHitResult bhit && player.getWorld().getBlockState(bhit.getBlockPos()).getBlock() instanceof AbstractPedestalBlock;
 		if(player.getInventory().getMainHandStack().getItem() instanceof AbstractWeaponItem w && w.shouldCancelPunching())
 		{
 			if(options.sneakKey.isPressed() && pedestal && !player.getMainHandStack().isOf(Items.DEBUG_STICK))
@@ -251,7 +254,7 @@ public abstract class MinecraftClientMixin
 			return;
 		BlockPos hitPos = bhit.getBlockPos();
 		BlockState state = player.getWorld().getBlockState(hitPos);
-		if(player.isCreative() && state.isOf(BlockRegistry.PEDESTAL) && options.sneakKey.isPressed())
+		if(player.isCreative() && state.getBlock() instanceof AbstractPedestalBlock && options.sneakKey.isPressed())
 			ci.cancel();
 		if(player.isCreative() && state.isOf(BlockRegistry.TERMINAL) && UltracraftClient.isTerminalProtEnabled())
 		{
