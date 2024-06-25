@@ -188,6 +188,7 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 				damage = Math.round(amount + 1);
 				dataTracker.set(DEADCOINED, true);
 				dataTracker.set(STOPPED, false);
+				timeUntilRegen = 1;
 			}
 			return false;
 		}
@@ -262,7 +263,7 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 			//remove every target that has blocks inbetween itself and the coin
 			potentialTargets = potentialTargets.stream().filter(e -> getWorld().raycast(new RaycastContext(getPos(), e.getPos(), RaycastContext.ShapeType.COLLIDER,
 							RaycastContext.FluidHandling.NONE, this)).getType().equals(HitResult.Type.MISS)).toList();
-			if (potentialTargets.size() > 0)
+			if (!potentialTargets.isEmpty())
 			{
 				if (hitTicks == 0)
 				{
@@ -348,6 +349,8 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 	@Override
 	public void tick()
 	{
+		if(timeUntilRegen > 0)
+			timeUntilRegen--;
 		if(age == 1 && !isRemoved())
 			if(getWorld().isClient)
 				UltracraftClient.TRAIL_RENDERER.createTrail(uuid, this::getPoint, new Vector4f(1f, 1f, 0f, 0.4f), 5);

@@ -8,6 +8,7 @@
 - Added Flipped state to Cerberus Block
 - Added `sacrificial` nbt tag to Pedestals
 - Fixed Fall Damage not working correctly for Players
+- Fixed Deadcoins not being shootable
 ## Settings & Config
 ## Commands
 ## Tweaks
