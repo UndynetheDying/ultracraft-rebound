@@ -14,6 +14,7 @@
 ## Tweaks
 ## Minor Changes
 - Fixed Cerberus Cracking Sounds not playing
+- Fixed the modification suppression message in limbo showing up when it shouldn't
 ## Edit Mode Changes
 ## Resource Changes
 ## API Changes

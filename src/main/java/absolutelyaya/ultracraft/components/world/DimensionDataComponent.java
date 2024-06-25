@@ -109,12 +109,13 @@ public class DimensionDataComponent implements IDimensionDataComponent
 			if(!(provider.getBlockEntity(roomPos) instanceof RoomBlockEntity room))
 			{
 				data.markRoomInvalid(pos);
-				if(UltraDimensions.Instance != null)
-					UltraDimensions.Instance.onSuppressedModification(player);
 				continue;
 			}
 			if(room.isSuppressModifications() && room.getAreaBox().contains(pos.toCenterPos()))
+			{
+				UltraDimensions.Instance.onSuppressedModification(player);
 				return true;
+			}
 		}
 		data.clearInvalidRooms();
 		return !provider.canPlayerModifyAt(player, pos);

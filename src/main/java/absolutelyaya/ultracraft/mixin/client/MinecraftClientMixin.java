@@ -219,7 +219,7 @@ public abstract class MinecraftClientMixin
 				return;
 			}
 		}
-		if(UltraComponents.DIMENSION_DATA.get(world).isPosNotModifiable(player, ((BlockHitResult)hit).getBlockPos()))
+		if(!hit.getType().equals(HitResult.Type.MISS) && UltraComponents.DIMENSION_DATA.get(world).isPosNotModifiable(player, ((BlockHitResult)hit).getBlockPos()))
 		{
 			player.swingHand(Hand.MAIN_HAND);
 			cir.setReturnValue(false);
@@ -274,7 +274,7 @@ public abstract class MinecraftClientMixin
 		}
 		if(player.getInventory().getMainHandStack().getItem() instanceof AbstractWeaponItem w && w.shouldCancelPunching())
 			ci.cancel();
-		if(bl && UltraComponents.DIMENSION_DATA.get(world).isPosNotModifiable(player, hitPos))
+		if(!hit.getType().equals(HitResult.Type.MISS) && bl && UltraComponents.DIMENSION_DATA.get(world).isPosNotModifiable(player, hitPos))
 			ci.cancel();
 		wasBreaking = bl;
 	}
