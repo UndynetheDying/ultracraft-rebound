@@ -15,6 +15,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
+import net.minecraft.util.math.RotationAxis;
 import org.joml.AxisAngle4f;
 import org.joml.Quaternionf;
 
@@ -81,6 +82,12 @@ public class PedestalBlockEntityRenderer implements BlockEntityRenderer<Pedestal
 		}
 		else if ((item instanceof BlockItem block) && block.getBlock() instanceof AbstractPedestalBlock)
 			matrices.scale(0.6f, 0.6f, 0.6f);
+		else if(item instanceof BlahajItem)
+		{
+			matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90f));
+			matrices.scale(0.5f, 0.5f, 0.5f);
+			matrices.translate(0f, 0f, 0.5f);
+		}
 		else if (!(item instanceof BlockItem) && !(item.equals(ItemRegistry.BLUE_SKULL) || item.equals(ItemRegistry.RED_SKULL)))
 		{
 			matrices.scale(0.75f, 0.75f, 0.75f);

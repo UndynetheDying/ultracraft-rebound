@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.mixin.client.render;
 
+import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.item.BlahajItem;
 import absolutelyaya.ultracraft.item.SwordsmachinePlushieItem;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -21,8 +22,6 @@ import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
-import org.joml.AxisAngle4f;
-import org.joml.Quaternionf;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -45,11 +44,22 @@ public abstract class HeldItemFeatureRendererMixin<T extends LivingEntity, M ext
 				   !(entity.getMainArm().equals(Arm.LEFT) && !entity.getStackInHand(Hand.MAIN_HAND).isEmpty())) &&
 				   (entity.getPose().equals(EntityPose.CROUCHING) || entity.getPose().equals(EntityPose.STANDING)))
 		{
+			if(stack.getItem() instanceof BlahajItem)
+			{
+				matrices.push();
+				matrices.translate(-0.1f, 0.3f, -0.075f);
+				matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-90f));
+				matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(5f));
+				matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(15f));
+				matrices.scale(1.1f, 1.1f, 1.1f);
+				renderItem(entity, stack, matrices, vertexConsumers, light);
+				matrices.pop();
+				return;
+			}
 			matrices.push();
-			Vec3d rot = new Vec3d(Math.toRadians(20), Math.toRadians(-80), Math.toRadians(215));
-			matrices.multiply(new Quaternionf(new AxisAngle4f((float)rot.x, 1, 0, 0)));
-			matrices.multiply(new Quaternionf(new AxisAngle4f((float)rot.y, 0, 1, 0)));
-			matrices.multiply(new Quaternionf(new AxisAngle4f((float)rot.z, 0, 0, 1)));
+			matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(20f));
+			matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-80f));
+			matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(215f));
 			Vec3d offset = new Vec3d(0.15 - (MinecraftClient.getInstance().player.isSneaking() ? 0.2 : 0), -0.4 - (entity.isSneaking() ? 0.2 : 0), -0.1);
 			matrices.translate(offset.x, offset.y, offset.z);
 			matrices.scale(1.75f, 1.75f, 1.75f);
