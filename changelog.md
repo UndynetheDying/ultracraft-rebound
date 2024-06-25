@@ -7,6 +7,7 @@
   - Proximity triggered Cerberi now use the nbt tag `proximity` instead
 - Added Flipped state to Cerberus Block
 - Added `sacrificial` nbt tag to Pedestals
+- Fixed Fall Damage not working correctly for Players
 ## Settings & Config
 ## Commands
 ## Tweaks

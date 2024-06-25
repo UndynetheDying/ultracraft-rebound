@@ -317,7 +317,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	@ModifyReturnValue(method = "computeFallDamage", at = @At("RETURN"))
 	private int onComputeFallDamage(int original)
 	{
-		if(isPlayer() && !(this instanceof WingedPlayerEntity winged && winged.isSliding()))
+		if(isPlayer() && this instanceof WingedPlayerEntity winged && winged.isSliding())
 			return 0;
 		return original;
 	}
