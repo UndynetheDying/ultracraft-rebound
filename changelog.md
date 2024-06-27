@@ -9,12 +9,16 @@
 - Added `sacrificial` nbt tag to Pedestals
 - Fixed Fall Damage not working correctly for Players
 - Fixed Deadcoins not being shootable
+- Added Hyacinth
+- Added Hyacinth patches to Limbo worldgen
+- Added Butteflies :3
 ## Settings & Config
 ## Commands
 ## Tweaks
 ## Minor Changes
 - Fixed Cerberus Cracking Sounds not playing
 - Fixed the modification suppression message in limbo showing up when it shouldn't
+- Fixed fake trees being able to generate on any block
 ## Edit Mode Changes
 ## Resource Changes
 ## API Changes

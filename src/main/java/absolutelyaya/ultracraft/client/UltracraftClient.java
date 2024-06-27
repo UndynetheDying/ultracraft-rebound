@@ -174,6 +174,7 @@ public class UltracraftClient implements ClientModInitializer
 		particleRegistry.register(ParticleRegistry.BIG_CIRCLE, BigCircleParticle.Factory::new);
 		particleRegistry.register(ParticleRegistry.DRONE_CHARGE, DroneChargeParticle.Factory::new);
 		particleRegistry.register(ParticleRegistry.SHOCK, ShockParticle.Factory::new);
+		particleRegistry.register(ParticleRegistry.BUTTERFLY, ButterflyParticle.Factory::new);
 		//Entity model layers
 		EntityModelLayerRegistry.registerModelLayer(WINGS_LAYER, WingsModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(MALICIOUS_LAYER, MaliciousFaceModel::getTexturedModelData);
@@ -383,6 +384,7 @@ public class UltracraftClient implements ClientModInitializer
 		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.FLOWERBED, RenderLayer.getTranslucent());
 		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.ZOOTYCOONCHAINLINKFENCE, RenderLayer.getCutout());
 		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.FAKE_LEAVES, RenderLayer.getTranslucent());
+		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.HYACINTH, RenderLayer.getCutout());
 		
 		//TerminalCodeRegistry.registerCode("florp", t -> t.setTab(new PetTab()));
 		TerminalCodeRegistry.registerCode("somethingwicked", new TerminalCodeRegistry.Result(t -> {

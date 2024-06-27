@@ -320,6 +320,7 @@ public class ItemRegistry
 			content.add(BlockRegistry.LIGHT_GRAY_CARPET.asItem());
 			content.add(BlockRegistry.WHITE_CARPET.asItem());
 			content.add(BlockRegistry.FLOWERBED.asItem());
+			content.add(BlockRegistry.HYACINTH.asItem());
 			content.add(BlockRegistry.SHEETMETAL.asItem());
 			content.add(BlockRegistry.SHEETMETAL_SHEET.asItem());
 			content.add(BlockRegistry.SHEETMETAL_SHEET_STAIRS.asItem());
