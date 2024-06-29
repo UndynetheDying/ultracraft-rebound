@@ -250,8 +250,6 @@ public class UltracraftClient implements ClientModInitializer
 			buf = new PacketByteBuf(Unpooled.buffer());
 			buf.writeBoolean(config.get().armSkinThirdPerson);
 			ClientPlayNetworking.send(PacketRegistry.ARM_VISIBLE_PACKET_ID, buf);
-			if(config.get().showEpilepsyWarning)
-				MinecraftClient.getInstance().setScreen(new EpilepsyPopupScreen(null));
 		});
 		
 		ClientEntityEvents.ENTITY_LOAD.register((entity, clientWorld) -> {

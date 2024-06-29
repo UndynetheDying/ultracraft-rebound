@@ -19,6 +19,7 @@
 - Fixed Cerberus Cracking Sounds not playing
 - Fixed the modification suppression message in limbo showing up when it shouldn't
 - Fixed fake trees being able to generate on any block
+- Moved photosensitivity warning to Intro Sequence
 ## Edit Mode Changes
 ## Resource Changes
 ## API Changes
