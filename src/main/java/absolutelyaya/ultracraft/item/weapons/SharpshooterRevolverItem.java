@@ -1,9 +1,10 @@
-package absolutelyaya.ultracraft.item;
+package absolutelyaya.ultracraft.item.weapons;
 
 import absolutelyaya.ultracraft.ServerHitscanHandler;
+import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
-import absolutelyaya.ultracraft.client.rendering.item.PierceRevolverRenderer;
+import absolutelyaya.ultracraft.client.rendering.item.SharpshooterRevolverRenderer;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.client.MinecraftClient;
@@ -17,9 +18,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
@@ -36,23 +39,38 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class PierceRevolverItem extends AbstractRevolverItem
+public class SharpshooterRevolverItem extends AbstractRevolverItem
 {
 	private final AnimatableInstanceCache cache = AzureLibUtil.createInstanceCache(this);
 	private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
 	protected int approxUseTime = -1;
 	
-	public PierceRevolverItem(Settings settings)
+	public SharpshooterRevolverItem(Settings settings)
 	{
 		super(settings, 15f, 25f);
 		SingletonGeoAnimatable.registerSyncedAnimatable(this);
 	}
 	
 	@Override
+	public ItemStack getDefaultStack()
+	{
+		ItemStack stack = new ItemStack(this);
+		setNbt(stack, "charges", isAlternate() ? 1 : 3);
+		return stack;
+	}
+	
+	public ItemStack getStackedSharpshooter()
+	{
+		ItemStack stack = getDefaultStack();
+		setNbt(stack, "charges", 64);
+		return stack;
+	}
+	
+	@Override
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand)
 	{
 		ItemStack itemStack = user.getStackInHand(hand);
-		if(hand.equals(Hand.OFF_HAND))
+		if(hand.equals(Hand.OFF_HAND) || getNbt(itemStack, "charges") == 0)
 			return TypedActionResult.fail(itemStack);
 		user.setCurrentHand(hand);
 		itemStack.getOrCreateNbt().putBoolean("charging", true);
@@ -62,8 +80,15 @@ public class PierceRevolverItem extends AbstractRevolverItem
 	@Override
 	public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected)
 	{
-		super.inventoryTick(stack, world, entity, slot, selected);
 		selected = isMainHandstack(stack, entity);
+		if(world.isClient && (approxUseTime > 5 || isAlternate()))
+		{
+			float f = Math.min((approxUseTime - (isAlternate() ? 0 : 5)) / (isAlternate() ? 5f : 35f), 1f);
+			float pitch = MathHelper.lerp(f, 0.1f, 1.4f);
+			int frequency = MathHelper.lerp(f, 8, 3);
+			if((approxUseTime - 2) % frequency == 0)
+				entity.playSound(SoundRegistry.SHARPSHOOTER_SPIN, 0.6f, pitch);
+		}
 		if(stack.hasNbt() && stack.getNbt().contains("charging"))
 		{
 			if(!selected)
@@ -78,20 +103,21 @@ public class PierceRevolverItem extends AbstractRevolverItem
 			if(world.isClient && entity instanceof ClientPlayerEntity player && player.equals(MinecraftClient.getInstance().player))
 				approxUseTime++;
 			else if(entity instanceof PlayerEntity player)
-				triggerAnim(player, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), "charging");
+				triggerAnim(player, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), isAlternate() ? "altspin" : "spin");
 		}
+		super.inventoryTick(stack, world, entity, slot, selected);
 	}
 	
 	@Override
 	public Vector2i getHUDTexture()
 	{
-		return new Vector2i(0, 0);
+		return new Vector2i(2, 0);
 	}
 	
 	@Override
 	String getControllerName()
 	{
-		return "pierceRevolverController";
+		return "sharpshooterRevolverController";
 	}
 	
 	@Override
@@ -104,18 +130,21 @@ public class PierceRevolverItem extends AbstractRevolverItem
 	public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks)
 	{
 		GunCooldownManager cdm = UltraComponents.WINGED.get(user).getGunCooldownManager();
+		int charges = getNbt(stack, "charges");
 		if(remainingUseTicks <= 0)
 		{
 			if(user instanceof PlayerEntity player)
 			{
 				if(!world.isClient)
 				{
-					cdm.setCooldown(this, 50, GunCooldownManager.SECONDARY);
+					if(charges == (isAlternate() ? 1 : 3))
+						cdm.setCooldown(this, getSharpshooterRechargeTime(), GunCooldownManager.TRITARY);
+					setNbt(stack, "charges", charges - 1);
 					triggerAnim(user, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), "discharge");
-					world.playSound(null, user.getBlockPos(), SoundRegistry.PIERCER_FIRE, SoundCategory.PLAYERS, 1f,
+					world.playSound(null, user.getBlockPos(), SoundRegistry.SHARPSHOOTER_FIRE, SoundCategory.PLAYERS, 1f,
 							0.85f + (user.getRandom().nextFloat() - 0.5f) * 0.2f);
 				}
-				player.getItemCooldownManager().set(this, isAlternate() ? 100 : 50);
+				player.getItemCooldownManager().set(this, 10);
 				onAltFire(world, player);
 				if(isAlternate())
 				{
@@ -125,16 +154,11 @@ public class PierceRevolverItem extends AbstractRevolverItem
 			}
 			if(!world.isClient)
 			{
-				if(isAlternate())
-					ServerHitscanHandler.makeBasicHitscan(user, ServerHitscanHandler.REVOLVER_PIERCE, 6 * 2.5f, DamageSources.PIERCER)
-							.semiPierce(4, 2.5f)
-							.explosion(new ServerHitscanHandler.HitscanExplosionData(2f, 0f, 0f, true))
-							.charged().perform();
-				else
-					ServerHitscanHandler.makeBasicHitscan(user, ServerHitscanHandler.REVOLVER_PIERCE, 2, DamageSources.PIERCER)
-							.maxHits(3)
-							.explosion(new ServerHitscanHandler.HitscanExplosionData(2f, 0f, 0f, true))
-							.charged().perform();
+				int bounces = isAlternate() ? 3 : (int)Math.ceil(Math.min(Math.abs(remainingUseTicks) / 20f, 1f) * 3);
+				ServerHitscanHandler.performBouncingHitscan(
+						ServerHitscanHandler.makeBasicHitscan(user, ServerHitscanHandler.SHARPSHOOTER, isAlternate() ? 5f : 2f, DamageSources.SHARPSHOOTER)
+											.explosion(new ServerHitscanHandler.HitscanExplosionData(1.5f, 0f, 0f, true))
+											.maxHits(Integer.MAX_VALUE).bounces(bounces).autoAim(45f).charged());
 			}
 		}
 		else if(!world.isClient && user instanceof PlayerEntity)
@@ -162,14 +186,15 @@ public class PierceRevolverItem extends AbstractRevolverItem
 	@Override
 	public int getMaxUseTime(ItemStack stack)
 	{
-		return 15;
+		return isAlternate() ? 0 : 20;
 	}
 	
 	@Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar)
 	{
 		controllerRegistrar.add(new AnimationController<>(this, getControllerName(), 0, state -> PlayState.STOP)
-										.triggerableAnim("charging", AnimationCharge)
+										.triggerableAnim("spin", AnimationSpin)
+										.triggerableAnim("altspin", AnimationAltSpin)
 										.triggerableAnim("discharge", AnimationDischarge)
 										.triggerableAnim("shot", AnimationShot)
 										.triggerableAnim("shot2", AnimationShot2) //this animation purely exists to cancel shot animations.
@@ -186,21 +211,16 @@ public class PierceRevolverItem extends AbstractRevolverItem
 		return cache;
 	}
 	
-	public int getApproxUseTime()
-	{
-		return approxUseTime;
-	}
-	
 	@Override
 	public void createRenderer(Consumer<Object> consumer)
 	{
 		consumer.accept(new RenderProvider() {
-			private PierceRevolverRenderer renderer;
+			private SharpshooterRevolverRenderer renderer;
 			
 			@Override
 			public BuiltinModelItemRenderer getCustomRenderer() {
 				if (this.renderer == null)
-					this.renderer = new PierceRevolverRenderer();
+					this.renderer = new SharpshooterRevolverRenderer();
 				
 				return renderer;
 			}
@@ -208,9 +228,45 @@ public class PierceRevolverItem extends AbstractRevolverItem
 	}
 	
 	@Override
+	protected boolean shouldShowCooldown(ItemStack stack)
+	{
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		return !cdm.isUsable(getCooldownClass(stack), GunCooldownManager.PRIMARY) || getNbt(stack, "charges") < (isAlternate() ? 1 : 3);
+	}
+	
+	@Override
+	protected int getWeaponCooldownStep(ItemStack stack)
+	{
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		if(!cdm.isUsable(this, GunCooldownManager.PRIMARY))
+			return (int)(cdm.getCooldownPercent(getCooldownClass(stack), GunCooldownManager.PRIMARY) * 14);
+		else
+			return (int)((1f - cdm.getCooldownPercent(getCooldownClass(stack), GunCooldownManager.TRITARY)) * 14);
+	}
+	
+	@Override
+	public int getItemBarColor(ItemStack stack)
+	{
+		if(Ultracraft.SERVER_SIDE)
+			return 0xdf2828;
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		if(cdm.isUsable(this, GunCooldownManager.PRIMARY))
+			return 0xdfb728;
+		return 0xdf2828;
+	}
+	
+	@Override
 	public Supplier<Object> getRenderProvider()
 	{
 		return renderProvider;
+	}
+	
+	@Override
+	public String getTopOverlayString(ItemStack stack)
+	{
+		if(stack.hasNbt() && stack.getNbt().contains("charges"))
+			return Formatting.GOLD + String.valueOf(getNbt(stack, "charges"));
+		return null;
 	}
 	
 	@Override
@@ -224,8 +280,9 @@ public class PierceRevolverItem extends AbstractRevolverItem
 	protected void appendWeaponInfoTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
 	{
 		super.appendWeaponInfoTooltip(stack, world, tooltip, context);
-		tooltip.add(Text.translatable("item.ultracraft.pierce_revolver.lore1"));
+		tooltip.add(Text.translatable("item.ultracraft.sharpshooter_revolver.lore1"));
+		tooltip.add(Text.translatable("item.ultracraft.sharpshooter_revolver.lore2"));
 		if(isAlternate())
-			tooltip.add(Text.translatable("item.ultracraft.pierce_revolver.lore.alternate"));
+			tooltip.add(Text.translatable("item.ultracraft.sharpshooter_revolver.lore.alternate"));
 	}
 }

@@ -12,6 +12,7 @@ import absolutelyaya.ultracraft.entity.projectile.HellBulletEntity;
 import absolutelyaya.ultracraft.entity.projectile.ThrownSoapEntity;
 import absolutelyaya.ultracraft.item.SkullItem;
 import absolutelyaya.ultracraft.item.*;
+import absolutelyaya.ultracraft.item.weapons.*;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -103,6 +104,8 @@ public class ItemRegistry
 			Ultracraft.identifier("core_shotgun"), new CoreEjectShotgunItem(new FabricItemSettings().maxCount(1)));
 	public static final PumpShotgunItem PUMP_SHOTGUN = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("pump_shotgun"), new PumpShotgunItem(new FabricItemSettings().maxCount(1)));
+	public static final SawedOnShotgunItem SAW_SHOTGUN = Registry.register(Registries.ITEM,
+			Ultracraft.identifier("saw_shotgun"), new SawedOnShotgunItem(new FabricItemSettings().maxCount(1)));
 	public static final MachineSwordItem MACHINE_SWORD = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("machinesword"), new MachineSwordItem(ToolMaterials.IRON, 4, -2.4f,
 					new FabricItemSettings().maxCount(1)));
@@ -351,6 +354,7 @@ public class ItemRegistry
 			content.add(ALTERNATE_SHARPSHOOTER);
 			content.add(CORE_SHOTGUN);
 			content.add(PUMP_SHOTGUN);
+			content.add(SAW_SHOTGUN);
 			content.add(ATTRACTOR_NAILGUN);
 			content.add(OVERHEAT_NAILGUN);
 			content.add(MACHINE_SWORD.getDefaultStack(MachineSwordItem.Type.NORMAL));

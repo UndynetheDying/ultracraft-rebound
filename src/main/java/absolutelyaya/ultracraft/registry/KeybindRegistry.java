@@ -8,7 +8,7 @@ import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.screen.WingCustomizationScreen;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
-import absolutelyaya.ultracraft.item.AbstractWeaponItem;
+import absolutelyaya.ultracraft.item.weapons.AbstractWeaponItem;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

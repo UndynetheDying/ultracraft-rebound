@@ -1,4 +1,5 @@
 ## Major Changes
+- Added Sawed-On Shotgun
 - Added new ████
 - Added Hank
 - Removed "glitched" Blockstate from Fake Leaves
@@ -22,4 +23,5 @@
 - Moved photosensitivity warning to Intro Sequence
 ## Edit Mode Changes
 ## Resource Changes
+- Changed Shotgun UVs(moved smoke to make room for the chainsaw)
 ## API Changes

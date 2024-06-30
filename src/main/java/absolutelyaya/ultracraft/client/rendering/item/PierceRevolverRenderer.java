@@ -2,7 +2,7 @@ package absolutelyaya.ultracraft.client.rendering.item;
 
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.UltracraftClient;
-import absolutelyaya.ultracraft.item.PierceRevolverItem;
+import absolutelyaya.ultracraft.item.weapons.PierceRevolverItem;
 import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;

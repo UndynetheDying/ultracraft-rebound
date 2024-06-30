@@ -1,6 +1,6 @@
-package absolutelyaya.ultracraft.item;
+package absolutelyaya.ultracraft.item.weapons;
 
-import absolutelyaya.ultracraft.client.rendering.item.AlternatePierceRevolverRenderer;
+import absolutelyaya.ultracraft.client.rendering.item.AlternateMarksmanRevolverRenderer;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import mod.azure.azurelib.animatable.client.RenderProvider;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
@@ -14,9 +14,9 @@ import org.joml.Vector2i;
 
 import java.util.function.Consumer;
 
-public class AlternatePiercerItem extends PierceRevolverItem
+public class AlternateMarksmanItem extends MarksmanRevolverItem
 {
-	public AlternatePiercerItem(Settings settings)
+	public AlternateMarksmanItem(Settings settings)
 	{
 		super(settings);
 	}
@@ -25,12 +25,12 @@ public class AlternatePiercerItem extends PierceRevolverItem
 	public void createRenderer(Consumer<Object> consumer)
 	{
 		consumer.accept(new RenderProvider() {
-			private AlternatePierceRevolverRenderer renderer;
+			private AlternateMarksmanRevolverRenderer renderer;
 			
 			@Override
 			public BuiltinModelItemRenderer getCustomRenderer() {
 				if (this.renderer == null)
-					this.renderer = new AlternatePierceRevolverRenderer();
+					this.renderer = new AlternateMarksmanRevolverRenderer();
 				
 				return renderer;
 			}
@@ -83,18 +83,18 @@ public class AlternatePiercerItem extends PierceRevolverItem
 	@Override
 	protected String getHammerId()
 	{
-		return "hammer1";
+		return "hammer2";
 	}
 	
 	@Override
 	public Vector2i getHUDTexture()
 	{
-		return new Vector2i(4, 0);
+		return new Vector2i(5, 0);
 	}
 	
 	@Override
 	public Identifier getProgressionEntry()
 	{
-		return ItemRegistry.PIERCE_REVOLVER.getProgressionEntry();
+		return ItemRegistry.MARKSMAN_REVOLVER.getProgressionEntry();
 	}
 }

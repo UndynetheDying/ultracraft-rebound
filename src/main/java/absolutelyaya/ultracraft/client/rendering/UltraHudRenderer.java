@@ -11,6 +11,7 @@ import absolutelyaya.ultracraft.components.player.IStyleComponent;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
 import absolutelyaya.ultracraft.components.player.ProgressionComponent;
 import absolutelyaya.ultracraft.item.*;
+import absolutelyaya.ultracraft.item.weapons.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.util.RenderingUtil;
 import com.mojang.blaze3d.systems.RenderSystem;

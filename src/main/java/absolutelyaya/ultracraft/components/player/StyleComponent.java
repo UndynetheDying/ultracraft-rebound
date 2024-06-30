@@ -7,7 +7,7 @@ import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
-import absolutelyaya.ultracraft.item.AbstractWeaponItem;
+import absolutelyaya.ultracraft.item.weapons.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.data.StyleBonus;
 import absolutelyaya.ultracraft.registry.ScoreboardCriteria;

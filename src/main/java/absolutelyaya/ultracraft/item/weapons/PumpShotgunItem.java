@@ -1,4 +1,4 @@
-package absolutelyaya.ultracraft.item;
+package absolutelyaya.ultracraft.item.weapons;
 
 import absolutelyaya.ultracraft.ExplosionHandler;
 import absolutelyaya.ultracraft.components.UltraComponents;
@@ -40,10 +40,10 @@ public class PumpShotgunItem extends AbstractShotgunItem
 {
 	private final AnimatableInstanceCache cache = AzureLibUtil.createInstanceCache(this);
 	private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
-	final RawAnimation AnimationShot = RawAnimation.begin().thenPlay("shot_pump");
-	final RawAnimation AnimationShot2 = RawAnimation.begin().thenPlay("shot_pump2");
-	final RawAnimation AnimationPump = RawAnimation.begin().thenPlay("pump");
-	final RawAnimation AnimationPump2 = RawAnimation.begin().thenPlay("pump2");
+	static final RawAnimation AnimationShot = RawAnimation.begin().thenPlay("shot_pump");
+	static final RawAnimation AnimationShot2 = RawAnimation.begin().thenPlay("shot_pump2");
+	static final RawAnimation AnimationPump = RawAnimation.begin().thenPlay("pump");
+	static final RawAnimation AnimationPump2 = RawAnimation.begin().thenPlay("pump2");
 	boolean b; //toggled on every pump; decides purely which pump animation should be used to allow for rapid... pumping
 	
 	public PumpShotgunItem(Settings settings)
@@ -154,8 +154,8 @@ public class PumpShotgunItem extends AbstractShotgunItem
 		controllerRegistrar.add(new AnimationController<>(this, getControllerName(), 1, state -> PlayState.STOP)
 										.triggerableAnim("switch", AnimationSwitch)
 										.triggerableAnim("switch2", AnimationSwitch2)
-										.triggerableAnim("shot_pump", AnimationShot)
-										.triggerableAnim("shot_pump2", AnimationShot2)
+										.triggerableAnim("shot", AnimationShot)
+										.triggerableAnim("shot2", AnimationShot2)
 										.triggerableAnim("pump", AnimationPump)
 										.triggerableAnim("pump2", AnimationPump2)
 										.setSoundKeyframeHandler(this::handleAnimSound));
@@ -187,12 +187,6 @@ public class PumpShotgunItem extends AbstractShotgunItem
 	public Supplier<Object> getRenderProvider()
 	{
 		return renderProvider;
-	}
-	
-	@Override
-	public String getShotAnimationName()
-	{
-		return "shot_pump";
 	}
 	
 	@Override

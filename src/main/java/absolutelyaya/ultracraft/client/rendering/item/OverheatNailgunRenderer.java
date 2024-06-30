@@ -1,8 +1,7 @@
 package absolutelyaya.ultracraft.client.rendering.item;
 
 import absolutelyaya.ultracraft.Ultracraft;
-import absolutelyaya.ultracraft.item.AttractorNailgunItem;
-import absolutelyaya.ultracraft.item.OverheatNailgunItem;
+import absolutelyaya.ultracraft.item.weapons.OverheatNailgunItem;
 import mod.azure.azurelib.model.DefaultedItemGeoModel;
 import mod.azure.azurelib.renderer.GeoItemRenderer;
 import net.minecraft.util.Identifier;

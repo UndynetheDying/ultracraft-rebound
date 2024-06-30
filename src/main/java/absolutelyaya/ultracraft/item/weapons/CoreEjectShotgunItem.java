@@ -1,4 +1,4 @@
-package absolutelyaya.ultracraft.item;
+package absolutelyaya.ultracraft.item.weapons;
 
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
@@ -39,8 +39,6 @@ public class CoreEjectShotgunItem extends AbstractShotgunItem
 	protected int approxUseTime = -1;
 	private final AnimatableInstanceCache cache = AzureLibUtil.createInstanceCache(this);
 	private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
-	final RawAnimation AnimationShot = RawAnimation.begin().thenPlay("shot_core");
-	final RawAnimation AnimationShot2 = RawAnimation.begin().thenPlay("shot_core2");
 	final RawAnimation AnimationAltShot = RawAnimation.begin().thenPlay("altShot");
 	
 	public CoreEjectShotgunItem(Settings settings)
@@ -146,8 +144,8 @@ public class CoreEjectShotgunItem extends AbstractShotgunItem
 		controllerRegistrar.add(new AnimationController<>(this, getControllerName(), 1, state -> PlayState.STOP)
 										.triggerableAnim("switch", AnimationSwitch)
 										.triggerableAnim("switch2", AnimationSwitch2)
-										.triggerableAnim("shot_core", AnimationShot)
-										.triggerableAnim("shot_core2", AnimationShot2)
+										.triggerableAnim("shot", AnimationShotCore)
+										.triggerableAnim("shot2", AnimationShotCore2)
 										.triggerableAnim("altShot", AnimationAltShot)
 										.setSoundKeyframeHandler(this::handleAnimSound));
 	}

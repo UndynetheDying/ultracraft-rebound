@@ -1,7 +1,7 @@
 package absolutelyaya.ultracraft.client.rendering.item;
 
 import absolutelyaya.ultracraft.Ultracraft;
-import absolutelyaya.ultracraft.item.SharpshooterRevolverItem;
+import absolutelyaya.ultracraft.item.weapons.SharpshooterRevolverItem;
 import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.util.Identifier;
 import mod.azure.azurelib.model.DefaultedItemGeoModel;

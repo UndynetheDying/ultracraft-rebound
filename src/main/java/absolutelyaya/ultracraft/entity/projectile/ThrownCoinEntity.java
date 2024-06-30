@@ -9,7 +9,7 @@ import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.HitscanDamageSource;
 import absolutelyaya.ultracraft.entity.demon.MaliciousFaceEntity;
-import absolutelyaya.ultracraft.item.AbstractRevolverItem;
+import absolutelyaya.ultracraft.item.weapons.AbstractRevolverItem;
 import absolutelyaya.ultracraft.item.CoinItem;
 import absolutelyaya.ultracraft.registry.*;
 import absolutelyaya.ultracraft.util.AutoAimUtil;

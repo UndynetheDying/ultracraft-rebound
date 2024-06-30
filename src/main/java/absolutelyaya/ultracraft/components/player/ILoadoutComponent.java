@@ -1,7 +1,7 @@
 package absolutelyaya.ultracraft.components.player;
 
 import absolutelyaya.ultracraft.Weapon;
-import absolutelyaya.ultracraft.item.AbstractWeaponItem;
+import absolutelyaya.ultracraft.item.weapons.AbstractWeaponItem;
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import net.minecraft.util.Identifier;

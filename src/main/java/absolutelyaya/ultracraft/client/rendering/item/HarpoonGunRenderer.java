@@ -1,7 +1,7 @@
 package absolutelyaya.ultracraft.client.rendering.item;
 
 import absolutelyaya.ultracraft.Ultracraft;
-import absolutelyaya.ultracraft.item.HarpoonGunItem;
+import absolutelyaya.ultracraft.item.weapons.HarpoonGunItem;
 import net.minecraft.util.Identifier;
 import mod.azure.azurelib.model.DefaultedItemGeoModel;
 import mod.azure.azurelib.renderer.GeoItemRenderer;

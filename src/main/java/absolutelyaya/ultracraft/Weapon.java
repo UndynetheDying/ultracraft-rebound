@@ -19,7 +19,8 @@ public enum Weapon
 	}, Ultracraft.identifier("slab")),
 	SHOTGUN(new Identifier[] {
 			Ultracraft.identifier("core_shotgun"),
-			Ultracraft.identifier("pump_shotgun")
+			Ultracraft.identifier("pump_shotgun"),
+			Ultracraft.identifier("saw_shotgun")
 	}, null),
 	NAILGUN(new Identifier[]{
 			Ultracraft.identifier("attractor_nailgun"),

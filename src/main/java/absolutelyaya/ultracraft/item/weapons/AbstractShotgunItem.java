@@ -1,4 +1,4 @@
-package absolutelyaya.ultracraft.item;
+package absolutelyaya.ultracraft.item.weapons;
 
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
@@ -37,8 +37,10 @@ public abstract class AbstractShotgunItem extends AbstractWeaponItem implements 
 	{
 		super(settings, recoil, altRecoil);
 	}
-	protected final RawAnimation AnimationSwitch = RawAnimation.begin().thenPlay("switch");
-	protected final RawAnimation AnimationSwitch2 = RawAnimation.begin().thenPlay("switch2");
+	protected static final RawAnimation AnimationSwitch = RawAnimation.begin().thenPlay("switch");
+	protected static final RawAnimation AnimationSwitch2 = RawAnimation.begin().thenPlay("switch2");
+	final RawAnimation AnimationShotCore = RawAnimation.begin().thenPlay("shot_core");
+	final RawAnimation AnimationShotCore2 = RawAnimation.begin().thenPlay("shot_core2");
 	
 	@Override
 	public boolean onPrimaryFire(World world, PlayerEntity user, Vec3d userVelocity)
@@ -66,8 +68,7 @@ public abstract class AbstractShotgunItem extends AbstractWeaponItem implements 
 				}
 				parry = true;
 			}
-			triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(),
-					getShotAnimationName() + (b ? "2" : ""));
+			triggerAnim(user, GeoItem.getOrAssignId(user.getMainHandStack(), (ServerWorld)world), getControllerName(), b ? "shot2" : "shot");
 			cdm.setCooldown(this, getPrimaryCooldown(), GunCooldownManager.PRIMARY);
 			b = !b;
 			ItemStack stack = user.getMainHandStack();
@@ -114,11 +115,6 @@ public abstract class AbstractShotgunItem extends AbstractWeaponItem implements 
 	int getSwitchCooldown(ItemStack stack)
 	{
 		return 8;
-	}
-	
-	public String getShotAnimationName()
-	{
-		return "shot_core";
 	}
 	
 	public int getPelletCount(ItemStack stack)

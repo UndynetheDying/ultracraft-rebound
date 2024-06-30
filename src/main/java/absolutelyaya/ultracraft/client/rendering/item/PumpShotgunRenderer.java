@@ -3,7 +3,7 @@ package absolutelyaya.ultracraft.client.rendering.item;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
-import absolutelyaya.ultracraft.item.PumpShotgunItem;
+import absolutelyaya.ultracraft.item.weapons.PumpShotgunItem;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;

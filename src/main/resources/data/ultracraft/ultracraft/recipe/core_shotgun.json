@@ -7,5 +7,5 @@
   ],
   "result": "ultracraft:core_shotgun",
   "extra-output": [],
-  "unlocks": ["ultracraft:pump_shotgun"]
+  "unlocks": ["ultracraft:pump_shotgun", "ultracraft:saw_shotgun"]
 }

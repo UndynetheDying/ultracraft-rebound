@@ -1,4 +1,4 @@
-package absolutelyaya.ultracraft.item;
+package absolutelyaya.ultracraft.item.weapons;
 
 import absolutelyaya.ultracraft.client.rendering.item.AlternateSharpshooterRevolverRenderer;
 import absolutelyaya.ultracraft.registry.ItemRegistry;

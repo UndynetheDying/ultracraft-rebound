@@ -2,8 +2,8 @@ package absolutelyaya.ultracraft.mixin.client.render;
 
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.client.UltracraftClient;
-import absolutelyaya.ultracraft.item.AbstractNailgunItem;
-import absolutelyaya.ultracraft.item.AbstractWeaponItem;
+import absolutelyaya.ultracraft.item.weapons.AbstractNailgunItem;
+import absolutelyaya.ultracraft.item.weapons.AbstractWeaponItem;
 import absolutelyaya.ultracraft.item.BlahajItem;
 import absolutelyaya.ultracraft.item.SwordsmachinePlushieItem;
 import com.chocohead.mm.api.ClassTinkerers;
