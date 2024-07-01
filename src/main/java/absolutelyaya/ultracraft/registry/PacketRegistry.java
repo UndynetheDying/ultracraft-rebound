@@ -22,6 +22,7 @@ import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.cybergrind.CybergrindManager;
 import absolutelyaya.ultracraft.entity.machine.DroneEntity;
 import absolutelyaya.ultracraft.entity.projectile.AbstractSkewerEntity;
+import absolutelyaya.ultracraft.entity.projectile.ChainsawEntity;
 import absolutelyaya.ultracraft.entity.projectile.ThrownCoinEntity;
 import absolutelyaya.ultracraft.item.weapons.AbstractWeaponItem;
 import absolutelyaya.ultracraft.item.weapons.SoapItem;
@@ -237,7 +238,14 @@ public class PacketRegistry
 					return;
 				}
 				if(!arm.isFeedbacker())
+				{
+					if(parried instanceof ChainsawEntity chainsaw)
+					{
+						Ultracraft.freeze(player, 10);
+						chainsaw.onKnucklePunch(player);
+					}
 					return;
+				}
 				if(parried == null || !parried.isParriable())
 					return;
 				boolean heal = !player.equals(parried.getParriableOwner());

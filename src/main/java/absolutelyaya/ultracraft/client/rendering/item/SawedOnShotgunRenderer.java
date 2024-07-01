@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.item.weapons.SawedOnShotgunItem;
+import mod.azure.azurelib.core.animatable.model.CoreGeoBone;
 import mod.azure.azurelib.model.DefaultedItemGeoModel;
 import mod.azure.azurelib.renderer.GeoItemRenderer;
 import net.minecraft.client.MinecraftClient;
@@ -23,7 +24,7 @@ public class SawedOnShotgunRenderer extends GeoItemRenderer<SawedOnShotgunItem>
 	
 	public SawedOnShotgunRenderer()
 	{
-		super(new DefaultedItemGeoModel<>(Ultracraft.identifier("shotgun")));
+		super(new SawedOnShotgunModel());
 	}
 	
 	@Override
@@ -74,6 +75,7 @@ public class SawedOnShotgunRenderer extends GeoItemRenderer<SawedOnShotgunItem>
 			super.render(stack, transformType, poseStack, bufferSource, packedLight, packedOverlay);
 			return;
 		}
+		
 		poseStack.push();
 		float useTime = 1f - (stack.getItem().getMaxUseTime(stack) - ((SawedOnShotgunItem)stack.getItem()).getApproxUseTime()) / (float)(stack.getItem().getMaxUseTime(stack));
 		float f = UltracraftClient.getConfig().safeVFX ? 0.01f : 0.025f;

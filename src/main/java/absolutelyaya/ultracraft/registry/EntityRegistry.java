@@ -122,6 +122,10 @@ public class EntityRegistry
 			Ultracraft.identifier("beam"),
 			FabricEntityTypeBuilder.create(SpawnGroup.MISC).entityFactory(BeamProjectileEntity::new).dimensions(EntityDimensions.fixed(0.25f, 0.25f)
 					).trackRangeChunks(5).trackedUpdateRate(1).disableSaving().build());
+	public static final EntityType<ChainsawEntity> CHAINSAW = Registry.register(Registries.ENTITY_TYPE,
+			Ultracraft.identifier("chainsaw"),
+			FabricEntityTypeBuilder.create(SpawnGroup.MISC).entityFactory(ChainsawEntity::new).dimensions(EntityDimensions.fixed(0.25f, 0.25f)
+			).trackRangeChunks(5).trackedUpdateRate(1).disableSaving().build());
 	
 	public static final EntityType<ShockwaveEntity> SHOCKWAVE = Registry.register(Registries.ENTITY_TYPE,
 			Ultracraft.identifier("shockwave"),

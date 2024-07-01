@@ -42,8 +42,8 @@ public class ClientHitscanHandler
 	
 	public void tick()
 	{
-		if(hitscans.size() == 0)
-			if(hitscans.size() == 0 && added.size() == 0 && removed.size() == 0)
+		if(hitscans.isEmpty())
+			if(added.isEmpty() && removed.isEmpty())
 				return;
 		for (Object o : hitscans.toArray())
 		{
@@ -54,7 +54,7 @@ public class ClientHitscanHandler
 		for (MovingHitscan moving : movingHitscans.values())
 			moving.tick();
 		hitscans.removeIf(hitscan -> !hitscan.tick());
-		while(added.size() > 0)
+		while(!added.isEmpty())
 		{
 			Hitscan scan = added.remove();
 			if(scan instanceof MovingHitscan moving)
@@ -62,7 +62,7 @@ public class ClientHitscanHandler
 			else
 				hitscans.add(scan);
 		}
-		while(removed.size() > 0)
+		while(!removed.isEmpty())
 		{
 			UUID id = removed.remove();
 			movingHitscans.remove(id);

@@ -5,6 +5,8 @@ import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.rendering.item.SawedOnShotgunRenderer;
 import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.damage.DamageSources;
+import absolutelyaya.ultracraft.entity.projectile.ChainsawEntity;
 import mod.azure.azurelib.animatable.GeoItem;
 import mod.azure.azurelib.animatable.SingletonGeoAnimatable;
 import mod.azure.azurelib.animatable.client.RenderProvider;
@@ -15,12 +17,14 @@ import mod.azure.azurelib.core.animation.AnimationController;
 import mod.azure.azurelib.core.animation.RawAnimation;
 import mod.azure.azurelib.core.object.PlayState;
 import mod.azure.azurelib.util.AzureLibUtil;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -29,7 +33,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
@@ -62,13 +68,16 @@ public class SawedOnShotgunItem extends AbstractShotgunItem
 		if(hand.equals(Hand.OFF_HAND))
 			return TypedActionResult.fail(stack);
 		GunCooldownManager cdm = UltraComponents.WINGED.get(user).getGunCooldownManager();
-		if(!cdm.isUsable(this, 0))
+		if(!cdm.isUsable(this, GunCooldownManager.PRIMARY) || !cdm.isUsable(this, GunCooldownManager.SECONDARY))
 			return TypedActionResult.fail(stack);
 		user.setCurrentHand(hand);
-		if(!world.isClient && stack.hasNbt() && !stack.getNbt().contains("charging"))
+		if(!world.isClient)
 		{
-			stack.getOrCreateNbt().putBoolean("charging", true);
-			triggerAnim(user, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), shouldFlip(user) ? "sawStartFlip" : "sawStart");
+			if(stack.hasNbt() && !stack.getNbt().contains("charging"))
+			{
+				stack.getOrCreateNbt().putBoolean("charging", true);
+				triggerAnim(user, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), shouldFlip(user) ? "sawStartFlip" : "sawStart");
+			}
 		}
 		return TypedActionResult.pass(stack);
 	}
@@ -78,13 +87,22 @@ public class SawedOnShotgunItem extends AbstractShotgunItem
 	{
 		super.inventoryTick(stack, world, entity, slot, selected);
 		selected = isMainHandstack(stack, entity);
-		if(!selected && stack.hasNbt() && stack.getNbt().contains("charging"))
+		if(stack.getNbt().contains("charging"))
 		{
-			stack.getNbt().remove("charging");
-			if(world.isClient)
-				approxUseTime = -1;
-			else if(entity instanceof PlayerEntity player)
-				triggerAnim(player, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), shouldFlip(player) ? "sawEndFlip" : "sawEnd");
+			if(!selected && stack.hasNbt())
+			{
+				stack.getNbt().remove("charging");
+				if(world.isClient)
+					approxUseTime = -1;
+				else if(entity instanceof PlayerEntity player)
+					triggerAnim(player, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), shouldFlip(player) ? "sawEndFlip" : "sawEnd");
+			}
+			Vec3d pos = entity.getEyePos(), forward = entity.getRotationVector();
+			Box check = new Box(pos.x - 0.3f, pos.y - 0.3f, pos.z - 0.3f,
+					pos.x + 0.3f, pos.y + 0.3f, pos.z + 0.3f)
+								.stretch(forward.multiply(2f));
+			DamageSource source = DamageSources.get(world, DamageSources.SAW, entity);
+			world.getOtherEntities(entity, check, i -> i instanceof LivingEntity).forEach(i -> i.damage(source, 0.5f));
 		}
 		if(world.isClient && stack.hasNbt() && stack.getNbt().contains("charging") &&
 				   entity instanceof ClientPlayerEntity player && player.equals(MinecraftClient.getInstance().player))
@@ -100,18 +118,16 @@ public class SawedOnShotgunItem extends AbstractShotgunItem
 		if(!world.isClient && user instanceof PlayerEntity player)
 		{
 			float useTime = 1f - MathHelper.clamp(Math.max(remainingUseTicks, 0) / 30f, 0f, 1f);
-			//player.getItemCooldownManager().set(this, 50);
-			//EjectedCoreEntity bullet = EjectedCoreEntity.spawn(user, world);
-			//Vec3d dir = new Vec3d(0f, 0f, 1f);
-			//dir = dir.rotateX((float)Math.toRadians(-user.getPitch()));
-			//dir = dir.rotateY((float)Math.toRadians(-user.getHeadYaw()));
-			//bullet.setVelocity(dir.x, dir.y + ((1f - useTime) * 0.5 + 0.05f), dir.z, Math.max(useTime * 1.25f, 0.25f), 0f);
-			//Vec3d vel = bullet.getVelocity();
-			//world.addParticle(ParticleTypes.SMOKE, bullet.getX(), bullet.getY(), bullet.getZ(), vel.x, vel.y, vel.z);
-			//bullet.setNoGravity(true);
-			//world.spawnEntity(bullet);
+			
+			ChainsawEntity saw = ChainsawEntity.spawn(user, world);
+			Vec3d dir = player.getRotationVector();
+			saw.setVelocity(dir.x, dir.y, dir.z, Math.max(useTime * 1.5f, 0.5f), 0f);
+			world.spawnEntity(saw);
+			
 			triggerAnim(player, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), shouldFlip(player) ? "sawEndFlip" : "sawEnd");
 			((LivingEntityAccessor)user).addRecoil(altRecoil * useTime);
+			GunCooldownManager cdm = UltraComponents.WINGED.get(player).getGunCooldownManager();
+			cdm.setCooldown(this, 80, GunCooldownManager.SECONDARY);
 		}
 		if(nbt != null)
 			nbt.remove("charging");
@@ -245,5 +261,12 @@ public class SawedOnShotgunItem extends AbstractShotgunItem
 			return (int)(cdm.getCooldownPercent(getCooldownClass(stack), GunCooldownManager.PRIMARY) * 14);
 		else
 			return (int)((1f - cdm.getCooldownPercent(getCooldownClass(stack), GunCooldownManager.SECONDARY)) * 14);
+	}
+	
+	@Override
+	protected boolean shouldShowCooldown(ItemStack stack)
+	{
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		return super.shouldShowCooldown(stack) || !cdm.isUsable(getCooldownClass(stack), GunCooldownManager.SECONDARY);
 	}
 }

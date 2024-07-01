@@ -8,7 +8,6 @@ import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.api.terminal.TerminalCodeRegistry;
-import absolutelyaya.ultracraft.client.gui.screen.EpilepsyPopupScreen;
 import absolutelyaya.ultracraft.client.gui.screen.ServerConfigScreen;
 import absolutelyaya.ultracraft.client.rendering.EditModeRenderer;
 import absolutelyaya.ultracraft.client.rendering.TrailRenderer;
@@ -156,6 +155,7 @@ public class UltracraftClient implements ClientModInitializer
 		EntityRendererRegistry.register(EntityRegistry.BEAM, BeamProjectileRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.RODENT, RodentRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.GREATER_FILTH, GreaterFilthRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.CHAINSAW, ChainsawEntityRenderer::new);
 		//Particles
 		ParticleFactoryRegistry particleRegistry = ParticleFactoryRegistry.getInstance();
 		particleRegistry.register(ParticleRegistry.MALICIOUS_CHARGE, MaliciousChargeParticle.Factory::new);
