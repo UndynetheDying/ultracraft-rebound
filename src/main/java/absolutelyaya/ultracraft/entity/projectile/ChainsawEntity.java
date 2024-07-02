@@ -18,12 +18,14 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
+import net.minecraft.util.Pair;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.joml.Vector4f;
 
 public class ChainsawEntity extends ProjectileEntity implements GeoEntity, ProjectileEntityAccessor, IIgnoreSharpshooter
 {
@@ -74,7 +76,7 @@ public class ChainsawEntity extends ProjectileEntity implements GeoEntity, Proje
 		if(dataTracker.get(AWAITING_PARRY))
 		{
 			if(dataTracker.get(WAITING_TICKS) <= 0 || owner == null)
-				remove(RemovalReason.KILLED);
+				kill();
 			else
 			{
 				setPosition(owner.getEyePos());
@@ -222,6 +224,9 @@ public class ChainsawEntity extends ProjectileEntity implements GeoEntity, Proje
 					}, this::getLeashPos, getUuid(),
 					new Vec2f(0.01f, 0.05f), 0.1f, 0x000000, 1);
 		}
+		UltracraftClient.TRAIL_RENDERER.createTrail(uuid,
+				() -> new Pair<>(getPos().subtract(0f, 0.1f, 0f).toVector3f(), getPos().add(0f, 0.1f, 0f).toVector3f()),
+				new Vector4f(0.3f, 0.5f, 1f, 0.4f), 15);
 	}
 	
 	@Override
@@ -229,6 +234,8 @@ public class ChainsawEntity extends ProjectileEntity implements GeoEntity, Proje
 	{
 		if(dataTracker.get(CONNECTED))
 			UltracraftClient.HITSCAN_HANDLER.removeMoving(getUuid());
+		if(getWorld().isClient)
+			UltracraftClient.TRAIL_RENDERER.removeTrail(uuid);
 		super.onRemoved();
 	}
 }
