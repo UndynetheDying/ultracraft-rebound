@@ -50,6 +50,7 @@ public class DamageSources
 	public static final RegistryKey<DamageType> HELL_BULLET = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Ultracraft.identifier("hell_bullet"));
 	public static final RegistryKey<DamageType> EXPLOSION = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Ultracraft.identifier("explosion"));
 	public static final RegistryKey<DamageType> SAW = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Ultracraft.identifier("saw"));
+	public static final RegistryKey<DamageType> SAW_MELEE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Ultracraft.identifier("saw_melee"));
 	
 	public static DamageSource get(World world, RegistryKey<DamageType> type)
 	{

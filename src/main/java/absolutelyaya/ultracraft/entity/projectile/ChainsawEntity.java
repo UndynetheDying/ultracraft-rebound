@@ -93,7 +93,7 @@ public class ChainsawEntity extends ProjectileEntity implements GeoEntity, Proje
 		if(dataTracker.get(CONNECTED))
 		{
 			if(owner != null)
-				setVelocity(vel.lerp((owner.getEyePos().subtract(getPos())).normalize(), 0.1f));
+				setVelocity(vel.lerp((owner.getEyePos().subtract(getPos())).normalize(), Math.max(1f - (distanceTo(owner) / 2f + 1f), 1f) * 0.1f));
 			else
 				dataTracker.set(CONNECTED, false);
 		}
@@ -226,7 +226,7 @@ public class ChainsawEntity extends ProjectileEntity implements GeoEntity, Proje
 		}
 		UltracraftClient.TRAIL_RENDERER.createTrail(uuid,
 				() -> new Pair<>(getPos().subtract(0f, 0.1f, 0f).toVector3f(), getPos().add(0f, 0.1f, 0f).toVector3f()),
-				new Vector4f(0.3f, 0.5f, 1f, 0.4f), 15);
+				new Vector4f(1f, 0.2f, 0.2f, 0.4f), 15);
 	}
 	
 	@Override

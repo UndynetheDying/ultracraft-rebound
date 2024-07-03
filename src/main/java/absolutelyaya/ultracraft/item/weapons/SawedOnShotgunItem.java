@@ -17,7 +17,7 @@ import mod.azure.azurelib.core.animation.AnimationController;
 import mod.azure.azurelib.core.animation.RawAnimation;
 import mod.azure.azurelib.core.object.PlayState;
 import mod.azure.azurelib.util.AzureLibUtil;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -28,14 +28,20 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.particle.BlockStateParticleEffect;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
@@ -96,13 +102,29 @@ public class SawedOnShotgunItem extends AbstractShotgunItem
 					approxUseTime = -1;
 				else if(entity instanceof PlayerEntity player)
 					triggerAnim(player, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), shouldFlip(player) ? "sawEndFlip" : "sawEnd");
+				return;
 			}
 			Vec3d pos = entity.getEyePos(), forward = entity.getRotationVector();
 			Box check = new Box(pos.x - 0.3f, pos.y - 0.3f, pos.z - 0.3f,
 					pos.x + 0.3f, pos.y + 0.3f, pos.z + 0.3f)
 								.stretch(forward.multiply(2f));
-			DamageSource source = DamageSources.get(world, DamageSources.SAW, entity);
+			DamageSource source = DamageSources.get(world, DamageSources.SAW_MELEE, entity);
 			world.getOtherEntities(entity, check, i -> i instanceof LivingEntity).forEach(i -> i.damage(source, 0.5f));
+			BlockHitResult hit = world.raycast(new RaycastContext(entity.getEyePos(), entity.getEyePos().add(entity.getRotationVector().multiply(2f)),
+					RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, entity));
+			if(hit != null && !hit.getType().equals(HitResult.Type.MISS))
+			{
+				for (int i = 0; i < 4; i++)
+				{
+					BlockState state = world.getBlockState(hit.getBlockPos());
+					Vec3d p = hit.getPos().addRandom(entity.getWorld().random, 0.2f);
+					world.addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, state),
+							p.x, p.y, p.z, 0f, 0f, 0f);
+					if(entity.age % 3 == 0)
+						world.playSound(null, hit.getBlockPos(), state.getSoundGroup().getHitSound(),
+								SoundCategory.BLOCKS, 1f, 0.9f + world.getRandom().nextFloat() * 0.2f);
+				}
+			}
 		}
 		if(world.isClient && stack.hasNbt() && stack.getNbt().contains("charging") &&
 				   entity instanceof ClientPlayerEntity player && player.equals(MinecraftClient.getInstance().player))
