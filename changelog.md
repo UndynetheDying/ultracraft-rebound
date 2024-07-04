@@ -1,4 +1,5 @@
 ## Major Changes
+- Added `Versus` by [Aavanitro](https://www.youtube.com/@Aavanitro) to OST
 - Added Sawed-On Shotgun
 - Added new ████
 - Added Hank

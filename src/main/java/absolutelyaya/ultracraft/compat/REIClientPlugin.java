@@ -38,7 +38,8 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 				EntryStacks.of(ItemRegistry.KNUCKLEBLASTER),
 				EntryStacks.of(ItemRegistry.PLACEHOLDER),
 				EntryStacks.of(ItemRegistry.FLORP),
-				EntryStacks.of(ItemRegistry.PITR_POIN)));
+				EntryStacks.of(ItemRegistry.PITR_POIN),
+				EntryStacks.of(ItemRegistry.BLAHAJ)));
 	}
 	
 	@Override
@@ -107,7 +108,8 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 				EntryStacks.of(ItemRegistry.LIMBO2_DISK),
 				EntryStacks.of(ItemRegistry.LIMBO2_CALM_DISK),
 				EntryStacks.of(ItemRegistry.CYBERGRIND_DISK),
-				EntryStacks.of(ItemRegistry.CLAIR_DE_LUNE_DISK));
+				EntryStacks.of(ItemRegistry.CLAIR_DE_LUNE_DISK),
+				EntryStacks.of(ItemRegistry.VERSUS_DISK));
 		registry.group(Ultracraft.identifier("discs"), Text.translatable("rei-group.ultracraft.discs"), entries);
 	}
 }

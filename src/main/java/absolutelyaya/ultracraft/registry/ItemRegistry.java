@@ -244,6 +244,9 @@ public class ItemRegistry
 	public static final MusicDiscItem LIMBO2_DISK = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("disc/limbo2"),
 			new MusicDiscItem(15, SoundRegistry.LIMBO2.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 176));
+	public static final MusicDiscItem VERSUS_DISK = Registry.register(Registries.ITEM,
+			Ultracraft.identifier("disc/versus"),
+			new MusicDiscItem(15, SoundRegistry.VERSUS.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 128));
 	public static final MusicDiscItem LIMBO2_CALM_DISK = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("disc/limbo2_calm"),
 			new MusicDiscItem(15, SoundRegistry.LIMBO2_CALM.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 176));
@@ -533,6 +536,7 @@ public class ItemRegistry
 			content.add(ItemRegistry.LIMBO2_CALM_DISK);
 			content.add(ItemRegistry.LIMBO2_DISK);
 			content.add(ItemRegistry.CLAIR_DE_LUNE_DISK);
+			content.add(ItemRegistry.VERSUS_DISK);
 			content.add(ItemRegistry.CYBERGRIND_DISK);
 		});
 	}

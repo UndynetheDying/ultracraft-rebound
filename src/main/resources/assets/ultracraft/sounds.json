@@ -617,6 +617,11 @@
       "ultracraft:music/efefski/limbo2_calm"
     ]
   },
+  "music.versus": {
+    "sounds": [
+      "ultracraft:music/aavanitro/versus"
+    ]
+  },
   "music.efefski_cybergrind": {
     "sounds": [
       "ultracraft:music/efefski/cybergrind"
