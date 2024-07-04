@@ -26,6 +26,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.BlockStateParticleEffect;
@@ -109,7 +110,7 @@ public class SawedOnShotgunItem extends AbstractShotgunItem
 					pos.x + 0.3f, pos.y + 0.3f, pos.z + 0.3f)
 								.stretch(forward.multiply(2f));
 			DamageSource source = DamageSources.get(world, DamageSources.SAW_MELEE, entity);
-			world.getOtherEntities(entity, check, i -> i instanceof LivingEntity).forEach(i -> i.damage(source, 0.5f));
+			world.getOtherEntities(entity, check, i -> i instanceof LivingEntity || i instanceof BoatEntity).forEach(i -> i.damage(source, 0.5f));
 			BlockHitResult hit = world.raycast(new RaycastContext(entity.getEyePos(), entity.getEyePos().add(entity.getRotationVector().multiply(2f)),
 					RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, entity));
 			if(hit != null && !hit.getType().equals(HitResult.Type.MISS))

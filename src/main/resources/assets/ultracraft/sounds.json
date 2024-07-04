@@ -539,6 +539,12 @@
     ],
     "pitch": 0.4273
   },
+  "misc.i_sawed": {
+    "sounds": [
+      "ultracraft:misc/i_sawed"
+    ],
+    "pitch": 0.4273
+  },
   "placeholder": {
     "sounds": [
       "ultracraft:placeholder"

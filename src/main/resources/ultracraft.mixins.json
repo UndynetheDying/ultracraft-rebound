@@ -6,6 +6,7 @@
   "mixins": [
     "BlockItemMixin",
     "BlockMixin",
+    "BoatEntityMixin",
     "EntityMixin",
     "ExplosiveProjectileMixin",
     "FishingBobberMixin",
