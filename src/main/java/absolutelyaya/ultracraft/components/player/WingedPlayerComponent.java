@@ -259,7 +259,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 				buf.writeByte(CybergrindData.FULL_SYNC);
 				buf.writeNbt(v.serialize());
 			}
-			ServerPlayNetworking.send(serverPlayer, PacketRegistry.SYNC_CYBERGRIND_ID, buf);
+			ServerPlayNetworking.send(serverPlayer, PacketRegistry.SYNC_CYBERGRIND_PACKET_ID, buf);
 		}
 	}
 	

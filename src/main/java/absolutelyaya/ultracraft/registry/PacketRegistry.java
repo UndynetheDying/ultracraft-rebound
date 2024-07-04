@@ -138,9 +138,9 @@ public class PacketRegistry
 	public static final Identifier SEND_LEVELS_PACKET_ID = Ultracraft.identifier("levels_s2c");
 	public static final Identifier SEND_LEVEL_INSTANCES_PACKET_ID = Ultracraft.identifier("instances_s2c");
 	public static final Identifier FINISH_TRAVELLING_PACKET_ID = Ultracraft.identifier("travel_end");
-	public static final Identifier ANNOUNCE_CYBERGRIND_ID = Ultracraft.identifier("announce_cybergrind");
-	public static final Identifier SYNC_CYBERGRIND_ID = Ultracraft.identifier("sync_cybergrind");
-	public static final Identifier PICKUP_PROGRESSION_ITEM_ID = Ultracraft.identifier("pickup_progression");
+	public static final Identifier ANNOUNCE_CYBERGRIND_PACKET_ID = Ultracraft.identifier("announce_cybergrind");
+	public static final Identifier SYNC_CYBERGRIND_PACKET_ID = Ultracraft.identifier("sync_cybergrind");
+	public static final Identifier PICKUP_PROGRESSION_ITEM_PACKET_ID = Ultracraft.identifier("pickup_progression");
 	
 	public static void registerC2S()
 	{

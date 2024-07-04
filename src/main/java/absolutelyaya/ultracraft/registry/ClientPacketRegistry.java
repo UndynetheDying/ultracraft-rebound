@@ -21,6 +21,7 @@ import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.components.player.ProgressionComponent;
 import absolutelyaya.ultracraft.cybergrind.CybergrindData;
 import absolutelyaya.ultracraft.data.*;
+import absolutelyaya.ultracraft.entity.projectile.ChainsawEntity;
 import absolutelyaya.ultracraft.item.weapons.AbstractWeaponItem;
 import absolutelyaya.ultracraft.particle.ParryIndicatorParticleEffect;
 import absolutelyaya.ultracraft.recipe.UltraRecipe;
@@ -460,13 +461,13 @@ public class ClientPacketRegistry
 			if(client.currentScreen instanceof AbstractTravelScreen travel)
 				travel.setShouldClose();
 		})));
-		ClientPlayNetworking.registerGlobalReceiver(ANNOUNCE_CYBERGRIND_ID, (((client, handler, buf, responseSender) -> {
+		ClientPlayNetworking.registerGlobalReceiver(ANNOUNCE_CYBERGRIND_PACKET_ID, (((client, handler, buf, responseSender) -> {
 			Text result = buf.readText();
 			CybergrindHUD hud = CybergrindHUD.Instance;
 			if(hud != null)
 				hud.startAnnouncementSequence(result);
 		})));
-		ClientPlayNetworking.registerGlobalReceiver(SYNC_CYBERGRIND_ID, (((client, handler, buf, responseSender) -> {
+		ClientPlayNetworking.registerGlobalReceiver(SYNC_CYBERGRIND_PACKET_ID, (((client, handler, buf, responseSender) -> {
 			byte mode = buf.readByte();
 			NbtCompound data = mode != CybergrindData.DESTROY_SYNC ? buf.readNbt() : new NbtCompound();
 			client.execute(() -> {
@@ -493,7 +494,7 @@ public class ClientPacketRegistry
 					last.setEnemies(data.getInt("enemies"));
 			});
 		})));
-		ClientPlayNetworking.registerGlobalReceiver(PICKUP_PROGRESSION_ITEM_ID, (((client, handler, buf, responseSender) -> {
+		ClientPlayNetworking.registerGlobalReceiver(PICKUP_PROGRESSION_ITEM_PACKET_ID, (((client, handler, buf, responseSender) -> {
 			int entityID = buf.readInt();
 			client.execute(() -> {
 				Entity e = client.world.getEntityById(entityID);

@@ -80,7 +80,7 @@ public class ChainsawEntity extends ProjectileEntity implements GeoEntity, Proje
 			else
 			{
 				setPosition(owner.getEyePos());
-				setInvisible(true);
+				//setInvisible(true);
 				dataTracker.set(WAITING_TICKS, dataTracker.get(WAITING_TICKS) - 1);
 			}
 			return;
@@ -93,7 +93,7 @@ public class ChainsawEntity extends ProjectileEntity implements GeoEntity, Proje
 		if(dataTracker.get(CONNECTED))
 		{
 			if(owner != null)
-				setVelocity(vel.lerp((owner.getEyePos().subtract(getPos())).normalize(), Math.max(1f - (distanceTo(owner) / 2f + 1f), 1f) * 0.1f));
+				setVelocity(vel.lerp((owner.getEyePos().subtract(getPos())).normalize(), Math.max(age / 10f, 1f) * 0.125f));
 			else
 				dataTracker.set(CONNECTED, false);
 		}
@@ -111,7 +111,7 @@ public class ChainsawEntity extends ProjectileEntity implements GeoEntity, Proje
 		{
 			if(!dataTracker.get(AWAITING_PARRY))
 			{
-				dataTracker.set(WAITING_TICKS, 10);
+				dataTracker.set(WAITING_TICKS, 5);
 				dataTracker.set(AWAITING_PARRY, true);
 			}
 		}
@@ -136,7 +136,7 @@ public class ChainsawEntity extends ProjectileEntity implements GeoEntity, Proje
 		setRotation(-parrier.getYaw(), -parrier.getPitch());
 		dataTracker.set(AWAITING_PARRY, false);
 		age = 0;
-		setInvisible(false);
+		//setInvisible(false);
 	}
 	
 	public void onKnucklePunch(PlayerEntity player)
@@ -145,10 +145,10 @@ public class ChainsawEntity extends ProjectileEntity implements GeoEntity, Proje
 		setVelocity(vel);
 		setVelocityClient(vel.x, vel.y, vel.z);
 		setRotation(-player.getYaw(), -player.getPitch());
-		velocityDirty = velocityModified = true;
+		scheduleVelocityUpdate();
 		dataTracker.set(AWAITING_PARRY, false);
 		age = 0;
-		setInvisible(false);
+		//setInvisible(false);
 		setOwner(getParrier());
 		if(dataTracker.get(CONNECTED))
 			dataTracker.set(CONNECTED, false);

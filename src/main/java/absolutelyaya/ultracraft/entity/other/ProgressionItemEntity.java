@@ -69,7 +69,7 @@ public class ProgressionItemEntity extends ItemEntity
 		{
 			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 			buf.writeInt(getId());
-			ServerPlayNetworking.send(serverPlayer, PacketRegistry.PICKUP_PROGRESSION_ITEM_ID, buf);
+			ServerPlayNetworking.send(serverPlayer, PacketRegistry.PICKUP_PROGRESSION_ITEM_PACKET_ID, buf);
 		}
 		IProgressionComponent progression = UltraComponents.PROGRESSION.get(player);
 		ILoadoutComponent loadout = UltraComponents.LOADOUT.get(player);
