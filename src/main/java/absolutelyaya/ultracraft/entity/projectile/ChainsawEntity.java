@@ -76,7 +76,10 @@ public class ChainsawEntity extends ProjectileEntity implements GeoEntity, Proje
 		if(dataTracker.get(AWAITING_PARRY))
 		{
 			if(dataTracker.get(WAITING_TICKS) <= 0 || owner == null)
-				kill();
+			{
+				if(!getWorld().isClient)
+					kill();
+			}
 			else
 			{
 				setPosition(owner.getEyePos());
@@ -109,7 +112,7 @@ public class ChainsawEntity extends ProjectileEntity implements GeoEntity, Proje
 		super.onEntityHit(entityHitResult);
 		if(entityHitResult.getEntity().equals(owner))
 		{
-			if(!dataTracker.get(AWAITING_PARRY))
+			if(dataTracker.get(CONNECTED) && !dataTracker.get(AWAITING_PARRY))
 			{
 				dataTracker.set(WAITING_TICKS, 5);
 				dataTracker.set(AWAITING_PARRY, true);
