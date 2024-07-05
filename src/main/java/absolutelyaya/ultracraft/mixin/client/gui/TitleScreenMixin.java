@@ -131,7 +131,10 @@ public abstract class TitleScreenMixin extends Screen
         }
         Text t = Text.translatable("screen.ultracraft.credits.title");
         addDrawableChild(new PressableTextWidget(2, height - 33, textRenderer.getWidth(t), 10, t,
-                button -> client.setScreen(new CreditsScreen(this)), textRenderer));
+                button -> {
+                    client.setScreen(new CreditsScreen(this));
+                    client.getSoundManager().stop(ambience);
+                }, textRenderer));
     }
     
     @Inject(method = "render", at = @At("TAIL"))

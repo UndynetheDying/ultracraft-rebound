@@ -24,6 +24,8 @@
 - Moved photosensitivity warning to Intro Sequence
 - Fixed Style resetting when taking damage equal to or greater than half of the players Health
 - Fixed Malicious Face not being immune to explosions anymore
+- Opening the UltraCredits Screen now stops main menu ambience sounds
+  - This fixes an issue where they'd stack when opening and closing the credits
 ## Edit Mode Changes
 ## Resource Changes
 - Changed Shotgun UVs(moved smoke to make room for the chainsaw)
