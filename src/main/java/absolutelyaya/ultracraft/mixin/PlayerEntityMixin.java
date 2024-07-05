@@ -155,7 +155,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	{
 		if(cir.getReturnValue() && amount > 0)
 		{
-			if(getHealth() - amount <= 0)
+			if(getHealth() <= 0)
 				UltraComponents.STYLE.get(this).resetScore();
 			else
 				UltraComponents.STYLE.get(this).takeDamage(amount);

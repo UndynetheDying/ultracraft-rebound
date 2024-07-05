@@ -315,7 +315,7 @@ public class StyleComponent implements IStyleComponent
 	@Override
 	public void tick()
 	{
-		if(bonusQueue.size() > 0 && provider.getWorld().getTime() - bonusQueue.peek().getRight() > 60)
+		if(!bonusQueue.isEmpty() && provider.getWorld().getTime() - bonusQueue.peek().getRight() > 60)
 			bonusQueue.remove();
 		if(chain > 0)
 			chain = Math.max(chain - getChainDecay() / 2f, 0);

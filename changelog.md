@@ -22,6 +22,8 @@
 - Fixed the modification suppression message in limbo showing up when it shouldn't
 - Fixed fake trees being able to generate on any block
 - Moved photosensitivity warning to Intro Sequence
+- Fixed Style resetting when taking damage equal to or greater than half of the players Health
+- Fixed Malicious Face not being immune to explosions anymore
 ## Edit Mode Changes
 ## Resource Changes
 - Changed Shotgun UVs(moved smoke to make room for the chainsaw)

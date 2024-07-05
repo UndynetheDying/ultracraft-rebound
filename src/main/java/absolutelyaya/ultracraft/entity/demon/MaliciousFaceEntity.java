@@ -338,11 +338,11 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		if(source.isIn(DamageTypeTags.IS_EXPLOSION))
 			return false;
 		if(source.isOf(DamageSources.SLAM))
-			amount *= 3.5;
+			amount *= 3.5f;
 		if(source.isOf(DamageSources.NAIL))
-			amount *= 1.5;
+			amount *= 1.5f;
 		if(source.isOf(DamageSources.CHARGEBACK))
-			amount = 999;
+			amount = getHealth() + 1f;
 		if(dataTracker.get(DEAD))
 		{
 			if(source.isOf(DamageTypes.STARVE)) //starve because there's no way this damage would occur accidentally
