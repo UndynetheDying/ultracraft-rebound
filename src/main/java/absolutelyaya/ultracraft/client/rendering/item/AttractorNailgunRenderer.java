@@ -8,7 +8,7 @@ import mod.azure.azurelib.renderer.GeoItemRenderer;
 
 public class AttractorNailgunRenderer extends GeoItemRenderer<AttractorNailgunItem>
 {
-	static final Identifier TEXTURE = Ultracraft.identifier("textures/item/nailgun.png");
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/item/nailgun");
 	
 	public AttractorNailgunRenderer()
 	{

@@ -14,10 +14,10 @@ import mod.azure.azurelib.model.data.EntityModelData;
 
 public class V2Model extends GeoModel<V2Entity>
 {
-	static final Identifier YELLOW = Ultracraft.identifier("textures/entity/v2/yellow.png");
-	static final Identifier GREEN = Ultracraft.identifier("textures/entity/v2/green.png");
-	static final Identifier RED = Ultracraft.identifier("textures/entity/v2/red.png");
-	static final Identifier BLUE = Ultracraft.identifier("textures/entity/v2/blue.png");
+	static final Identifier YELLOW = Ultracraft.texIdentifier("textures/entity/v2/yellow");
+	static final Identifier GREEN = Ultracraft.texIdentifier("textures/entity/v2/green");
+	static final Identifier RED = Ultracraft.texIdentifier("textures/entity/v2/red");
+	static final Identifier BLUE = Ultracraft.texIdentifier("textures/entity/v2/blue");
 	
 	@Override
 	public Identifier getModelResource(V2Entity object)

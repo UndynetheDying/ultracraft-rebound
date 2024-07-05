@@ -10,9 +10,9 @@ import mod.azure.azurelib.model.GeoModel;
 
 public class HideousMassModel extends GeoModel<HideousMassEntity>
 {
-	final Identifier NORMAL = Ultracraft.identifier("textures/entity/hideous_mass.png");
-	final Identifier ENRAGED = Ultracraft.identifier("textures/entity/hideous_mass_enraged.png");
-	final Identifier DYING = Ultracraft.identifier("textures/entity/hideous_mass_dying.png");
+	final Identifier NORMAL = Ultracraft.texIdentifier("textures/entity/hideous_mass");
+	final Identifier ENRAGED = Ultracraft.texIdentifier("textures/entity/hideous_mass_enraged");
+	final Identifier DYING = Ultracraft.texIdentifier("textures/entity/hideous_mass_dying");
 	
 	@Override
 	public Identifier getModelResource(HideousMassEntity animatable)

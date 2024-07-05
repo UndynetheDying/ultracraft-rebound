@@ -5,8 +5,6 @@ import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.item.weapons.SawedOnShotgunItem;
-import mod.azure.azurelib.core.animatable.model.CoreGeoBone;
-import mod.azure.azurelib.model.DefaultedItemGeoModel;
 import mod.azure.azurelib.renderer.GeoItemRenderer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -33,8 +31,12 @@ public class SawedOnShotgunRenderer extends GeoItemRenderer<SawedOnShotgunItem>
 		float useTime = 1f - (animatable.getMaxUseTime(null) - animatable.getApproxUseTime()) / (float)(animatable.getMaxUseTime(null));
 		String tex = "textures/item/saw_shotgun";
 		
-		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
-		float primaryCD = cdm.getCooldownPercent(animatable, 0);
+		PlayerEntity player = MinecraftClient.getInstance().player;
+		if(player == null)
+			return Ultracraft.texIdentifier(tex);
+		
+		GunCooldownManager cdm = UltraComponents.WINGED.get(player).getGunCooldownManager();
+		float primaryCD = cdm.getCooldownPercent(animatable, GunCooldownManager.PRIMARY);
 		if(primaryCD > 0f)
 		{
 			if(primaryCD < 0.4f)
@@ -43,7 +45,20 @@ public class SawedOnShotgunRenderer extends GeoItemRenderer<SawedOnShotgunItem>
 				tex += 1;
 			else if(primaryCD < 0.65f)
 				tex += 0;
-			return Ultracraft.identifier(tex + ".png");
+			return Ultracraft.texIdentifier(tex);
+		}
+		float secondaryCD = cdm.getCooldownPercent(animatable, GunCooldownManager.SECONDARY);
+		if(secondaryCD > 0f)
+		{
+			if(secondaryCD < 0.25f)
+				tex += 6;
+			else if(secondaryCD < 0.5f)
+				tex += 5;
+			else if(secondaryCD < 0.75f)
+				tex += 4;
+			else if(secondaryCD < 1f)
+				tex += 3;
+			return Ultracraft.texIdentifier(tex);
 		}
 		
 		if(useTime < 0.99f)
@@ -57,14 +72,7 @@ public class SawedOnShotgunRenderer extends GeoItemRenderer<SawedOnShotgunItem>
 			else if(useTime > 0f)
 				tex += 3;
 		}
-		
-		PlayerEntity player = MinecraftClient.getInstance().player;
-		if(useTime > 0 && player != null)
-		{
-			if(player.age % 4 > 1)
-				tex += "b";
-		}
-		return Ultracraft.identifier(tex + ".png");
+		return Ultracraft.texIdentifier(tex);
 	}
 	
 	@Override

@@ -21,12 +21,13 @@ public class PumpShotgunRenderer extends GeoItemRenderer<PumpShotgunItem>
 	@Override
 	public Identifier getTextureLocation(PumpShotgunItem animatable)
 	{
+		String tex = "textures/item/pump_shotgun";
 		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		float primaryCD = cdm.getCooldownPercent(animatable, 0);
 		if(primaryCD > 0.6f)
-			return Ultracraft.identifier("textures/item/pump_shotgun0.png");
+			return Ultracraft.texIdentifier(tex + 0);
 		if(primaryCD > 0.4f)
-			return Ultracraft.identifier("textures/item/pump_shotgun.png");
+			return Ultracraft.texIdentifier(tex);
 		
 		int charge = 0;
 		PlayerEntity player = MinecraftClient.getInstance().player;
@@ -35,15 +36,15 @@ public class PumpShotgunRenderer extends GeoItemRenderer<PumpShotgunItem>
 		if(charge == 3)
 		{
 			if(player.age % 6 > 2)
-				return Ultracraft.identifier("textures/item/pump_shotgun4.png");
+				return Ultracraft.texIdentifier(tex + 4);
 			else
-				return Ultracraft.identifier("textures/item/pump_shotgun3.png");
+				return Ultracraft.texIdentifier(tex + 3);
 		}
 		else if(charge == 2)
-			return Ultracraft.identifier("textures/item/pump_shotgun2.png");
+			return Ultracraft.texIdentifier(tex + 2);
 		else if(charge == 1)
-			return Ultracraft.identifier("textures/item/pump_shotgun1.png");
+			return Ultracraft.texIdentifier(tex + 1);
 		
-		return Ultracraft.identifier("textures/item/pump_shotgun.png");
+		return Ultracraft.texIdentifier(tex);
 	}
 }

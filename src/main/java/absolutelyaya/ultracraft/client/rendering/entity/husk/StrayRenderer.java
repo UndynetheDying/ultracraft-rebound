@@ -1,6 +1,5 @@
 package absolutelyaya.ultracraft.client.rendering.entity.husk;
 
-import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.entity.husk.StrayEntity;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -14,12 +13,6 @@ public class StrayRenderer extends GeoEntityRenderer<StrayEntity>
 	public StrayRenderer(EntityRendererFactory.Context ctx)
 	{
 		super(ctx, new StrayModel());
-	}
-	
-	@Override
-	public Identifier getTexture(StrayEntity object)
-	{
-		return Ultracraft.identifier("textures/entity/stray.png");
 	}
 	
 	@Override

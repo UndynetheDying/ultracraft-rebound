@@ -20,7 +20,7 @@ public class InterruptableChargeRenderer extends EntityRenderer<InterruptableCha
 	@Override
 	public Identifier getTexture(InterruptableCharge entity)
 	{
-		return Ultracraft.identifier("textures/entity/interruptable_charge.png");
+		return Ultracraft.texIdentifier("textures/entity/interruptable_charge");
 	}
 	
 	@Override

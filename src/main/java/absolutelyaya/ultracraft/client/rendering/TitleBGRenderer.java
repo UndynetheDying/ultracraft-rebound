@@ -12,6 +12,7 @@ import org.joml.Matrix4f;
 
 public class TitleBGRenderer extends RotatingCubeMapRenderer
 {
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/misc/title_bg");
 	private final MinecraftClient client;
 	float time, yOffset = 0f;
 	
@@ -48,7 +49,7 @@ public class TitleBGRenderer extends RotatingCubeMapRenderer
 		RenderSystem.disableCull();
 		RenderSystem.depthMask(false);
 		RenderSystem.defaultBlendFunc();
-		RenderSystem.setShaderTexture(0, Ultracraft.identifier("textures/misc/title_bg.png"));
+		RenderSystem.setShaderTexture(0, TEXTURE);
 		
 		for (int i = 0; i < 3; i++)
 		{

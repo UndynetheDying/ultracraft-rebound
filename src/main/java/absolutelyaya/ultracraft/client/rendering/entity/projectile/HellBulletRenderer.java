@@ -15,9 +15,9 @@ import org.joml.Quaternionf;
 
 public class HellBulletRenderer extends EntityRenderer<HellBulletEntity>
 {
-	protected static final Identifier HELL_BULLET = Ultracraft.identifier("textures/item/hell_bullet.png");
-	protected static final Identifier CERB_BALL = Ultracraft.identifier("textures/item/cerberus_ball.png");
-	protected static final Identifier CANCER_BULLET = Ultracraft.identifier("textures/item/cancer_bullet.png");
+	protected static final Identifier HELL_BULLET = Ultracraft.texIdentifier("textures/item/hell_bullet");
+	protected static final Identifier CERB_BALL = Ultracraft.texIdentifier("textures/item/cerberus_ball");
+	protected static final Identifier CANCER_BULLET = Ultracraft.texIdentifier("textures/item/cancer_bullet");
 	
 	public HellBulletRenderer(EntityRendererFactory.Context context)
 	{

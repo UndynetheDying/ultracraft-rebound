@@ -7,6 +7,8 @@ import mod.azure.azurelib.model.GeoModel;
 
 public class RodentModel extends GeoModel<RodentEntity>
 {
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/entity/rodent");
+	
 	@Override
 	public Identifier getModelResource(RodentEntity animatable)
 	{
@@ -16,7 +18,7 @@ public class RodentModel extends GeoModel<RodentEntity>
 	@Override
 	public Identifier getTextureResource(RodentEntity animatable)
 	{
-		return Ultracraft.identifier("textures/entity/rodent.png");
+		return TEXTURE;
 	}
 	
 	@Override

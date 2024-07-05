@@ -12,6 +12,9 @@ import mod.azure.azurelib.model.data.EntityModelData;
 
 public class CerberusModel extends GeoModel<CerberusEntity>
 {
+	static final Identifier NORMAL = Ultracraft.texIdentifier("textures/entity/cerberus");
+	static final Identifier CRACKED = Ultracraft.texIdentifier("textures/entity/cerberus_cracked");
+	
 	@Override
 	public Identifier getModelResource(CerberusEntity object)
 	{
@@ -21,7 +24,7 @@ public class CerberusModel extends GeoModel<CerberusEntity>
 	@Override
 	public Identifier getTextureResource(CerberusEntity object)
 	{
-		return Ultracraft.identifier(object.isCracked() ? "textures/entity/cerberus_cracked.png" : "textures/entity/cerberus.png");
+		return object.isCracked() ? CRACKED : NORMAL;
 	}
 	
 	@Override

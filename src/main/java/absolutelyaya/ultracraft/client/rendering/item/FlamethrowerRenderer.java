@@ -8,7 +8,7 @@ import mod.azure.azurelib.renderer.GeoItemRenderer;
 
 public class FlamethrowerRenderer extends GeoItemRenderer<FlamethrowerItem>
 {
-	static final Identifier TEXTURE = Ultracraft.identifier("textures/item/flamethrower.png");
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/item/flamethrower");
 	
 	public FlamethrowerRenderer()
 	{

@@ -8,6 +8,9 @@ import net.minecraft.util.Identifier;
 
 public class BlahajRenderer extends GeoItemRenderer<BlahajItem>
 {
+	static final Identifier BLUE = Ultracraft.texIdentifier("textures/item/fish/blahaj_blue");
+	static final Identifier PINK = Ultracraft.texIdentifier("textures/item/fish/blahaj_pink");
+	
 	public BlahajRenderer()
 	{
 		super(new DefaultedItemGeoModel<>(Ultracraft.identifier("blahaj")));
@@ -16,6 +19,6 @@ public class BlahajRenderer extends GeoItemRenderer<BlahajItem>
 	@Override
 	public Identifier getTextureLocation(BlahajItem animatable)
 	{
-		return Ultracraft.identifier("textures/item/fish/blahaj_" + (animatable.isRare() ? "pink" : "blue") + ".png");
+		return animatable.isRare() ? PINK : BLUE;
 	}
 }

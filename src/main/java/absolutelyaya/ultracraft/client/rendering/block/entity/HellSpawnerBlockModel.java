@@ -16,7 +16,7 @@ public class HellSpawnerBlockModel extends DefaultedBlockGeoModel<HellSpawnerBlo
 	@Override
 	public Identifier getTextureResource(HellSpawnerBlockEntity animatable)
 	{
-		return Ultracraft.identifier("textures/block/hell_spawner.png");
+		return Ultracraft.texIdentifier("textures/block/hell_spawner");
 	}
 	
 	@Override

@@ -16,7 +16,7 @@ import net.minecraft.util.Identifier;
 
 public class CerberusBlockEmissiveLayer extends GeoRenderLayer<CerberusBlockEntity>
 {
-	private static final Identifier TEXTURE = Ultracraft.identifier("textures/entity/cerberus_e.png");
+	private static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/entity/cerberus_e");
 	
 	public CerberusBlockEmissiveLayer(GeoRenderer<CerberusBlockEntity> entityRendererIn)
 	{

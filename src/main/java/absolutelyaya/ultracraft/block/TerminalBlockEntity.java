@@ -49,6 +49,7 @@ import java.util.List;
 
 public class TerminalBlockEntity extends BlockEntity implements GeoBlockEntity
 {
+	static final Identifier HSV_MAP_TEXTURE = Ultracraft.texIdentifier("textures/block/terminal/c");
 	//Persistent
 	Base base = Base.YELLOW;
 	UUID owner = null;
@@ -491,7 +492,7 @@ public class TerminalBlockEntity extends BlockEntity implements GeoBlockEntity
 		if(getTerminalID() == null)
 			terminalID = UUID.randomUUID();
 		if(world != null && world.isClient)
-			ProceduralTextureManager.createHsvMappedTexture(Ultracraft.identifier("textures/block/terminal/c.png"),
+			ProceduralTextureManager.createHsvMappedTexture(HSV_MAP_TEXTURE,
 					Base.YELLOW.getTexture(), Ultracraft.identifier("procedural/terminal_base/" + getTerminalID().toString()), baseColor);
 	}
 	
@@ -825,7 +826,7 @@ public class TerminalBlockEntity extends BlockEntity implements GeoBlockEntity
 		
 		public Identifier getTexture()
 		{
-			return Ultracraft.identifier(String.format("textures/block/terminal/%s.png", name().toLowerCase(Locale.ROOT)));
+			return Ultracraft.texIdentifier(String.format("textures/block/terminal/%s", name().toLowerCase(Locale.ROOT)));
 		}
 		
 		public int getColor()

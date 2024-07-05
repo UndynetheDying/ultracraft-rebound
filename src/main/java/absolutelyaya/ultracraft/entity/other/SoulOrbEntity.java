@@ -14,6 +14,8 @@ import net.minecraft.world.World;
 
 public class SoulOrbEntity extends AbstractOrbEntity
 {
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/item/soul_orb");
+	
 	public SoulOrbEntity(EntityType<?> type, World world)
 	{
 		super(type, world);
@@ -22,7 +24,7 @@ public class SoulOrbEntity extends AbstractOrbEntity
 	@Override
 	public Identifier getTexture()
 	{
-		return Ultracraft.identifier("textures/item/soul_orb.png");
+		return TEXTURE;
 	}
 	
 	@Override

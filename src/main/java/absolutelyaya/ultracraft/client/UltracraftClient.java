@@ -306,11 +306,11 @@ public class UltracraftClient implements ClientModInitializer
 			{
 				RenderSystem.enableBlend();
 				String bloodName = GoopClient.getConfig().censorMature ? "textures/misc/blood_overlay_c" : "textures/misc/blood_overlay";
-				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, Ultracraft.identifier(bloodName + "3.png"),
+				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, Ultracraft.texIdentifier(bloodName + "3"),
 						Math.min(screenblood - 1.25f, 0.75f));
-				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, Ultracraft.identifier(bloodName + "2.png"),
+				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, Ultracraft.texIdentifier(bloodName + "2"),
 						Math.min(screenblood - 0.25f, Math.max(0.6f - Math.min(screenblood - 0.75f, 0.6f), 0f)));
-				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, Ultracraft.identifier(bloodName + "1.png"),
+				MinecraftClient.getInstance().inGameHud.renderOverlay(matrices, Ultracraft.texIdentifier(bloodName + "1"),
 						Math.min(screenblood - 0.75f, 0.6f));
 				screenblood = Math.max(0f, screenblood - delta / 120);
 			}

@@ -157,7 +157,7 @@ public class TravelScreen extends AbstractTravelScreen
 			case OVERWORLD ->
 			{
 				LevelButton freeroam = new LevelButton(x, height / 2 - 68, Text.translatable("level.ultracraft.0-F"),
-						Ultracraft.identifier("textures/level/0_freeroam.png"), Ultracraft.identifier("dimension.overworld"),
+						Ultracraft.texIdentifier("textures/level/0_freeroam"), Ultracraft.identifier("dimension.overworld"),
 						d -> travel(Layer.OVERWORLD));
 				x += freeroam.getWidth() + spacing;
 				LevelButton tutorial = new LevelButton(x, height / 2 - 68,
@@ -178,7 +178,7 @@ public class TravelScreen extends AbstractTravelScreen
 			case LIMBO ->
 			{
 				LevelButton freeroam = new LevelButton(x, height / 2 - 68, Text.translatable("level.ultracraft.1-F"),
-						Ultracraft.identifier("textures/level/1_freeroam.png"), Ultracraft.identifier("dimension.limbo"),
+						Ultracraft.texIdentifier("textures/level/1_freeroam"), Ultracraft.identifier("dimension.limbo"),
 						d -> travel(Layer.LIMBO));
 				centerButtons(x + freeroam.getWidth(), freeroam);
 				LevelButton limbo1 = new LevelButton(x, height / 2,

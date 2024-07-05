@@ -17,8 +17,8 @@ import org.joml.Quaternionf;
 
 public class StainedGlassWindowRenderer extends EntityRenderer<StainedGlassWindow>
 {
-	static final Identifier TEXTURE = Ultracraft.identifier("textures/entity/stained_glass/bird.png");
-	static final Identifier BACK_TEXTURE = Ultracraft.identifier("textures/entity/stained_glass/hologram.png");
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/entity/stained_glass/bird");
+	static final Identifier BACK_TEXTURE = Ultracraft.texIdentifier("textures/entity/stained_glass/hologram");
 	
 	public StainedGlassWindowRenderer(EntityRendererFactory.Context ctx)
 	{

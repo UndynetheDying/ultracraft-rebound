@@ -21,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(DrawContext.class)
 public abstract class ItemOverlayMixin
 {
+	private static final Identifier BORDER_TEXTURE = Ultracraft.texIdentifier("textures/gui/weapon_border");
 	
 	@Shadow public abstract void drawTexture(Identifier texture, int x, int y, int z, float u, float v, int width, int height, int textureWidth, int textureHeight);
 	
@@ -38,7 +39,7 @@ public abstract class ItemOverlayMixin
 			RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
 			RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 			int i = weapon.getHUDTexture().x;
-			drawTexture(Ultracraft.identifier("textures/gui/weapon_border.png"), x, y, 0,
+			drawTexture(BORDER_TEXTURE, x, y, 0,
 					16 * (i % 2), 16 * (int)Math.floor(i / 2f), 16, 16, 32, 32);
 			matrices.pop();
 		}

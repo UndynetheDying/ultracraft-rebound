@@ -15,7 +15,7 @@ import net.minecraft.util.Identifier;
 
 public class HideousMassEmissiveLayer extends GeoRenderLayer<HideousMassEntity>
 {
-	private static final Identifier TEXTURE = Ultracraft.identifier("textures/entity/hideous_mass_emissive.png");
+	private static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/entity/hideous_mass_emissive");
 	
 	public HideousMassEmissiveLayer(GeoRenderer<HideousMassEntity> entityRendererIn)
 	{

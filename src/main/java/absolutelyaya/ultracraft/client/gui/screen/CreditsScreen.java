@@ -29,8 +29,8 @@ public class CreditsScreen extends Screen
 {
 	static final Style ROLE_STYLE = Style.EMPTY.withUnderline(true);
 	static final Style NAME_STYLE = Style.EMPTY.withColor(Formatting.GOLD);
-	static final Identifier TEXTURE = Ultracraft.identifier("textures/gui/credits.png");
-	static final Identifier BG = Ultracraft.identifier("textures/block/flesh1.png");
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/gui/credits");
+	static final Identifier BG = Ultracraft.texIdentifier("textures/block/flesh1");
 	static final List<Text> supporters = new ArrayList<>();
 	static boolean initializedSupporters;
 	final Screen parent;

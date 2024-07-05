@@ -19,7 +19,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class PedestalScreen extends HandledScreen<PedestalScreenHandler>
 {
-	private static final Identifier TEXTURE = Ultracraft.identifier("textures/gui/container/pedestal.png");
+	private static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/gui/container/pedestal");
 	LockButtonWidget lock;
 	
 	public PedestalScreen(PedestalScreenHandler handler, PlayerInventory inventory, Text title)

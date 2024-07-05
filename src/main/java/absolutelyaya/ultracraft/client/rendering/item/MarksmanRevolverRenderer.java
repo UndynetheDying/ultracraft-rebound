@@ -22,17 +22,18 @@ public class MarksmanRevolverRenderer extends GeoItemRenderer<MarksmanRevolverIt
 	@Override
 	public Identifier getTextureLocation(MarksmanRevolverItem animatable)
 	{
+		String tex = "textures/item/marksman_revolver";
 		int coins = animatable.getNbt(currentItemStack, "coins");
 		
 		if (coins == 3)
-			return Ultracraft.identifier("textures/item/marksman_revolver3.png");
+			return Ultracraft.texIdentifier(tex + 3);
 		else if (coins == 2)
-			return Ultracraft.identifier("textures/item/marksman_revolver2.png");
+			return Ultracraft.texIdentifier(tex + 2);
 		else if (coins == 1)
-			return Ultracraft.identifier("textures/item/marksman_revolver1.png");
+			return Ultracraft.texIdentifier(tex + 1);
 		else if (coins == 0)
-			return Ultracraft.identifier("textures/item/marksman_revolver0.png");
+			return Ultracraft.texIdentifier(tex + 0);
 		
-		return Ultracraft.identifier("textures/item/marksman_revolver.png");
+		return Ultracraft.texIdentifier(tex);
 	}
 }

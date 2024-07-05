@@ -15,6 +15,8 @@ import org.joml.Quaternionf;
 
 public class FlameRenderer extends EntityRenderer<FlameProjectileEntity>
 {
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/entity/flame");
+	
 	public FlameRenderer(EntityRendererFactory.Context context)
 	{
 		super(context);
@@ -46,6 +48,6 @@ public class FlameRenderer extends EntityRenderer<FlameProjectileEntity>
 	@Override
 	public Identifier getTexture(FlameProjectileEntity entity)
 	{
-		return Ultracraft.identifier("textures/entity/flame.png");
+		return TEXTURE;
 	}
 }

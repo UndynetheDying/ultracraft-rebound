@@ -7,7 +7,7 @@ import mod.azure.azurelib.renderer.GeoItemRenderer;
 
 public class HellSpawnerItemRenderer extends GeoItemRenderer<HellSpawnerItem>
 {
-	static final Identifier TEXTURE = Ultracraft.identifier("textures/block/hell_spawner.png");
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/block/hell_spawner");
 	
 	public HellSpawnerItemRenderer()
 	{

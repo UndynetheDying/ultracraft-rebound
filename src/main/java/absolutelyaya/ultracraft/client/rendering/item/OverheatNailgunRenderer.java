@@ -8,7 +8,7 @@ import net.minecraft.util.Identifier;
 
 public class OverheatNailgunRenderer extends GeoItemRenderer<OverheatNailgunItem>
 {
-	static final Identifier TEXTURE = Ultracraft.identifier("textures/item/overheat_nailgun.png");
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/item/overheat_nailgun");
 	
 	public OverheatNailgunRenderer()
 	{

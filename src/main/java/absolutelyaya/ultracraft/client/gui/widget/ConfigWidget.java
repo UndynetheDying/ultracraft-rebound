@@ -37,7 +37,8 @@ import java.util.List;
 
 public class ConfigWidget<T extends ConfigEntry<?>> extends ClickableWidget implements Element, Drawable, Selectable
 {
-	static final Identifier ICONS = Ultracraft.identifier("textures/gui/gamerule_icons.png");
+	static final Identifier SIMPLE_BG_TEXTURE = Ultracraft.texIdentifier("textures/gui/simplistic_bg");
+	static final Identifier ICONS = Ultracraft.texIdentifier("textures/gui/gamerule_icons");
 	
 	final String parentId;
 	final T rule;
@@ -116,7 +117,7 @@ public class ConfigWidget<T extends ConfigEntry<?>> extends ClickableWidget impl
 	{
 		alpha = MathHelper.clamp((getY() - 30) / 10f, 0f, 1f);
 		RenderSystem.setShaderColor(0.69f, 0.69f, 0.69f, alpha);
-		RenderSystem.setShaderTexture(0, simplistic ? Ultracraft.identifier("textures/gui/simplistic_bg.png") : BGTexture);
+		RenderSystem.setShaderTexture(0, simplistic ? SIMPLE_BG_TEXTURE : BGTexture);
 		MatrixStack matrices = context.getMatrices();
 		RenderingUtil.drawTexture(matrices.peek().getPositionMatrix(), new Vector4f(getX(), getY(), 200, 36), 0,
 				new Vec2f(16, 16), new Vector4f(0f, 0, 100, 16), alpha);
@@ -188,7 +189,7 @@ public class ConfigWidget<T extends ConfigEntry<?>> extends ClickableWidget impl
 				text = String.valueOf(checkbox.isChecked());
 			else if(valueWidget instanceof CyclingButtonWidget<?> cycler)
 				text = cycler.getValue().toString();
-			if(text.length() > 0)
+			if(!text.isEmpty())
 				setRuleClient(text);
 		}
 		return b || super.mouseClicked(mouseX, mouseY, button);
@@ -214,7 +215,7 @@ public class ConfigWidget<T extends ConfigEntry<?>> extends ClickableWidget impl
 			String text = ((TextFieldWidget)valueWidget).getText();
 			if(!(type.equals(ValueType.FLOAT) && Float.parseFloat(text) > 0) && !((type.equals(ValueType.INT) && Integer.parseInt(text) > 0)))
 				return b;
-			if(text.length() > 0)
+			if(!text.isEmpty())
 				setRuleClient(text);
 		}
 		return b;
@@ -222,7 +223,7 @@ public class ConfigWidget<T extends ConfigEntry<?>> extends ClickableWidget impl
 	
 	void setRuleClient(String value)
 	{
-		if(value.length() == 0)
+		if(value.isEmpty())
 			return;
 		ServerConfigScreen.getRules().putString(rule.getId(), value);
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());

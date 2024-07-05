@@ -14,6 +14,8 @@ import net.minecraft.world.World;
 
 public class BloodOrbEntity extends AbstractOrbEntity
 {
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/item/blood_orb");
+	
 	public BloodOrbEntity(EntityType<?> type, World world)
 	{
 		super(type, world);
@@ -22,7 +24,7 @@ public class BloodOrbEntity extends AbstractOrbEntity
 	@Override
 	public Identifier getTexture()
 	{
-		return Ultracraft.identifier("textures/item/blood_orb.png");
+		return TEXTURE;
 	}
 	
 	@Override

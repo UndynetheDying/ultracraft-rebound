@@ -11,6 +11,7 @@ import net.minecraft.client.gui.widget.CheckboxWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.joml.Vector2i;
 
@@ -19,6 +20,7 @@ import java.util.List;
 
 public class ServerConfigScreen extends Screen
 {
+	static final Identifier SIMPLE_BG_TEXTURE = Ultracraft.texIdentifier("textures/gui/simplistic_bg");
 	public static ServerConfigScreen INSTANCE;
 	static NbtCompound rules;
 	List<ConfigWidget<?>> ruleWidgets = new ArrayList<>();
@@ -113,7 +115,7 @@ public class ServerConfigScreen extends Screen
 		context.fill(0, 0, width, height, 0x44000000);
 		RenderSystem.setShader(GameRenderer::getPositionTexProgram);
 		RenderSystem.setShaderColor(0.25f, 0.25f, 0.25f, 1.0f);
-		context.drawTexture(simplistic.isChecked() ? Ultracraft.identifier("textures/gui/simplistic_bg.png") : OPTIONS_BACKGROUND_TEXTURE,
+		context.drawTexture(simplistic.isChecked() ? SIMPLE_BG_TEXTURE : OPTIONS_BACKGROUND_TEXTURE,
 				width /2 - 125, 0, 0, 0.0f, 0.0f, 250, height, 32, 32);
 		context.fill(width / 2 - 125, -1, width / 2 - 124, height + 1, 0xaaffffff);
 		context.fill(width / 2 + 125, -1, width / 2 + 124, height + 1, 0xaa000000);

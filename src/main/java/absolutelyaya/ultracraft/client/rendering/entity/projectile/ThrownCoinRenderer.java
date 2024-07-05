@@ -16,7 +16,7 @@ import org.joml.Quaternionf;
 
 public class ThrownCoinRenderer extends EntityRenderer<ThrownCoinEntity>
 {
-	final Identifier FLASH_TEXTURE = Ultracraft.identifier("textures/particle/flash.png");
+	final Identifier FLASH_TEXTURE = Ultracraft.texIdentifier("textures/particle/flash");
 	
 	public ThrownCoinRenderer(EntityRendererFactory.Context context)
 	{

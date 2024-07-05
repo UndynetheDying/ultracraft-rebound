@@ -19,12 +19,6 @@ public class CerberusRenderer extends GeoEntityRenderer<CerberusEntity>
 	}
 	
 	@Override
-	public Identifier getTexture(CerberusEntity object)
-	{
-		return Ultracraft.identifier(object.isCracked() ? "textures/entity/cerberus_cracked.png" : "textures/entity/cerberus.png");
-	}
-	
-	@Override
 	public RenderLayer getRenderType(CerberusEntity animatable, Identifier texture, VertexConsumerProvider bufferSource, float partialTick)
 	{
 		return RenderLayer.getEntityTranslucent(texture);

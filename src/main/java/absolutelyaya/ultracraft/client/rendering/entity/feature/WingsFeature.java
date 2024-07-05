@@ -28,9 +28,9 @@ import org.joml.Vector3f;
 
 public class WingsFeature<T extends PlayerEntity, M extends PlayerEntityModel<T>> extends FeatureRenderer<T, M>
 {
-	private static final Identifier TEXTURE_CLR = Ultracraft.identifier("textures/entity/wings_clr.png");
-	private static final Identifier TEXTURE_WNG = Ultracraft.identifier("textures/entity/wings_wing.png");
-	private static final Identifier TEXTURE_MTL = Ultracraft.identifier("textures/entity/wings_metal.png");
+	private static final Identifier TEXTURE_CLR = Ultracraft.texIdentifier("textures/entity/wings_clr");
+	private static final Identifier TEXTURE_WNG = Ultracraft.texIdentifier("textures/entity/wings_wing");
+	private static final Identifier TEXTURE_MTL = Ultracraft.texIdentifier("textures/entity/wings_metal");
 	private final WingsModel<T> wingsModel;
 	
 	public WingsFeature(FeatureRendererContext<T, M> context, EntityModelLoader loader)

@@ -14,8 +14,8 @@ import net.minecraft.util.Identifier;
 
 public class CerberusEmissiveLayer extends GeoRenderLayer<CerberusEntity>
 {
-	private static final Identifier TEXTURE = Ultracraft.identifier("textures/entity/cerberus_e.png");
-	private static final Identifier TEXTURE2 = Ultracraft.identifier("textures/entity/cerberus_cracked_e.png");
+	private static final Identifier NORMAL = Ultracraft.texIdentifier("textures/entity/cerberus_e");
+	private static final Identifier CRACKED = Ultracraft.texIdentifier("textures/entity/cerberus_cracked_e");
 	
 	public CerberusEmissiveLayer(GeoRenderer<CerberusEntity> entityRendererIn)
 	{
@@ -25,7 +25,7 @@ public class CerberusEmissiveLayer extends GeoRenderLayer<CerberusEntity>
 	@Override
 	public void render(MatrixStack poseStack, CerberusEntity animatable, BakedGeoModel bakedModel, RenderLayer renderType, VertexConsumerProvider bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay)
 	{
-		RenderLayer layer = RenderLayer.getEntityTranslucentEmissive(animatable.isCracked() ? TEXTURE2 : TEXTURE);
+		RenderLayer layer = RenderLayer.getEntityTranslucentEmissive(animatable.isCracked() ? CRACKED : NORMAL);
 		
 		getRenderer().reRender(getDefaultBakedModel(animatable), poseStack, bufferSource, animatable, layer,
 				bufferSource.getBuffer(layer), partialTick, packedLight, OverlayTexture.DEFAULT_UV,

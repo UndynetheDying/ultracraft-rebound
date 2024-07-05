@@ -7,6 +7,8 @@ import net.minecraft.util.Identifier;
 
 public class AlternatePierceRevolverRenderer extends PierceRevolverRenderer
 {
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/item/alternate_piercer");
+	
 	public AlternatePierceRevolverRenderer()
 	{
 		super(new DefaultedItemGeoModel<PierceRevolverItem>(Ultracraft.identifier("alternate_revolver"))
@@ -16,6 +18,6 @@ public class AlternatePierceRevolverRenderer extends PierceRevolverRenderer
 	@Override
 	public Identifier getTextureLocation(PierceRevolverItem animatable)
 	{
-		return Ultracraft.identifier("textures/item/alternate_piercer.png");
+		return TEXTURE;
 	}
 }

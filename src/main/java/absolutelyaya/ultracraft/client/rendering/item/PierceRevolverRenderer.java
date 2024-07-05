@@ -34,25 +34,26 @@ public class PierceRevolverRenderer extends GeoItemRenderer<PierceRevolverItem>
 	@Override
 	public Identifier getTextureLocation(PierceRevolverItem animatable)
 	{
+		String tex = "textures/item/pierce_revolver";
 		double cooldown = 0f;
 		PlayerEntity player = MinecraftClient.getInstance().player;
 		if(player != null)
 			cooldown = player.getItemCooldownManager().getCooldownProgress(animatable, 0f);
 		
 		if (cooldown > 0.5f)
-			return Ultracraft.identifier("textures/item/pierce_revolver0.png");
+			return Ultracraft.texIdentifier(tex + 0);
 		else if (cooldown > 0f)
-			return Ultracraft.identifier("textures/item/pierce_revolver1.png");
+			return Ultracraft.texIdentifier(tex + 1);
 		
 		float useTime = 1f - (animatable.getMaxUseTime(null) - animatable.getApproxUseTime()) / (float)(animatable.getMaxUseTime(null));
 		if(useTime > 0.99f)
-			return Ultracraft.identifier("textures/item/pierce_revolver4.png");
+			return Ultracraft.texIdentifier(tex + 4);
 		else if(useTime > 0.5f)
-			return Ultracraft.identifier("textures/item/pierce_revolver3.png");
+			return Ultracraft.texIdentifier(tex + 3);
 		else if(useTime > 0f)
-			return Ultracraft.identifier("textures/item/pierce_revolver2.png");
+			return Ultracraft.texIdentifier(tex + 2);
 		
-		return Ultracraft.identifier("textures/item/pierce_revolver.png");
+		return Ultracraft.texIdentifier(tex);
 	}
 	
 	@Override

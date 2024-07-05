@@ -12,6 +12,8 @@ import mod.azure.azurelib.model.data.EntityModelData;
 
 public class StrayModel extends GeoModel<StrayEntity>
 {
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/entity/stray");
+	
 	@Override
 	public Identifier getModelResource(StrayEntity object)
 	{
@@ -21,7 +23,7 @@ public class StrayModel extends GeoModel<StrayEntity>
 	@Override
 	public Identifier getTextureResource(StrayEntity object)
 	{
-		return Ultracraft.identifier("textures/entity/stray.png");
+		return TEXTURE;
 	}
 	
 	@Override

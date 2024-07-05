@@ -50,17 +50,6 @@ public class SwordsmachineRenderer extends GeoEntityRenderer<SwordsmachineEntity
 	}
 	
 	@Override
-	public Identifier getTexture(SwordsmachineEntity object)
-	{
-		if(object instanceof DestinyBondSwordsmachineEntity destinyBondSM)
-		{
-			return destinyBondSM.getVariant() == 0 ? Ultracraft.identifier("textures/entity/swordsmachine_tundra.png") :
-						   Ultracraft.identifier("textures/entity/swordsmachine_agony.png");
-		}
-		return Ultracraft.identifier("textures/entity/swordsmachine.png");
-	}
-	
-	@Override
 	public RenderLayer getRenderType(SwordsmachineEntity animatable, Identifier texture, VertexConsumerProvider bufferSource, float partialTick)
 	{
 		return RenderLayer.getEntityTranslucent(texture);

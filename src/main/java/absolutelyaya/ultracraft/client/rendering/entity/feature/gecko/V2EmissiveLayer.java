@@ -14,10 +14,10 @@ import mod.azure.azurelib.renderer.layer.GeoRenderLayer;
 
 public class V2EmissiveLayer extends GeoRenderLayer<V2Entity>
 {
-	static final Identifier YELLOW = Ultracraft.identifier("textures/entity/v2/yellow_e.png");
-	static final Identifier BLUE = Ultracraft.identifier("textures/entity/v2/blue_e.png");
-	static final Identifier RED = Ultracraft.identifier("textures/entity/v2/red_e.png");
-	static final Identifier GREEN = Ultracraft.identifier("textures/entity/v2/green_e.png");
+	static final Identifier YELLOW = Ultracraft.texIdentifier("textures/entity/v2/yellow_e");
+	static final Identifier BLUE = Ultracraft.texIdentifier("textures/entity/v2/blue_e");
+	static final Identifier RED = Ultracraft.texIdentifier("textures/entity/v2/red_e");
+	static final Identifier GREEN = Ultracraft.texIdentifier("textures/entity/v2/green_e");
 	
 	public V2EmissiveLayer(GeoRenderer<V2Entity> entityRendererIn)
 	{

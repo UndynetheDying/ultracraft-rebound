@@ -13,6 +13,9 @@ import net.minecraft.util.Identifier;
 
 public class GreaterFilthModel extends GeoModel<GreaterFilthEntity>
 {
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/entity/filth");
+	static final Identifier TEXTURE_RARE = Ultracraft.texIdentifier("textures/entity/blue_filth");
+	
 	@Override
 	public Identifier getModelResource(GreaterFilthEntity object)
 	{
@@ -22,7 +25,7 @@ public class GreaterFilthModel extends GeoModel<GreaterFilthEntity>
 	@Override
 	public Identifier getTextureResource(GreaterFilthEntity object)
 	{
-		return Ultracraft.identifier(object.isRare() ? "textures/entity/blue_filth.png" : "textures/entity/filth.png");
+		return object.isRare() ? TEXTURE_RARE : TEXTURE;
 	}
 	
 	@Override

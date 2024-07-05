@@ -41,6 +41,9 @@ import java.util.Random;
 
 public class WingCustomizationScreen extends Screen
 {
+	static final Identifier NOT_YET_TEXTURE = Ultracraft.texIdentifier("textures/gui/notyet");
+	static final Identifier ULTRA_WIDGETS_TEXTURE = Ultracraft.texIdentifier("textures/gui/widgets");
+	static final Identifier PRESET_PREVIEW_TEXTURE = Ultracraft.texIdentifier("textures/gui/preset_preview");
 	public static WingCustomizationScreen Instance;
 	public static boolean MenuOpen;
 	
@@ -227,7 +230,7 @@ public class WingCustomizationScreen extends Screen
 		//PatternTab
 		if(patternsAnim > 0f)
 		{
-			RenderSystem.setShaderTexture(0, Ultracraft.identifier("textures/gui/notyet.png"));
+			RenderSystem.setShaderTexture(0, NOT_YET_TEXTURE);
 			float scale = 2f * (1f + (1f - patternsAnim));
 			RenderSystem.setShaderColor(1f, 1f, 1f, 1f - Math.abs(1 - patternsAnim));
 			RenderSystem.setShader(GameRenderer::getPositionTexProgram);
@@ -585,7 +588,7 @@ public class WingCustomizationScreen extends Screen
 				i = 0;
 			else if (isSelected())
 				i = 2;
-			context.drawNineSlicedTexture(Ultracraft.identifier("textures/gui/widgets.png"), getX(), getY(), getWidth(), getHeight(), 20, 4, 200, 20, 0, i * 20);
+			context.drawNineSlicedTexture(ULTRA_WIDGETS_TEXTURE, getX(), getY(), getWidth(), getHeight(), 20, 4, 200, 20, 0, i * 20);
 			RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 			i = active ? 16777215 : 10526880;
 			drawMessage(context, client.textRenderer, i | MathHelper.ceil(alpha * 255f) << 24);
@@ -611,7 +614,7 @@ public class WingCustomizationScreen extends Screen
 				i = 0;
 			else if (isSelected())
 				i = 2;
-			context.drawNineSlicedTexture(Ultracraft.identifier("textures/gui/widgets.png"), getX(), getY(), getWidth(), getHeight(), 20, 20, 20, 20, 0, (3 + i) * 20);
+			context.drawNineSlicedTexture(ULTRA_WIDGETS_TEXTURE, getX(), getY(), getWidth(), getHeight(), 20, 20, 20, 20, 0, (3 + i) * 20);
 			RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 			i = active ? 16777215 : 10526880;
 			drawMessage(context, client.textRenderer, i | MathHelper.ceil(alpha * 255f) << 24);
@@ -696,7 +699,7 @@ public class WingCustomizationScreen extends Screen
 				setAlpha((0.1f - appearTime) * 10);
 			}
 			MinecraftClient client = MinecraftClient.getInstance();
-			RenderSystem.setShaderTexture(0, Ultracraft.identifier("textures/gui/widgets.png"));
+			RenderSystem.setShaderTexture(0, ULTRA_WIDGETS_TEXTURE);
 			RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
 			RenderSystem.enableBlend();
 			RenderSystem.enableDepthTest();
@@ -714,13 +717,13 @@ public class WingCustomizationScreen extends Screen
 			wingShader.getUniform("WingColor").set((float)wingColor.x, (float)wingColor.y, (float)wingColor.z);
 			wingShader.getUniform("MetalColor").set((float)metalColor.x, (float)metalColor.y, (float)metalColor.z);
 			RenderSystem.setShader(pattern == null ? UltracraftClient::getWingsColoredUIShaderProgram : pattern.previewProgram());
-			RenderSystem.setShaderTexture(0, Ultracraft.identifier("textures/gui/preset_preview.png"));
+			RenderSystem.setShaderTexture(0, PRESET_PREVIEW_TEXTURE);
 			RenderingUtil.drawTexture(context.getMatrices().peek().getPositionMatrix(), new Vector4f(getX() + 1, getY() + 1, width, height),
 					new Vec2f(76, 40), new Vector4f(0, 20, 76, -20));
 			if(overlay != null)
 			{
 				RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-				RenderSystem.setShaderTexture(0, Ultracraft.identifier("textures/gui/wing_overlay/" + id + ".png"));
+				RenderSystem.setShaderTexture(0, Ultracraft.texIdentifier("textures/gui/wing_overlay/" + id));
 				RenderingUtil.drawTexture(context.getMatrices().peek().getPositionMatrix(), new Vector4f(getX() + 1, getY() + 1, width, height),
 						new Vec2f(76, 20), new Vector4f(0, 20, 76, -20));
 			}

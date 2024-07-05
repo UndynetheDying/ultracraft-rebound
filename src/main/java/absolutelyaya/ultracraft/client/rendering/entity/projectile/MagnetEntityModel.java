@@ -9,6 +9,8 @@ import mod.azure.azurelib.model.GeoModel;
 
 public class MagnetEntityModel extends GeoModel<MagnetEntity>
 {
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/entity/magnet");
+	
 	@Override
 	public Identifier getModelResource(MagnetEntity animatable)
 	{
@@ -18,7 +20,7 @@ public class MagnetEntityModel extends GeoModel<MagnetEntity>
 	@Override
 	public Identifier getTextureResource(MagnetEntity animatable)
 	{
-		return Ultracraft.identifier("textures/entity/magnet.png");
+		return TEXTURE;
 	}
 	
 	@Override

@@ -15,6 +15,6 @@ public class HankBlockEntityModel extends DefaultedBlockGeoModel<HankBlockEntity
 	@Override
 	public Identifier getTextureResource(HankBlockEntity animatable)
 	{
-		return Ultracraft.identifier("textures/block/hank.png");
+		return Ultracraft.texIdentifier("textures/block/hank");
 	}
 }

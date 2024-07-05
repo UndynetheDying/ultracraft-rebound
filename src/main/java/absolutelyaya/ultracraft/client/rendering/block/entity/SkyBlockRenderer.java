@@ -27,7 +27,7 @@ public class SkyBlockRenderer implements BlockEntityRenderer<SkyBlockEntity>
 		SkyBlockEntity.SkyType type = entity.getSkyType();
 		VertexConsumer consumer = vertexConsumers.getBuffer(RenderLayers.getSky(type));
 		for (int i = 0; i < 6; i++)
-			RenderSystem.setShaderTexture(i + 3, Ultracraft.identifier("textures/sky/" + type + i + ".png"));
+			RenderSystem.setShaderTexture(i + 3, Ultracraft.texIdentifier("textures/sky/" + type + i));
 		Camera camera = MinecraftClient.getInstance().gameRenderer.getCamera();
 		Matrix4f matrix = new Matrix4f(new MatrixStack().peek().getPositionMatrix());
 		Vec3d offset = camera.getPos().subtract(entity.getPos().getX(), entity.getPos().getY(), entity.getPos().getZ());

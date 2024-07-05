@@ -16,7 +16,7 @@ import org.joml.Vector3f;
 
 public class WeaponInfoHUD
 {
-	static final Identifier TEXTURE = Ultracraft.identifier("textures/gui/weapon_info_hud.png");
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/gui/weapon_info_hud");
 	
 	public void render(DrawContext context, float tickDelta)
 	{

@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 
 public class HellObserverScreen extends Screen
 {
-	static final Identifier TEXTURE = Ultracraft.identifier("textures/gui/container/hell_observer.png");
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/gui/container/hell_observer");
 	
 	final BlockPos pos;
 	int bgWidth = 179, bgHeight = 150, playerCount = 0, enemyCount = 0;

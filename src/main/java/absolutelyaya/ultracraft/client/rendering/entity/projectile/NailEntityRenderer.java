@@ -20,8 +20,8 @@ import org.joml.Quaternionf;
 
 public class NailEntityRenderer extends EntityRenderer<NailEntity>
 {
-	static final Identifier TEXTURE = Ultracraft.identifier("textures/item/nail.png");
-	static final Identifier TEXTURE_HOT = Ultracraft.identifier("textures/item/nail_hot.png");
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/item/nail");
+	static final Identifier TEXTURE_HOT = Ultracraft.texIdentifier("textures/item/nail_hot");
 	
 	public NailEntityRenderer(EntityRendererFactory.Context context)
 	{

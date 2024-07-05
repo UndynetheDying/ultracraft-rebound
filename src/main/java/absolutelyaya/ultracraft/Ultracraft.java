@@ -161,6 +161,11 @@ public class Ultracraft implements ModInitializer
         return new Identifier(Ultracraft.MOD_ID, path);
     }
     
+    public static Identifier texIdentifier(String path)
+    {
+        return identifier(path + ".png");
+    }
+    
     void loadConfig(MinecraftServer server)
     {
         config = new ServerConfig(server);

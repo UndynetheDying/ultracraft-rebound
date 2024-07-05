@@ -16,7 +16,7 @@ public class CerberusBlockModel extends DefaultedBlockGeoModel<CerberusBlockEnti
 	@Override
 	public Identifier getTextureResource(CerberusBlockEntity animatable)
 	{
-		return Ultracraft.identifier("textures/entity/cerberus.png");
+		return Ultracraft.texIdentifier("textures/entity/cerberus");
 	}
 	
 	@Override
