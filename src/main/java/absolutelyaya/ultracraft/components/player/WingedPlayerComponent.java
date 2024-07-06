@@ -13,6 +13,7 @@ import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -38,6 +39,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	RegistryKey<World> checkpointDimension;
 	float checkpointRot;
 	CybergrindData cybergrindData;
+	Entity hooked;
 	
 	public WingedPlayerComponent(PlayerEntity provider)
 	{
@@ -270,6 +272,27 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	}
 	
 	@Override
+	public void setHookedEntity(Entity entity)
+	{
+		hooked = entity;
+	}
+	
+	@Override
+	public Entity getHookedEntity()
+	{
+		return hooked;
+	}
+	
+	@Override
+	public boolean isHasHookedEntity()
+	{
+		boolean b = hooked != null && !hooked.isRemoved() && hooked.isAlive();
+		if(!b && hooked != null)
+			hooked = null;
+		return b;
+	}
+	
+	@Override
 	public void readFromNbt(NbtCompound tag)
 	{
 		if(tag.contains("checkpoint", NbtElement.COMPOUND_TYPE))
@@ -285,6 +308,12 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			lastCheckpoint = null;
 			checkpointRot = 0f;
 			checkpointDimension = null;
+		}
+		if(tag.contains("hooked", NbtElement.INT_TYPE))
+		{
+			Entity e = provider.getWorld().getEntityById(tag.getInt("hooked"));
+			if(e != null)
+				hooked = e;
 		}
 	}
 	
@@ -303,6 +332,8 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			checkpoint.putString("dimension", getCheckpointDimension().getValue().toString());
 			tag.put("checkpoint", checkpoint);
 		}
+		if(hooked != null)
+			tag.putInt("hooked", hooked.getId());
 	}
 	
 	@Override

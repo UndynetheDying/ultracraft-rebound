@@ -3,6 +3,8 @@ package absolutelyaya.ultracraft.item.weapons;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Weapon;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.entity.projectile.NailEntity;
+import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
@@ -10,8 +12,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import mod.azure.azurelib.animatable.GeoItem;
 import mod.azure.azurelib.core.animation.AnimatableManager;
@@ -27,6 +31,7 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 	final RawAnimation AnimationFireLoop = RawAnimation.begin().thenPlay("fire_loop");
 	final RawAnimation AnimationFireStop = RawAnimation.begin().thenPlay("fire_stop");
 	final RawAnimation AnimationAltFire = RawAnimation.begin().thenPlay("alt_fire");
+	final RawAnimation AnimationAltFireB = RawAnimation.begin().thenPlay("alt_fireb");
 	final RawAnimation AnimationAltFire2 = RawAnimation.begin().thenPlay("alt_fire2").thenLoop("fire_loop");
 	final RawAnimation AnimationAltFire2B = RawAnimation.begin().thenPlay("alt_fire2b").thenLoop("fire_loop");
 	
@@ -93,6 +98,17 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 		}
 	}
 	
+	void fireNail(World world, PlayerEntity user, Vec3d userVelocity, boolean hot)
+	{
+		NailEntity nail = new NailEntity(EntityRegistry.NAIL, world);
+		nail.setPosition(user.getEyePos().subtract(0, 0.25, 0).add(user.getRotationVector().rotateY((float)Math.toRadians(90))
+																		   .multiply(user.getMainArm().equals(Arm.RIGHT) ? -0.3 : 0.3)));
+		nail.setOwner(user);
+		nail.setVelocity(user, user.getPitch(), user.getYaw(), 0f, 2.5f, 7.5f);
+		nail.addVelocity(userVelocity);
+		nail.setHot(hot);
+		world.spawnEntity(nail);
+	}
 	
 	@Override
 	int getSwitchCooldown(ItemStack stack)
@@ -107,6 +123,7 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 										.triggerableAnim("fire_loop", AnimationFireLoop)
 										.triggerableAnim("fire_stop", AnimationFireStop)
 										.triggerableAnim("alt_fire", AnimationAltFire)
+										.triggerableAnim("alt_fireb", AnimationAltFireB)
 										.triggerableAnim("alt_fire2", AnimationAltFire2)
 										.triggerableAnim("alt_fire2b", AnimationAltFire2B));
 	}
@@ -114,13 +131,13 @@ public abstract class AbstractNailgunItem extends AbstractWeaponItem implements 
 	@Override
 	public int getNbtDefault(String nbt)
 	{
-		if(nbt.equals("nails"))
-			return 100;
-		if(nbt.equals("magnets"))
-			return 3;
-		if(nbt.equals("heatsinks"))
-			return 2;
-		return 0;
+		return switch (nbt)
+		{
+			case "nails" -> 100;
+			case "magnets" -> 3;
+			case "heatsinks" -> 2;
+			default -> 0;
+		};
 	}
 	
 	@Override

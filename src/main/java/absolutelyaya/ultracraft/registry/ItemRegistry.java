@@ -122,6 +122,8 @@ public class ItemRegistry
 			Ultracraft.identifier("attractor_nailgun"), new AttractorNailgunItem(new FabricItemSettings().maxCount(1)));
 	public static final OverheatNailgunItem OVERHEAT_NAILGUN = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("overheat_nailgun"), new OverheatNailgunItem(new FabricItemSettings().maxCount(1)));
+	public static final JumpstartNailgunItem JUMPSTART_NAILGUN = Registry.register(Registries.ITEM,
+			Ultracraft.identifier("jumpstart_nailgun"), new JumpstartNailgunItem(new FabricItemSettings().maxCount(1)));
 	public static final AlternatePiercerItem ALTERNATE_PIERCER = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("alternate_piercer"), new AlternatePiercerItem(new FabricItemSettings().maxCount(1)));
 	public static final AlternateMarksmanItem ALTERNATE_MARKSMAN = Registry.register(Registries.ITEM,
@@ -360,6 +362,7 @@ public class ItemRegistry
 			content.add(SAW_SHOTGUN);
 			content.add(ATTRACTOR_NAILGUN);
 			content.add(OVERHEAT_NAILGUN);
+			content.add(JUMPSTART_NAILGUN);
 			content.add(MACHINE_SWORD.getDefaultStack(MachineSwordItem.Type.NORMAL));
 			content.add(MACHINE_SWORD.getDefaultStack(MachineSwordItem.Type.TUNDRA));
 			content.add(MACHINE_SWORD.getDefaultStack(MachineSwordItem.Type.AGONY));

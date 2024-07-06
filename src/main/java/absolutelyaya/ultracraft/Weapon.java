@@ -24,7 +24,8 @@ public enum Weapon
 	}, null),
 	NAILGUN(new Identifier[]{
 			Ultracraft.identifier("attractor_nailgun"),
-			Ultracraft.identifier("overheat_nailgun")
+			Ultracraft.identifier("overheat_nailgun"),
+			Ultracraft.identifier("jumpstart_nailgun")
 	}, null),
 	RAILCANNON(null, null),
 	ROCKET_LAUNCHER(null, null),

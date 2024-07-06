@@ -1,0 +1,12 @@
+{
+  "materials": [
+    { "item": "minecraft:iron_ingot", "count": 64 },
+    { "item": "minecraft:copper_ingot", "count": 32 },
+    { "item": "minecraft:diamond", "count": 6 },
+    { "item": "minecraft:tripwire_hook", "count": 2 }
+  ],
+  "point-alternative": -1,
+  "result": "ultracraft:overheat_nailgun",
+  "extra-output": [],
+  "unlocks": []
+}

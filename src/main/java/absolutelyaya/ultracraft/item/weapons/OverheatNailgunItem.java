@@ -3,8 +3,6 @@ package absolutelyaya.ultracraft.item.weapons;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.rendering.item.OverheatNailgunRenderer;
-import absolutelyaya.ultracraft.entity.projectile.NailEntity;
-import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import mod.azure.azurelib.animatable.GeoItem;
 import mod.azure.azurelib.animatable.SingletonGeoAnimatable;
@@ -15,7 +13,6 @@ import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Arm;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -54,7 +51,7 @@ public class OverheatNailgunItem extends AbstractNailgunItem
 			int heat = getNbt(stack, "heat");
 			if(!heatsinkActive)
 			{
-				fireNail(world, user, false);
+				fireNail(world, user, userVelocity, false);
 				if(getNbt(stack, "heatsinks") == 0)
 					cdm.setCooldown(this, 8, GunCooldownManager.PRIMARY);
 				else
@@ -63,7 +60,7 @@ public class OverheatNailgunItem extends AbstractNailgunItem
 			else
 			{
 				for (int i = 0; i < 5; i++)
-					fireNail(world, user, true);
+					fireNail(world, user, userVelocity, true);
 				if(heat > 0)
 					setNbt(stack, "heat", Math.max(heat - 5, 0));
 				else
@@ -74,17 +71,6 @@ public class OverheatNailgunItem extends AbstractNailgunItem
 		}
 		else
 			return false;
-	}
-	
-	void fireNail(World world, PlayerEntity user, boolean hot)
-	{
-		NailEntity nail = new NailEntity(EntityRegistry.NAIL, world);
-		nail.setPosition(user.getEyePos().subtract(0, 0.25, 0).add(user.getRotationVector().rotateY((float)Math.toRadians(90))
-																		   .multiply(user.getMainArm().equals(Arm.RIGHT) ? -0.3 : 0.3)));
-		nail.setOwner(user);
-		nail.setVelocity(user, user.getPitch(), user.getYaw(), 0f, 2.5f, 7.5f);
-		world.spawnEntity(nail);
-		nail.setHot(hot);
 	}
 	
 	@Override
@@ -157,6 +143,7 @@ public class OverheatNailgunItem extends AbstractNailgunItem
 	{
 		return Formatting.AQUA + String.valueOf(getNbt(stack, "heatsinks"));
 	}
+	
 	@Override
 	public boolean isItemBarVisible(ItemStack stack)
 	{

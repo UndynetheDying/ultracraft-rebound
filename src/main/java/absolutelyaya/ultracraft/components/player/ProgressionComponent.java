@@ -41,6 +41,7 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 			add(Registries.ITEM.getId(ItemRegistry.SAW_SHOTGUN));
 			add(Registries.ITEM.getId(ItemRegistry.ATTRACTOR_NAILGUN));
 			add(Registries.ITEM.getId(ItemRegistry.OVERHEAT_NAILGUN));
+			add(Registries.ITEM.getId(ItemRegistry.JUMPSTART_NAILGUN));
 			add(FEEDBACKER);
 			add(KNUCKLEBLASTER);
 			add(SLAB);
@@ -57,7 +58,8 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 					Registries.ITEM.getId(ItemRegistry.SAW_SHOTGUN)
 			});
 			put(Registries.ITEM.getId(ItemRegistry.ATTRACTOR_NAILGUN), new Identifier[]{
-					Registries.ITEM.getId(ItemRegistry.OVERHEAT_NAILGUN)
+					Registries.ITEM.getId(ItemRegistry.OVERHEAT_NAILGUN),
+					Registries.ITEM.getId(ItemRegistry.JUMPSTART_NAILGUN)
 			});
 		}
 	};

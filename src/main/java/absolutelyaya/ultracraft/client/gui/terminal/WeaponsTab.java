@@ -228,10 +228,13 @@ public class WeaponsTab extends Tab
 							new Vector2i(0, 0), 0.001f, new Vector2i(16, 16), new Vector2i(0, 0), new Vector2i(16, 16)),
 							amount + " " + Text.translatable(item.getTranslationKey()).getString() + (amount > 0 ? "s" : "")));
 				});
-				if (loadout.isWeaponTypeHeld(selectedCategory) && progression.isOwned(weaponId))
-					craftButton.setLabel(Text.translatable("terminal.held").getString());
-				else if (!isResultItemInLoadout(loadout))
-					craftButton.setLabel(Text.translatable("terminal.not-equipped").getString());
+				if(progression.isOwned(weaponId))
+				{
+					if (loadout.isWeaponTypeHeld(selectedCategory))
+						craftButton.setLabel(Text.translatable("terminal.held").getString());
+					else if (!isResultItemInLoadout(loadout))
+						craftButton.setLabel(Text.translatable("terminal.not-equipped").getString());
+				}
 				else
 					craftButton.setLabel(Text.translatable("terminal." + (progression.isOwned(weaponId) ? "dispense" : "craft")).getString());
 			}
