@@ -30,6 +30,7 @@
 - Fixed Nailgun alt-fire animation not being interrupted by rapid uses while not primary firing
 - Fixed Weapons that weren't obtained yet, but aren't already equipped in the weapons loadout, being uncraftable
   - Normally all weapons are equipped by default, the unobtained ones just were skipped when switching weapons; newly added weapons weren't in previously saved loadouts though, revealing this issue
+- Added `sprite-override` Attribute to UltraRecipes
 ## Edit Mode Changes
 ## Resource Changes
 - Changed Shotgun UVs(moved smoke to make room for the chainsaw)

@@ -3,10 +3,9 @@
     { "item": "minecraft:iron_ingot", "count": 64 },
     { "item": "minecraft:copper_ingot", "count": 32 },
     { "item": "minecraft:diamond", "count": 6 },
-    { "item": "minecraft:tripwire_hook", "count": 2 }
+    { "item": "minecraft:tripwire_hook", "count": 2, "sprite-override": "minecraft:textures/block/tripwire_hook.png" }
   ],
-  "point-alternative": -1,
-  "result": "ultracraft:overheat_nailgun",
+  "result": "ultracraft:jumpstart_nailgun",
   "extra-output": [],
   "unlocks": []
 }

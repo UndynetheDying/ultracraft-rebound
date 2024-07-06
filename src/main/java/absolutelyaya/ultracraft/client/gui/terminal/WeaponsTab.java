@@ -220,13 +220,18 @@ public class WeaponsTab extends Tab
 			selectedRecipe = UltraRecipeManager.getRecipe(weaponId);
 			if (selectedRecipe != null)
 			{
-				Map<Item, Integer> materials = selectedRecipe.getMaterials();
-				materials.forEach((item, amount) ->
+				List<UltraRecipe.Ingredient> materials = selectedRecipe.getMaterials();
+				materials.forEach(i ->
 				{
-					Identifier id = Registries.ITEM.getId(item);
-					ingredients.add(new Pair<>(new Sprite(new Identifier(id.getNamespace(), "textures/item/" + id.getPath() + ".png"),
+					Identifier id = Registries.ITEM.getId(i.item());
+					Identifier sprite = null;
+					if(i.textureOverride() != null)
+						sprite = Identifier.tryParse(i.textureOverride());
+					if(sprite == null)
+						sprite = new Identifier(id.getNamespace(), "textures/item/" + id.getPath() + ".png");
+					ingredients.add(new Pair<>(new Sprite(sprite,
 							new Vector2i(0, 0), 0.001f, new Vector2i(16, 16), new Vector2i(0, 0), new Vector2i(16, 16)),
-							amount + " " + Text.translatable(item.getTranslationKey()).getString() + (amount > 0 ? "s" : "")));
+							i.amount() + " " + Text.translatable(i.item().getTranslationKey()).getString() + (i.amount() > 0 ? "s" : "")));
 				});
 				if(progression.isOwned(weaponId))
 				{
