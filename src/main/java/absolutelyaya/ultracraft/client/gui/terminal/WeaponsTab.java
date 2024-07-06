@@ -16,7 +16,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -26,7 +25,6 @@ import org.joml.Vector2i;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class WeaponsTab extends Tab
 {
@@ -225,8 +223,8 @@ public class WeaponsTab extends Tab
 				{
 					Identifier id = Registries.ITEM.getId(i.item());
 					Identifier sprite = null;
-					if(i.textureOverride() != null)
-						sprite = Identifier.tryParse(i.textureOverride());
+					if(i.spriteOverride() != null)
+						sprite = Identifier.tryParse(i.spriteOverride());
 					if(sprite == null)
 						sprite = new Identifier(id.getNamespace(), "textures/item/" + id.getPath() + ".png");
 					ingredients.add(new Pair<>(new Sprite(sprite,

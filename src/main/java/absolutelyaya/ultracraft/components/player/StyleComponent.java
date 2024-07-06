@@ -315,6 +315,8 @@ public class StyleComponent implements IStyleComponent
 	@Override
 	public void tick()
 	{
+		if(Ultracraft.isTimeFrozen())
+			return;
 		if(!bonusQueue.isEmpty() && provider.getWorld().getTime() - bonusQueue.peek().getRight() > 60)
 			bonusQueue.remove();
 		if(chain > 0)

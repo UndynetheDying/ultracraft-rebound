@@ -15,6 +15,9 @@
 - Added Hyacinth
 - Added Hyacinth patches to Limbo worldgen
 - Added Butteflies :3
+- Style doesn't decay anymore while time is frozen
+- Level Timer now pauses while time is frozen
+- Fixed Level Timer Pausing not actually working at all lmao
 ## Settings & Config
 ## Commands
 ## Tweaks

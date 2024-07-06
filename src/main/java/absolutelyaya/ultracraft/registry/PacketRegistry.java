@@ -101,6 +101,7 @@ public class PacketRegistry
 	public static final Identifier SWITCH_SLOT_PACKET_ID = Ultracraft.identifier("slot_c2s");
 	public static final Identifier SUBMIT_BEST_RANK_PACKET_ID = Ultracraft.identifier("rank_c2s");
 	public static final Identifier SUBMIT_BEST_TIME_PACKET_ID = Ultracraft.identifier("time_c2s");
+	public static final Identifier PAUSE_STATE_PACKET_ID = Ultracraft.identifier("pause_c2s");
 	
 	public static final Identifier FREEZE_PACKET_ID = Ultracraft.identifier("freeze");
 	public static final Identifier HITSCAN_PACKET_ID = Ultracraft.identifier("scan");
@@ -730,6 +731,10 @@ public class PacketRegistry
 			long time = buf.readLong();
 			boolean perfect = buf.readBoolean();
 			server.execute(() -> UltraComponents.LEVEL_STATS.get(player).setBestTime(levelId, perfect, time));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.PAUSE_STATE_PACKET_ID, (server, player, handler, buf, sender) -> {
+			boolean state = buf.readBoolean();
+			server.execute(() -> UltraComponents.LEVEL_STATS.get(player).setTimerPaused(state));
 		});
 	}
 	

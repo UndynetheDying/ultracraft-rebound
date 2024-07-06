@@ -75,8 +75,8 @@ public abstract class MinecraftClientMixin
 	
 	@Shadow @Nullable public abstract IntegratedServer getServer();
 	
-	@Shadow private static MinecraftClient instance;
-	boolean isShooting, wasBreaking;
+	@Shadow private volatile boolean paused;
+	boolean isShooting, wasBreaking, wasPaused;
 	
 	@WrapOperation(method = "handleInputEvents()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V"))
 	void OnHandSwap(ClientPlayNetworkHandler instance, Packet<?> packet, Operation<Void> original)
@@ -300,6 +300,23 @@ public abstract class MinecraftClientMixin
 			setScreen(new TravelScreen(true));
 			UltracraftClient.setTravelling(false);
 			ci.cancel();
+		}
+	}
+	
+	@Inject(method = "render", at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;paused:Z"))
+	void beforeSetPaused(boolean tick, CallbackInfo ci)
+	{
+		wasPaused = paused;
+	}
+	
+	@Inject(method = "render", at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;paused:Z", shift = At.Shift.AFTER))
+	void afterSetPaused(boolean tick, CallbackInfo ci)
+	{
+		if(player != null && (wasPaused != paused))
+		{
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			buf.writeBoolean(paused);
+			ClientPlayNetworking.send(PacketRegistry.PAUSE_STATE_PACKET_ID, buf);
 		}
 	}
 }

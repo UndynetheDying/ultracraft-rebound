@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.client.gui;
 
+import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.sound.MusicMetadata;
 import absolutelyaya.ultracraft.client.sound.MusicMetadataManager;
 import absolutelyaya.ultracraft.components.UltraComponents;
@@ -48,9 +49,6 @@ public class LevelHUD implements SoundInstanceListener
 		}
 		MinecraftClient client = MinecraftClient.getInstance();
 		ILevelStatsComponent levelStats = UltraComponents.LEVEL_STATS.get(client.player);
-		boolean gamePaused = client.isPaused();
-		if(gamePaused != levelStats.isTimerPaused())
-			levelStats.setTimerPaused(gamePaused);
 		if(levelStats.isTimerRunning())
 			renderTimer(context, levelStats.getElapsedTimer());
 		else if(displayFinishedTimer > 0)
