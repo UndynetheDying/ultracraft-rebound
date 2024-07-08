@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.rendering.item.JumpstartNailgunRenderer;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
+import absolutelyaya.ultracraft.entity.projectile.JumpstartHookEntity;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import mod.azure.azurelib.animatable.GeoItem;
 import mod.azure.azurelib.animatable.SingletonGeoAnimatable;
@@ -63,12 +64,17 @@ public class JumpstartNailgunItem extends AbstractNailgunItem
 	@Override
 	public void onAltFire(World world, PlayerEntity user)
 	{
-		user.playSound(SoundRegistry.NAILGUN_MAGNET_FIRE, 1f, 0.8f + user.getRandom().nextFloat() * 0.1f);
-		super.onAltFire(world, user);
-		//MagnetEntity magnet = MagnetEntity.spawn(user, user.getEyePos(), user.getRotationVector().multiply(1.5f));
-		//world.spawnEntity(magnet);
-		//TODO: spawn jumpstart entity
 		IWingedPlayerComponent winged = UltraComponents.WINGED.get(user);
+		JumpstartHookEntity oldHook = winged.getHook();
+		if(oldHook != null && !oldHook.breakIfVacant())
+			return;
+		if(!winged.getGunCooldownManager().isUsable(this, GunCooldownManager.SECONDARY))
+			return;
+		super.onAltFire(world, user);
+		user.playSound(SoundRegistry.NAILGUN_MAGNET_FIRE, 1f, 0.9f + user.getRandom().nextFloat() * 0.1f);
+		JumpstartHookEntity hook = JumpstartHookEntity.spawn(user, user.getEyePos(), user.getRotationVector().multiply(0.75f));
+		world.spawnEntity(hook);
+		winged.setHook(hook);
 		if(!world.isClient)
 		{
 			if(winged.isPrimaryFiring())

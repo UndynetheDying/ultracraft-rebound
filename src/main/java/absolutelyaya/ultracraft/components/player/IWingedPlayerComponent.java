@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.components.player;
 
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.cybergrind.CybergrindData;
+import absolutelyaya.ultracraft.entity.projectile.JumpstartHookEntity;
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
 import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
 import net.minecraft.entity.Entity;
@@ -78,4 +79,8 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	 * hooked means the entity that this providers jumpstart cable is attached to
 	 */
 	boolean isHasHookedEntity();
+	
+	JumpstartHookEntity getHook();
+	
+	void setHook(JumpstartHookEntity hook);
 }

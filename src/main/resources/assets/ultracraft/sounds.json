@@ -362,6 +362,11 @@
       "note/bit"
     ]
   },
+  "item.nailgun.jumpstart_hook.break": {
+    "sounds": [
+      {"name": "block.lantern.break", "type": "event", "pitch": 0.9}
+    ]
+  },
 
   "arm.switch": {
     "sounds": [

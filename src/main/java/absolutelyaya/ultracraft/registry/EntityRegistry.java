@@ -18,7 +18,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.Identifier;
 
 public class EntityRegistry
 {
@@ -125,6 +124,10 @@ public class EntityRegistry
 	public static final EntityType<ChainsawEntity> CHAINSAW = Registry.register(Registries.ENTITY_TYPE,
 			Ultracraft.identifier("chainsaw"),
 			FabricEntityTypeBuilder.create(SpawnGroup.MISC).entityFactory(ChainsawEntity::new).dimensions(EntityDimensions.fixed(0.25f, 0.25f)
+			).trackRangeChunks(5).trackedUpdateRate(1).disableSaving().build());
+	public static final EntityType<JumpstartHookEntity> JUMPSTART_HOOK = Registry.register(Registries.ENTITY_TYPE,
+			Ultracraft.identifier("jumpstart_hook"),
+			FabricEntityTypeBuilder.create(SpawnGroup.MISC).entityFactory(JumpstartHookEntity::new).dimensions(EntityDimensions.fixed(0.25f, 0.25f)
 			).trackRangeChunks(5).trackedUpdateRate(1).disableSaving().build());
 	
 	public static final EntityType<ShockwaveEntity> SHOCKWAVE = Registry.register(Registries.ENTITY_TYPE,

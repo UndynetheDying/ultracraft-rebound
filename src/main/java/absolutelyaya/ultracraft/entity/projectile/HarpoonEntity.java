@@ -78,9 +78,9 @@ public class HarpoonEntity extends AbstractSkewerEntity implements IIgnoreSharps
 				UltracraftClient.HITSCAN_HANDLER.removeMoving(getUuid());
 			owner = null;
 		}
-		if(victim == null && dataTracker.get(GROUND_TIME) > 20 && getOwner() != null && !getOwner().isPlayer())
+		if(getVictim() == null && dataTracker.get(GROUND_TIME) > 20 && getOwner() != null && !getOwner().isPlayer())
 			setReturning(true);
-		else if(victim != null && dataTracker.get(GROUND_TIME) > 200 && getOwner() != null)
+		else if(getVictim() != null && dataTracker.get(GROUND_TIME) > 200 && getOwner() != null)
 			setReturning(true);
 		if(dataTracker.get(RETURNING))
 		{
@@ -99,15 +99,15 @@ public class HarpoonEntity extends AbstractSkewerEntity implements IIgnoreSharps
 				despawn();
 			}
 		}
-		if(victim != null && !dataTracker.get(RETURNING) && !isRemoved())
+		if(getVictim() != null && !dataTracker.get(RETURNING) && !isRemoved())
 		{
-			if(!victim.isAlive())
+			if(!getVictim().isAlive())
 			{
-				victim = null;
+				dataTracker.set(VICTIM, -1);
 				setReturning(true);
 				return;
 			}
-			if(victim instanceof LivingEntity living)
+			if(getVictim() instanceof LivingEntity living)
 				living.addStatusEffect(new StatusEffectInstance(StatusEffectRegistry.IMPALED, 10, 1), this);
 		}
 	}
@@ -148,7 +148,7 @@ public class HarpoonEntity extends AbstractSkewerEntity implements IIgnoreSharps
 	@Override
 	protected void onEntityHit(EntityHitResult entityHitResult)
 	{
-		if(dataTracker.get(RETURNING) || victim != null)
+		if(dataTracker.get(RETURNING) || getVictim() != null)
 			return;
 		if(entityHitResult.getEntity() instanceof LivingEntity living)
 			living.damage(DamageSources.get(getWorld(), DamageSources.HARPOON, this, getOwner()), 5f);
@@ -157,8 +157,8 @@ public class HarpoonEntity extends AbstractSkewerEntity implements IIgnoreSharps
 	
 	public void setReturning(boolean b)
 	{
-		if(victim != null)
-			victim = null;
+		if(getVictim() != null)
+			dataTracker.set(VICTIM, -1);
 		dataTracker.set(RETURNING, b);
 		if(b && !dataTracker.get(STACK).isEmpty() && getOwner() instanceof LivingEntity living)
 		{

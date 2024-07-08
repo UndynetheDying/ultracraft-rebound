@@ -407,6 +407,8 @@
   "death.attack.skill_issue.item": "%1$s had a fatal Skill Issue",
   "death.attack.saw": "%1$s was sawed in half %2$s",
   "death.attack.saw.item": "%1$s was sawed in half by %2$s using %3$s",
+  "death.attack.jumpstart": "%1$s couldn't handle %2$ss electrifying presence",
+  "death.attack.jumpstart.item": "%1$s was electrocuted by %2$s using %3$s",
 
   "itemGroup.ultracraft.item": "ULTRACRAFT",
   "itemGroup.ultracraft.edit": "Edit Mode Blocks",

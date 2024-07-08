@@ -6,6 +6,7 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.cybergrind.CybergrindData;
+import absolutelyaya.ultracraft.entity.projectile.JumpstartHookEntity;
 import absolutelyaya.ultracraft.item.weapons.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
@@ -40,6 +41,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	float checkpointRot;
 	CybergrindData cybergrindData;
 	Entity hooked;
+	JumpstartHookEntity hook;
 	
 	public WingedPlayerComponent(PlayerEntity provider)
 	{
@@ -293,6 +295,20 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	}
 	
 	@Override
+	public JumpstartHookEntity getHook()
+	{
+		if(hook == null || hook.isRemoved())
+			return null;
+		return hook;
+	}
+	
+	@Override
+	public void setHook(JumpstartHookEntity hook)
+	{
+		this.hook = hook;
+	}
+	
+	@Override
 	public void readFromNbt(NbtCompound tag)
 	{
 		if(tag.contains("checkpoint", NbtElement.COMPOUND_TYPE))
@@ -315,6 +331,16 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			if(e != null)
 				hooked = e;
 		}
+		else
+			hooked = null;
+		if(tag.contains("hook", NbtElement.INT_TYPE))
+		{
+			Entity e = provider.getWorld().getEntityById(tag.getInt("hook"));
+			if(e instanceof JumpstartHookEntity h)
+				hook = h;
+		}
+		else
+			hook = null;
 	}
 	
 	@Override
@@ -334,6 +360,8 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 		}
 		if(hooked != null)
 			tag.putInt("hooked", hooked.getId());
+		if(hook != null)
+			tag.putInt("hook", hook.getId());
 	}
 	
 	@Override
