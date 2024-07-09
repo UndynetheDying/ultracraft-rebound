@@ -81,6 +81,7 @@ public class ClientHitscanHandler
 		final Vec3d from, to;
 		final HitscanType type;
 		int age;
+		boolean electric;
 		
 		public Hitscan(Vec3d from, Vec3d to, byte type)
 		{
@@ -92,6 +93,11 @@ public class ClientHitscanHandler
 		public boolean tick()
 		{
 			return age++ <= getMaxAge();
+		}
+		
+		public int getAge()
+		{
+			return age;
 		}
 		
 		public int getMaxAge()
@@ -124,26 +130,48 @@ public class ClientHitscanHandler
 			return 3;
 		}
 		
+		public boolean isElectic()
+		{
+			return type.electric;
+		}
+		
+		public Hitscan markElectric()
+		{
+			electric = true;
+			return this;
+		}
+		
 		public enum HitscanType
 		{
 			REVOLVER_SHOT(0xdff6f5, 3, 0.1f),
 			REVOLVER_PIERCE(0x8aebf1, 20, 0.2f),
-			RAILGUN_ELEC(0x2ee9ff, 60, 0.3f),
+			RAILGUN_ELEC(0x2ee9ff, 60, 0.3f, true),
 			RAILGUN_DRILL(0x30ff72, 60, 0.3f),
 			RAILGUN_MALICIOUS(0xff4530, 60, 0.3f),
 			MALICIOUS(0xf4d81b, 60, 0.3f),
 			RICOCHET(0xf4d81b, 5, 0.1f),
 			SHARPSHOOTER(0xdf2828, 60, 0.1f),
-			SLAB(0xf4d81b, 4, 0.1f);;
+			SLAB(0xf4d81b, 4, 0.1f),
+			JUMPSTART_ARC(0x2ee9ff, 8, 0.1f, true);
 			
 			public final int color, maxAge;
 			public final float startGirth;
+			public final boolean electric;
+			
+			HitscanType(int color, int maxAge, float startGirth, boolean electric)
+			{
+				this.color = color;
+				this.maxAge = maxAge;
+				this.startGirth = startGirth;
+				this.electric = electric;
+			}
 			
 			HitscanType(int color, int maxAge, float startGirth)
 			{
 				this.color = color;
 				this.maxAge = maxAge;
 				this.startGirth = startGirth;
+				this.electric = false;
 			}
 		}
 	}

@@ -53,6 +53,7 @@ public class ServerHitscanHandler
 	public static final byte COIN_RICOCHET = 6;
 	public static final byte SHARPSHOOTER = 7;
 	public static final byte SLAB = 8;
+	public static final byte JUMPSTART_ARC = 9;
 	
 	static final Queue<IScheduledHitscan> scheduleAdditions = new ArrayDeque<>();
 	static final List<IScheduledHitscan> schedule = new ArrayList<>();

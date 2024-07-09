@@ -21,7 +21,6 @@ import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.components.player.ProgressionComponent;
 import absolutelyaya.ultracraft.cybergrind.CybergrindData;
 import absolutelyaya.ultracraft.data.*;
-import absolutelyaya.ultracraft.entity.projectile.ChainsawEntity;
 import absolutelyaya.ultracraft.item.weapons.AbstractWeaponItem;
 import absolutelyaya.ultracraft.particle.ParryIndicatorParticleEffect;
 import absolutelyaya.ultracraft.recipe.UltraRecipe;
