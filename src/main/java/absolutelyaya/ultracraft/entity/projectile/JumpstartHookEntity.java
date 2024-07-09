@@ -1,11 +1,13 @@
 package absolutelyaya.ultracraft.entity.projectile;
 
+import absolutelyaya.ultracraft.ExplosionHandler;
+import absolutelyaya.ultracraft.ServerHitscanHandler;
 import absolutelyaya.ultracraft.accessor.IParriable;
+import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.damage.DamageSources;
-import absolutelyaya.ultracraft.item.weapons.JumpstartNailgunItem;
 import absolutelyaya.ultracraft.registry.BlockRegistry;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
@@ -21,6 +23,7 @@ import net.minecraft.entity.projectile.thrown.ThrownEntity;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec2f;
@@ -32,6 +35,7 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 	protected static final TrackedData<Integer> VICTIM = DataTracker.registerData(JumpstartHookEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Integer> CHARGE = DataTracker.registerData(JumpstartHookEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Integer> STRESS = DataTracker.registerData(JumpstartHookEntity.class, TrackedDataHandlerRegistry.INTEGER);
+	protected static final TrackedData<Integer> EXPLOSION_TICKS = DataTracker.registerData(JumpstartHookEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	
 	final float maxDistance = 8f;
 	
@@ -46,6 +50,7 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 		dataTracker.startTracking(VICTIM, -1);
 		dataTracker.startTracking(CHARGE, 0);
 		dataTracker.startTracking(STRESS, 0);
+		dataTracker.startTracking(EXPLOSION_TICKS, 0);
 	}
 	
 	public static JumpstartHookEntity spawn(LivingEntity owner, Vec3d pos, Vec3d vel)
@@ -119,7 +124,7 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 		float distance = distanceTo(getOwner());
 		if(hasVictim && !getWorld().isClient)
 		{
-			if(distance > maxDistance)
+			if(distance > maxDistance && dataTracker.get(EXPLOSION_TICKS) == 0)
 			{
 				int stress = dataTracker.get(STRESS);
 				dataTracker.set(STRESS, stress + 1);
@@ -130,10 +135,32 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 			dataTracker.set(CHARGE, charge + 1);
 			if(charge >= 100)
 			{
-				//TODO: if target has nails, launch upwards and damage everything in 8 block radius instead
-				getVictim().damage(DamageSources.get(getWorld(), DamageSources.JUMPSTART, getOwner()), 20);
-				kill();
-				UltraComponents.WINGED.get(getOwner()).getGunCooldownManager().setCooldown(ItemRegistry.JUMPSTART_NAILGUN, 100, GunCooldownManager.SECONDARY);
+				if(getVictim() instanceof LivingEntityAccessor living && living.getNails() > 0)
+				{
+					int explosionTicks = dataTracker.get(EXPLOSION_TICKS);
+					if(explosionTicks == 0)
+					{
+						ExplosionHandler.explosion(getVictim(), getWorld(), getVictim().getPos(), DamageSources.get(getWorld(), DamageSources.EXPLOSION), 0.001f, 0f, 0.01f, false);
+						getVictim().addVelocity(new Vec3d(0f, 1.5f, 0f));
+						UltraComponents.WINGED.get(getOwner()).getGunCooldownManager().setCooldown(ItemRegistry.JUMPSTART_NAILGUN, 100, GunCooldownManager.SECONDARY);
+					}
+					else if(explosionTicks == 10)
+					{
+						getWorld().getOtherEntities(this,
+								getBoundingBox().expand(10f), e -> e != getOwner() && (getOwner() != null && !getOwner().isTeammate(e))).forEach(e -> {
+									ServerHitscanHandler.sendPacket((ServerWorld) getWorld(), getPos().addRandom(random, 0.1f),
+											e.getPos().add(0f, e.getHeight() / 2f, 0f), ServerHitscanHandler.JUMPSTART_ARC);
+									e.damage(DamageSources.get(getWorld(), DamageSources.JUMPSTART, getOwner()), 10);
+								});
+						kill();
+					}
+					dataTracker.set(EXPLOSION_TICKS, explosionTicks + 1);
+				}
+				else
+				{
+					getVictim().damage(DamageSources.get(getWorld(), DamageSources.JUMPSTART, getOwner()), 20);
+					kill();
+				}
 			}
 		}
 		if(!hasVictim && distance >= maxDistance)

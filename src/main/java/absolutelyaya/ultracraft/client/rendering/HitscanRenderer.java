@@ -24,7 +24,7 @@ public class HitscanRenderer
 		float girth = Math.max(hitscan.getGirth(), 0f);
 		
 		if(hitscan.isElectic())
-			renderElectricArc(matrices, from, to, camPos, girth, col, RenderLayer.getLightning(), hitscan.getLayers(), (int)(from.getX() + from.getZ()));
+			renderElectricArc(matrices, from, to, camPos, girth, col, RenderLayer.getLightning(), hitscan.getLayers(), (int)(from.getX() * 100f + from.getZ() * 100f));
 		else
 			renderRay(matrices, from, to, camPos, girth, col,
 					(hitscan instanceof ClientHitscanHandler.MovingHitscan ? RenderLayer.getGui() : RenderLayer.getLightning()), hitscan.getLayers());
