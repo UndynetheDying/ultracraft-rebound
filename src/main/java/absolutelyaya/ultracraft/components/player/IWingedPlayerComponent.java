@@ -68,11 +68,6 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	/***
 	 * hooked means the entity that this providers jumpstart cable is attached to
 	 */
-	void setHookedEntity(Entity entity);
-	
-	/***
-	 * hooked means the entity that this providers jumpstart cable is attached to
-	 */
 	Entity getHookedEntity();
 	
 	/***

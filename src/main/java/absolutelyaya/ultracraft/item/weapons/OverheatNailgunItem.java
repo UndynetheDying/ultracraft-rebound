@@ -9,6 +9,7 @@ import mod.azure.azurelib.animatable.SingletonGeoAnimatable;
 import mod.azure.azurelib.animatable.client.RenderProvider;
 import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
 import mod.azure.azurelib.core.animatable.instance.SingletonAnimatableInstanceCache;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -147,7 +148,7 @@ public class OverheatNailgunItem extends AbstractNailgunItem
 	@Override
 	public boolean isItemBarVisible(ItemStack stack)
 	{
-		return getNbt(stack, "heatsink_cd") > 0;
+		return shouldShowCooldown(stack) || getNbt(stack, "heatsink_cd") > 0;
 	}
 	
 	@Override
@@ -156,7 +157,14 @@ public class OverheatNailgunItem extends AbstractNailgunItem
 		int cd = getNbt(stack, "heatsink_cd");
 		if(cd > 0)
 			return (int)((1f - cd / 160f) * 14);
-		return 0;
+		return super.getItemBarStep(stack);
+	}
+	
+	@Override
+	protected boolean shouldShowCooldown(ItemStack stack)
+	{
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		return cdm.getCooldown(getCooldownClass(stack), GunCooldownManager.PRIMARY) > 4;
 	}
 	
 	@Override

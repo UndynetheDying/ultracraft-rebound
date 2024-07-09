@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.item.weapons;
 
+import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.rendering.item.JumpstartNailgunRenderer;
 import absolutelyaya.ultracraft.components.UltraComponents;
@@ -53,7 +54,7 @@ public class JumpstartNailgunItem extends AbstractNailgunItem
 			if(!UltraComponents.WINGED.get(user).isHasHookedEntity())
 			{
 				GunCooldownManager cdm = UltraComponents.WINGED.get(user).getGunCooldownManager();
-				cdm.setCooldown(this, 1, GunCooldownManager.PRIMARY);
+				cdm.setCooldown(this, 2, GunCooldownManager.PRIMARY);
 			}
 			return true;
 		}
@@ -137,7 +138,7 @@ public class JumpstartNailgunItem extends AbstractNailgunItem
 	protected boolean shouldShowCooldown(ItemStack stack)
 	{
 		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
-		return !cdm.isUsable(getCooldownClass(stack), GunCooldownManager.SECONDARY);
+		return cdm.getCooldown(this, GunCooldownManager.PRIMARY) > 2 || !cdm.isUsable(getCooldownClass(stack), GunCooldownManager.SECONDARY);
 	}
 	
 	@Override
@@ -146,21 +147,25 @@ public class JumpstartNailgunItem extends AbstractNailgunItem
 		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		if(!cdm.isUsable(this, GunCooldownManager.SECONDARY))
 			return (int)(cdm.getCooldownPercent(getCooldownClass(stack), GunCooldownManager.SECONDARY) * 14);
-		return 0;
+		return super.getWeaponCooldownStep(stack);
 	}
+	
 	@Override
 	public boolean isItemBarVisible(ItemStack stack)
 	{
-		return getNbt(stack, "jumpstart_cd") > 0;
+		if(Ultracraft.SERVER_SIDE)
+			return false;
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		return shouldShowCooldown(stack) || !cdm.isUsable(this, GunCooldownManager.SECONDARY);
 	}
 	
 	@Override
 	public int getItemBarStep(ItemStack stack)
 	{
-		int cd = getNbt(stack, "jumpstart_cd");
-		if(cd > 0)
-			return (int)((1f - cd / 200f) * 14);
-		return 0;
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		if(!cdm.isUsable(this, GunCooldownManager.SECONDARY))
+			return (int)(cdm.getCooldownPercent(getCooldownClass(stack), GunCooldownManager.SECONDARY) * 14);
+		return super.getItemBarStep(stack);
 	}
 	
 	@Override

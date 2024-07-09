@@ -40,7 +40,6 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	RegistryKey<World> checkpointDimension;
 	float checkpointRot;
 	CybergrindData cybergrindData;
-	Entity hooked;
 	JumpstartHookEntity hook;
 	
 	public WingedPlayerComponent(PlayerEntity provider)
@@ -274,24 +273,18 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	}
 	
 	@Override
-	public void setHookedEntity(Entity entity)
-	{
-		hooked = entity;
-	}
-	
-	@Override
 	public Entity getHookedEntity()
 	{
-		return hooked;
+		if(hook == null)
+			return null;
+		return hook.getVictim();
 	}
 	
 	@Override
 	public boolean isHasHookedEntity()
 	{
-		boolean b = hooked != null && !hooked.isRemoved() && hooked.isAlive();
-		if(!b && hooked != null)
-			hooked = null;
-		return b;
+		Entity hooked = getHookedEntity();
+		return hooked != null && !hooked.isRemoved() && hooked.isAlive();
 	}
 	
 	@Override
@@ -325,14 +318,6 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			checkpointRot = 0f;
 			checkpointDimension = null;
 		}
-		if(tag.contains("hooked", NbtElement.INT_TYPE))
-		{
-			Entity e = provider.getWorld().getEntityById(tag.getInt("hooked"));
-			if(e != null)
-				hooked = e;
-		}
-		else
-			hooked = null;
 		if(tag.contains("hook", NbtElement.INT_TYPE))
 		{
 			Entity e = provider.getWorld().getEntityById(tag.getInt("hook"));
@@ -358,8 +343,6 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			checkpoint.putString("dimension", getCheckpointDimension().getValue().toString());
 			tag.put("checkpoint", checkpoint);
 		}
-		if(hooked != null)
-			tag.putInt("hooked", hooked.getId());
 		if(hook != null)
 			tag.putInt("hook", hook.getId());
 	}

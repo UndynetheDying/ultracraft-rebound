@@ -158,6 +158,7 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 				}
 				else
 				{
+					UltraComponents.WINGED.get(getOwner()).getGunCooldownManager().setCooldown(ItemRegistry.JUMPSTART_NAILGUN, 100, GunCooldownManager.SECONDARY);
 					getVictim().damage(DamageSources.get(getWorld(), DamageSources.JUMPSTART, getOwner()), 20);
 					kill();
 				}
