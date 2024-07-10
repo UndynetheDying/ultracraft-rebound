@@ -18,6 +18,7 @@
 - Style doesn't decay anymore while time is frozen
 - Level Timer now pauses while time is frozen
 - Fixed Level Timer Pausing not actually working at all lmao
+- Added Item to place decorative Malicious Faces more easily
 ## Settings & Config
 ## Commands
 ## Tweaks
@@ -34,6 +35,7 @@
 - Fixed Weapons that weren't obtained yet, but aren't already equipped in the weapons loadout, being uncraftable
   - Normally all weapons are equipped by default, the unobtained ones just were skipped when switching weapons; newly added weapons weren't in previously saved loadouts though, revealing this issue
 - Added `sprite-override` Attribute to UltraRecipes
+- Fixed a minor issue with Malicious Faces rotation
 ## Edit Mode Changes
 ## Resource Changes
 - Changed Shotgun UVs(moved smoke to make room for the chainsaw)

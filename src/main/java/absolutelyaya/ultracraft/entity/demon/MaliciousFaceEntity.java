@@ -445,7 +445,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	{
 		if(!getWorld().isClient && !isRemoved())
 		{
-			if(getWorld().getGameRules().getBoolean(GameRules.DO_MOB_LOOT))
+			if(getWorld().getGameRules().getBoolean(GameRules.DO_MOB_LOOT) && killingBlow != null)
 			{
 				dropLoot(killingBlow, killerPlayer != null);
 				if(killingBlow != null && killingBlow.isOf(DamageSources.CHARGEBACK))
@@ -563,6 +563,11 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		return dataTracker.get(DECORATIVE);
 	}
 	
+	public void setDecorative(boolean state)
+	{
+		dataTracker.set(DECORATIVE, state);
+	}
+	
 	static class MaliciousMoveControl extends MoveControl
 	{
 		private final MaliciousFaceEntity face;
@@ -632,8 +637,14 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 		@Override
 		public void tick()
 		{
-			if(entity.isAlive())
+			if(!entity.isAlive())
 				super.tick();
+		}
+		
+		@Override
+		protected boolean shouldStayHorizontal()
+		{
+			return false;
 		}
 	}
 	

@@ -80,6 +80,8 @@ public class ItemRegistry
 			Ultracraft.identifier("lumpfish"), new LumpFishItem(new FabricItemSettings().maxCount(64)));
 	public static final BlahajItem BLAHAJ = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("blahaj"), new BlahajItem(new FabricItemSettings().maxCount(1)));
+	public static final DecorativeMauriceItem DECORATIVE_MAURICE = Registry.register(Registries.ITEM,
+			Ultracraft.identifier("maurice_deco"), new DecorativeMauriceItem(new FabricItemSettings().maxCount(1)));
 	
 	//Progression Items
 	public static final Item FEEDBACKER = Registry.register(Registries.ITEM,
@@ -394,6 +396,7 @@ public class ItemRegistry
 			content.add(GREATERFILTH_SPAWN_EGG);
 			content.add(SOUL_ORB);
 			content.add(BLOOD_ORB);
+			content.add(DECORATIVE_MAURICE);
 			content.add(PLUSHIE.getDefaultStack("yaya"));
 			content.add(TALON.getDefaultStack("talon"));
 			content.add(ASHEN.getDefaultStack("ashenwulf"));
