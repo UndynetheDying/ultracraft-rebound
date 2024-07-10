@@ -12,6 +12,7 @@ import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.Registries;
@@ -30,6 +31,7 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 	List<Entity> entities = new ArrayList<>();
 	Identifier entityType = Ultracraft.identifier("stray");
 	float yaw;
+	boolean noAI;
 	
 	public SpawnListenerBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -74,6 +76,11 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 				e.setBodyYaw(yaw);
 				e.setHeadYaw(yaw);
 				e.prevYaw = yaw;
+				if(noAI && e instanceof MobEntity mob)
+				{
+					mob.setAiDisabled(true);
+					mob.setPosition(mob.getPos().subtract(0f, 0.5f, 0f));
+				}
 			});
 		}
 		else if(!newState)
@@ -124,6 +131,7 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 			case "entityType" -> entityType = parseIdentifier(value);
 			case "delay" -> activationDelay = Integer.parseInt(value);
 			case "yaw" -> yaw = Float.parseFloat(value);
+			case "noAI" -> noAI = Boolean.parseBoolean(value);
 		}
 		super.setAttribute(s, value);
 	}
@@ -136,6 +144,7 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 			case "entityType" -> String.valueOf(entityType);
 			case "delay" -> String.valueOf(activationDelay);
 			case "yaw" -> String.valueOf(yaw);
+			case "noAI" -> String.valueOf(noAI);
 			default -> null;
 		};
 	}
@@ -148,6 +157,8 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 			entityType = Identifier.tryParse(nbt.getString("entityType"));
 		if(nbt.contains("yaw", NbtElement.FLOAT_TYPE))
 			yaw = nbt.getFloat("yaw");
+		if(nbt.contains("noAI", NbtElement.BYTE_TYPE))
+			noAI = nbt.getBoolean("noAI");
 	}
 	
 	@Override
@@ -156,11 +167,13 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 		super.writeNbt(nbt);
 		nbt.putString("entityType", entityType.toString());
 		nbt.putFloat("yaw", yaw);
+		nbt.putBoolean("noAI", noAI);
 	}
 	
 	static {
 		attributes.add("entityType");
 		attributes.add("delay");
 		attributes.add("yaw");
+		attributes.add("noAI");
 	}
 }

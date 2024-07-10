@@ -37,6 +37,7 @@
 - Added `sprite-override` Attribute to UltraRecipes
 - Fixed a minor issue with Malicious Faces rotation
 ## Edit Mode Changes
+- Added `noAI` Attribute to spawn listeners
 ## Resource Changes
 - Changed Shotgun UVs(moved smoke to make room for the chainsaw)
 ## API Changes
