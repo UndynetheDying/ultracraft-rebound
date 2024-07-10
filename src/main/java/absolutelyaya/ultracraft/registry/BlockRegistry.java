@@ -161,6 +161,10 @@ public class BlockRegistry
 			new HankBlock(AbstractBlock.Settings.copy(Blocks.SKELETON_SKULL).mapColor(MapColor.WHITE_GRAY).sounds(BlockSoundGroup.BONE)), false);
 	public static final Block HYACINTH = register("hyacinth",
 			new ButterflyFlowerBlock(AbstractBlock.Settings.copy(Blocks.ALLIUM).mapColor(MapColor.DARK_GREEN).sounds(BlockSoundGroup.GRASS).breakInstantly().noCollision().offset(AbstractBlock.OffsetType.XZ).pistonBehavior(PistonBehavior.DESTROY)), true);
+	public static final Block MAURICE = register("maurice",
+			new MauriceBlock(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.GRAY).sounds(BlockSoundGroup.STONE)), true);
+	public static final Block CRACKED_MAURICE = register("cracked_maurice",
+			new MauriceBlock(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.GRAY).sounds(BlockSoundGroup.STONE)), true);
 	
 	public static final Block MAP_ROOM = register("map_room", new RoomBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_TRIGGER = register("map_trigger", new TriggerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);

@@ -10,7 +10,6 @@ import me.shedaniel.rei.api.client.registry.entry.CollapsibleEntryRegistry;
 import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +38,9 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 				EntryStacks.of(ItemRegistry.PLACEHOLDER),
 				EntryStacks.of(ItemRegistry.FLORP),
 				EntryStacks.of(ItemRegistry.PITR_POIN),
-				EntryStacks.of(ItemRegistry.BLAHAJ)));
+				EntryStacks.of(ItemRegistry.BLAHAJ),
+				EntryStacks.of(BlockRegistry.MAURICE),
+				EntryStacks.of(BlockRegistry.CRACKED_MAURICE)));
 	}
 	
 	@Override

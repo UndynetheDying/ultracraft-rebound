@@ -9,6 +9,7 @@
     "BoatEntityMixin",
     "EntityMixin",
     "ExplosiveProjectileMixin",
+    "FallingBlockEntityMixin",
     "FishingBobberMixin",
     "FluidBlockMixin",
     "HungerManagerMixin",

@@ -15,10 +15,7 @@ import absolutelyaya.ultracraft.entity.AbstractUltraFlyingEntity;
 import absolutelyaya.ultracraft.entity.goal.TargetPlayerGoal;
 import absolutelyaya.ultracraft.entity.other.ShockwaveEntity;
 import absolutelyaya.ultracraft.entity.projectile.HellBulletEntity;
-import absolutelyaya.ultracraft.registry.EntityRegistry;
-import absolutelyaya.ultracraft.registry.ParticleRegistry;
-import absolutelyaya.ultracraft.registry.SoundRegistry;
-import absolutelyaya.ultracraft.registry.StatusEffectRegistry;
+import absolutelyaya.ultracraft.registry.*;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
@@ -43,7 +40,6 @@ import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.random.Random;
@@ -67,6 +63,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	Vec2f deathRotation;
 	int deathTicks;
 	PlayerEntity killerPlayer;
+	DamageSource killingBlow;
 	
 	public MaliciousFaceEntity(EntityType<? extends AbstractUltraFlyingEntity> entityType, World world)
 	{
@@ -384,6 +381,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 				killerPlayer = player;
 			else if(source.getAttacker() instanceof PlayerEntity player)
 				killerPlayer = player;
+			killingBlow = source;
 			return false;
 		}
 		if(getHealth() - amount < getCrackThreshold() && !dataTracker.get(CRACKED))
@@ -447,6 +445,12 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	{
 		if(!getWorld().isClient && !isRemoved())
 		{
+			if(getWorld().getGameRules().getBoolean(GameRules.DO_MOB_LOOT))
+			{
+				dropLoot(killingBlow, killerPlayer != null);
+				if(killingBlow != null && killingBlow.isOf(DamageSources.CHARGEBACK))
+					dropItem(BlockRegistry.MAURICE);
+			}
 			getWorld().sendEntityStatus(this, EntityStatuses.ADD_DEATH_PARTICLES);
 			remove(RemovalReason.KILLED);
 		}
@@ -879,7 +883,8 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 			}
 			if(timer <= 0)
 			{
-				ServerHitscanHandler.performHitscan(face, ServerHitscanHandler.MALICIOUS, 0, new ServerHitscanHandler.HitscanExplosionData(5.5f, 10f, 0f, true));
+				ServerHitscanHandler.performHitscan(face, ServerHitscanHandler.MALICIOUS, 0,
+						new ServerHitscanHandler.HitscanExplosionData(5.5f, 10f, 0f, true));
 				if(repeat)
 				{
 					timer = interruptWindow + 2;
