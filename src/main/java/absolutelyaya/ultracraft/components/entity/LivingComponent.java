@@ -11,6 +11,7 @@ public class LivingComponent implements ILivingComponent
 {
 	final LivingEntity provider;
 	boolean cancerous, enraged;
+	int nails;
 	
 	public LivingComponent(LivingEntity provider)
 	{
@@ -46,12 +47,34 @@ public class LivingComponent implements ILivingComponent
 	}
 	
 	@Override
+	public int getNails()
+	{
+		return nails;
+	}
+	
+	@Override
+	public void setNails(int nails)
+	{
+		this.nails = nails;
+		UltraComponents.LIVING.sync(provider);
+	}
+	
+	@Override
+	public void incrementNails()
+	{
+		nails++;
+		UltraComponents.LIVING.sync(provider);
+	}
+	
+	@Override
 	public void readFromNbt(NbtCompound tag)
 	{
 		if(tag.contains("cancerous", NbtElement.BYTE_TYPE))
 			cancerous = tag.getBoolean("cancerous");
 		if(tag.contains("enraged", NbtElement.BYTE_TYPE))
 			enraged = tag.getBoolean("enraged");
+		if(tag.contains("nails", NbtElement.INT_TYPE))
+			nails = tag.getInt("nails");
 	}
 	
 	@Override
@@ -59,5 +82,6 @@ public class LivingComponent implements ILivingComponent
 	{
 		tag.putBoolean("cancerous", cancerous);
 		tag.putBoolean("enraged", enraged);
+		tag.putInt("nails", nails);
 	}
 }

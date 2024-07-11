@@ -135,7 +135,7 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 			dataTracker.set(CHARGE, charge + 1);
 			if(charge >= 100)
 			{
-				if(getVictim() instanceof LivingEntityAccessor living && living.getNails() > 0)
+				if(getVictim() instanceof LivingEntityAccessor living && UltraComponents.LIVING.get(living).getNails() > 0)
 				{
 					int explosionTicks = dataTracker.get(EXPLOSION_TICKS);
 					if(explosionTicks == 0)

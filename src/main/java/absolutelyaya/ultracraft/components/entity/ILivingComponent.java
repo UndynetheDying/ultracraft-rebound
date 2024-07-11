@@ -12,4 +12,10 @@ public interface ILivingComponent extends ComponentV3, AutoSyncedComponent
 	boolean isEnraged();
 	
 	void setEnraged(boolean v);
+	
+	int getNails();
+	
+	void setNails(int nails);
+	
+	void incrementNails();
 }

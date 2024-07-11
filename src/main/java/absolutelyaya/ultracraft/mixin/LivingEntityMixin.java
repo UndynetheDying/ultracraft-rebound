@@ -33,15 +33,11 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageTypes;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.tag.FluidTags;
@@ -106,7 +102,6 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	
 	@Shadow protected abstract void consumeItem();
 	
-	private static final TrackedData<Integer> NAILS = DataTracker.registerData(LivingEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	int punchDuration = 60;
 	Supplier<Boolean> canBleedSupplier = () -> true, takePunchKnockpackSupplier = this::isPushable; //TODO: add Sandy Enemies (eventually)
 	int punchTicks, knuckleTicks, ticksSincePunch = Integer.MAX_VALUE, ricochetCooldown, fatique, firecooldown;
@@ -116,12 +111,6 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	public LivingEntityMixin(EntityType<?> type, World world)
 	{
 		super(type, world);
-	}
-	
-	@Inject(method = "initDataTracker", at = @At("TAIL"))
-	void onInitDatatracker(CallbackInfo ci)
-	{
-		dataTracker.startTracking(NAILS, 0);
 	}
 	
 	@Inject(method = "tick", at = @At("HEAD"))
@@ -155,7 +144,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	{
 		lastHealth = getHealth();
 		if(source.getSource() instanceof NailEntity || source.getAttacker() instanceof NailEntity)
-			dataTracker.set(NAILS, dataTracker.get(NAILS) + 1);
+			UltraComponents.LIVING.get(this).incrementNails();
 	}
 	
 	@Inject(method = "damage", at = @At("RETURN"), cancellable = true)
@@ -611,11 +600,5 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	boolean isAffectedByMovementConfig()
 	{
 		return (this instanceof WingedPlayerEntity winged && UltraComponents.WING_DATA.get(winged).isActive()) || (Object)this instanceof V2Entity;
-	}
-	
-	@Override
-	public int getNails()
-	{
-		return dataTracker.get(NAILS);
 	}
 }

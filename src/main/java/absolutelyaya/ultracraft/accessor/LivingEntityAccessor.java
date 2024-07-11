@@ -38,6 +38,4 @@ public interface LivingEntityAccessor
 	boolean isRicochetHittable();
 	
 	void bleed(Vec3d pos, float halfheight, DamageSource source, float amount);
-	
-	int getNails();
 }
