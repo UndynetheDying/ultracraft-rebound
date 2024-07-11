@@ -225,7 +225,7 @@ public class ChainsawEntity extends ProjectileEntity implements GeoEntity, Proje
 						}
 						return getOwner().getLeashPos(delta);
 					}, this::getLeashPos, getUuid(),
-					new Vec2f(0.01f, 0.05f), 0.1f, 0x000000, 1);
+					new Vec2f(0.01f, 0.05f), 0.1f, () -> 0x000000, 1);
 		}
 		UltracraftClient.TRAIL_RENDERER.createTrail(uuid,
 				() -> new Pair<>(getPos().subtract(0f, 0.1f, 0f).toVector3f(), getPos().add(0f, 0.1f, 0f).toVector3f()),

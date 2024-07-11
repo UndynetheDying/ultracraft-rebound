@@ -183,7 +183,7 @@ public class HarpoonEntity extends AbstractSkewerEntity implements IIgnoreSharps
 						}
 						return getOwner().getLeashPos(delta);
 					}, this::getLeashPos, getUuid(),
-					new Vec2f(0.01f, 0.05f), 0.1f, 0x000000, 1);
+					new Vec2f(0.01f, 0.05f), 0.1f, () -> 0x000000, 1);
 		}
 	}
 	

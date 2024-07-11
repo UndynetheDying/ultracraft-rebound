@@ -9,7 +9,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 
 import java.awt.*;
 
@@ -25,9 +27,10 @@ public class HitscanRenderer
 		
 		if(hitscan.isElectic())
 			renderElectricArc(matrices, from, to, camPos, girth, col, RenderLayer.getLightning(), hitscan.getLayers(), (int)(from.getX() * 100f + from.getZ() * 100f));
+		else if(hitscan instanceof ClientHitscanHandler.Connector connector)
+			renderConnector(matrices, connector, camPos, RenderLayer.getGui(), delta);
 		else
-			renderRay(matrices, from, to, camPos, girth, col,
-					(hitscan instanceof ClientHitscanHandler.MovingHitscan ? RenderLayer.getGui() : RenderLayer.getLightning()), hitscan.getLayers());
+			renderRay(matrices, from, to, camPos, girth, col, RenderLayer.getLightning(), hitscan.getLayers());
 	}
 	
 	public static void renderRay(MatrixStack matrices, Vec3d from, Vec3d to, Vec3d camPos, float girth, Color col, RenderLayer layer, int steps)
@@ -107,5 +110,44 @@ public class HitscanRenderer
 		branchTo = branchTo.rotateX(-(float)(Math.atan2(dir.y, Math.sqrt(1 - dir.y * dir.y))) + (rand.nextFloat() * 0.7f - 0.35f) * diversion);
 		branchTo = branchTo.rotateY((float)(-Math.atan2(dir.z, dir.x) - Math.toRadians(90f)) + (rand.nextFloat() * 0.7f - 0.35f) * diversion);
 		return branchTo;
+	}
+	
+	public static void renderConnector(MatrixStack matrices, ClientHitscanHandler.Connector connector, Vec3d camPos, RenderLayer layer, float delta)
+	{
+		Color col = connector.getColor();
+		Vec3d from = connector.getFrom(delta);
+		Vec3d to = connector.getTo(delta);
+		float girth = Math.max(connector.getGirth(), 0f);
+		int steps = connector.getLayers();
+		
+		renderRay(matrices, from, to, camPos, girth, col, layer, steps);
+		
+		if(connector.getSpark() != null && connector.getSparkPos().get() != -1f)
+		{
+			float fullSparkPos = connector.getSparkPos().get() + delta * 0.05f;
+			float partialSparkPos = fullSparkPos % 1f;
+			Vec3d globalSparkPos = from.lerp(to, partialSparkPos).subtract(camPos);
+			
+			VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEffectVertexConsumers();
+			VertexConsumer consumer = immediate.getBuffer(RenderLayer.getEntityTranslucent(connector.getSpark()));
+			matrices.push();
+			matrices.translate(globalSparkPos.x, globalSparkPos.y, globalSparkPos.z);
+			Quaternionf camRot = new Quaternionf(MinecraftClient.getInstance().gameRenderer.getCamera().getRotation());
+			matrices.multiply(camRot.rotateY((float)Math.toRadians(180f)));
+			float rot = (float)Math.floor(fullSparkPos) * 90f;
+			matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(rot));
+			Matrix4f matrix = matrices.peek().getPositionMatrix();
+			Matrix3f normalMatrix = matrices.peek().getNormalMatrix();
+			float sin = -(float)Math.sin(Math.toRadians(rot + 90f)), cos = -(float)Math.cos(Math.toRadians(rot + 90f));
+			consumer.vertex(matrix, -0.33f, -0.33f, 0f).color(255, 255, 255, 255).texture(0f, 1f)
+					.overlay(OverlayTexture.DEFAULT_UV).light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(normalMatrix, sin, cos, 0f).next();
+			consumer.vertex(matrix, 0.33f, -0.33f, 0f).color(255, 255, 255, 255).texture(1f, 1f)
+					.overlay(OverlayTexture.DEFAULT_UV).light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(normalMatrix, sin, cos, 0f).next();
+			consumer.vertex(matrix, 0.33f, 0.33f, 0f).color(255, 255, 255, 255).texture(1f, 0f)
+					.overlay(OverlayTexture.DEFAULT_UV).light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(normalMatrix, sin, cos, 0f).next();
+			consumer.vertex(matrix, -0.33f, 0.33f, 0f).color(255, 255, 255, 255).texture(0f, 0f)
+					.overlay(OverlayTexture.DEFAULT_UV).light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(normalMatrix, sin, cos, 0f).next();
+			matrices.pop();
+		}
 	}
 }

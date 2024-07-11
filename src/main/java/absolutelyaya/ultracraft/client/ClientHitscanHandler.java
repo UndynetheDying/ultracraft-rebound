@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.client.rendering.HitscanRenderer;
 import com.google.common.collect.Queues;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
@@ -12,6 +13,7 @@ import java.awt.*;
 import java.util.Queue;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class ClientHitscanHandler
 {
@@ -30,9 +32,11 @@ public class ClientHitscanHandler
 		added.add(new MovingHitscan(from, to, id, type));
 	}
 	
-	public void addConnector(Function<Float, Vec3d> from, Function<Float, Vec3d> to, UUID id, Vec2f girth, float girthOverDistance, int color, int layers)
+	public Connector addConnector(Function<Float, Vec3d> from, Function<Float, Vec3d> to, UUID id, Vec2f girth, float girthOverDistance, Supplier<Integer> color, int layers)
 	{
-		added.add(new Connector(from, to, id, girth, girthOverDistance, color, layers));
+		Connector connector = new Connector(from, to, id, girth, girthOverDistance, color, layers);
+		added.add(connector);
+		return connector;
 	}
 	
 	public void removeMoving(UUID id)
@@ -214,14 +218,16 @@ public class ClientHitscanHandler
 		final int layers;
 		final Vec2f girth;
 		final float girthOverDistance;
-		final Color color;
+		final Supplier<Integer> color;
+		Identifier spark;
+		Supplier<Float> sparkPos;
 		
-		public Connector(Function<Float, Vec3d> from, Function<Float, Vec3d> to, UUID id, Vec2f girth, float girthOverDistance, int color, int layers)
+		public Connector(Function<Float, Vec3d> from, Function<Float, Vec3d> to, UUID id, Vec2f girth, float girthOverDistance, Supplier<Integer> color, int layers)
 		{
 			super(from, to, id, (byte)0);
 			this.girth = girth;
 			this.girthOverDistance = girthOverDistance;
-			this.color = new Color(color);
+			this.color = color;
 			this.layers = layers;
 		}
 		
@@ -234,13 +240,30 @@ public class ClientHitscanHandler
 		@Override
 		public Color getColor()
 		{
-			return color;
+			return new Color(color.get());
 		}
 		
 		@Override
 		public int getLayers()
 		{
 			return layers;
+		}
+		
+		public Connector setSpark(Identifier tex, Supplier<Float> posSupplier)
+		{
+			spark = tex;
+			sparkPos = posSupplier;
+			return this;
+		}
+		
+		public Identifier getSpark()
+		{
+			return spark;
+		}
+		
+		public Supplier<Float> getSparkPos()
+		{
+			return sparkPos;
 		}
 	}
 }

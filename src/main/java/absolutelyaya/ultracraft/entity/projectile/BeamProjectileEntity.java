@@ -62,7 +62,7 @@ public class BeamProjectileEntity extends ProjectileEntity
 		startPos = getPos();
 		ClientHitscanHandler.Hitscan.HitscanType type = ClientHitscanHandler.Hitscan.HitscanType.values()[dataTracker.get(HITSCAN_TYPE)];
 		UltracraftClient.HITSCAN_HANDLER.addConnector(f -> getStartPos().equals(Vec3d.ZERO) ? getLerpedPos(f) : getStartPos(), this::getLerpedPos, getUuid(),
-				new Vec2f(type.startGirth, 0f), 0f, type.color, 3);
+				new Vec2f(type.startGirth, 0f), 0f, () -> type.color, 3);
 	}
 	
 	@Override

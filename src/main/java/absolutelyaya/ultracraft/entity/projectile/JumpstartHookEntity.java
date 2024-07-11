@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.entity.projectile;
 
 import absolutelyaya.ultracraft.ExplosionHandler;
 import absolutelyaya.ultracraft.ServerHitscanHandler;
+import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.IParriable;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
@@ -12,6 +13,7 @@ import absolutelyaya.ultracraft.registry.BlockRegistry;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
+import absolutelyaya.ultracraft.util.ColorUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -29,6 +31,7 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.joml.Vector3f;
 
 public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpshooter, IParriable
 {
@@ -190,6 +193,13 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 		return getDistance() / MAX_DISTANCE;
 	}
 	
+	public int getConnectorColor()
+	{
+		if(getOwner() == null)
+			return 0x000000;
+		return ColorUtil.getAsHex(new Vector3f().lerp(new Vector3f(0.4f, 0f, 0f), Math.min(distanceTo(getOwner()) / MAX_DISTANCE, 1f)));
+	}
+	
 	@Override
 	public void onSpawnPacket(EntitySpawnS2CPacket packet)
 	{
@@ -204,7 +214,8 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 						}
 						return getOwner().getLeashPos(delta);
 					}, this::getLeashPos, getUuid(),
-					new Vec2f(0.01f, 0.05f), 0.1f, 0x000000, 1);
+					new Vec2f(0.01f, 0.05f), 0.1f, this::getConnectorColor, 1)
+					.setSpark(Ultracraft.texIdentifier("textures/misc/spark"), () -> dataTracker.get(CHARGE) == 0 ? -1f : ((dataTracker.get(CHARGE) / 25f) * (age / 20f)));
 		}
 	}
 	
