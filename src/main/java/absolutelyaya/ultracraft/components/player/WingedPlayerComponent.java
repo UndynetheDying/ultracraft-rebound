@@ -299,6 +299,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	public void setHook(JumpstartHookEntity hook)
 	{
 		this.hook = hook;
+		UltraComponents.WINGED.sync(provider);
 	}
 	
 	@Override

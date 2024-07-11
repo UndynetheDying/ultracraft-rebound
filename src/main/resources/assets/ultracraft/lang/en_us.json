@@ -785,6 +785,10 @@
   "screen.ultracraft.credits.music": "Composers:",
   "screen.ultracraft.credits.supporter-info": "If you're a Supporter (<- certified cool person) of Absolutelyaya on Ko-fi, but are missing from the list, or would like to be hidden, please contact me (<- yaya) so I can add you to the list // hide you. (<- this is done manually)\nBoth Past and Present Supporters may be listed here; I greatly appreciate all of you <3",
   "screen.ultracraft.pause.exitLevel": "Exit Ultracraft Level",
+  "screen.ultracraft.jumpstart-nailgun-hud.recharging": "RECHARGING...",
+  "screen.ultracraft.jumpstart-nailgun-hud.ready": "READY",
+  "screen.ultracraft.jumpstart-nailgun-hud.distance": "DISTANCE: %s",
+  "screen.ultracraft.jumpstart-nailgun-hud.no-target": "NO TARGET",
 
   "level.ultracraft.error.title": "Invalid ID",
   "level.ultracraft.error.description": "The ID for this buttons level wasn't found. This shouldn't really ever happen.",

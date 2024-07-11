@@ -36,6 +36,7 @@
   - Normally all weapons are equipped by default, the unobtained ones just were skipped when switching weapons; newly added weapons weren't in previously saved loadouts though, revealing this issue
 - Added `sprite-override` Attribute to UltraRecipes
 - Fixed a minor issue with Malicious Faces rotation
+- Kinda fixed transparency layering issues (only works with `Fabulous!` graphics enabled)
 ## Edit Mode Changes
 - Added `noAI` Attribute to spawn listeners
 ## Resource Changes

@@ -32,12 +32,11 @@ import net.minecraft.world.World;
 
 public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpshooter, IParriable
 {
+	public static final float MAX_DISTANCE = 8f;
 	protected static final TrackedData<Integer> VICTIM = DataTracker.registerData(JumpstartHookEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Integer> CHARGE = DataTracker.registerData(JumpstartHookEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Integer> STRESS = DataTracker.registerData(JumpstartHookEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Integer> EXPLOSION_TICKS = DataTracker.registerData(JumpstartHookEntity.class, TrackedDataHandlerRegistry.INTEGER);
-	
-	final float maxDistance = 8f;
 	
 	public JumpstartHookEntity(EntityType<? extends ThrownEntity> entityType, World world)
 	{
@@ -124,7 +123,7 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 		float distance = distanceTo(getOwner());
 		if(hasVictim && !getWorld().isClient)
 		{
-			if(distance > maxDistance && dataTracker.get(EXPLOSION_TICKS) == 0)
+			if(distance > MAX_DISTANCE && dataTracker.get(EXPLOSION_TICKS) == 0)
 			{
 				int stress = dataTracker.get(STRESS);
 				dataTracker.set(STRESS, stress + 1);
@@ -132,7 +131,8 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 					kill();
 			}
 			int charge = dataTracker.get(CHARGE);
-			dataTracker.set(CHARGE, charge + 1);
+			if(charge < 100)
+				dataTracker.set(CHARGE, charge + 1);
 			if(charge >= 100)
 			{
 				if(getVictim() instanceof LivingEntityAccessor living && UltraComponents.LIVING.get(living).getNails() > 0)
@@ -164,13 +164,30 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 				}
 			}
 		}
-		if(!hasVictim && distance >= maxDistance)
+		if(!hasVictim && distance >= MAX_DISTANCE)
 		{
-			setPosition(getOwner().getPos().add(getPos().subtract(getOwner().getPos()).normalize().multiply(Math.max(maxDistance, 0f)))
+			setPosition(getOwner().getPos().add(getPos().subtract(getOwner().getPos()).normalize().multiply(Math.max(MAX_DISTANCE, 0f)))
 								.subtract(0f, getGravity(), 0f));
 			setVelocity(new Vec3d(0f, Math.max(getVelocity().y, 0f), 0f));
 		}
 		super.tick();
+	}
+	
+	public float getChargePercent()
+	{
+		return dataTracker.get(CHARGE) / 100f;
+	}
+	
+	public float getDistance()
+	{
+		if(owner == null)
+			return 0f;
+		return distanceTo(owner);
+	}
+	
+	public float getDistancePercent()
+	{
+		return getDistance() / MAX_DISTANCE;
 	}
 	
 	@Override
@@ -189,6 +206,14 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 					}, this::getLeashPos, getUuid(),
 					new Vec2f(0.01f, 0.05f), 0.1f, 0x000000, 1);
 		}
+	}
+	
+	@Override
+	public void kill()
+	{
+		super.kill();
+		if(getOwner() instanceof PlayerEntity)
+			UltraComponents.WINGED.get(getOwner()).setHook(null);
 	}
 	
 	@Override
