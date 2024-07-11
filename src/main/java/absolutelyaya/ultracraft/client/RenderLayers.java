@@ -59,14 +59,14 @@ public class RenderLayers extends RenderLayer
 		RenderLayer.MultiPhaseParameters multiPhaseParameters =
 				RenderLayer.MultiPhaseParameters.builder().program(BEACON_BEAM_PROGRAM)
 						.texture(new Texture(texture, false, false)).transparency(LIGHTNING_TRANSPARENCY)
-						.writeMaskState(ALL_MASK).cull(DISABLE_CULLING).build(false);
+						.writeMaskState(ALL_MASK).cull(DISABLE_CULLING).target(RenderPhase.WEATHER_TARGET).build(false);
 		return RenderLayer.of("shockwave", VertexFormats.POSITION_COLOR_TEXTURE, VertexFormat.DrawMode.QUADS, 256, false, true, multiPhaseParameters);
 	});
 	
 	private static final Supplier<RenderLayer> LIGHT_TRAIL = (() -> {
 		RenderLayer.MultiPhaseParameters multiPhaseParameters =
 				RenderLayer.MultiPhaseParameters.builder().program(LIGHTNING_PROGRAM).layering(VIEW_OFFSET_Z_LAYERING)
-						.transparency(RenderPhase.LIGHTNING_TRANSPARENCY).writeMaskState(ALL_MASK).cull(DISABLE_CULLING).build(false);
+						.transparency(RenderPhase.LIGHTNING_TRANSPARENCY).writeMaskState(ALL_MASK).cull(DISABLE_CULLING).target(RenderPhase.WEATHER_TARGET).build(false);
 		return RenderLayer.of("light_trail", VertexFormats.POSITION_COLOR, VertexFormat.DrawMode.QUADS, 256, false, true, multiPhaseParameters);
 	});
 	
@@ -82,13 +82,13 @@ public class RenderLayers extends RenderLayer
 		RenderLayer.MultiPhaseParameters multiPhaseParameters =
 				RenderLayer.MultiPhaseParameters.builder().program(POSITION_COLOR_TEXTURE_PROGRAM)
 						.texture(new Texture(texture, false, false)).transparency(RenderPhase.TRANSLUCENT_TRANSPARENCY)
-						.writeMaskState(ALL_MASK).build(false);
+						.writeMaskState(ALL_MASK).target(RenderPhase.WEATHER_TARGET).build(false);
 		return of("gui_texture", VertexFormats.POSITION_COLOR_TEXTURE, VertexFormat.DrawMode.QUADS, 256, multiPhaseParameters);
 	});
 	
 	static {
 		FLESH = of("flesh", VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL, VertexFormat.DrawMode.QUADS, 2048, true, false, RenderLayer.MultiPhaseParameters.builder().program(new ShaderProgram(UltracraftClient::getFleshProgram)).texture(RenderPhase.BLOCK_ATLAS_TEXTURE).lightmap(ENABLE_LIGHTMAP).build(true));
 		for (int i = 0; i < SkyBlockEntity.SkyType.values().length; i++)
-			SKIES.add(of("sky", VertexFormats.POSITION, VertexFormat.DrawMode.QUADS, 2048, true, false, RenderLayer.MultiPhaseParameters.builder().program(new ShaderProgram(UltracraftClient::getSkyProgram)).build(true)));
+			SKIES.add(of("sky", VertexFormats.POSITION, VertexFormat.DrawMode.QUADS, 2048, true, false, RenderLayer.MultiPhaseParameters.builder().program(new ShaderProgram(UltracraftClient::getSkyProgram)).target(RenderPhase.MAIN_TARGET).build(true)));
 	}
 }

@@ -1070,7 +1070,7 @@
 
   "text.autoconfig.ultracraft.option.trailParticles": "Trails as particles",
   "text.autoconfig.ultracraft.option.trailParticles.@Tooltip[0]": "Renders Trails using particles instead of the Trail renderer.",
-  "text.autoconfig.ultracraft.option.trailParticles.@Tooltip[1]": "Disabling this will currently lead to Transparency Layering issues!",
+  "text.autoconfig.ultracraft.option.trailParticles.@Tooltip[1]": "'Fabulous!' fix transparency issues caused by disabling this.",
 
   "text.autoconfig.ultracraft.option.bloodOverlay": "Blood Overlay",
   "text.autoconfig.ultracraft.option.bloodOverlay.@Tooltip": "If you get splashed with a LOT of blood, it might cover your screen a bit.",
