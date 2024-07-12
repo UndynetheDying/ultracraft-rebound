@@ -237,9 +237,11 @@ public class WeaponsTab extends Tab
 						craftButton.setLabel(Text.translatable("terminal.held").getString());
 					else if (!isResultItemInLoadout(loadout))
 						craftButton.setLabel(Text.translatable("terminal.not-equipped").getString());
+					else
+						craftButton.setLabel(Text.translatable("terminal.dispense").getString());
 				}
 				else
-					craftButton.setLabel(Text.translatable("terminal." + (progression.isOwned(weaponId) ? "dispense" : "craft")).getString());
+					craftButton.setLabel(Text.translatable("terminal.craft").getString());
 			}
 		}
 		boolean clickable = selectedRecipe != null && !(loadout.isWeaponTypeHeld(selectedCategory) && progression.isOwned(weaponId)) && isResultItemInLoadout(loadout);
