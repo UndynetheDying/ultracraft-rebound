@@ -37,6 +37,8 @@
 - Added `sprite-override` Attribute to UltraRecipes
 - Fixed a minor issue with Malicious Faces rotation
 - Kinda fixed transparency layering issues (only works with `Fabulous!` graphics enabled)
+- Fixed an issue that caused the music in limbo1 to switch back to `Mirage of Paradise` when it shouldn't
+- Added Hyacinth and//or Butterflies to old Limbo Levels
 ## Edit Mode Changes
 - Added `noAI` Attribute to spawn listeners
 ## Resource Changes

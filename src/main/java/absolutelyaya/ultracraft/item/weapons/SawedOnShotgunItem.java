@@ -80,7 +80,7 @@ public class SawedOnShotgunItem extends AbstractShotgunItem
 		user.setCurrentHand(hand);
 		if(!world.isClient)
 		{
-			if(stack.hasNbt() && !stack.getNbt().contains("charging"))
+			if(!stack.getOrCreateNbt().contains("charging"))
 			{
 				stack.getOrCreateNbt().putBoolean("charging", true);
 				triggerAnim(user, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), shouldFlip(user) ? "sawStartFlip" : "sawStart");
@@ -94,7 +94,7 @@ public class SawedOnShotgunItem extends AbstractShotgunItem
 	{
 		super.inventoryTick(stack, world, entity, slot, selected);
 		selected = isMainHandstack(stack, entity);
-		if(stack.getNbt().contains("charging"))
+		if(stack.getOrCreateNbt().contains("charging"))
 		{
 			if(!selected && stack.hasNbt())
 			{
@@ -291,5 +291,11 @@ public class SawedOnShotgunItem extends AbstractShotgunItem
 	{
 		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		return super.shouldShowCooldown(stack) || !cdm.isUsable(getCooldownClass(stack), GunCooldownManager.SECONDARY);
+	}
+	
+	@Override
+	protected int getNbtDefault(String nbt)
+	{
+		return super.getNbtDefault(nbt);
 	}
 }
