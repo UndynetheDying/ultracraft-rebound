@@ -119,7 +119,7 @@ public class WeaponInfoHUD
 				if(hit instanceof EntityHitResult eHit && !hit.getType().equals(HitResult.Type.MISS) && eHit.getEntity() instanceof LivingEntity)
 				{
 					text = Text.translatable("screen.ultracraft.jumpstart-nailgun-hud.ready");
-					distancePercent = Math.min(player.distanceTo(eHit.getEntity()) / JumpstartHookEntity.MAX_DISTANCE, 1f);
+					distancePercent = Math.min(player.distanceTo(eHit.getEntity()) / (JumpstartHookEntity.MAX_DISTANCE + 0.1f), 1f);
 				}
 				else
 					text = Text.translatable("screen.ultracraft.jumpstart-nailgun-hud.no-target");

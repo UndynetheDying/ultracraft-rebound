@@ -14,6 +14,10 @@ import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import absolutelyaya.ultracraft.util.ColorUtil;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.EndGatewayBlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -21,6 +25,7 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.entity.projectile.thrown.ThrownEntity;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.particle.BlockStateParticleEffect;
@@ -28,9 +33,13 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.event.GameEvent;
 import org.joml.Vector3f;
 
 public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpshooter, IParriable
@@ -94,7 +103,8 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 	{
 		if(getVictim() == null)
 		{
-			kill();
+			if(!getWorld().isClient)
+				kill();
 			return true;
 		}
 		else
@@ -120,60 +130,86 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 		}
 		if(getOwner() == null)
 		{
-			super.tick();
+			tickMovement();
 			return;
 		}
 		float distance = distanceTo(getOwner());
-		if(hasVictim && !getWorld().isClient)
+		if(!getWorld().isClient)
 		{
-			if(distance > MAX_DISTANCE && dataTracker.get(EXPLOSION_TICKS) == 0)
+			if(distance > MAX_DISTANCE + 0.1f && dataTracker.get(EXPLOSION_TICKS) == 0)
 			{
 				int stress = dataTracker.get(STRESS);
 				dataTracker.set(STRESS, stress + 1);
 				if(stress + 1 >= 20)
 					kill();
 			}
-			int charge = dataTracker.get(CHARGE);
-			if(charge < 100)
-				dataTracker.set(CHARGE, charge + 1);
-			if(charge >= 100)
+			else if(hasVictim)
 			{
-				if(getVictim() instanceof LivingEntityAccessor living && UltraComponents.LIVING.get(living).getNails() > 0)
+				int charge = dataTracker.get(CHARGE);
+				if(charge < 100)
+					dataTracker.set(CHARGE, charge + 1);
+				if(charge >= 100)
 				{
-					int explosionTicks = dataTracker.get(EXPLOSION_TICKS);
-					if(explosionTicks == 0)
+					if(getVictim() instanceof LivingEntityAccessor living && UltraComponents.LIVING.get(living).getNails() > 0)
 					{
-						ExplosionHandler.explosion(getVictim(), getWorld(), getVictim().getPos(), DamageSources.get(getWorld(), DamageSources.EXPLOSION), 0.001f, 0f, 0.01f, false);
-						getVictim().addVelocity(new Vec3d(0f, 1.5f, 0f));
-						UltraComponents.WINGED.get(getOwner()).getGunCooldownManager().setCooldown(ItemRegistry.JUMPSTART_NAILGUN, 100, GunCooldownManager.SECONDARY);
+						int explosionTicks = dataTracker.get(EXPLOSION_TICKS);
+						if(explosionTicks == 0)
+						{
+							ExplosionHandler.explosion(getVictim(), getWorld(), getVictim().getPos(), DamageSources.get(getWorld(), DamageSources.EXPLOSION), 0.001f, 0f, 0.01f, false);
+							getVictim().addVelocity(new Vec3d(0f, 1.5f, 0f));
+							UltraComponents.WINGED.get(getOwner()).getGunCooldownManager().setCooldown(ItemRegistry.JUMPSTART_NAILGUN, 100, GunCooldownManager.SECONDARY);
+						}
+						else if(explosionTicks == 10)
+						{
+							getWorld().getOtherEntities(this,
+									getBoundingBox().expand(10f), e -> e != getOwner() && (getOwner() != null && !getOwner().isTeammate(e))).forEach(e -> {
+								ServerHitscanHandler.sendPacket((ServerWorld) getWorld(), getPos().addRandom(random, 0.1f),
+										e.getPos().add(0f, e.getHeight() / 2f, 0f), ServerHitscanHandler.JUMPSTART_ARC);
+								e.damage(DamageSources.get(getWorld(), DamageSources.JUMPSTART, getOwner()), 10);
+							});
+							kill();
+						}
+						dataTracker.set(EXPLOSION_TICKS, explosionTicks + 1);
 					}
-					else if(explosionTicks == 10)
+					else
 					{
-						getWorld().getOtherEntities(this,
-								getBoundingBox().expand(10f), e -> e != getOwner() && (getOwner() != null && !getOwner().isTeammate(e))).forEach(e -> {
-									ServerHitscanHandler.sendPacket((ServerWorld) getWorld(), getPos().addRandom(random, 0.1f),
-											e.getPos().add(0f, e.getHeight() / 2f, 0f), ServerHitscanHandler.JUMPSTART_ARC);
-									e.damage(DamageSources.get(getWorld(), DamageSources.JUMPSTART, getOwner()), 10);
-								});
+						UltraComponents.WINGED.get(getOwner()).getGunCooldownManager().setCooldown(ItemRegistry.JUMPSTART_NAILGUN, 100, GunCooldownManager.SECONDARY);
+						getVictim().damage(DamageSources.get(getWorld(), DamageSources.JUMPSTART, getOwner()), 20);
 						kill();
 					}
-					dataTracker.set(EXPLOSION_TICKS, explosionTicks + 1);
-				}
-				else
-				{
-					UltraComponents.WINGED.get(getOwner()).getGunCooldownManager().setCooldown(ItemRegistry.JUMPSTART_NAILGUN, 100, GunCooldownManager.SECONDARY);
-					getVictim().damage(DamageSources.get(getWorld(), DamageSources.JUMPSTART, getOwner()), 20);
-					kill();
 				}
 			}
 		}
-		if(!hasVictim && distance >= MAX_DISTANCE)
+		tickMovement();
+	}
+	
+	void tickMovement()
+	{
+		Vec3d vel = getVelocity();
+		prevX = getX();
+		prevY = getY();
+		prevZ = getZ();
+		
+		if(getOwner() != null && distanceTo(getOwner()) >= MAX_DISTANCE && getVictim() == null)
 		{
-			setPosition(getOwner().getPos().add(getPos().subtract(getOwner().getPos()).normalize().multiply(Math.max(MAX_DISTANCE, 0f)))
-								.subtract(0f, getGravity(), 0f));
-			setVelocity(new Vec3d(0f, Math.max(getVelocity().y, 0f), 0f));
+			vel = new Vec3d(vel.x, Math.min(vel.y, 0f), vel.z);
+			Vec3d delta = getPos().add(vel).subtract(getOwner().getPos());
+			Vec3d dir = delta.normalize();
+			
+			float distance = distanceTo(getOwner());
+			Vec3d dest = getOwner().getPos().add(dir.multiply(Math.min(distance, MAX_DISTANCE)));
+			if(delta.y < 0f)
+				setPos(dest.x, dest.y, dest.z);
+			else
+				setPos(dest.x, getPos().y + vel.y, dest.z);
+			if(dir.y < 0f)
+				vel = vel.multiply(1f - Math.abs(dir.x), 1f - Math.abs(dir.y), 1f - Math.abs(dir.z)).add(dir.multiply(-distance * 0.05f, 0f, -distance * 0.05f));
+			else
+				vel = vel.multiply(0f, 1f - Math.abs(dir.y), 0f);
+			setVelocity(vel.subtract(vel.x * 0.05f, getGravity(), vel.z * 0.05f));;
 		}
-		super.tick();
+		else
+			super.tick();
 	}
 	
 	public float getChargePercent()
@@ -190,7 +226,7 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 	
 	public float getDistancePercent()
 	{
-		return getDistance() / MAX_DISTANCE;
+		return getDistance() / (MAX_DISTANCE + 0.1f);
 	}
 	
 	public int getConnectorColor()
