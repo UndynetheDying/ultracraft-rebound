@@ -49,6 +49,12 @@ public class FadingMusicInstance extends PositionedSoundInstance implements Tick
 			fadingIn = false;
 	}
 	
+	public void skipFadein()
+	{
+		fadingIn = false;
+		fadeInVolume = 1f;
+	}
+	
 	public void startFadeout()
 	{
 		fadingIn = false;

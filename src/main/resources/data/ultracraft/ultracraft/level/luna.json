@@ -1,7 +1,6 @@
 {
   "builtin": true,
-  "title": "Clair de Lune",
-  "description": "Tales say that the moon bewitches man, yet in reality, it is the man that despairs at the moon.",
+  "title": "level.ultracraft.1-3",
   "author": "yaya",
   "structure": "ultracraft:limbo/ruin1",
   "thumbnail": "ultracraft:textures/level/err.png",
@@ -10,6 +9,16 @@
     "y": 8,
     "z": 9
   },
-  "unimplemented": true,
-  "version": 1
+  "music": {
+    "main": {
+      "calm": "ultracraft:music.limbo2_calm",
+      "combat": "ultracraft:music.limbo2"
+    },
+    "versus": {
+      "calm": "ultracraft:music.versus",
+      "combat": "ultracraft:music.versus",
+      "intro": "ultracraft:music.versus.intro"
+    }
+  },
+  "version": 2
 }

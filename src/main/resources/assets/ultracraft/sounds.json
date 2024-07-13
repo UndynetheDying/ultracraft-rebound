@@ -627,6 +627,11 @@
       "ultracraft:music/aavanitro/versus"
     ]
   },
+  "music.versus.intro": {
+    "sounds": [
+      "ultracraft:music/aavanitro/versus_intro"
+    ]
+  },
   "music.efefski_cybergrind": {
     "sounds": [
       "ultracraft:music/efefski/cybergrind"

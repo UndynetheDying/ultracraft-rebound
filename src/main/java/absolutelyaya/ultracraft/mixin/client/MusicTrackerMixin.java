@@ -12,6 +12,7 @@ import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.*;
 import net.minecraft.sound.MusicSound;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -27,9 +28,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MusicTrackerMixin
 {
 	Identifier curLevelMusic;
-	ModularMusicInstance calm, fight;
+	ModularMusicInstance calm, combat;
 	FadingMusicInstance cybergrind;
+	PositionedSoundInstance intro;
 	float action, minAction;
+	boolean playingIntro;
 	
 	@Shadow @Final private MinecraftClient client;
 	
@@ -92,30 +95,48 @@ public abstract class MusicTrackerMixin
 		}
 		if (current != null) //stop any vanilla music
 			stop();
-		if(curLevelMusic == null || !curLevelMusic.equals(level))
+		if((curLevelMusic == null || !curLevelMusic.equals(level)))
 		{
-			if(music.getCalmSound() != null)
-				calm = playModular(music.getCalmSound());
-			if(music.getCombatSound() != null)
-				fight = playModular(music.getCombatSound());
-			if(calm == null && fight != null)
-				fight.setVolume(1f);
-			curLevelMusic = level;
-			action = minAction = 0f;
+			if(music.isHasIntro() && !playingIntro)
+			{
+				intro = new PositionedSoundInstance(music.getIntroSound().getId(), SoundCategory.MUSIC, 1f, 1f, SoundInstance.createRandom(), false,
+						0, SoundInstance.AttenuationType.NONE, 0.0, 0.0, 0.0, true);
+				client.getSoundManager().play(intro);
+				playingIntro = true;
+			}
+			if(!music.isHasIntro() || (music.isHasIntro() && !client.getSoundManager().isPlaying(intro)))
+			{
+				if(music.getCalmSound() != null)
+					calm = playModular(music.getCalmSound());
+				if(music.getCombatSound() != null)
+					combat = playModular(music.getCombatSound());
+				if(calm == null && combat != null)
+					combat.setVolume(1f);
+				action = minAction = 0f;
+				curLevelMusic = level;
+				if(playingIntro)
+				{
+					if(calm != null)
+						calm.skipFadein();
+					if(combat != null)
+						combat.skipFadein();
+					playingIntro = false;
+				}
+			}
 		}
-		else if(calm != null && fight != null)
+		else if(calm != null && combat != null)
 		{
 			action = MathHelper.clamp(action + (levelStats.isInCombat() ? 0.05f : -0.05f) * UltracraftClient.getDeltaTime() *
 													   UltracraftClient.getConfig().musicTransitionSpeed, 0f, 2.5f);
 			if(music.isNoCalmdown())
 				minAction = action = Math.max(action, minAction);
 			calm.setVolume(1f - Math.min(action, 1f));
-			fight.setVolume(Math.min(action, 1f));
+			combat.setVolume(Math.min(action, 1f));
 		}
 		if(calm != null && !client.getSoundManager().isPlaying(calm))
 			client.getSoundManager().play(calm);
-		if(fight != null && !client.getSoundManager().isPlaying(fight))
-			client.getSoundManager().play(fight);
+		if(combat != null && !client.getSoundManager().isPlaying(combat))
+			client.getSoundManager().play(combat);
 	}
 	
 	ModularMusicInstance playModular(SoundEvent sound)
@@ -138,13 +159,13 @@ public abstract class MusicTrackerMixin
 				calm.startFadeout();
 			calm = null;
 		}
-		if(fight != null)
+		if(combat != null)
 		{
 			if(!fade)
-				client.getSoundManager().stop(fight);
+				client.getSoundManager().stop(combat);
 			else
-				fight.startFadeout();
-			fight = null;
+				combat.startFadeout();
+			combat = null;
 		}
 		curLevelMusic = null;
 	}

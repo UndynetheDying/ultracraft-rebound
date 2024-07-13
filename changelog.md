@@ -8,6 +8,8 @@
   - The Glitch visuals still appear, but it's random now
 - Removed Proximity Blockstate from Cerberus Block
   - Proximity triggered Cerberi now use the nbt tag `proximity` instead
+- Added `intro` Attribute to level music data
+  - This allows setting an intro sound played before the actual track starts
 - Added Flipped state to Cerberus Block
 - Added `sacrificial` nbt tag to Pedestals
 - Fixed Fall Damage not working correctly for Players

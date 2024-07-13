@@ -120,7 +120,7 @@ public class LevelDataManager extends JsonDataLoader
 				JsonObject music = json.getAsJsonObject("music");
 				for (Map.Entry<String, JsonElement> entry : music.entrySet())
 				{
-					Identifier calm = null, combat = null;
+					Identifier calm = null, combat = null, intro = null;
 					int combatThreshold = 0;
 					boolean noCalmdown = false;
 					JsonObject elementt = entry.getValue().getAsJsonObject();
@@ -128,11 +128,13 @@ public class LevelDataManager extends JsonDataLoader
 						calm = Identifier.tryParse(JsonHelper.getString(elementt, "calm"));
 					if(elementt.has("combat"))
 						combat = Identifier.tryParse(JsonHelper.getString(elementt, "combat"));
+					if(elementt.has("intro"))
+						intro = Identifier.tryParse(JsonHelper.getString(elementt, "intro"));
 					if(elementt.has("combat-threshold"))
 						combatThreshold = JsonHelper.getInt(elementt, "combat-threshold");
 					if(elementt.has("no-calmdown"))
 						noCalmdown = JsonHelper.getBoolean(elementt, "no-calmdown");
-					level.putMusic(entry.getKey(), calm, combat, combatThreshold, noCalmdown);
+					level.putMusic(entry.getKey(), calm, combat, intro, combatThreshold, noCalmdown);
 				}
 			}
 			if(json.has("unimplemented"))
