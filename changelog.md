@@ -4,6 +4,7 @@
 - Added Jumpstart Nailgun
 - Added new ████
 - Added Hank
+- Added new varians of Stained Glass Windows
 - Removed "glitched" Blockstate from Fake Leaves
   - The Glitch visuals still appear, but it's random now
 - Removed Proximity Blockstate from Cerberus Block

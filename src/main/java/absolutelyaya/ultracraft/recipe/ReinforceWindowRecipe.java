@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.recipe;
 
+import absolutelyaya.ultracraft.entity.other.StainedGlassWindow;
 import absolutelyaya.ultracraft.item.StainedGlassWindowItem;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import com.google.gson.JsonObject;
@@ -51,7 +52,7 @@ public class ReinforceWindowRecipe extends AbstractNbtResultRecipe
 				throw new JsonSyntaxException("Invalid output count: " + i);
 			Item item = JsonHelper.getItem(json, "item", ItemRegistry.STAINED_GLASS_WINDOW);
 			if(item instanceof StainedGlassWindowItem)
-				return StainedGlassWindowItem.getStack(reinforced);
+				return StainedGlassWindowItem.getStack(reinforced, StainedGlassWindow.Variant.DOVE);
 			else
 				throw new JsonSyntaxException("Not a StainedGlassWindowItem: " + item);
 		}

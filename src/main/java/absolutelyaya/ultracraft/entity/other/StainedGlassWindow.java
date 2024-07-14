@@ -1,9 +1,9 @@
 package absolutelyaya.ultracraft.entity.other;
 
+import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.entity.projectile.IIgnoreSharpshooter;
 import absolutelyaya.ultracraft.item.StainedGlassWindowItem;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
-import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -20,6 +20,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -31,15 +32,17 @@ public class StainedGlassWindow extends AbstractDecorationEntity implements IIgn
 {
 	protected static final TrackedData<Boolean> REINFORCED = DataTracker.registerData(StainedGlassWindow.class, TrackedDataHandlerRegistry.BOOLEAN);
 	protected static final TrackedData<Boolean> NO_DROP = DataTracker.registerData(StainedGlassWindow.class, TrackedDataHandlerRegistry.BOOLEAN);
+	protected static final TrackedData<Byte> VARIANT = DataTracker.registerData(StainedGlassWindow.class, TrackedDataHandlerRegistry.BYTE);
 	
 	public StainedGlassWindow(EntityType<? extends AbstractDecorationEntity> entityType, World world)
 	{
 		super(entityType, world);
 	}
 	
-	private StainedGlassWindow(World world, BlockPos pos)
+	private StainedGlassWindow(World world, BlockPos pos, Variant variant)
 	{
 		super(EntityRegistry.STAINED_GLASS_WINDOW, world, pos);
+		setVariant(variant);
 	}
 	
 	@Override
@@ -48,27 +51,52 @@ public class StainedGlassWindow extends AbstractDecorationEntity implements IIgn
 		super.initDataTracker();
 		dataTracker.startTracking(REINFORCED, false);
 		dataTracker.startTracking(NO_DROP, false);
+		dataTracker.startTracking(VARIANT, (byte)Variant.DOVE.ordinal());
 	}
 	
-	public static StainedGlassWindow place(World world, BlockPos pos, Direction facing)
+	@Override
+	public void onTrackedDataSet(TrackedData<?> data)
 	{
-		StainedGlassWindow window = new StainedGlassWindow(world, pos);
+		super.onTrackedDataSet(data);
+		if (VARIANT.equals(data))
+			this.updateAttachmentPosition();
+	}
+	
+	public static StainedGlassWindow place(World world, BlockPos pos, Direction facing, Variant variant)
+	{
+		StainedGlassWindow window = new StainedGlassWindow(world, pos, variant);
 		window.setFacing(facing);
+		window.setVariant(variant);
 		if(!window.canStayAttached())
 			return null;
 		return window;
 	}
 	
+	Variant getVariant()
+	{
+		return Variant.values()[dataTracker.get(VARIANT) % Variant.values().length];
+	}
+	
+	public void setVariant(Variant variant)
+	{
+		dataTracker.set(VARIANT, (byte)variant.ordinal());
+	}
+	
+	public Identifier getTexture()
+	{
+		return getVariant().texture;
+	}
+	
 	@Override
 	public int getWidthPixels()
 	{
-		return 32;
+		return getVariant().width;
 	}
 	
 	@Override
 	public int getHeightPixels()
 	{
-		return 48;
+		return getVariant().height;
 	}
 	
 	@Override
@@ -86,7 +114,7 @@ public class StainedGlassWindow extends AbstractDecorationEntity implements IIgn
 		if((entity instanceof PlayerEntity player && player.isCreative()) || !getWorld().getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS) ||
 				   dataTracker.get(NO_DROP))
 			return;
-		dropStack(StainedGlassWindowItem.getStack(dataTracker.get(REINFORCED)));
+		dropStack(StainedGlassWindowItem.getStack(dataTracker.get(REINFORCED), getVariant()));
 	}
 	
 	@Override
@@ -99,7 +127,7 @@ public class StainedGlassWindow extends AbstractDecorationEntity implements IIgn
 	@Override
 	public ItemStack getPickBlockStack()
 	{
-		return ItemRegistry.STAINED_GLASS_WINDOW.getDefaultStack();
+		return StainedGlassWindowItem.getStack(dataTracker.get(REINFORCED), getVariant());
 	}
 	
 	@Override
@@ -143,6 +171,8 @@ public class StainedGlassWindow extends AbstractDecorationEntity implements IIgn
 			dataTracker.set(NO_DROP, nbt.getBoolean("noDrop"));
 		if(nbt.contains("facing", NbtElement.BYTE_TYPE))
 			setFacing(Direction.fromHorizontal(nbt.getByte("facing")));
+		if(nbt.contains("variant", NbtElement.BYTE_TYPE))
+			setVariant(Variant.values()[nbt.getByte("variant") % Variant.values().length]);
 	}
 	
 	@Override
@@ -151,6 +181,7 @@ public class StainedGlassWindow extends AbstractDecorationEntity implements IIgn
 		nbt.putBoolean("reinforced", dataTracker.get(REINFORCED));
 		nbt.putBoolean("noDrop", dataTracker.get(NO_DROP));
 		nbt.putByte("facing", (byte)facing.getHorizontal());
+		nbt.putByte("variant", (byte)getVariant().ordinal());
 		return super.writeNbt(nbt);
 	}
 	
@@ -162,5 +193,20 @@ public class StainedGlassWindow extends AbstractDecorationEntity implements IIgn
 	public boolean isReinforced()
 	{
 		return dataTracker.get(REINFORCED);
+	}
+	
+	public enum Variant
+	{
+		DOVE(32, 48, Ultracraft.texIdentifier("textures/entity/stained_glass/bird")),
+		GABRIEL(48, 96,Ultracraft.texIdentifier("textures/entity/stained_glass/gabriel"));
+		public final int width, height;
+		public final Identifier texture;
+		
+		Variant(int width, int height, Identifier texture)
+		{
+			this.width = width;
+			this.height = height;
+			this.texture = texture;
+		}
 	}
 }
