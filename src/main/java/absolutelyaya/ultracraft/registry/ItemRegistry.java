@@ -316,8 +316,10 @@ public class ItemRegistry
 			content.add(BlockRegistry.ADORNED_RAILING.asItem());
 			content.add(StainedGlassWindowItem.getStack(false, StainedGlassWindow.Variant.DOVE));
 			content.add(StainedGlassWindowItem.getStack(false, StainedGlassWindow.Variant.GABRIEL));
+			content.add(StainedGlassWindowItem.getStack(false, StainedGlassWindow.Variant.SAINT));
 			content.add(StainedGlassWindowItem.getStack(true, StainedGlassWindow.Variant.DOVE));
 			content.add(StainedGlassWindowItem.getStack(true, StainedGlassWindow.Variant.GABRIEL));
+			content.add(StainedGlassWindowItem.getStack(true, StainedGlassWindow.Variant.SAINT));
 			content.add(BlockRegistry.SLAB_BLOCK.asItem());
 			content.add(BlockRegistry.RED_CARPET.asItem());
 			content.add(BlockRegistry.ORANGE_CARPET.asItem());

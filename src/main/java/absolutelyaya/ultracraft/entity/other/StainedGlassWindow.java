@@ -198,7 +198,8 @@ public class StainedGlassWindow extends AbstractDecorationEntity implements IIgn
 	public enum Variant
 	{
 		DOVE(32, 48, Ultracraft.texIdentifier("textures/entity/stained_glass/bird")),
-		GABRIEL(48, 96,Ultracraft.texIdentifier("textures/entity/stained_glass/gabriel"));
+		GABRIEL(48, 96,Ultracraft.texIdentifier("textures/entity/stained_glass/gabriel")),
+		SAINT(16, 32,Ultracraft.texIdentifier("textures/entity/stained_glass/saint"));
 		public final int width, height;
 		public final Identifier texture;
 		
