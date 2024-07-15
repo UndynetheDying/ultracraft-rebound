@@ -560,86 +560,116 @@
   "music.the_fire_is_gone": {
     "sounds": [
       "ultracraft:music/the_fire_is_gone"
-    ]
+    ],
+    "stream": true
   },
   "music.clair_de_lune": {
     "sounds": [
       "ultracraft:music/clair_de_lune"
-    ]
+    ],
+    "stream": true
   },
   "music.prelude1": {
     "sounds": [
       "ultracraft:music/triage/beyondthefire"
-    ]
+    ],
+    "stream": true
   },
   "music.prelude1_calm": {
     "sounds": [
       "ultracraft:music/triage/beyondthefire_calm"
-    ]
+    ],
+    "stream": true
   },
   "music.prelude2": {
     "sounds": [
       "ultracraft:music/efefski/prelude2"
-    ]
+    ],
+    "stream": true
   },
   "music.prelude2_calm": {
     "sounds": [
       "ultracraft:music/efefski/prelude2_calm"
-    ]
+    ],
+    "stream": true
   },
   "music.cerberus": {
     "sounds": [
       "ultracraft:music/psykomatic/cerbfight"
-    ]
+    ],
+    "stream": true
   },
   "music.cerberus_calm": {
     "sounds": [
       "ultracraft:music/psykomatic/cerbcalm"
-    ]
+    ],
+    "stream": true
   },
   "music.limbo1_illusion": {
     "sounds": [
       "ultracraft:music/oxblood/limbo1_illusion"
-    ]
+    ],
+    "stream": true
   },
   "music.limbo1": {
     "sounds": [
       "ultracraft:music/oxblood/limbo1"
-    ]
+    ],
+    "stream": true
   },
   "music.limbo1_calm": {
     "sounds": [
       "ultracraft:music/oxblood/limbo1_calm"
-    ]
+    ],
+    "stream": true
   },
   "music.limbo2": {
     "sounds": [
       "ultracraft:music/efefski/limbo2"
-    ]
+    ],
+    "stream": true
   },
   "music.limbo2_calm": {
     "sounds": [
       "ultracraft:music/efefski/limbo2_calm"
-    ]
+    ],
+    "stream": true
   },
   "music.versus": {
     "sounds": [
       "ultracraft:music/aavanitro/versus"
-    ]
+    ],
+    "stream": true
   },
   "music.versus.intro": {
     "sounds": [
       "ultracraft:music/aavanitro/versus_intro"
-    ]
+    ],
+    "stream": true
+  },
+  "music.ennway_limbo_freeroam": {
+    "sounds": [
+      "ultracraft:music/ennway/limbo_freeroam"
+    ],
+    "stream": true
+  },
+  "music.limbo_freeroam": {
+    "sounds": [
+      "ultracraft:music/ennway/limbo_freeroam",
+      "ultracraft:music/oxblood/limbo1_illusion"
+    ],
+    "stream": true
   },
   "music.efefski_cybergrind": {
     "sounds": [
       "ultracraft:music/efefski/cybergrind"
-    ]
+    ],
+    "stream": true
   },
   "music.cybergrind": {
     "sounds": [
       "ultracraft:music/efefski/cybergrind"
-    ]
+    ],
+    "stream": true
   }
 }

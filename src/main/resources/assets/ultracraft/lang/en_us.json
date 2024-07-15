@@ -160,6 +160,8 @@
   "item.ultracraft.disc.limbo1_calm.desc": "Oxblood - Truth of the Broken Screen (Calm Mix)",
   "item.ultracraft.disc.versus": "Music Disc",
   "item.ultracraft.disc.versus.desc": "Aavanitro - Versus",
+  "item.ultracraft.disc.limbo_freeroam": "Music Disc",
+  "item.ultracraft.disc.limbo_freeroam.desc": "ENNWAY - Limbo Freeroam",
   "item.ultracraft.knuckleblaster": "Knuckleblaster",
   "item.ultracraft.hell_mass": "Hell Mass",
   "item.ultracraft.florp": "Florp",
@@ -836,6 +838,7 @@
   "music.ultracraft.limbo2": "Blameless",
   "music.ultracraft.versus": "Versus",
   "music.ultracraft.cybergrind": "Infinite",
+  "music.ultracraft.limbo_freeroam": "Limbo Freeroam",
   "music.ultracraft.clair_de_lune": "Clair de Lune (Noteblock Cover)",
   "music.ultracraft.fire_is_gone": "The Fire is Gone (Noteblock Cover)",
 

@@ -1,5 +1,7 @@
 ## Major Changes
 - Added `Versus` by [Aavanitro](https://www.youtube.com/@Aavanitro) to OST
+- Added `Limbo Freeroam` by [ENNWAY](https://www.youtube.com/@ENNWAY) to OST
+  - Played in Limbo Freeroam Dimension as long as you're not in creative mode
 - Added Sawed-On Shotgun
 - Added Jumpstart Nailgun
 - Added new ████
@@ -42,6 +44,7 @@
 - Kinda fixed transparency layering issues (only works with `Fabulous!` graphics enabled)
 - Fixed an issue that caused the music in limbo1 to switch back to `Mirage of Paradise` when it shouldn't
 - Added Hyacinth and//or Butterflies to old Limbo Levels
+- Music Sounds now get streamed, meaning they cause less lag
 ## Edit Mode Changes
 - Added `noAI` Attribute to spawn listeners
 ## Resource Changes
