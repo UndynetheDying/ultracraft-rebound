@@ -580,24 +580,22 @@ public class PacketRegistry
 		});
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.HIVEL_DATA_PACKET_ID, (server, player, handler, buf, sender) -> {
 			boolean ignoreSlowdown = buf.readBoolean();
+			boolean sliding = buf.readBoolean();
+			boolean slamming = buf.readBoolean();
 			server.execute(() -> {
 				IHivelComponent hivel = UltraComponents.HIVEL.get(player);
 				hivel.setIgnoreSlowdown(ignoreSlowdown);
+				hivel.setSliding(sliding);
+				hivel.setSlamming(slamming);
 			});
 		});
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.SLIDE_STATE_PACKET_ID, (server, player, handler, buf, sender) -> {
 			boolean slide = buf.readBoolean();
-			server.execute(() -> {
-				if(player instanceof WingedPlayerEntity winged)
-					winged.setSliding(slide);
-			});
+			server.execute(() -> UltraComponents.HIVEL.get(player).setSliding(slide));
 		});
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.SLAM_STATE_PACKET_ID, (server, player, handler, buf, sender) -> {
 			boolean slam = buf.readBoolean();
-			server.execute(() -> {
-				if(player instanceof WingedPlayerEntity winged)
-					winged.setSlamming(slam);
-			});
+			server.execute(() -> UltraComponents.HIVEL.get(player).setSlamming(slam));
 		});
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.SYNC_LOADOUT_PACKET_ID, (server, player, handler, buf, sender) -> {
 			Weapon weapon = Weapon.values()[buf.readInt()];
@@ -768,8 +766,7 @@ public class PacketRegistry
 	static void onTravelFinished(ServerPlayerEntity player)
 	{
 		ServerPlayNetworking.send(player, FINISH_TRAVELLING_PACKET_ID, new PacketByteBuf(Unpooled.buffer()));
-		if(player instanceof WingedPlayerEntity winged)
-			winged.setSlamming(false);
+		UltraComponents.HIVEL.get(player).setSlamming(false);
 	}
 	
 	static HashSet<Entity> fetchParryCandidates(ServerPlayerEntity player, Vec3d pos, Vec3d forward, float dist, Vector3f clientVel,

@@ -24,6 +24,9 @@
 - Level Timer now pauses while time is frozen
 - Fixed Level Timer Pausing not actually working at all lmao
 - Added Item to place decorative Malicious Faces more easily
+- Fixed sprint and sneak states tending to get stuck when enabling hivel mode
+- Changed how slide and slam states are handled
+- Changed how movement sounds are handled
 ## Settings & Config
 ## Commands
 ## Tweaks

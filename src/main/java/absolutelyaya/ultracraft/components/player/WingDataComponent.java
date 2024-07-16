@@ -1,5 +1,7 @@
 package absolutelyaya.ultracraft.components.player;
 
+import absolutelyaya.ultracraft.client.sound.MovingSlideSoundInstance;
+import absolutelyaya.ultracraft.client.sound.MovingWindSoundInstance;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
@@ -7,6 +9,8 @@ import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.rendering.UltraHudRenderer;
 import absolutelyaya.ultracraft.registry.WingPatterns;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.sound.SoundManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import org.joml.Vector3f;
@@ -88,7 +92,17 @@ public class WingDataComponent implements IWingDataComponent, AutoSyncedComponen
 			UltraHudRenderer.onUpdateWingsActive();
 		if(provider instanceof WingedPlayerEntity winged)
 			winged.updateSpeedConfig(b);
-		//provider.setSprinting(false);
+		if(b)
+		{
+			if(provider.getWorld().isClient && UltracraftClient.getConfig().movementSounds)
+			{
+				SoundManager sound = MinecraftClient.getInstance().getSoundManager();
+				sound.play(new MovingSlideSoundInstance(provider));
+				sound.play(new MovingWindSoundInstance(provider));
+			}
+			provider.setSprinting(false);
+			provider.setSneaking(false);
+		}
 	}
 	
 	public void sync()

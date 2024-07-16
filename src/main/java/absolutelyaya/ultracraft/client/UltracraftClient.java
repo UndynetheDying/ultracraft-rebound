@@ -116,6 +116,7 @@ public class UltracraftClient implements ClientModInitializer
 		IRIS = FabricLoader.getInstance().getModContainer("iris").isPresent();
 		
 		config = AutoConfig.register(ClientConfig.class, GsonConfigSerializer::new);
+		wasMovementSoundsEnabled = config.get().movementSounds;
 		KeybindRegistry.register();
 		
 		//EntityRenderers
@@ -256,12 +257,6 @@ public class UltracraftClient implements ClientModInitializer
 		ClientEntityEvents.ENTITY_LOAD.register((entity, clientWorld) -> {
 			if (entity instanceof PlayerEntity player)
 			{
-				if(config.get().movementSounds && player.getUuid().equals(MinecraftClient.getInstance().player.getUuid()))
-				{
-					SoundManager sound = MinecraftClient.getInstance().getSoundManager();
-					sound.play(new MovingSlideSoundInstance(player));
-					sound.play(new MovingWindSoundInstance(player));
-				}
 				UltraComponents.WING_DATA.get(player).sync();
 				if(player.getUuid().equals(MinecraftClient.getInstance().player.getUuid()))
 					return;

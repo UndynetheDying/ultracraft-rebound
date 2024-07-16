@@ -156,7 +156,7 @@ public class KeybindRegistry
 		{
 			boolean flip = player.getMainArm().equals(Arm.LEFT);
 			int anim;
-			if(player instanceof WingedPlayerEntity winged && winged.isSliding())
+			if(UltraComponents.HIVEL.get(player).isSliding())
 				anim = flip ? PlayerAnimator.SLIDE_PUNCH_FLIPPED : PlayerAnimator.SLIDE_PUNCH;
 			else
 				anim = flip ? PlayerAnimator.PUNCH_FLIPPED : PlayerAnimator.PUNCH;

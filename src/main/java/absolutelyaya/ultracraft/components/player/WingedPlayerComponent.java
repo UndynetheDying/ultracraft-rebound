@@ -3,7 +3,6 @@ package absolutelyaya.ultracraft.components.player;
 import absolutelyaya.ultracraft.client.gui.TitleHUD;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
-import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.cybergrind.CybergrindData;
 import absolutelyaya.ultracraft.entity.projectile.JumpstartHookEntity;
@@ -62,13 +61,11 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	public void updateWingState()
 	{
 		IHivelComponent hivel = UltraComponents.HIVEL.get(provider);
-		if(!(provider instanceof WingedPlayerEntity winged))
-			return;
 		if(hivel.isDashing())
 			setWingState((byte)0);
-		if (winged.isSliding())
+		if (hivel.isSliding())
 			setWingState((byte)2);
-		else if ((wingState == 0 && provider.isOnGround()) || (wingState == 2 && !winged.isSliding()))
+		else if ((wingState == 0 && provider.isOnGround()) || (wingState == 2 && !hivel.isSliding()))
 			setWingState((byte)1);
 	}
 	
