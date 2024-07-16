@@ -72,6 +72,14 @@ public class StainedGlassWindow extends AbstractDecorationEntity implements IIgn
 		return window;
 	}
 	
+	@Override
+	public boolean canStayAttached()
+	{
+		if(age > 5 && isReinforced())
+			return true;
+		return super.canStayAttached();
+	}
+	
 	Variant getVariant()
 	{
 		return Variant.values()[dataTracker.get(VARIANT) % Variant.values().length];

@@ -27,6 +27,7 @@
 - Fixed sprint and sneak states tending to get stuck when enabling hivel mode
 - Changed how slide and slam states are handled
 - Changed how movement sounds are handled
+- Reinforced Stained Glass windows don't need to be supported by blocks anymore once they've been placed successfully
 ## Settings & Config
 ## Commands
 ## Tweaks
