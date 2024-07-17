@@ -647,15 +647,15 @@
     ],
     "stream": true
   },
-  "music.ennway_limbo_freeroam": {
+  "music.counterfeit": {
     "sounds": [
-      "ultracraft:music/ennway/limbo_freeroam"
+      "ultracraft:music/ennway/counterfeit"
     ],
     "stream": true
   },
   "music.limbo_freeroam": {
     "sounds": [
-      "ultracraft:music/ennway/limbo_freeroam",
+      "ultracraft:music/ennway/counterfeit",
       "ultracraft:music/oxblood/limbo1_illusion"
     ],
     "stream": true

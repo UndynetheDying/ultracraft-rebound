@@ -1,6 +1,6 @@
 ## Major Changes
 - Added `Versus` by [Aavanitro](https://www.youtube.com/@Aavanitro) to OST
-- Added `Limbo Freeroam` by [ENNWAY](https://www.youtube.com/@ENNWAY) to OST
+- Added `Counterfeit` by [ENNWAY](https://www.youtube.com/@ENNWAY) to OST
   - Played in Limbo Freeroam Dimension as long as you're not in creative mode
 - Added Sawed-On Shotgun
 - Added Jumpstart Nailgun

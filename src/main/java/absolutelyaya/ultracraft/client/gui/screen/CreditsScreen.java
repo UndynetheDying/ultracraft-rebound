@@ -46,7 +46,7 @@ public class CreditsScreen extends Screen
 		contributors.add(new ContributorElement("build", "Talon_MC", "AshenWulf", "Marmalude"));
 		contributors.add(new ContributorElement("sound", "8BitBunny"));
 		contributors.add(new ContributorElement("test", "Talon_MC", "AshenWulf", "Athanes", "Marmalude"));
-		contributors.add(new ContributorElement("music", "Efefski", "Psykomatic", "Triage", "Oxblood"));
+		contributors.add(new ContributorElement("music", "Efefski", "Psykomatic", "Triage", "Oxblood", "Aavanitro[H]", "ENNWAY"));
 		HashMap<String, List<String>> localizerMap = new HashMap<>();
 		localizerMap.put("LOLCAT", new ArrayList<>() { { add("Doggochleb"); } });
 		localizerMap.put("Russian", new ArrayList<>() { { add("closet748"); } });

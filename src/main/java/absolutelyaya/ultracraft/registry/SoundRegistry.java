@@ -155,7 +155,7 @@ public class SoundRegistry
 	public static final RegistryEntry.Reference<SoundEvent> VERSUS_INTRO = registerReference("music.versus.intro");
 	public static final RegistryEntry.Reference<SoundEvent> VERSUS = registerReference("music.versus");
 	public static final RegistryEntry.Reference<SoundEvent> LIMBO_FREEROAM = registerReference("music.limbo_freeroam");
-	public static final RegistryEntry.Reference<SoundEvent> LIMBO_FREEROAM_DISK = registerReference("music.ennway_limbo_freeroam");
+	public static final RegistryEntry.Reference<SoundEvent> COUNTERFEIT = registerReference("music.counterfeit");
 	public static final RegistryEntry.Reference<SoundEvent> CYBERGRIND = registerReference("music.cybergrind");
 	public static final RegistryEntry.Reference<SoundEvent> CYBERGRIND_DISK = registerReference("music.efefski_cybergrind");
 	

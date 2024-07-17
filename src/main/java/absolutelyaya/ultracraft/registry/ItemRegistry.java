@@ -256,8 +256,8 @@ public class ItemRegistry
 			Ultracraft.identifier("disc/versus"),
 			new MusicDiscItem(15, SoundRegistry.VERSUS.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 128));
 	public static final MusicDiscItem LIMBO_FREEROAM_DISK = Registry.register(Registries.ITEM,
-			Ultracraft.identifier("disc/limbo_freeroam"),
-			new MusicDiscItem(15, SoundRegistry.LIMBO_FREEROAM_DISK.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 196));
+			Ultracraft.identifier("disc/counterfeit"),
+			new MusicDiscItem(15, SoundRegistry.COUNTERFEIT.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 196));
 	public static final MusicDiscItem CYBERGRIND_DISK = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("disc/cybergrind"),
 			new MusicDiscItem(15, SoundRegistry.CYBERGRIND_DISK.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 269));
