@@ -116,8 +116,13 @@ public abstract class AbstractMappingBlock extends BlockWithEntity
 			{
 				if(world.getBlockEntity(rebind) instanceof AbstractMappingBlockEntity rebindTarget)
 				{
-					rebindTarget.setParent(pos);
-					room.registerChild(rebind, rebindTarget);
+					if(rebindTarget instanceof RoomBlockEntity && rebindTarget == room)
+						rebindTarget.setParent(null);
+					else
+					{
+						rebindTarget.setParent(pos);
+						room.registerChild(rebind, rebindTarget);
+					}
 					if(!world.isClient)
 						player.sendMessage(Text.of("Rebound Child Block to '" + entity.getID() + "'"));
 				}

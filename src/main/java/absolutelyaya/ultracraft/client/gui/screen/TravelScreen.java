@@ -188,7 +188,7 @@ public class TravelScreen extends AbstractTravelScreen
 						getLevelData(Ultracraft.identifier("limbo2")), this::selectLevel);
 				x += limbo2.getWidth() + spacing;
 				LevelButton luna = new LevelButton(x, height / 2,
-						getLevelData(Ultracraft.identifier("luna")), ignored -> {});
+						getLevelData(Ultracraft.identifier("luna")), this::selectLevel);
 				centerButtons(x + luna.getWidth(), limbo1, limbo2, luna);
 				buttons.addAll(List.of(freeroam, limbo1, limbo2, luna));
 			}
