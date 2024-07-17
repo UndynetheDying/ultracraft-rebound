@@ -20,6 +20,9 @@
 - Added Hyacinth
 - Added Hyacinth patches to Limbo worldgen
 - Added Butteflies :3
+- Added Fire Sky Block variant
+- Added Luna Sky Block variant
+  - The old Night Sky Block variant now doesn't have a moon anymore
 - Style doesn't decay anymore while time is frozen
 - Level Timer now pauses while time is frozen
 - Fixed Level Timer Pausing not actually working at all lmao

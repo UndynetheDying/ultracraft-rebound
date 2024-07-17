@@ -423,8 +423,10 @@ public class ItemRegistry
 			content.add(BlockRegistry.HELL_SPAWNER.asItem());
 			content.add(HELL_MASS);
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.DAY));
+			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.FIRE));
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.EVENING));
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.NIGHT));
+			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.LUNA));
 			content.add(BlockRegistry.FAKE_LEAVES.asItem());
 			content.add(HANK);
 			content.add(PORTAL);

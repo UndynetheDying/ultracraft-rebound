@@ -36,8 +36,10 @@ public class SkyBlockEntity extends BlockEntity
 			type = switch(nbt.getString("type"))
 			{
 				default -> SkyType.DAY;
+				case "fire" -> SkyType.FIRE;
 				case "evening" -> SkyType.EVENING;
 				case "night" -> SkyType.NIGHT;
+				case "luna" -> SkyType.LUNA;
 			};
 		}
 	}
@@ -65,8 +67,22 @@ public class SkyBlockEntity extends BlockEntity
 	public enum SkyType
 	{
 		DAY,
+		FIRE,
 		EVENING,
-		NIGHT;
+		NIGHT,
+		LUNA(new String[]{null, "night1", "night2", "night3", "night4", "night5"});
+		
+		public final String[] textures;
+		
+		SkyType()
+		{
+			this.textures = null;
+		}
+		
+		SkyType(String[] textures)
+		{
+			this.textures = textures;
+		}
 		
 		@Override
 		public String toString()
