@@ -32,7 +32,7 @@ public abstract class MusicTrackerMixin
 	FadingMusicInstance cybergrind;
 	PositionedSoundInstance intro;
 	float action, minAction;
-	boolean playingIntro;
+	int introTicks = -1;
 	
 	@Shadow @Final private MinecraftClient client;
 	
@@ -97,14 +97,14 @@ public abstract class MusicTrackerMixin
 			stop();
 		if((curLevelMusic == null || !curLevelMusic.equals(level)))
 		{
-			if(music.isHasIntro() && !playingIntro)
+			if(music.isHasIntro() && introTicks == -1)
 			{
 				intro = new PositionedSoundInstance(music.getIntroSound().getId(), SoundCategory.MUSIC, 1f, 1f, SoundInstance.createRandom(), false,
 						0, SoundInstance.AttenuationType.NONE, 0.0, 0.0, 0.0, true);
 				client.getSoundManager().play(intro);
-				playingIntro = true;
+  				introTicks = music.getIntroLength();
 			}
-			if(!music.isHasIntro() || (music.isHasIntro() && !client.getSoundManager().isPlaying(intro)))
+			if(!music.isHasIntro() || (music.isHasIntro() && introTicks == 0))
 			{
 				if(music.getCalmSound() != null)
 					calm = playModular(music.getCalmSound());
@@ -114,15 +114,17 @@ public abstract class MusicTrackerMixin
 					combat.setVolume(1f);
 				action = minAction = 0f;
 				curLevelMusic = level;
-				if(playingIntro)
+				if(introTicks == 0)
 				{
 					if(calm != null)
 						calm.skipFadein();
 					if(combat != null)
 						combat.skipFadein();
-					playingIntro = false;
+					introTicks = -1;
 				}
 			}
+			else if(introTicks > 0)
+				introTicks--;
 		}
 		else if(calm != null && combat != null)
 		{

@@ -17,7 +17,8 @@
     "versus": {
       "calm": "ultracraft:music.versus",
       "combat": "ultracraft:music.versus",
-      "intro": "ultracraft:music.versus.intro"
+      "intro": "ultracraft:music.versus.intro",
+      "intro-length": 162
     }
   },
   "version": 2

@@ -128,9 +128,9 @@ public final class LevelData
 		return !music.isEmpty();
 	}
 	
-	public void putMusic(String id, Identifier calm, Identifier combat, Identifier intro, int combatThreshold, boolean noCalmdown)
+	public void putMusic(String id, Identifier calm, Identifier combat, Identifier intro, int introLength, int combatThreshold, boolean noCalmdown)
 	{
-		music.put(id, new ModularLevelMusic(calm, combat, combatThreshold, noCalmdown, intro));
+		music.put(id, new ModularLevelMusic(calm, combat, combatThreshold, noCalmdown, intro, introLength));
 	}
 	
 	public ModularLevelMusic getMusic(String id)
@@ -317,7 +317,10 @@ public final class LevelData
 					entry.putString("combat", combat.getId().toString());
 				SoundEvent intro = val.getIntroSound();
 				if(intro != null)
+				{
 					entry.putString("intro", intro.getId().toString());
+					entry.putInt("introLength", val.getIntroLength());
+				}
 				int combatThreshold = val.getCombatThreshold();
 				if(combatThreshold > 0)
 					entry.putInt("combatThreshold", combatThreshold);
@@ -363,7 +366,7 @@ public final class LevelData
 			{
 				NbtCompound entry = music.getCompound(key);
 				Identifier calm = null, combat = null, intro = null;
-				int combatThreshold = 0;
+				int combatThreshold = 0, introLength = 0;
 				boolean noCalmdown = false;
 				if (entry.contains("calm", NbtElement.STRING_TYPE))
 					calm = Identifier.tryParse(entry.getString("calm"));
@@ -371,11 +374,13 @@ public final class LevelData
 					combat = Identifier.tryParse(entry.getString("combat"));
 				if (entry.contains("intro", NbtElement.STRING_TYPE))
 					intro = Identifier.tryParse(entry.getString("intro"));
+				if (entry.contains("introLength", NbtElement.STRING_TYPE))
+					introLength = entry.getInt("introLength");
 				if (entry.contains("combatThreshold", NbtElement.INT_TYPE))
 					combatThreshold = entry.getInt("combatThreshold");
 				if (entry.contains("noCalmdown", NbtElement.BYTE_TYPE))
 					noCalmdown = entry.getBoolean("noCalmdown");
-				data.putMusic(key,  calm, combat, intro, combatThreshold, noCalmdown);
+				data.putMusic(key,  calm, combat, intro, introLength, combatThreshold, noCalmdown);
 			}
 		}
 		data.setUnimplemented(nbt.getBoolean("unimplemented"));
