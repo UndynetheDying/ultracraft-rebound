@@ -340,11 +340,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 			parryIFrames--;
 		
 		ItemStack stack = inventory.getMainHandStack();
-		if(!stack.isEmpty() && !stack.getItem().equals(lastHeldItem))
+		if(!stack.getItem().equals(lastHeldItem))
 		{
 			if(lastHeldItem instanceof ISelectionAwareItem aware)
 				aware.onUnselect((PlayerEntity)((Object)this));
-			lastHeldItem = stack.getItem();
+			lastHeldItem = stack.isEmpty() ? null : stack.getItem();
 			if(stack.getItem() instanceof ISelectionAwareItem aware)
 				aware.onSelect((PlayerEntity)((Object)this));
 		}
