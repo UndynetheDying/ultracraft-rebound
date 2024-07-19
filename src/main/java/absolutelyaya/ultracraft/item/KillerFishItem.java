@@ -1,9 +1,9 @@
 package absolutelyaya.ultracraft.item;
 
-import absolutelyaya.ultracraft.FishPacket;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
@@ -30,8 +30,14 @@ public class KillerFishItem extends AbstractFishItem
 	}
 	
 	@Override
-	protected void onSelect()
+	public void onSelect(PlayerEntity player)
 	{
-		sendFishPacket(FishPacket.KILLER_SELECT);
+		player.getWorld().playSound(null, player.getBlockPos(), SoundRegistry.KILLERFISH_SELECT, SoundCategory.PLAYERS, 1f, 1f);
+	}
+	
+	@Override
+	public void onUnselect(PlayerEntity player)
+	{
+	
 	}
 }

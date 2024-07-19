@@ -1,6 +1,5 @@
 package absolutelyaya.ultracraft.item;
 
-import absolutelyaya.ultracraft.FishPacket;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.CodEntity;
@@ -22,15 +21,15 @@ public class LumpFishItem extends AbstractFishItem
 	}
 	
 	@Override
-	protected void onSelect()
+	public void onSelect(PlayerEntity player)
 	{
-		sendFishPacket(FishPacket.LUMP_SELECT);
+		player.getWorld().playSound(null, player.getBlockPos(), SoundRegistry.LUMPFISH_SELECT, SoundCategory.PLAYERS, 1f, 1f);
 	}
 	
 	@Override
-	protected void onUnselect()
+	public void onUnselect(PlayerEntity player)
 	{
-		sendFishPacket(FishPacket.LUMP_UNSELECT);
+		player.getWorld().playSound(null, player.getBlockPos(), SoundRegistry.LUMPFISH_UNSELECT, SoundCategory.PLAYERS, 1f, 1f);
 	}
 	
 	@Override

@@ -15,6 +15,7 @@ import absolutelyaya.ultracraft.damage.DamageTypeTags;
 import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.entity.other.BackTank;
 import absolutelyaya.ultracraft.item.IOverrideMeleeDamageType;
+import absolutelyaya.ultracraft.item.ISelectionAwareItem;
 import absolutelyaya.ultracraft.registry.*;
 import com.chocohead.mm.api.ClassTinkerers;
 import com.google.common.collect.HashMultimap;
@@ -32,12 +33,12 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.damage.DamageTypes;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.projectile.thrown.SnowballEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.world.ServerWorld;
@@ -79,11 +80,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	
 	@Shadow public abstract void sendMessage(Text message, boolean overlay);
 	
+	@Shadow @Final private PlayerInventory inventory;
 	Multimap<EntityAttribute, EntityAttributeModifier> curSpeedMod;
 	BackTank backtank;
 	int parryIFrames, damageTypeChain;
 	long lastDamageAge = 0;
 	DamageType lastDamageType;
+	Item lastHeldItem;
 	
 	private final Vec3d[] curWingPose = new Vec3d[] {new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f)};
 	
@@ -335,6 +338,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 		}
 		if(parryIFrames > 0)
 			parryIFrames--;
+		
+		ItemStack stack = inventory.getMainHandStack();
+		if(!stack.isEmpty() && !stack.getItem().equals(lastHeldItem))
+		{
+			if(lastHeldItem instanceof ISelectionAwareItem aware)
+				aware.onUnselect((PlayerEntity)((Object)this));
+			lastHeldItem = stack.getItem();
+			if(stack.getItem() instanceof ISelectionAwareItem aware)
+				aware.onSelect((PlayerEntity)((Object)this));
+		}
 	}
 	
 	@Inject(method = "tick", at = @At("TAIL"))

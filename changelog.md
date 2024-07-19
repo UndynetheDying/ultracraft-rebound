@@ -47,8 +47,9 @@
 - Fixed Weapons that weren't obtained yet, but aren't already equipped in the weapons loadout, being uncraftable
   - Normally all weapons are equipped by default, the unobtained ones just were skipped when switching weapons; newly added weapons weren't in previously saved loadouts though, revealing this issue
 - Added `sprite-override` Attribute to UltraRecipes
+- Changed how Fishes are handled
 - Fixed a minor issue with Malicious Faces rotation
-- Kinda fixed transparency layering issues (only works with `Fabulous!` graphics enabled)
+- Kinda fixed transparency layering issues with visual effects (only works with `Fabulous!` graphics enabled)
 - Fixed an issue that caused the music in limbo1 to switch back to `Mirage of Paradise` when it shouldn't
 - Added Hyacinth and//or Butterflies to old Limbo Levels
 - Music Sounds now get streamed, meaning they cause less lag

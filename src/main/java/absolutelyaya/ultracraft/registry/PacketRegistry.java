@@ -76,7 +76,6 @@ public class PacketRegistry
 	public static final Identifier THROW_COIN_PACKET_ID = Ultracraft.identifier("throw_coin");
 	public static final Identifier LOCK_PEDESTAL_ID = Ultracraft.identifier("lock_pedestal");
 	public static final Identifier ANIMATION_C2S_PACKET_ID = Ultracraft.identifier("animation_c2s");
-	public static final Identifier FISH_PACKET_ID = Ultracraft.identifier("fish");
 	public static final Identifier TERMINAL_SYNC_C2S_PACKET_ID = Ultracraft.identifier("terminal_c2s");
 	public static final Identifier GRAFFITI_C2S_PACKET_ID = Ultracraft.identifier("graffiti_c2s");
 	public static final Identifier TERMINAL_REDSTONE_PACKET_ID = Ultracraft.identifier("terminal_redstone");
@@ -455,11 +454,6 @@ public class PacketRegistry
 				if(p != player)
 					ServerPlayNetworking.send((ServerPlayerEntity)p, ANIMATION_S2C_PACKET_ID, cbuf);
 			});
-		});
-		ServerPlayNetworking.registerGlobalReceiver(FISH_PACKET_ID, (server, player, handler, buf, sender) -> {
-			int data = buf.readInt();
-			server.execute(() -> player.getWorld().playSound(null, player.getBlockPos(),
-					FishPacket.values()[data].sound, SoundCategory.PLAYERS, 1f, 1f));
 		});
 		ServerPlayNetworking.registerGlobalReceiver(TERMINAL_SYNC_C2S_PACKET_ID, (server, player, handler, buf, sender) -> {
 			BlockPos pos = buf.readBlockPos();
