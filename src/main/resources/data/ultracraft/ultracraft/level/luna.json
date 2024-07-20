@@ -3,7 +3,7 @@
   "title": "level.ultracraft.1-3",
   "author": "yaya",
   "structure": "ultracraft:level/limbo3",
-  "thumbnail": "ultracraft:textures/level/err.png",
+  "thumbnail": "ultracraft:textures/level/1_3.png",
   "spawn-offset":{
     "x": 19,
     "y": 47,
