@@ -44,7 +44,6 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.*;
 import net.minecraft.world.GameRules;
@@ -99,7 +98,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
         return HostileEntity.createMobAttributes()
 					   .add(EntityAttributes.GENERIC_MAX_HEALTH, 80.0d)
 					   .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 1.0)
-					   .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3d)
+					   .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.4d)
 					   .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 64.0d).build();
 	}
 	
@@ -120,7 +119,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 	public void onTrackedDataSet(TrackedData<?> data)
 	{
 		super.onTrackedDataSet(data);
-		if(data.equals(INTRO_TICKS) && getAnimation() == ANIMATION_INTRO && dataTracker.get(INTRO_TICKS) >= 100)
+		if(data.equals(INTRO_TICKS) && getAnimation() == ANIMATION_INTRO && dataTracker.get(INTRO_TICKS) >= 135)
 		{
 			dataTracker.set(INTRO_TICKS, -1);
 			dataTracker.set(ANIMATION, ANIMATION_IDLE);
@@ -245,6 +244,8 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 		{
 			if(getMovementMode() != 2)
 				setMovementMode(2);
+			if(ferocity <= 0)
+				dataTracker.set(ENRAGED, false);
 			return;
 		}
 		if(movementChangeCD > 0)
@@ -252,9 +253,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 			movementChangeCD--;
 			return;
 		}
-		if(rage && ferocity <= 0)
-			dataTracker.set(ENRAGED, false);
-		if(ferocity <= 0 && targetDistance < 4f && target.getHealth() > target.getMaxHealth() / 3f )
+		if(ferocity <= 0 && target != null && targetDistance < 4f && target.getHealth() > target.getMaxHealth() / 3f )
 				setMovementMode(3);
 		if(getMovementMode() == 3)
 		{
@@ -336,7 +335,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 					}
 					else
 					{
-						attackCD = 3;
+						attackCD = 1;
 						nextShotDir = aim(0.1f);
 					}
 				}
@@ -347,28 +346,28 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 				if(shots == -1)
 				{
 					shots = 1;
-					attackCD = isEnraged() ? 20 : 40;
+					attackCD = isEnraged() ? 15 : 30;
 					playSound(SoundRegistry.V2_PIERCER_TELL, 1.5f, 1f);
 				}
 				else if(shots == 1)
 				{
 					if(nextShotDir == null)
 					{
-						nextShotDir = aim(0.1f);
-						attackCD = 4;
+						nextShotDir = aim(0f);
+						attackCD = 1;
 						return;
 					}
 					firePiercer();
 					shots = 0;
 					activeAttack = -1;
 					if(!isEnraged())
-						attackCD = 20 + random.nextInt(20);
+						attackCD = 10 + random.nextInt(10);
 				}
 			}
 			case 2 -> { //shotgun shot
 				fireShotgun();
 				activeAttack = -1;
-				attackCD = (isEnraged() ? 10 : 30) + random.nextInt(20);
+				attackCD = (isEnraged() ? 10 : 20) + random.nextInt(10);
 			}
 			case 3 -> { //core eject
 				if(shots == -1)
@@ -382,7 +381,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 					ejectCore();
 					shots = 0;
 					activeAttack = -1;
-					attackCD = 20 + random.nextInt(30);
+					attackCD = 10 + random.nextInt(20);
 				}
 			}
 		}
@@ -390,16 +389,14 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 	
 	void fireRevolver()
 	{
-		BeamProjectileEntity beam = BeamProjectileEntity.spawn(getWorld(), this, 5f, ServerHitscanHandler.NORMAL);
-		beam.setVelocity(nextShotDir.multiply(7.5f));
+		BeamProjectileEntity beam = BeamProjectileEntity.spawn(getWorld(), this, nextShotDir.multiply(5f), ServerHitscanHandler.NORMAL);
 		beam.setDamage(1.5f);
 		playSound(SoundRegistry.REVOLVER_FIRE, 0.75f, 0.9f + (getRandom().nextFloat() - 0.5f) * 0.2f);
 	}
 	
 	void firePiercer()
 	{
-		BeamProjectileEntity beam = BeamProjectileEntity.spawn(getWorld(), this, 5f, ServerHitscanHandler.REVOLVER_PIERCE);
-		beam.setVelocity(nextShotDir.multiply(7.5f));
+		BeamProjectileEntity beam = BeamProjectileEntity.spawn(getWorld(), this, nextShotDir.multiply(5f), ServerHitscanHandler.REVOLVER_PIERCE);
 		beam.setDamage(2f);
 		playSound(SoundRegistry.PIERCER_FIRE, 1f, 0.85f + (getRandom().nextFloat() - 0.5f) * 0.2f);
 	}
@@ -805,7 +802,10 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 			cooldown--;
 			if(mob.getRandom().nextFloat() < 0.005f && mob.isOnGround())
 				mob.jump();
-			if(mob.horizontalCollision || cooldown <= 0)
+			if(mob.horizontalCollision ||
+					   (mob.groundCollision && mob.getWorld().isSpaceEmpty(mob.getBoundingBox().shrink(0.75f, 0f, 0.75f)
+																				   .offset(dir.x * 0.25f, -2f, dir.z * 0.25f))) ||
+					   cooldown <= 0)
 			{
 				changeDirection();
 				if(mob.getRandom().nextFloat() < 0.1f)

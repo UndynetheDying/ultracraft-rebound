@@ -2,6 +2,12 @@
 - Added `Versus` by [Aavanitro](https://www.youtube.com/@Aavanitro) to OST
 - Added `Counterfeit` by [ENNWAY](https://www.youtube.com/@ENNWAY) to OST
   - Played in Limbo Freeroam Dimension as long as you're not in creative mode
+- Added Level `Clair de Lune`
+- Improved V2 Boss Fight
+  - Buffed Speed
+  - Decreased Attack Cooldowns
+  - Fixed Wing Rendering
+  - 
 - Added Sawed-On Shotgun
 - Added Jumpstart Nailgun
 - Added new ████
@@ -31,6 +37,7 @@
 - Changed how slide and slam states are handled
 - Changed how movement sounds are handled
 - Reinforced Stained Glass windows don't need to be supported by blocks anymore once they've been placed successfully
+- Improved Beam Projectiles
 ## Settings & Config
 ## Commands
 ## Tweaks
@@ -55,6 +62,9 @@
 - Music Sounds now get streamed, meaning they cause less lag
 ## Edit Mode Changes
 - Added `noAI` Attribute to spawn listeners
+- Added `knockbackOnly` Attribute ot explosion listeners
+  - enabling this, will make the explosion listeners throw entities within its `explosionRadius` away from it
+  - the velocity is calculated using `(1f - (distance(entity, block) / explosionRadius)) * explosionDamage`
 ## Resource Changes
 - Changed Shotgun UVs(moved smoke to make room for the chainsaw)
 ## API Changes
