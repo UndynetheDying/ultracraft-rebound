@@ -259,6 +259,8 @@ public class PacketRegistry
 					else
 						return;
 				}
+				else if(parried instanceof ChainsawEntity)
+					Ultracraft.freeze(player, 5);
 				else if(!(parried instanceof ThrownCoinEntity))
 				{
 					Ultracraft.freeze(player, 10);

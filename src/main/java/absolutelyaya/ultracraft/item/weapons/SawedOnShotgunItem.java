@@ -4,9 +4,13 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.rendering.item.SawedOnShotgunRenderer;
+import absolutelyaya.ultracraft.client.sound.MovingWeaponSoundInstance;
 import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.entity.projectile.ChainsawEntity;
+import absolutelyaya.ultracraft.item.ISelectionAwareItem;
+import absolutelyaya.ultracraft.registry.SoundRegistry;
 import mod.azure.azurelib.animatable.GeoItem;
 import mod.azure.azurelib.animatable.SingletonGeoAnimatable;
 import mod.azure.azurelib.animatable.client.RenderProvider;
@@ -51,7 +55,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class SawedOnShotgunItem extends AbstractShotgunItem
+public class SawedOnShotgunItem extends AbstractShotgunItem implements ISelectionAwareItem
 {
 	protected int approxUseTime = -1;
 	private final AnimatableInstanceCache cache = AzureLibUtil.createInstanceCache(this);
@@ -74,7 +78,8 @@ public class SawedOnShotgunItem extends AbstractShotgunItem
 		ItemStack stack = user.getStackInHand(hand);
 		if(hand.equals(Hand.OFF_HAND))
 			return TypedActionResult.fail(stack);
-		GunCooldownManager cdm = UltraComponents.WINGED.get(user).getGunCooldownManager();
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(user);
+		GunCooldownManager cdm = winged.getGunCooldownManager();
 		if(!cdm.isUsable(this, GunCooldownManager.PRIMARY) || !cdm.isUsable(this, GunCooldownManager.SECONDARY))
 			return TypedActionResult.fail(stack);
 		user.setCurrentHand(hand);
@@ -84,6 +89,8 @@ public class SawedOnShotgunItem extends AbstractShotgunItem
 			{
 				stack.getOrCreateNbt().putBoolean("charging", true);
 				triggerAnim(user, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), shouldFlip(user) ? "sawStartFlip" : "sawStart");
+				
+				winged.attachMovingSound("SawActive", new MovingWeaponSoundInstance(SoundRegistry.SHOTGUN_SAW_ACTIVE, user, true));
 			}
 		}
 		return TypedActionResult.pass(stack);
@@ -149,12 +156,18 @@ public class SawedOnShotgunItem extends AbstractShotgunItem
 			
 			triggerAnim(player, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), shouldFlip(player) ? "sawEndFlip" : "sawEnd");
 			((LivingEntityAccessor)user).addRecoil(altRecoil * useTime);
-			GunCooldownManager cdm = UltraComponents.WINGED.get(player).getGunCooldownManager();
+			IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
+			GunCooldownManager cdm = winged.getGunCooldownManager();
 			cdm.setCooldown(this, 80, GunCooldownManager.SECONDARY);
 		}
 		if(nbt != null)
 			nbt.remove("charging");
 		approxUseTime = -1;
+		if(user instanceof PlayerEntity player)
+		{
+			UltraComponents.WINGED.get(player).removeMovingSound("SawActive");
+			player.playSound(SoundRegistry.SHOTGUN_SAW_END, 1f, 1f);
+		}
 	}
 	
 	@Override
@@ -297,5 +310,26 @@ public class SawedOnShotgunItem extends AbstractShotgunItem
 	protected int getNbtDefault(String nbt)
 	{
 		return super.getNbtDefault(nbt);
+	}
+	
+	@Override
+	public void onSelect(PlayerEntity player)
+	{
+		if(!player.getWorld().isClient)
+		{
+			IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
+			winged.attachMovingSound("SawIdle", new MovingWeaponSoundInstance(SoundRegistry.SHOTGUN_SAW_IDLE, player, false));
+		}
+	}
+	
+	@Override
+	public void onUnselect(PlayerEntity player)
+	{
+		if(!player.getWorld().isClient)
+		{
+			IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
+			winged.removeMovingSound("SawIdle");
+			winged.removeMovingSound("SawActive");
+		}
 	}
 }

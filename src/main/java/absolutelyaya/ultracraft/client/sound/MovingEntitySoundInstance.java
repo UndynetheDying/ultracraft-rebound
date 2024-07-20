@@ -6,11 +6,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 
-public abstract class MovingPlayerSoundInstance extends MovingSoundInstance
+public abstract class MovingEntitySoundInstance extends MovingSoundInstance
 {
 	protected final Entity owner;
 	
-	public MovingPlayerSoundInstance(SoundEvent event, Entity owner)
+	public MovingEntitySoundInstance(SoundEvent event, Entity owner)
 	{
 		super(event, SoundCategory.PLAYERS, SoundInstance.createRandom());
 		this.owner = owner;
@@ -23,7 +23,7 @@ public abstract class MovingPlayerSoundInstance extends MovingSoundInstance
 		z = owner.getZ();
 	}
 	
-	public MovingPlayerSoundInstance(SoundEvent event, SoundCategory category, Entity owner)
+	public MovingEntitySoundInstance(SoundEvent event, SoundCategory category, Entity owner)
 	{
 		super(event, category, SoundInstance.createRandom());
 		this.owner = owner;
@@ -40,5 +40,10 @@ public abstract class MovingPlayerSoundInstance extends MovingSoundInstance
 	public boolean shouldAlwaysPlay()
 	{
 		return true;
+	}
+	
+	public void setFinished()
+	{
+		setDone();
 	}
 }

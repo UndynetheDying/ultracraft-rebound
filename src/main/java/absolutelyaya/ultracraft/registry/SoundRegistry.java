@@ -77,6 +77,9 @@ public class SoundRegistry
 	public static final SoundEvent SHOTGUN_OPEN = register("item.shotgun.open");
 	public static final SoundEvent SHOTGUN_CLOSE = register("item.shotgun.close");
 	public static final SoundEvent SHOTGUN_HISS = register("item.shotgun.hiss");
+	public static final SoundEvent SHOTGUN_SAW_IDLE = register("item.shotgun.saw_idle");
+	public static final SoundEvent SHOTGUN_SAW_ACTIVE = register("item.shotgun.saw_active");
+	public static final SoundEvent SHOTGUN_SAW_END = register("item.shotgun.saw_end");
 	
 	public static final SoundEvent MACHINESWORD_ATTACK = register("item.machinesword.attack");
 	

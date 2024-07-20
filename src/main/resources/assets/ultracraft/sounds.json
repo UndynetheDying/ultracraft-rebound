@@ -308,6 +308,21 @@
       {"name":"block.iron_trapdoor.close","type":"event","pitch": 0.9}
     ]
   },
+  "item.shotgun.saw_idle": {
+    "sounds": [
+      "ultracraft:item/saw_idle"
+    ]
+  },
+  "item.shotgun.saw_active": {
+    "sounds": [
+      "ultracraft:item/saw_active"
+    ]
+  },
+  "item.shotgun.saw_end": {
+    "sounds": [
+      "ultracraft:item/saw_end"
+    ]
+  },
 
   "item.machinesword.attack": {
     "sounds": [

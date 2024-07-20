@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.components.player;
 
 import absolutelyaya.ultracraft.client.GunCooldownManager;
+import absolutelyaya.ultracraft.client.sound.MovingEntitySoundInstance;
 import absolutelyaya.ultracraft.cybergrind.CybergrindData;
 import absolutelyaya.ultracraft.entity.projectile.JumpstartHookEntity;
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
@@ -78,4 +79,8 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	JumpstartHookEntity getHook();
 	
 	void setHook(JumpstartHookEntity hook);
+	
+	void attachMovingSound(String id, MovingEntitySoundInstance sound);
+	
+	void removeMovingSound(String id);
 }

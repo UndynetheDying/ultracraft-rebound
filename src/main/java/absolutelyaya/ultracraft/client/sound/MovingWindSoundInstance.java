@@ -7,7 +7,7 @@ import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 
-public class MovingWindSoundInstance extends MovingPlayerSoundInstance
+public class MovingWindSoundInstance extends MovingEntitySoundInstance
 {
 	float desiredVolume, desiredPitch;
 	

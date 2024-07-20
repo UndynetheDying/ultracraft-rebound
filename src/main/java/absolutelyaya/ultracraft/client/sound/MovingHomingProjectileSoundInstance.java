@@ -6,7 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 
-public class MovingHomingProjectileSoundInstance extends MovingPlayerSoundInstance
+public class MovingHomingProjectileSoundInstance extends MovingEntitySoundInstance
 {
 	public MovingHomingProjectileSoundInstance(IHomingProjectile owner)
 	{

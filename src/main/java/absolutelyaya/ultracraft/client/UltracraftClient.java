@@ -32,6 +32,7 @@ import absolutelyaya.ultracraft.components.player.ProgressionComponent;
 import absolutelyaya.ultracraft.config.*;
 import absolutelyaya.ultracraft.entity.husk.AbstractHuskEntity;
 import absolutelyaya.ultracraft.entity.machine.SwordsmachineEntity;
+import absolutelyaya.ultracraft.entity.projectile.ChainsawEntity;
 import absolutelyaya.ultracraft.entity.projectile.IHomingProjectile;
 import absolutelyaya.ultracraft.entity.projectile.ThrownMachineSwordEntity;
 import absolutelyaya.ultracraft.particle.*;
@@ -272,6 +273,8 @@ public class UltracraftClient implements ClientModInitializer
 				MinecraftClient.getInstance().getSoundManager().play(new MovingHuskScreamSoundInstance(husk));
 			else if (entity instanceof IHomingProjectile projectile)
 				MinecraftClient.getInstance().getSoundManager().play(new MovingHomingProjectileSoundInstance(projectile));
+			else if (entity instanceof ChainsawEntity projectile)
+				MinecraftClient.getInstance().getSoundManager().play(new MovingChainsawSoundInstance(projectile));
 		});
 		
 		LivingEntityFeatureRendererRegistrationCallback.EVENT.register((type, renderer, helper, context) -> {

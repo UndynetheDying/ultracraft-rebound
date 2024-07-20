@@ -374,7 +374,7 @@ public final class LevelData
 					combat = Identifier.tryParse(entry.getString("combat"));
 				if (entry.contains("intro", NbtElement.STRING_TYPE))
 					intro = Identifier.tryParse(entry.getString("intro"));
-				if (entry.contains("introLength", NbtElement.STRING_TYPE))
+				if (entry.contains("introLength", NbtElement.INT_TYPE))
 					introLength = entry.getInt("introLength");
 				if (entry.contains("combatThreshold", NbtElement.INT_TYPE))
 					combatThreshold = entry.getInt("combatThreshold");

@@ -6,7 +6,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 
-public class MovingSlideSoundInstance extends MovingPlayerSoundInstance
+public class MovingSlideSoundInstance extends MovingEntitySoundInstance
 {
 	public MovingSlideSoundInstance(PlayerEntity owner)
 	{
