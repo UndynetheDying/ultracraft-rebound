@@ -76,6 +76,11 @@ public class UltraRecipeManager extends JsonDataLoader
 		return recipes.get(id);
 	}
 	
+	public static boolean isRecipePresent(Identifier id)
+	{
+		return recipes.containsKey(id);
+	}
+	
 	public static void sync(ServerPlayerEntity player)
 	{
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());

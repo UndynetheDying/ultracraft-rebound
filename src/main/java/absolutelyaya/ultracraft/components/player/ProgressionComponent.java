@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.gui.terminal.WeaponsTab;
+import absolutelyaya.ultracraft.data.UltraRecipeManager;
 import absolutelyaya.ultracraft.registry.GameruleRegistry;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
@@ -17,10 +18,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ProgressionComponent implements IProgressionComponent, AutoSyncedComponent
 {
@@ -45,22 +43,6 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 			add(FEEDBACKER);
 			add(KNUCKLEBLASTER);
 			add(SLAB);
-		}
-	};
-	static final Map<Identifier, Identifier[]> UNLOCK_LOGIC = new HashMap<>() {
-		{
-			put(Registries.ITEM.getId(ItemRegistry.PIERCE_REVOLVER), new Identifier[]{
-					Registries.ITEM.getId(ItemRegistry.MARKSMAN_REVOLVER),
-					Registries.ITEM.getId(ItemRegistry.SHARPSHOOTER_REVOLVER)
-			});
-			put(Registries.ITEM.getId(ItemRegistry.CORE_SHOTGUN), new Identifier[]{
-					Registries.ITEM.getId(ItemRegistry.PUMP_SHOTGUN),
-					Registries.ITEM.getId(ItemRegistry.SAW_SHOTGUN)
-			});
-			put(Registries.ITEM.getId(ItemRegistry.ATTRACTOR_NAILGUN), new Identifier[]{
-					Registries.ITEM.getId(ItemRegistry.OVERHEAT_NAILGUN),
-					Registries.ITEM.getId(ItemRegistry.JUMPSTART_NAILGUN)
-			});
 		}
 	};
 	
@@ -99,6 +81,11 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 	{
 		if(isOwned(id) && !unlocked.contains(id))
 			unlocked.add(id);
+		for (Identifier owned : getOwnedList())
+		{
+			if(UltraRecipeManager.isRecipePresent(owned) && UltraRecipeManager.getRecipe(owned).getUnlocks().contains(id))
+				return true;
+		}
 		return unlocked.contains(id);
 	}
 	
@@ -119,8 +106,8 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 	{
 		if(!owned.contains(id))
 			owned.add(id);
-		if(UNLOCK_LOGIC.containsKey(id))
-			for (Identifier unlock : UNLOCK_LOGIC.get(id))
+		if(UltraRecipeManager.isRecipePresent(id))
+			for (Identifier unlock : UltraRecipeManager.getRecipe(id).getUnlocks())
 				unlock(unlock);
 	}
 	

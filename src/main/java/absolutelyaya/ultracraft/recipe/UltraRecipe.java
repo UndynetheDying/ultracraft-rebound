@@ -237,6 +237,11 @@ public class UltraRecipe
 		return material;
 	}
 	
+	public List<Identifier> getUnlocks()
+	{
+		return unlocks;
+	}
+	
 	public record Ingredient(Item item, int amount, String spriteOverride)
 	{
 	
