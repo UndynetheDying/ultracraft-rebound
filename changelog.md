@@ -63,6 +63,7 @@
 - Progression Unlock Logic now uses the items UltraRecipe unlock list instead of being hard-coded
 - Progression Unlock checks now take Unlock Logic into account
   - That means, as long as you have obtained for example the Piercer Revolver, the Marksman and Sharpshooter are unlocked
+- Added Darkness Block and replaced Black Stained Glass in all Levels with it
 ## Edit Mode Changes
 - Added `noAI` Attribute to spawn listeners
 - Added `knockbackOnly` Attribute ot explosion listeners

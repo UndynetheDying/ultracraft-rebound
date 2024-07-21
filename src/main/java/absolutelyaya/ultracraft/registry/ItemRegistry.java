@@ -430,6 +430,7 @@ public class ItemRegistry
 			content.add(BlockRegistry.FAKE_LEAVES.asItem());
 			content.add(HANK);
 			content.add(PORTAL);
+			content.add(BlockRegistry.DARKNESS);
 		});
 		//Dispenser Behaviors
 		DispenserBlock.registerBehavior(HELL_BULLET, new ProjectileDispenserBehavior(){

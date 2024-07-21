@@ -165,6 +165,8 @@ public class BlockRegistry
 			new MauriceBlock(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.GRAY).sounds(BlockSoundGroup.STONE)), true);
 	public static final Block CRACKED_MAURICE = register("cracked_maurice",
 			new MauriceBlock(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.GRAY).sounds(BlockSoundGroup.STONE)), true);
+	public static final Block DARKNESS = register("darkness",
+			new DarknessBlock(AbstractBlock.Settings.copy(Blocks.BLACK_STAINED_GLASS).mapColor(MapColor.GRAY).sounds(BlockSoundGroup.STONE).requiresTool().strength(-1f, 3600000f).nonOpaque()), true);
 	
 	public static final Block MAP_ROOM = register("map_room", new RoomBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_TRIGGER = register("map_trigger", new TriggerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
