@@ -6,7 +6,6 @@ import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.rendering.item.CoreEjectShotgunRenderer;
 import absolutelyaya.ultracraft.entity.projectile.EjectedCoreEntity;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -80,7 +79,7 @@ public class CoreEjectShotgunItem extends AbstractShotgunItem
 				approxUseTime = -1;
 		}
 		if(world.isClient && stack.hasNbt() && stack.getNbt().contains("charging") &&
-				   entity instanceof ClientPlayerEntity player && player.equals(MinecraftClient.getInstance().player))
+				   entity instanceof PlayerEntity player && player.equals(MinecraftClient.getInstance().player))
 			approxUseTime++;
 	}
 	

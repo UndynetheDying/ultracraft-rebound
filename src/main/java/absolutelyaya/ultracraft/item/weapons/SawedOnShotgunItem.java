@@ -4,7 +4,6 @@ import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.rendering.item.SawedOnShotgunRenderer;
-import absolutelyaya.ultracraft.client.sound.MovingWeaponSoundInstance;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.damage.DamageSources;
@@ -24,7 +23,6 @@ import mod.azure.azurelib.util.AzureLibUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -88,9 +86,8 @@ public class SawedOnShotgunItem extends AbstractShotgunItem implements ISelectio
 			if(!stack.getOrCreateNbt().contains("charging"))
 			{
 				stack.getOrCreateNbt().putBoolean("charging", true);
-				triggerAnim(user, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), shouldFlip(user) ? "sawStartFlip" : "sawStart");
-				
-				winged.attachMovingSound("SawActive", new MovingWeaponSoundInstance(SoundRegistry.SHOTGUN_SAW_ACTIVE, user, true));
+				triggerAnim(user, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), shouldFlip() ? "sawStartFlip" : "sawStart");
+				winged.attachMovingSound("SawActive", SoundRegistry.SHOTGUN_SAW_ACTIVE.getId(), true);
 			}
 		}
 		return TypedActionResult.pass(stack);
@@ -109,7 +106,7 @@ public class SawedOnShotgunItem extends AbstractShotgunItem implements ISelectio
 				if(world.isClient)
 					approxUseTime = -1;
 				else if(entity instanceof PlayerEntity player)
-					triggerAnim(player, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), shouldFlip(player) ? "sawEndFlip" : "sawEnd");
+					triggerAnim(player, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), shouldFlip() ? "sawEndFlip" : "sawEnd");
 				return;
 			}
 			Vec3d pos = entity.getEyePos(), forward = entity.getRotationVector();
@@ -135,7 +132,7 @@ public class SawedOnShotgunItem extends AbstractShotgunItem implements ISelectio
 			}
 		}
 		if(world.isClient && stack.hasNbt() && stack.getNbt().contains("charging") &&
-				   entity instanceof ClientPlayerEntity player && player.equals(MinecraftClient.getInstance().player))
+				   entity instanceof PlayerEntity player && player.equals(MinecraftClient.getInstance().player))
 			approxUseTime++;
 	}
 	
@@ -154,7 +151,7 @@ public class SawedOnShotgunItem extends AbstractShotgunItem implements ISelectio
 			saw.setVelocity(dir.x, dir.y, dir.z, Math.max(useTime * 1.5f, 0.5f), 0f);
 			world.spawnEntity(saw);
 			
-			triggerAnim(player, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), shouldFlip(player) ? "sawEndFlip" : "sawEnd");
+			triggerAnim(player, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), shouldFlip() ? "sawEndFlip" : "sawEnd");
 			((LivingEntityAccessor)user).addRecoil(altRecoil * useTime);
 			IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
 			GunCooldownManager cdm = winged.getGunCooldownManager();
@@ -248,7 +245,7 @@ public class SawedOnShotgunItem extends AbstractShotgunItem implements ISelectio
 										.triggerableAnim("sawEndFlip", AnimationSawEndFlip)
 										.setSoundKeyframeHandler(this::handleAnimSound),
 				new AnimationController<GeoAnimatable>(this, "saw", 1, state -> {
-					if(shouldFlip(MinecraftClient.getInstance().player))
+					if(shouldFlip())
 					{
 						state.setAnimation(AnimationFlip);
 						return PlayState.CONTINUE;
@@ -264,11 +261,11 @@ public class SawedOnShotgunItem extends AbstractShotgunItem implements ISelectio
 		return cache;
 	}
 	
-	boolean shouldFlip(PlayerEntity player)
+	boolean shouldFlip()
 	{
-		if(player == null)
+		if(Ultracraft.SERVER_SIDE)
 			return false;
-		return player.getMainArm().equals(Arm.LEFT);
+		return MinecraftClient.getInstance().player.getMainArm().equals(Arm.LEFT);
 	}
 	
 	@Override
@@ -315,21 +312,15 @@ public class SawedOnShotgunItem extends AbstractShotgunItem implements ISelectio
 	@Override
 	public void onSelect(PlayerEntity player)
 	{
-		if(!player.getWorld().isClient)
-		{
-			IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
-			winged.attachMovingSound("SawIdle", new MovingWeaponSoundInstance(SoundRegistry.SHOTGUN_SAW_IDLE, player, false));
-		}
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
+		winged.attachMovingSound("SawIdle", SoundRegistry.SHOTGUN_SAW_IDLE.getId(), false);
 	}
 	
 	@Override
 	public void onUnselect(PlayerEntity player)
 	{
-		if(!player.getWorld().isClient)
-		{
-			IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
-			winged.removeMovingSound("SawIdle");
-			winged.removeMovingSound("SawActive");
-		}
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
+		winged.removeMovingSound("SawIdle");
+		winged.removeMovingSound("SawActive");
 	}
 }

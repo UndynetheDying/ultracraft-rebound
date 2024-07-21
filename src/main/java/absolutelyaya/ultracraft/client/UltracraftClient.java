@@ -496,6 +496,7 @@ public class UltracraftClient implements ClientModInitializer
 			return;
 		IWingDataComponent wings = UltraComponents.WING_DATA.get(player);
 		wings.setActive(b);
+		SoundInstanceManager.attachMovementSounds(player);
 		if(!fromServer)
 		{
 			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());

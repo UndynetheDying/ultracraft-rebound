@@ -9,7 +9,6 @@ import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -96,11 +95,11 @@ public class SharpshooterRevolverItem extends AbstractRevolverItem
 				stack.getNbt().remove("charging");
 				if(!world.isClient)
 					triggerAnim(entity, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), "stop");
-				if(world.isClient && entity instanceof ClientPlayerEntity player && player.equals(MinecraftClient.getInstance().player))
+				if(world.isClient && entity instanceof PlayerEntity player && player.equals(MinecraftClient.getInstance().player))
 					approxUseTime = -1;
 				return;
 			}
-			if(world.isClient && entity instanceof ClientPlayerEntity player && player.equals(MinecraftClient.getInstance().player))
+			if(world.isClient && entity instanceof PlayerEntity player && player.equals(MinecraftClient.getInstance().player))
 				approxUseTime++;
 			else if(entity instanceof PlayerEntity player)
 				triggerAnim(player, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), isAlternate() ? "altspin" : "spin");

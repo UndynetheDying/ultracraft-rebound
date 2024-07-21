@@ -1,7 +1,6 @@
 package absolutelyaya.ultracraft.components.player;
 
 import absolutelyaya.ultracraft.client.GunCooldownManager;
-import absolutelyaya.ultracraft.client.sound.MovingEntitySoundInstance;
 import absolutelyaya.ultracraft.cybergrind.CybergrindData;
 import absolutelyaya.ultracraft.entity.projectile.JumpstartHookEntity;
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
@@ -9,6 +8,7 @@ import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -80,7 +80,7 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	
 	void setHook(JumpstartHookEntity hook);
 	
-	void attachMovingSound(String id, MovingEntitySoundInstance sound);
+	void attachMovingSound(String id, Identifier sound, boolean warmUp);
 	
 	void removeMovingSound(String id);
 }

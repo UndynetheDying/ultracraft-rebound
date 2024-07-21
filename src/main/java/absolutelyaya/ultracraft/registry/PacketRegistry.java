@@ -141,6 +141,7 @@ public class PacketRegistry
 	public static final Identifier ANNOUNCE_CYBERGRIND_PACKET_ID = Ultracraft.identifier("announce_cybergrind");
 	public static final Identifier SYNC_CYBERGRIND_PACKET_ID = Ultracraft.identifier("sync_cybergrind");
 	public static final Identifier PICKUP_PROGRESSION_ITEM_PACKET_ID = Ultracraft.identifier("pickup_progression");
+	public static final Identifier WEAPON_SOUND_PACKET_ID = Ultracraft.identifier("weapon_sound");
 	
 	public static void registerC2S()
 	{

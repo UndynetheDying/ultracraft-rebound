@@ -1,7 +1,6 @@
 package absolutelyaya.ultracraft.components.player;
 
 import absolutelyaya.ultracraft.client.gui.TitleHUD;
-import absolutelyaya.ultracraft.client.sound.MovingEntitySoundInstance;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
@@ -14,13 +13,10 @@ import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -30,11 +26,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSyncedComponent
 {
@@ -49,7 +40,6 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	float checkpointRot;
 	CybergrindData cybergrindData;
 	JumpstartHookEntity hook;
-	Map<String, MovingEntitySoundInstance> movingSounds = new HashMap<>();
 	
 	public WingedPlayerComponent(PlayerEntity provider)
 	{
@@ -310,21 +300,29 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	}
 	
 	@Override
-	public void attachMovingSound(String id, MovingEntitySoundInstance sound)
+	public void attachMovingSound(String id, Identifier sound, boolean warmUp)
 	{
-		if(movingSounds.containsKey(id))
-			removeMovingSound(id);
-		movingSounds.put(id, sound);
-		if(provider.getWorld().isClient)
-			MinecraftClient.getInstance().getSoundManager().play(sound);
+		if(!(provider instanceof ServerPlayerEntity serverPlayer))
+			return;
+		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeBoolean(true);
+		buf.writeString(id);
+		buf.writeInt(provider.getId());
+		buf.writeString(sound.toString());
+		buf.writeBoolean(warmUp);
+		ServerPlayNetworking.send(serverPlayer, PacketRegistry.WEAPON_SOUND_PACKET_ID, buf);
 	}
 	
 	@Override
 	public void removeMovingSound(String id)
 	{
-		MovingEntitySoundInstance sound = movingSounds.remove(id);
-		if(sound != null)
-			sound.setFinished();
+		if(!(provider instanceof ServerPlayerEntity serverPlayer))
+			return;
+		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeBoolean(false);
+		buf.writeString(id);
+		buf.writeInt(provider.getId());
+		ServerPlayNetworking.send(serverPlayer, PacketRegistry.WEAPON_SOUND_PACKET_ID, buf);
 	}
 	
 	@Override
@@ -352,18 +350,6 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 		}
 		else
 			hook = null;
-		if(tag.contains("movingSounds", NbtElement.LIST_TYPE))
-		{
-			NbtList list = tag.getList("movingSounds", NbtElement.STRING_TYPE);
-			List<String> keys = new ArrayList<>();
-			List<String> remove = new ArrayList<>();
-			list.forEach(i -> keys.add(i.asString()));
-			movingSounds.keySet().forEach(i -> {
-				if(!keys.contains(i))
-					remove.add(i);
-			});
-			remove.forEach(this::removeMovingSound);
-		}
 	}
 	
 	@Override
@@ -383,9 +369,6 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 		}
 		if(hook != null)
 			tag.putInt("hook", hook.getId());
-		NbtList list = new NbtList();
-		movingSounds.keySet().forEach(i -> list.add(NbtString.of(i)));
-		tag.put("movingSounds", list);
 	}
 	
 	@Override

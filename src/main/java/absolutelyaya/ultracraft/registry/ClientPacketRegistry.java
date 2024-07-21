@@ -6,6 +6,7 @@ import absolutelyaya.goop.particles.GoopDropParticleEffect;
 import absolutelyaya.ultracraft.ExplosionHandler;
 import absolutelyaya.ultracraft.client.gui.CybergrindHUD;
 import absolutelyaya.ultracraft.client.gui.screen.*;
+import absolutelyaya.ultracraft.client.sound.SoundInstanceManager;
 import absolutelyaya.ultracraft.compat.TrinketUtil;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
@@ -502,6 +503,21 @@ public class ClientPacketRegistry
 				client.particleManager.addParticle(new ItemPickupParticle(client.getEntityRenderDispatcher(), client.getBufferBuilders(),
 						client.world, e, client.player));
 				client.world.removeEntity(entityID, Entity.RemovalReason.DISCARDED);
+			});
+		})));
+		ClientPlayNetworking.registerGlobalReceiver(WEAPON_SOUND_PACKET_ID, (((client, handler, buf, responseSender) -> {
+			boolean add = buf.readBoolean();
+			String id = buf.readString();
+			Entity target = client.world.getEntityById(buf.readInt());
+			String sound = add ? buf.readString() : "";
+			boolean warmUp = add && buf.readBoolean();
+			client.execute(() -> {
+				if(!(target instanceof PlayerEntity player))
+					return;
+				if(add)
+					SoundInstanceManager.attachWeaponSoundInstance(id, Identifier.tryParse(sound), player, warmUp);
+				else
+					SoundInstanceManager.removeSoundInstance(id, player);
 			});
 		})));
 	}
