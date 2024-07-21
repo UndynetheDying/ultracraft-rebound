@@ -80,21 +80,20 @@ public class StyleBonus
 			return true;
 		else
 		{
+			RegistryEntry<DamageType> dmg = world.getDamageSources().registry.getEntry(type);
 			if(damageType.startsWith("#"))
 			{
-				RegistryEntry<DamageType> dmg = world.getDamageSources().registry.getEntry(type);
 				if(dmg != null)
 					return dmg.isIn(TagKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.tryParse(damageType.substring(1))));
 				return false;
 			}
 			else
 			{
-				DamageType t = world.getDamageSources().registry.get(Identifier.tryParse(damageType));
-				if(t != null)
-					return t.equals(type);
+				if(dmg.getKey().isPresent())
+					return dmg.getKey().get().getValue().equals(Identifier.tryParse(damageType));
 				else
 				{
-					Ultracraft.LOGGER.error("Damagetype not found! " + id);
+					Ultracraft.LOGGER.error("Damagetype not found! {}", id);
 					return false;
 				}
 			}
