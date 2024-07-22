@@ -98,7 +98,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
         return HostileEntity.createMobAttributes()
 					   .add(EntityAttributes.GENERIC_MAX_HEALTH, 80.0d)
 					   .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 1.0)
-					   .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.4d)
+					   .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.325d)
 					   .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 64.0d).build();
 	}
 	
@@ -174,6 +174,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 		int outro;
 		if((outro = dataTracker.get(OUTRO_TICKS)) > 0)
 		{
+			setVelocity(0f, getVelocity().y, 0f);
 			dataTracker.set(OUTRO_TICKS, outro + 1);
 			if(getWorld().isClient)
 				return;
@@ -202,6 +203,8 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 	@Override
 	public void tickMovement()
 	{
+		if(isPlayingOutro())
+			return;
 		super.tickMovement();
 		if(getAnimation() != ANIMATION_SLIDE)
 		{

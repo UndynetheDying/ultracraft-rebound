@@ -4,10 +4,11 @@
   - Played in Limbo Freeroam Dimension as long as you're not in creative mode
 - Added Level `Clair de Lune`
 - Improved V2 Boss Fight
-  - Buffed Speed
+  - Buffed Speed slightly
   - Decreased Attack Cooldowns
   - Fixed Wing Rendering
-  - 
+  - Beam Projectiles aren't Sharpshooter hittable anymore
+  - Fixed Movement after Death issue
 - Added Sawed-On Shotgun
 - Added Jumpstart Nailgun
 - Added new ████

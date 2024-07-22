@@ -21,7 +21,7 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-public class BeamProjectileEntity extends ProjectileEntity
+public class BeamProjectileEntity extends ProjectileEntity implements IIgnoreSharpshooter
 {
 	public static final TrackedData<Byte> HITSCAN_TYPE = DataTracker.registerData(BeamProjectileEntity.class, TrackedDataHandlerRegistry.BYTE);
 	Vec3d startPos = Vec3d.ZERO;
