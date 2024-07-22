@@ -19,7 +19,12 @@ import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.BlockStateRaycastContext;
+import net.minecraft.world.BlockView;
+import net.minecraft.world.RaycastContext;
 import org.joml.Vector4f;
 
 import java.util.ArrayList;
@@ -31,7 +36,7 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 	List<Entity> entities = new ArrayList<>();
 	Identifier entityType = Ultracraft.identifier("stray");
 	float yaw;
-	boolean noAI;
+	boolean noAI, onGround;
 	
 	public SpawnListenerBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -56,20 +61,20 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 	{
 		if(newState && !world.isClient)
 		{
+			Vec3d pos = this.pos.toCenterPos();
 			switch(entityType.toString())
 			{
-				case "ultracraft:dummy" -> entities.add(FilthEntity.spawnWithoutAI(world, pos.toCenterPos().subtract(0f, 0.5f, 0f)));
-				case "ultracraft:swordsmachine_wave1" -> entities.add(SwordsmachineEntity.spawnAsBoss(world, pos.toCenterPos(), 1));
-				case "ultracraft:swordsmachine_wave2" -> entities.add(SwordsmachineEntity.spawnAsBoss(world, pos.toCenterPos(), 2));
-				case "ultracraft:regular_swordsmachine" -> entities.add(SwordsmachineEntity.spawnAsNonBoss(world, pos.toCenterPos()));
-				case "ultracraft:destiny_swordsmachine" -> entities.addAll(DestinyBondSwordsmachineEntity.spawn(world, pos.toCenterPos(), yaw));
-				case "ultracraft:very_rodent" -> entities.add(RodentEntity.spawn(world, pos.toCenterPos(), 1));
-				case "ultracraft:hidden_mass" -> entities.add(HideousMassEntity.spawn(world, pos.toCenterPos(), true));
-				case "ultracraft:regular_mass" -> entities.add(HideousMassEntity.spawnAsNonBoss(world, pos.toCenterPos()));
-				case "ultracraft:malicious_boss" -> entities.add(MaliciousFaceEntity.spawnAsBoss(world, pos.toCenterPos()));
-				case "ultracraft:cerberus_boss" -> entities.add(CerberusEntity.spawnAsBoss(world, pos.toCenterPos(), false));
-				case "ultracraft:half_cerberus_boss" -> entities.add(CerberusEntity.spawnAsBoss(world, pos.toCenterPos(), true));
-				default -> entities.add(Registries.ENTITY_TYPE.get(entityType).spawn((ServerWorld)world, pos, SpawnReason.SPAWNER));
+				case "ultracraft:swordsmachine_wave1" -> entities.add(SwordsmachineEntity.spawnAsBoss(world, pos, 1));
+				case "ultracraft:swordsmachine_wave2" -> entities.add(SwordsmachineEntity.spawnAsBoss(world, pos, 2));
+				case "ultracraft:regular_swordsmachine" -> entities.add(SwordsmachineEntity.spawnAsNonBoss(world, pos));
+				case "ultracraft:destiny_swordsmachine" -> entities.addAll(DestinyBondSwordsmachineEntity.spawn(world, pos, yaw));
+				case "ultracraft:very_rodent" -> entities.add(RodentEntity.spawn(world, pos, 1));
+				case "ultracraft:hidden_mass" -> entities.add(HideousMassEntity.spawn(world, pos, true));
+				case "ultracraft:regular_mass" -> entities.add(HideousMassEntity.spawnAsNonBoss(world, pos));
+				case "ultracraft:malicious_boss" -> entities.add(MaliciousFaceEntity.spawnAsBoss(world, pos));
+				case "ultracraft:cerberus_boss" -> entities.add(CerberusEntity.spawnAsBoss(world, pos, false));
+				case "ultracraft:half_cerberus_boss" -> entities.add(CerberusEntity.spawnAsBoss(world, pos, true));
+				default -> entities.add(Registries.ENTITY_TYPE.get(entityType).spawn((ServerWorld)world, this.pos, SpawnReason.SPAWNER));
 			}
 			entities.forEach(e -> {
 				e.setYaw(yaw);
@@ -80,6 +85,17 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 				{
 					mob.setAiDisabled(true);
 					mob.setPosition(mob.getPos().subtract(0f, 0.5f, 0f));
+				}
+				if(onGround)
+				{
+					HitResult hit = world.raycast(new RaycastContext(pos, pos.subtract(0f, 16f, 0f),
+							RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, e));
+					if(hit != null && !hit.getType().equals(HitResult.Type.MISS))
+					{
+						Vec3d hitPos = hit.getPos();
+						e.refreshPositionAndAngles(hitPos.x, hitPos.y, hitPos.z, e.getYaw(), e.getPitch());
+						e.setOnGround(true);
+					}
 				}
 			});
 		}
@@ -132,6 +148,7 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 			case "delay" -> activationDelay = Integer.parseInt(value);
 			case "yaw" -> yaw = Float.parseFloat(value);
 			case "noAI" -> noAI = Boolean.parseBoolean(value);
+			case "onGround" -> onGround = Boolean.parseBoolean(value);
 		}
 		super.setAttribute(s, value);
 	}
@@ -145,6 +162,7 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 			case "delay" -> String.valueOf(activationDelay);
 			case "yaw" -> String.valueOf(yaw);
 			case "noAI" -> String.valueOf(noAI);
+			case "onGround" -> String.valueOf(onGround);
 			default -> null;
 		};
 	}
@@ -159,6 +177,8 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 			yaw = nbt.getFloat("yaw");
 		if(nbt.contains("noAI", NbtElement.BYTE_TYPE))
 			noAI = nbt.getBoolean("noAI");
+		if(nbt.contains("onGround", NbtElement.BYTE_TYPE))
+			onGround = nbt.getBoolean("onGround");
 	}
 	
 	@Override
@@ -168,6 +188,7 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 		nbt.putString("entityType", entityType.toString());
 		nbt.putFloat("yaw", yaw);
 		nbt.putBoolean("noAI", noAI);
+		nbt.putBoolean("onGround", onGround);
 	}
 	
 	static {
@@ -175,5 +196,6 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 		attributes.add("delay");
 		attributes.add("yaw");
 		attributes.add("noAI");
+		attributes.add("onGround");
 	}
 }

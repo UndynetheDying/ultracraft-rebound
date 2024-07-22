@@ -66,7 +66,12 @@
   - That means, as long as you have obtained for example the Piercer Revolver, the Marksman and Sharpshooter are unlocked
 - Added Darkness Block and replaced Black Stained Glass in all Levels with it
 ## Edit Mode Changes
-- Added `noAI` Attribute to spawn listeners
+- Changes to Spawn Listeners
+  - Added `noAI` Attribute
+  - Added `onGround` Attribute
+    - Tries to spawn the entity on the first Solid Block directly below the spawner instead of at its Blocks Center position
+    - If there's no suitable ground block within 64 Blocks, the entity will just be spawned at the Blocks Position anyways
+  - Removed Special Spawn Identifier `ultracraft:dummy`
 - Added `knockbackOnly` Attribute ot explosion listeners
   - enabling this, will make the explosion listeners throw entities within its `explosionRadius` away from it
   - the velocity is calculated using `(1f - (distance(entity, block) / explosionRadius)) * explosionDamage`
