@@ -65,6 +65,7 @@
 - Progression Unlock checks now take Unlock Logic into account
   - That means, as long as you have obtained for example the Piercer Revolver, the Marksman and Sharpshooter are unlocked
 - Added Darkness Block and replaced Black Stained Glass in all Levels with it
+- Stained Glass Windows in Levels no longer drop when broken
 ## Edit Mode Changes
 - Changes to Spawn Listeners
   - Added `noAI` Attribute
