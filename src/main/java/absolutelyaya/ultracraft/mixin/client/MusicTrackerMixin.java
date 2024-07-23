@@ -132,8 +132,8 @@ public abstract class MusicTrackerMixin
 													   UltracraftClient.getConfig().musicTransitionSpeed, 0f, 2.5f);
 			if(music.isNoCalmdown())
 				minAction = action = Math.max(action, minAction);
-			calm.setVolume(1f - Math.min(action, 1f));
-			combat.setVolume(Math.min(action, 1f));
+			calm.setVolume(Math.max(1f - Math.min(action, 1f), 0.01f));
+			combat.setVolume(Math.max(Math.min(action, 1f), 0.01f));
 		}
 		if(calm != null && !client.getSoundManager().isPlaying(calm))
 			client.getSoundManager().play(calm);

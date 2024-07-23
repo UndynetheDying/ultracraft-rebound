@@ -83,6 +83,8 @@
   - That means, as long as you have obtained for example the Piercer Revolver, the Marksman and Sharpshooter are unlocked
 - Added Darkness Block
 - Stained Glass Windows in Levels no longer drop when broken
+- Fixed Level Music (half) restarting when changing volume
+  - Only the Version that isn't currently primarily playing is reset
 ## Edit Mode Changes
 - Changes to Spawn Listeners
   - Added `noAI` Attribute
