@@ -45,8 +45,11 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.TypeFilter;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.*;
 import net.minecraft.world.GameRules;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import mod.azure.azurelib.animatable.GeoEntity;
 import mod.azure.azurelib.core.animatable.GeoAnimatable;
@@ -85,6 +88,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 	SnowballEntity escapePearl;
 	Vec3d nextShotDir;
 	DamageSource killingBlow;
+	YellowMovementGoal yellowMovementGoal;
 	
 	public V2Entity(EntityType<? extends HostileEntity> entityType, World world)
 	{
@@ -130,7 +134,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 	protected void initGoals()
 	{
 		super.initGoals();
-		goalSelector.add(0, new YellowMovementGoal(this));
+		goalSelector.add(0, yellowMovementGoal = new YellowMovementGoal(this));
 		goalSelector.add(0, new BlueMovementGoal(this));
 		goalSelector.add(0, new RedMovementGoal(this));
 		goalSelector.add(0, new GreenMovementGoal(this));
@@ -204,7 +208,12 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 	public void tickMovement()
 	{
 		if(isPlayingOutro())
+		{
+			if(!hasNoGravity())
+				setVelocity(getVelocity().subtract(0f, GRAVITY / 4f, 0f));
+			move(MovementType.SELF, getVelocity());
 			return;
+		}
 		super.tickMovement();
 		if(getAnimation() != ANIMATION_SLIDE)
 		{
@@ -218,13 +227,45 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 			Vec3d pos = getPos().add(dir.multiply(1.5));
 			getWorld().addParticle(ParticleRegistry.SLIDE, false, pos.x, pos.y + 0.1, pos.z, particleVel.x, particleVel.y, particleVel.z);
 		}
-		if(wallJumps < 3 && groundCollision)
+		if(wallJumps < 3 && isOnGround())
 			wallJumps = 3;
 		if(getTarget() != null && !(Ultracraft.isTimeFrozen() || isPlayingIntro() || isPlayingOutro()))
 		{
 			updateMovementGoal();
 			tickAttack();
 		}
+	}
+	
+	@Override
+	public void move(MovementType movementType, Vec3d movement)
+	{
+		if(!finishedIntro())
+		{
+			super.move(movementType, movement);
+			return;
+		}
+		BlockHitResult hit = getWorld().raycast(new RaycastContext(getPos(), getPos().subtract(0, 5, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, this));
+		if(!hit.getType().equals(HitResult.Type.MISS))
+		{
+			for (int x = -1; x <= 1; x++)
+			{
+				for (int z = -1; z <= 1; z++)
+				{
+					if(x == 0 && z == 0)
+						continue;
+					if(getWorld().isSpaceEmpty(getBoundingBox().expand(0.1).offset(movement).offset(x * 0.4, -Math.abs(hit.getPos().y - getY()) - 2, z * 0.4)))
+					{
+						movement = movement.multiply(1f - Math.abs(x), 1f, 1f - Math.abs(z));
+						setVelocity(getVelocity().multiply(1f - Math.abs(x), 1f, 1f - Math.abs(z)));
+						if(getMovementMode() == 0 && yellowMovementGoal != null)
+							yellowMovementGoal.changeDirection();
+						if(getAnimation() == ANIMATION_SLIDE)
+							dataTracker.set(ANIMATION, ANIMATION_IDLE);
+					}
+				}
+			}
+		}
+		super.move(movementType, movement);
 	}
 	
 	void updateMovementGoal()
@@ -455,11 +496,10 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 	@Override
 	protected void jump()
 	{
-		if(!groundCollision)
-		{
-			if(wallJumps-- <= 0)
-				return;
-		}
+		if(getAnimation() == ANIMATION_SLIDE)
+			return;
+		if(!isOnGround() && (wallJumps-- <= 0 || !horizontalCollision))
+			return;
 		super.jump();
 	}
 	
@@ -806,7 +846,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 			if(mob.getRandom().nextFloat() < 0.005f && mob.isOnGround())
 				mob.jump();
 			if(mob.horizontalCollision ||
-					   (mob.groundCollision && mob.getWorld().isSpaceEmpty(mob.getBoundingBox().shrink(0.75f, 0f, 0.75f)
+					   (mob.isOnGround() && mob.getWorld().isSpaceEmpty(mob.getBoundingBox().shrink(0.75f, 0f, 0.75f)
 																				   .offset(dir.x * 0.25f, -2f, dir.z * 0.25f))) ||
 					   cooldown <= 0)
 			{
@@ -815,7 +855,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 					mob.jump();
 			}
 			if(mob.distanceTo(mob.getTarget()) > 24f)
-				dir = mob.getTarget().getPos().subtract(mob.getPos()).normalize();
+				dir = mob.getTarget().getPos().subtract(mob.getPos()).normalize().multiply(1f, 0f, 1f);
 		}
 		
 		@Override
@@ -927,11 +967,11 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 			if(mob.getAnimation() != ANIMATION_SLIDE) //Not Sliding
 			{
 				float jumpChance = 0.01f;
-				if(mob.getTarget().getPos().y - 2 < mob.getPos().y)
+				if(mob.getTarget().getPos().y - 3 > mob.getPos().y)
 					jumpChance = 0.1f;
-				if(mob.horizontalCollision && mob.getRandom().nextFloat() < jumpChance)
+				if(mob.isOnGround() && mob.getRandom().nextFloat() < jumpChance)
 					mob.jump();
-				if (targetDistance > 10f) //Start sliding
+				if (mob.isOnGround() && targetDistance > 10f) //Start sliding
 				{
 					if(mob.canSee(mob.getTarget()) && mob.getRandom().nextFloat() < 0.025f)
 					{
@@ -1012,7 +1052,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 			super.start();
 			mob.addVelocity(mob.getPos().subtract(mob.getTarget().getPos()).normalize().multiply(2f));
 			mob.ferocity += 50;
-			timer = 20;
+			timer = 10;
 			mob.getNavigation().startMovingAlong(path, mob.getSpeedAttribute() * 1.25f);
 		}
 		

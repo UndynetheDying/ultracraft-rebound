@@ -32,7 +32,7 @@ public class V2EmissiveLayer extends GeoRenderLayer<V2Entity>
 			case 2 -> RED;
 			case 3 -> GREEN;
 		};
-		renderLayer = RenderLayer.getEntityCutout(tex);
+		renderLayer = RenderLayer.getEntityCutoutNoCull(tex);
 		getRenderer().reRender(getDefaultBakedModel(animatable), poseStack, bufferSource, animatable, renderLayer,
 				bufferSource.getBuffer(renderLayer), partialTick, LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV,
 				1, 1, 1, 1);
