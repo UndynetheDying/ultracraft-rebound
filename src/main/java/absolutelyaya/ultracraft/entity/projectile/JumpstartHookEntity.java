@@ -5,6 +5,7 @@ import absolutelyaya.ultracraft.ServerHitscanHandler;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.accessor.IParriable;
 import absolutelyaya.ultracraft.accessor.LivingEntityAccessor;
+import absolutelyaya.ultracraft.api.HeavyEntities;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.components.UltraComponents;
@@ -111,6 +112,12 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 		{
 			if(!getVictim().isAlive())
 			{
+				
+				if(!getWorld().isClient && getVictim() instanceof LivingEntity living && living.isDead() && UltraComponents.LIVING.get(living).getNails() > 0)
+				{
+					nailExplosion();
+					return;
+				}
 				dataTracker.set(VICTIM, -1);
 				return;
 			}
@@ -148,19 +155,12 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 						if(explosionTicks == 0)
 						{
 							ExplosionHandler.explosion(getVictim(), getWorld(), getVictim().getPos(), DamageSources.get(getWorld(), DamageSources.EXPLOSION), 0.001f, 0f, 0.01f, false);
-							getVictim().addVelocity(new Vec3d(0f, 1.5f, 0f));
+							if(!HeavyEntities.isHeavy(getVictim().getType()))
+								getVictim().addVelocity(new Vec3d(0f, 1.5f, 0f));
 							UltraComponents.WINGED.get(getOwner()).getGunCooldownManager().setCooldown(ItemRegistry.JUMPSTART_NAILGUN, 100, GunCooldownManager.SECONDARY);
 						}
 						else if(explosionTicks == 10)
-						{
-							getWorld().getOtherEntities(this,
-									getBoundingBox().expand(10f), e -> e != getOwner() && (getOwner() != null && !getOwner().isTeammate(e))).forEach(e -> {
-								ServerHitscanHandler.sendPacket((ServerWorld) getWorld(), getPos().addRandom(random, 0.1f),
-										e.getPos().add(0f, e.getHeight() / 2f, 0f), ServerHitscanHandler.JUMPSTART_ARC);
-								e.damage(DamageSources.get(getWorld(), DamageSources.JUMPSTART, getOwner()), 10);
-							});
-							kill();
-						}
+							nailExplosion();
 						dataTracker.set(EXPLOSION_TICKS, explosionTicks + 1);
 					}
 					else
@@ -173,6 +173,17 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 			}
 		}
 		tickMovement();
+	}
+	
+	void nailExplosion()
+	{
+		getWorld().getOtherEntities(this,
+				getBoundingBox().expand(10f), e -> e != getOwner() && (getOwner() != null && !getOwner().isTeammate(e))).forEach(e -> {
+			ServerHitscanHandler.sendPacket((ServerWorld) getWorld(), getPos().addRandom(random, 0.1f),
+					e.getPos().add(0f, e.getHeight() / 2f, 0f), ServerHitscanHandler.JUMPSTART_ARC);
+			e.damage(DamageSources.get(getWorld(), DamageSources.JUMPSTART, getOwner()), 10);
+		});
+		kill();
 	}
 	
 	void tickMovement()
