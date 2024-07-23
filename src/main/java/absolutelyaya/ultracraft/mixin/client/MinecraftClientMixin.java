@@ -1,10 +1,7 @@
 package absolutelyaya.ultracraft.mixin.client;
 
-import absolutelyaya.ultracraft.block.AbstractPedestalBlock;
+import absolutelyaya.ultracraft.block.*;
 import absolutelyaya.ultracraft.components.UltraComponents;
-import absolutelyaya.ultracraft.block.TerminalBlock;
-import absolutelyaya.ultracraft.block.TerminalBlockEntity;
-import absolutelyaya.ultracraft.block.TerminalDisplayBlock;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.screen.IntroScreen;
 import absolutelyaya.ultracraft.client.gui.screen.TravelScreen;
@@ -219,16 +216,8 @@ public abstract class MinecraftClientMixin
 				return;
 			}
 		}
-		if(!hit.getType().equals(HitResult.Type.MISS) && UltraComponents.DIMENSION_DATA.get(world).isPosNotModifiable(player, ((BlockHitResult)hit).getBlockPos()))
-		{
-			player.swingHand(Hand.MAIN_HAND);
-			cir.setReturnValue(false);
-			return;
-		}
 		
-		if(!pedestal)
-			return;
-		if(player.isCreative())
+		if(pedestal && player.isCreative())
 		{
 			if(options.sneakKey.isPressed())
 			{
@@ -238,10 +227,18 @@ public abstract class MinecraftClientMixin
 			else
 				return;
 		}
-		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-		buf.writeBlockPos(((BlockHitResult)hit).getBlockPos());
-		buf.writeBoolean(true);
-		ClientPlayNetworking.send(PacketRegistry.PUNCH_BLOCK_PACKET_ID, buf);
+		if(world.getBlockState(bhit.getBlockPos()).getBlock() instanceof IPunchableBlock)
+		{
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			buf.writeBlockPos(((BlockHitResult)hit).getBlockPos());
+			buf.writeBoolean(true);
+			ClientPlayNetworking.send(PacketRegistry.PUNCH_BLOCK_PACKET_ID, buf);
+		}
+		if(!hit.getType().equals(HitResult.Type.MISS) && UltraComponents.DIMENSION_DATA.get(world).isPosNotModifiable(player, ((BlockHitResult)hit).getBlockPos()))
+		{
+			player.swingHand(Hand.MAIN_HAND);
+			cir.setReturnValue(false);
+		}
 	}
 	
 	@Inject(method = "handleBlockBreaking", at = @At("HEAD"), cancellable = true)

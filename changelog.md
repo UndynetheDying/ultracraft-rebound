@@ -42,6 +42,7 @@
 - Changed how movement sounds are handled
 - Reinforced Stained Glass windows don't need to be supported by blocks anymore once they've been placed successfully
 - Improved Beam Projectiles
+- Fixed Punchable Blocks (like Pedestals) not reaction to Main Hand punches in protected Areas
 ## Settings & Config
 ## Commands
 ## Tweaks

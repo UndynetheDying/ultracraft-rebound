@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.block;
 
+import absolutelyaya.ultracraft.registry.ItemRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -63,9 +64,23 @@ public class PedestalBlock extends AbstractPedestalBlock
 		{
 			ItemStack key = pedestal.getKey();
 			ItemStack held = pedestal.getHeld();
+			if(held.isEmpty())
+				return 0;
 			if (key.isEmpty())
 			{
-				return held.isEmpty() ? 0 : 15;
+				switch(state.get(TYPE))
+				{
+					case BLUE ->
+					{
+						if(held.isOf(ItemRegistry.BLUE_SKULL))
+							return 15;
+					}
+					case RED ->
+					{
+						if(held.isOf(ItemRegistry.RED_SKULL))
+							return 15;
+					}
+				}
 			}
 		}
 		return super.getWeakRedstonePower(state, world, pos, direction);
