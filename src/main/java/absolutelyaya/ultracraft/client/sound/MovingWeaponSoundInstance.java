@@ -8,13 +8,13 @@ public class MovingWeaponSoundInstance extends MovingEntitySoundInstance
 {
 	final boolean warmUp;
 	
-	public MovingWeaponSoundInstance(SoundEvent event, Entity owner, boolean warmUp)
+	public MovingWeaponSoundInstance(SoundEvent event, Entity owner, boolean warmUp, float volume)
 	{
 		super(event, owner);
 		this.warmUp = warmUp;
 		if(warmUp)
 			pitch = 0.5f;
-		volume = 1f;
+		this.volume = volume;
 		MinecraftClient.getInstance().getSoundManager().play(this);
 	}
 	

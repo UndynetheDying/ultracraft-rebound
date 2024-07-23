@@ -87,7 +87,7 @@ public class SawedOnShotgunItem extends AbstractShotgunItem implements ISelectio
 			{
 				stack.getOrCreateNbt().putBoolean("charging", true);
 				triggerAnim(user, GeoItem.getOrAssignId(stack, (ServerWorld)world), getControllerName(), shouldFlip() ? "sawStartFlip" : "sawStart");
-				winged.attachMovingSound("SawActive", SoundRegistry.SHOTGUN_SAW_ACTIVE.getId(), true);
+				winged.attachMovingSound("SawActive", SoundRegistry.SHOTGUN_SAW_ACTIVE.getId(), true, 0.6f);
 			}
 		}
 		return TypedActionResult.pass(stack);
@@ -313,7 +313,7 @@ public class SawedOnShotgunItem extends AbstractShotgunItem implements ISelectio
 	public void onSelect(PlayerEntity player)
 	{
 		IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
-		winged.attachMovingSound("SawIdle", SoundRegistry.SHOTGUN_SAW_IDLE.getId(), false);
+		winged.attachMovingSound("SawIdle", SoundRegistry.SHOTGUN_SAW_IDLE.getId(), false, 0.6f);
 	}
 	
 	@Override

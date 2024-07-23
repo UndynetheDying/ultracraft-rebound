@@ -13,14 +13,14 @@ public class SoundInstanceManager
 {
 	static final Map<Integer, Map<String, MovingEntitySoundInstance>> movingSounds = new HashMap<>();
 	
-	public static void attachWeaponSoundInstance(String id, Identifier sound, PlayerEntity target, boolean warmUp)
+	public static void attachWeaponSoundInstance(String id, Identifier sound, PlayerEntity target, boolean warmUp, float volume)
 	{
 		if(!movingSounds.containsKey(target.getId()))
 			movingSounds.put(target.getId(), new HashMap<>());
 		Map<String, MovingEntitySoundInstance> entry = movingSounds.get(target.getId());
 		if(entry.containsKey(id))
 			removeSoundInstance(id, target);
-		MovingEntitySoundInstance instance = new MovingWeaponSoundInstance(SoundEvent.of(sound), target, warmUp);
+		MovingEntitySoundInstance instance = new MovingWeaponSoundInstance(SoundEvent.of(sound), target, warmUp, volume);
 		entry.put(id, instance);
 	}
 	

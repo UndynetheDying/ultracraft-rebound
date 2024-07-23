@@ -10,7 +10,7 @@ public class MovingChainsawSoundInstance extends MovingEntitySoundInstance
 	public MovingChainsawSoundInstance(Entity owner)
 	{
 		super(SoundRegistry.SHOTGUN_SAW_ACTIVE, owner);
-		volume = 1f;
+		volume = 0.6f;
 	}
 	
 	@Override

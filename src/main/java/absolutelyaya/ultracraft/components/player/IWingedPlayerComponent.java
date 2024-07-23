@@ -80,7 +80,7 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	
 	void setHook(JumpstartHookEntity hook);
 	
-	void attachMovingSound(String id, Identifier sound, boolean warmUp);
+	void attachMovingSound(String id, Identifier sound, boolean warmUp, float volume);
 	
 	void removeMovingSound(String id);
 }

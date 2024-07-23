@@ -300,7 +300,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	}
 	
 	@Override
-	public void attachMovingSound(String id, Identifier sound, boolean warmUp)
+	public void attachMovingSound(String id, Identifier sound, boolean warmUp, float volume)
 	{
 		if(!(provider instanceof ServerPlayerEntity serverPlayer))
 			return;
@@ -310,6 +310,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 		buf.writeInt(provider.getId());
 		buf.writeString(sound.toString());
 		buf.writeBoolean(warmUp);
+		buf.writeFloat(volume);
 		ServerPlayNetworking.send(serverPlayer, PacketRegistry.WEAPON_SOUND_PACKET_ID, buf);
 	}
 	

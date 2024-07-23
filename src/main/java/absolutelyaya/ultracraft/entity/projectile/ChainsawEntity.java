@@ -24,6 +24,7 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.joml.Vector4f;
 
@@ -104,6 +105,24 @@ public class ChainsawEntity extends ProjectileEntity implements GeoEntity, Proje
 		double y = getY() + vel.y;
 		double z = getZ() + vel.z;
 		setPosition(x, y, z);
+		if(getWorld().isClient)
+			return;
+		if(dataTracker.get(CONNECTED) && getOwner() != null &&
+				   getWorld().raycast(new RaycastContext(getPos(), getOwner().getPos(),
+						   RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, this)).getType().equals(HitResult.Type.BLOCK))
+		{
+			setVelocity(getVelocity().normalize());
+			dataTracker.set(CONNECTED, false);
+		}
+		if(dataTracker.get(CONNECTED))
+		{
+			if(age > 600)
+				kill();
+		}
+		else if(age > 100)
+			kill();
+		if(owner != null && (owner.isRemoved() || !owner.isAlive()))
+			kill();
 	}
 	
 	@Override
@@ -138,7 +157,8 @@ public class ChainsawEntity extends ProjectileEntity implements GeoEntity, Proje
 		setVelocity(parrier.getRotationVector());
 		setRotation(-parrier.getYaw(), -parrier.getPitch());
 		dataTracker.set(AWAITING_PARRY, false);
-		age = 0;
+		if(dataTracker.get(CONNECTED))
+			age = 0;
 		//setInvisible(false);
 	}
 	

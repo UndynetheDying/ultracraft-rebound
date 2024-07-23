@@ -511,11 +511,12 @@ public class ClientPacketRegistry
 			Entity target = client.world.getEntityById(buf.readInt());
 			String sound = add ? buf.readString() : "";
 			boolean warmUp = add && buf.readBoolean();
+			float volume = add ? buf.readFloat() : 1f;
 			client.execute(() -> {
 				if(!(target instanceof PlayerEntity player))
 					return;
 				if(add)
-					SoundInstanceManager.attachWeaponSoundInstance(id, Identifier.tryParse(sound), player, warmUp);
+					SoundInstanceManager.attachWeaponSoundInstance(id, Identifier.tryParse(sound), player, warmUp, volume);
 				else
 					SoundInstanceManager.removeSoundInstance(id, player);
 			});
