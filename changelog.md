@@ -25,11 +25,24 @@
   - This allows setting an intro sound played before the actual track starts
 - Added Flipped state to Cerberus Block
 - Added `sacrificial` nbt tag to Pedestals
-- Fixed Fall Damage not working correctly for Players
-- Fixed Deadcoins not being shootable
 - Added Hyacinth
 - Added Hyacinth patches to Limbo worldgen
 - Added Butteflies :3
+- Changes to old levels
+  - Replaced all Black Stained Glass with Darkness Blocks
+  - limbo1 `Illusionary Paradise`
+    - Fixed enemies not spawning again after dying in `room-62`
+    - Fixed the room where you obtain the red skull not actually being a room and thus not being protected
+    - Fixed red pedestal in `room-67` not being locked
+    - Fixed checkpoint in Room `filthyStaircase` being parented to Room `HallOfNails` instead
+    - Added Tutorial Message on Pedestals
+    - Added Hyacinth
+  - limbo2 `Halls of the Blameless`
+    - Fixed Checkpoint in Room `Funtain`
+    - Fixed Checkpoint in Room `TheBigRed` being too big, allowing it to be triggered before finishing the preceeding Room (`Funtain`)
+    - Added Hyacinth
+- Fixed Fall Damage not working correctly for Players
+- Fixed Deadcoins not being shootable
 - Added Fire Sky Block variant
 - Added Luna Sky Block variant
   - The old Night Sky Block variant now doesn't have a moon anymore
@@ -68,7 +81,7 @@
 - Progression Unlock Logic now uses the items UltraRecipe unlock list instead of being hard-coded
 - Progression Unlock checks now take Unlock Logic into account
   - That means, as long as you have obtained for example the Piercer Revolver, the Marksman and Sharpshooter are unlocked
-- Added Darkness Block and replaced Black Stained Glass in all Levels with it
+- Added Darkness Block
 - Stained Glass Windows in Levels no longer drop when broken
 ## Edit Mode Changes
 - Changes to Spawn Listeners
