@@ -37,10 +37,11 @@ import org.joml.Vector3f;
 public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpshooter, IParriable
 {
 	public static final float MAX_DISTANCE = 8f;
-	protected static final TrackedData<Integer> VICTIM = DataTracker.registerData(JumpstartHookEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Integer> CHARGE = DataTracker.registerData(JumpstartHookEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Integer> STRESS = DataTracker.registerData(JumpstartHookEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Integer> EXPLOSION_TICKS = DataTracker.registerData(JumpstartHookEntity.class, TrackedDataHandlerRegistry.INTEGER);
+	
+	Entity victim;
 	
 	public JumpstartHookEntity(EntityType<? extends ThrownEntity> entityType, World world)
 	{
@@ -50,7 +51,6 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 	@Override
 	protected void initDataTracker()
 	{
-		dataTracker.startTracking(VICTIM, -1);
 		dataTracker.startTracking(CHARGE, 0);
 		dataTracker.startTracking(STRESS, 0);
 		dataTracker.startTracking(EXPLOSION_TICKS, 0);
@@ -75,10 +75,7 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 	
 	public Entity getVictim()
 	{
-		int id = dataTracker.get(VICTIM);
-		if(id == -1)
-			return null;
-		return getWorld().getEntityById(id);
+		return victim;
 	}
 	
 	@Override
@@ -89,7 +86,7 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 		Entity entity = entityHitResult.getEntity();
 		if(entity.isPartOf(owner))
 			return;
-		dataTracker.set(VICTIM, entity.getId());
+		victim = entity;
 	}
 	
 	public boolean breakIfVacant()
@@ -118,7 +115,7 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 					nailExplosion();
 					return;
 				}
-				dataTracker.set(VICTIM, -1);
+				victim = null;
 				return;
 			}
 			setVelocity(Vec3d.ZERO);

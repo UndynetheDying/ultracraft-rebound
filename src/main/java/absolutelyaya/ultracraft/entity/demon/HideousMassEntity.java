@@ -469,8 +469,8 @@ public class HideousMassEntity extends AbstractUltraHostileEntity implements Geo
 	public void onSpawnPacket(EntitySpawnS2CPacket packet)
 	{
 		super.onSpawnPacket(packet);
-		for (int i = 0; i < parts.length; i++)
-			parts[i].setId(packet.getId() + i + 1);
+		//for (int i = 0; i < parts.length; i++)
+		//	parts[i].setId(packet.getId() + i + 1);
 	}
 	
 	@Override

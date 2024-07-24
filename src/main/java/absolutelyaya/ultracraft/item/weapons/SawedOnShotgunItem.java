@@ -7,6 +7,8 @@ import absolutelyaya.ultracraft.client.rendering.item.SawedOnShotgunRenderer;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.damage.DamageSources;
+import absolutelyaya.ultracraft.entity.demon.HideousMassEntity;
+import absolutelyaya.ultracraft.entity.demon.HideousPart;
 import absolutelyaya.ultracraft.entity.projectile.ChainsawEntity;
 import absolutelyaya.ultracraft.item.ISelectionAwareItem;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
@@ -114,7 +116,9 @@ public class SawedOnShotgunItem extends AbstractShotgunItem
 					pos.x + 0.3f, pos.y + 0.3f, pos.z + 0.3f)
 								.stretch(forward.multiply(2f));
 			DamageSource source = DamageSources.get(world, DamageSources.SAW_MELEE, entity);
-			world.getOtherEntities(entity, check, i -> i instanceof LivingEntity || i instanceof BoatEntity).forEach(i -> i.damage(source, 0.5f));
+			world.getOtherEntities(entity, check, i -> (i instanceof LivingEntity || i instanceof BoatEntity || i instanceof HideousPart) &&
+															   !(i instanceof HideousMassEntity))
+					.forEach(i -> i.damage(source, 0.5f));
 			BlockHitResult hit = world.raycast(new RaycastContext(entity.getEyePos(), entity.getEyePos().add(entity.getRotationVector().multiply(2f)),
 					RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, entity));
 			if(hit != null && !hit.getType().equals(HitResult.Type.MISS))

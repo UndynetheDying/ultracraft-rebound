@@ -27,8 +27,8 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 	protected static final TrackedData<Float> IMPACT_PITCH = DataTracker.registerData(AbstractSkewerEntity.class, TrackedDataHandlerRegistry.FLOAT);
 	protected static final TrackedData<Integer> HEALTH = DataTracker.registerData(AbstractSkewerEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Integer> SHAKE = DataTracker.registerData(AbstractSkewerEntity.class, TrackedDataHandlerRegistry.INTEGER);
-	protected static final TrackedData<Integer> VICTIM = DataTracker.registerData(AbstractSkewerEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	
+	Entity victim;
 	protected int unmovingTicks;
 	
 	protected AbstractSkewerEntity(EntityType<? extends PersistentProjectileEntity> entityType, World world)
@@ -47,7 +47,6 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 		dataTracker.startTracking(IMPACT_PITCH, 0f);
 		dataTracker.startTracking(HEALTH, 2);
 		dataTracker.startTracking(SHAKE, 0);
-		dataTracker.startTracking(VICTIM, -1);
 	}
 	
 	@Override
@@ -66,7 +65,7 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 		{
 			if(!getVictim().isAlive())
 			{
-				dataTracker.set(VICTIM, -1);
+				victim = null;
 				return;
 			}
 			setVelocity(Vec3d.ZERO);
@@ -114,10 +113,7 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 	
 	public Entity getVictim()
 	{
-		int id = dataTracker.get(VICTIM);
-		if(id == -1)
-			return null;
-		return getWorld().getEntityById(id);
+		return victim;
 	}
 	
 	@Override
@@ -148,7 +144,7 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 		Entity entity = entityHitResult.getEntity();
 		if(entity.isPartOf(owner))
 			return;
-		dataTracker.set(VICTIM, entity.getId());
+		victim = entity;
 		dataTracker.set(IMPACT_YAW, getYaw());
 		dataTracker.set(IMPACT_PITCH, getPitch());
 		if(this instanceof ProjectileEntityAccessor proj && proj.isParried())

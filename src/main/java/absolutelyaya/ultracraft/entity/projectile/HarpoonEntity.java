@@ -103,7 +103,7 @@ public class HarpoonEntity extends AbstractSkewerEntity implements IIgnoreSharps
 		{
 			if(!getVictim().isAlive())
 			{
-				dataTracker.set(VICTIM, -1);
+				victim = null;
 				setReturning(true);
 				return;
 			}
@@ -158,7 +158,7 @@ public class HarpoonEntity extends AbstractSkewerEntity implements IIgnoreSharps
 	public void setReturning(boolean b)
 	{
 		if(getVictim() != null)
-			dataTracker.set(VICTIM, -1);
+			victim = null;
 		dataTracker.set(RETURNING, b);
 		if(b && !dataTracker.get(STACK).isEmpty() && getOwner() instanceof LivingEntity living)
 		{
