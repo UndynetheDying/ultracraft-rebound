@@ -64,6 +64,7 @@
   - If disabled, switching off of a weapon will replace it with its first equipped variant. Enabled by default
 ## Commands
 ## Tweaks
+- Reduced delay before Malicious Faces first attack
 ## Minor Changes
 - Fixed Cerberus Cracking Sounds not playing
 - Fixed the modification suppression message in limbo showing up when it shouldn't

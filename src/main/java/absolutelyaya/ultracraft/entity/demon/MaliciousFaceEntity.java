@@ -99,7 +99,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	protected void initDataTracker()
 	{
 		super.initDataTracker();
-		dataTracker.startTracking(ATTACK_COOLDOWN, 100);
+		dataTracker.startTracking(ATTACK_COOLDOWN, 50);
 		dataTracker.startTracking(CRACKED, false);
 		dataTracker.startTracking(DEAD, false);
 		dataTracker.startTracking(DECORATIVE, false);
