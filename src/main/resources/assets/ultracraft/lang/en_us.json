@@ -250,6 +250,7 @@
   "block.ultracraft.map_title": "Map Title Trigger",
   "block.ultracraft.map_title_listener": "Map Title Listener",
   "block.ultracraft.map_timer": "Map Timer Trigger",
+  "block.ultracraft.map_timer_listener": "Map Timer Listener",
   "block.ultracraft.map_receiver": "Map Redstone Receiver",
   "block.ultracraft.map_travel": "Map Force Travel Trigger",
   "block.ultracraft.map_level": "Map Level Unlock Listener",

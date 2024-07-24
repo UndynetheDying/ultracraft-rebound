@@ -102,6 +102,8 @@
 - Added `knockbackOnly` Attribute ot explosion listeners
   - enabling this, will make the explosion listeners throw entities within its `explosionRadius` away from it
   - the velocity is calculated using `(1f - (distance(entity, block) / explosionRadius)) * explosionDamage`
+- Added Timer Listener
+  - Starts//Stops the Timer for all players in its parent room when the flag bound to it is activated
 ## Resource Changes
 - Changed Shotgun UVs(moved smoke to make room for the chainsaw)
 ## API Changes

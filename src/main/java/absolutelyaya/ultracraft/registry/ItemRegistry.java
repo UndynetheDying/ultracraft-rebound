@@ -519,6 +519,7 @@ public class ItemRegistry
 			content.add(BlockRegistry.MAP_CHECKPOINT);
 			content.add(BlockRegistry.MAP_PROGRESSION);
 			content.add(BlockRegistry.MAP_TIMER);
+			content.add(BlockRegistry.MAP_TIMER_LISTENER);
 			content.add(BlockRegistry.MAP_TRAVEL);
 			content.add(BlockRegistry.MAP_ABYSS);
 			content.add(BlockRegistry.MAP_TITLE);

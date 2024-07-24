@@ -35,6 +35,7 @@ public class BlockEntityRegistry
 	public static final BlockEntityType<TitleListenerBlockEntity> MAP_TITLE_LISTENER;
 	public static final BlockEntityType<GlobalTitleListenerBlockEntity> MAP_GLOBAL_TITLE;
 	public static final BlockEntityType<TimerBlockEntity> MAP_TIMER;
+	public static final BlockEntityType<TimerListenerBlockEntity> MAP_TIMER_LISTENER;
 	public static final BlockEntityType<LevelUnlockBlockEntity> MAP_LEVEL;
 	public static final BlockEntityType<ForceTravelBlockEntity> MAP_TRAVEL;
 	public static final BlockEntityType<DamageBlockEntity> MAP_DAMAGE;
@@ -122,6 +123,9 @@ public class BlockEntityRegistry
 		MAP_TIMER = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				Ultracraft.identifier("map_timer"),
 				FabricBlockEntityTypeBuilder.create(TimerBlockEntity::new, BlockRegistry.MAP_TIMER).build());
+		MAP_TIMER_LISTENER = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				Ultracraft.identifier("map_timer_listener"),
+				FabricBlockEntityTypeBuilder.create(TimerListenerBlockEntity::new, BlockRegistry.MAP_TIMER_LISTENER).build());
 		MAP_LEVEL = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				Ultracraft.identifier("map_level"),
 				FabricBlockEntityTypeBuilder.create(LevelUnlockBlockEntity::new, BlockRegistry.MAP_LEVEL).build());

@@ -65,6 +65,7 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 				EntryStacks.of(BlockRegistry.MAP_PROGRESSION),
 				EntryStacks.of(BlockRegistry.MAP_LEVEL),
 				EntryStacks.of(BlockRegistry.MAP_TIMER),
+				EntryStacks.of(BlockRegistry.MAP_TIMER_LISTENER),
 				EntryStacks.of(BlockRegistry.MAP_TRAVEL),
 				EntryStacks.of(BlockRegistry.MAP_TITLE),
 				EntryStacks.of(BlockRegistry.MAP_TITLE_LISTENER),
