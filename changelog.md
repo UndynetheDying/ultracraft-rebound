@@ -56,6 +56,7 @@
 - Reinforced Stained Glass windows don't need to be supported by blocks anymore once they've been placed successfully
 - Improved Beam Projectiles
 - Fixed Punchable Blocks (like Pedestals) not reaction to Main Hand punches in protected Areas
+- Added `style` and `collision` Properties to Sky Blocks
 ## Settings & Config
 ## Commands
 ## Tweaks

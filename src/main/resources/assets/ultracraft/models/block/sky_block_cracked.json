@@ -1,0 +1,8 @@
+{
+	"credit": "Made by Absolutelyaya",
+	"parent": "ultracraft:block/sky_block",
+	"textures": {
+		"0": "ultracraft:block/hologram_cracked",
+		"particle": "minecraft:block/glass"
+	}
+}
