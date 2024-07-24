@@ -145,8 +145,11 @@ public class LevelManager extends DimensionManager
 					List<Entity> list = world.getOtherEntities(null, new Box(box.getMinX(), box.getMinY(), box.getMinZ(), box.getMaxX(), box.getMaxY(), box.getMaxZ()));
 					list.forEach(e -> {
 						boolean decorative = e instanceof MaliciousFaceEntity malicious && malicious.isDecorative();
-						if(!(decorative || e instanceof PlayerEntity || e instanceof DisplayEntity || e instanceof AbstractDecorationEntity))
+						if(!(decorative || e instanceof PlayerEntity || e instanceof DisplayEntity || e instanceof AbstractDecorationEntity) ||
+								   e.getCommandTags().contains("levelEntity"))
 							e.remove(Entity.RemovalReason.DISCARDED);
+						else if(!(e instanceof PlayerEntity))
+							e.addCommandTag("levelEntity");
 					});
 					LevelInstancePool pool = instances.computeIfAbsent(levelId, k -> {
 						nextLevelBaseX += box.getBlockCountX() + 128;
