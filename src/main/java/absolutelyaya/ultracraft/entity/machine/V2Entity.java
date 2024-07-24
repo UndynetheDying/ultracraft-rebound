@@ -24,7 +24,6 @@ import net.minecraft.entity.ai.NoPenaltyTargeting;
 import net.minecraft.entity.ai.control.MoveControl;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.RevengeGoal;
-import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -1018,13 +1017,14 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 			super.stop();
 			if(mob.getAnimation() == ANIMATION_SLIDE)
 				mob.getDataTracker().set(ANIMATION, ANIMATION_IDLE);
+			mob.getMoveControl().strafeTo(0f, 0f);
 		}
 	}
 	
 	static class GreenMovementGoal extends V2MovementGoal //Flee
 	{
 		int timer;
-		Path path;
+		Vec3d dest;
 		
 		public GreenMovementGoal(V2Entity mob)
 		{
@@ -1039,11 +1039,8 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 			if(mob.getTarget() == null)
 				return false;
 			LivingEntity target = mob.getTarget();
-			Vec3d vec3d = NoPenaltyTargeting.findFrom(this.mob, 16, 7, mob.getTarget().getPos());
-			if (vec3d == null)
-				return false;
-			path = mob.getNavigation().findPathTo(vec3d.x, vec3d.y, vec3d.z, 0);
-			return path != null && target.getHealth() > target.getMaxHealth() / 3f && mob.dataTracker.get(MOVEMENT_MODE) == 3;
+			dest = NoPenaltyTargeting.findFrom(this.mob, 16, 7, mob.getTarget().getPos());
+			return dest != null && target.getHealth() > target.getMaxHealth() / 3f && mob.dataTracker.get(MOVEMENT_MODE) == 3;
 		}
 		
 		@Override
@@ -1053,7 +1050,6 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 			mob.addVelocity(mob.getPos().subtract(mob.getTarget().getPos()).normalize().multiply(2f));
 			mob.ferocity += 50;
 			timer = 10;
-			mob.getNavigation().startMovingAlong(path, mob.getSpeedAttribute() * 1.25f);
 		}
 		
 		@Override
@@ -1064,6 +1060,9 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 			mob.getLookControl().lookAt(mob.getTarget(), 30.0f, 30.0f);
 			if(timer-- <= 0)
 				mob.setMovementMode(mob.getRandom().nextInt(2)); //either yellow or blue
+			if(mob.getWorld().raycast(new RaycastContext(mob.getEyePos(), mob.getEyePos().add(mob.getRotationVector().multiply(2f)),
+					RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, mob)).getType().equals(HitResult.Type.MISS))
+				mob.getMoveControl().moveTo(dest.x, dest.y, dest.z, 1.3f);
 			super.tick();
 		}
 		
@@ -1076,15 +1075,15 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 		@Override
 		public boolean shouldContinue()
 		{
-			return mob.dataTracker.get(MOVEMENT_MODE) == 3 && mob.getTarget() != null && timer > 0 && super.shouldContinue();
+			return mob.getPos().distanceTo(dest) > 2f && mob.dataTracker.get(MOVEMENT_MODE) == 3 && mob.getTarget() != null && timer > 0 && super.shouldContinue();
 		}
 		
 		@Override
 		public void stop()
 		{
 			super.stop();
-			mob.navigation.stop();
-			path = null;
+			mob.getMoveControl().moveTo(mob.getX(), mob.getY(), mob.getZ(), 1f);
+			dest = null;
 		}
 	}
 }

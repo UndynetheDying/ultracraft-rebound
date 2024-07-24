@@ -4,6 +4,23 @@
   "author": "yaya",
   "structure": "ultracraft:level/limbo3",
   "thumbnail": "ultracraft:textures/level/1_3.png",
+  "ranking": {
+    "time": [
+      "4:00:00",
+      "5:00:00",
+      "7:00:00",
+      "10:00:00"
+    ],
+    "kills": [
+      0
+    ],
+    "style": [
+      500,
+      400,
+      300,
+      150
+    ]
+  },
   "spawn-offset":{
     "x": 19,
     "y": 47,

@@ -12,6 +12,7 @@
   - Fixed V2 ascension issue
   - Fixed V2 running off of ledges
   - Fixed V2 trying to chase after dead and or creative//spectator targets
+  - Sort of fixed V2s Green Movement (fleeing)
 - Added Sawed-On Shotgun
 - Added Jumpstart Nailgun
 - Added new ████
