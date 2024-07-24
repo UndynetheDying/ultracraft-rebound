@@ -430,7 +430,8 @@ public class SwordsmachineEntity extends AbstractUltraHostileEntity implements G
 	@Override
 	public void onDeath(DamageSource damageSource)
 	{
-		if(getWorld().getGameRules().getBoolean(GameRules.DO_MOB_LOOT) && (!isCybergrind() || random.nextFloat() < 0.05f))
+		if(getWorld().getGameRules().getBoolean(GameRules.DO_MOB_LOOT) &&
+				   (!getSwordType().equals(MachineSwordItem.Type.NORMAL) || (isCybergrind() && random.nextFloat() < 0.05f)))
 			dropStack(dataTracker.get(SWORD_STACK));
 		super.onDeath(damageSource);
 	}
