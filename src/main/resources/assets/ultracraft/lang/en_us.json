@@ -1136,5 +1136,9 @@
   "text.autoconfig.ultracraft.option.onlyShowArmWhilePunching.@Tooltip": "Whether the offhand arm should only be visible while holding an item and an Ultracraft Arm is equipped.",
 
   "text.autoconfig.ultracraft.option.hideVanillaHotbar": "Hide Vanilla Hotbar",
-  "text.autoconfig.ultracraft.option.hideVanillaHotbar.@Tooltip": "Whether to hide the Vanilla Hotbar."
+  "text.autoconfig.ultracraft.option.hideVanillaHotbar.@Tooltip": "Whether to hide the Vanilla Hotbar.",
+
+  "text.autoconfig.ultracraft.option.rememberVariant": "Remember Weapon Variant",
+  "text.autoconfig.ultracraft.option.rememberVariant.@Tooltip[0]": "Keeps the Variant of Weapons when switching off of them.",
+  "text.autoconfig.ultracraft.option.rememberVariant.@Tooltip[1]": "If disabled, they get replaced with their first equipped Variant when switching off of them."
 }

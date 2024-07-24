@@ -82,6 +82,7 @@ public class PacketRegistry
 	public static final Identifier TERMINAL_WEAPON_CRAFT_PACKET_ID = Ultracraft.identifier("terminal_weapon_craft");
 	public static final Identifier TERMINAL_WEAPON_DISPENSE_PACKET_ID = Ultracraft.identifier("terminal_weapon_dispense");
 	public static final Identifier CYCLE_WEAPON_VARIANT_PACKET_ID = Ultracraft.identifier("cycle_weapon_variant");
+	public static final Identifier RESET_WEAPON_VARIANT_PACKET_ID = Ultracraft.identifier("reset_weapon_variant");
 	public static final Identifier HELL_OBSERVER_C2S_PACKET_ID = Ultracraft.identifier("hell_observer_c2s");
 	public static final Identifier REQUEST_GRAFFITI_WHITELIST_PACKET_ID = Ultracraft.identifier("request_graffiti_whitelist");
 	public static final Identifier ARM_CYCLE_PACKET_ID = Ultracraft.identifier("arm_cycle");
@@ -520,6 +521,13 @@ public class PacketRegistry
 		});
 		ServerPlayNetworking.registerGlobalReceiver(CYCLE_WEAPON_VARIANT_PACKET_ID, (server, player, handler, buf, sender) -> {
 			server.execute(() -> AbstractWeaponItem.cycleVariant(player));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(RESET_WEAPON_VARIANT_PACKET_ID, (server, player, handler, buf, sender) -> {
+			int slot = buf.readInt();
+			server.execute(() -> {
+				if(player.getInventory().getStack(slot).getItem() instanceof AbstractWeaponItem weapon)
+					weapon.resetVariant(player, slot);
+			});
 		});
 		ServerPlayNetworking.registerGlobalReceiver(HELL_OBSERVER_C2S_PACKET_ID, (server, player, handler, buf, sender) -> {
 			BlockPos pos = buf.readBlockPos();

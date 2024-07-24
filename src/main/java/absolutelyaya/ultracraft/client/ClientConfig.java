@@ -88,6 +88,8 @@ public class ClientConfig implements ConfigData
 	@ConfigEntry.Category("ultra-hud")
 	@ConfigEntry.Gui.Tooltip
 	public boolean hideVanillaHotbar = false;
+	@ConfigEntry.Gui.Tooltip(count = 2)
+	public boolean rememberVariant = true;
 	public boolean repeatIntro = false;
 	public boolean neverIntro = false;
 	

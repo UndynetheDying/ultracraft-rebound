@@ -53,7 +53,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class SawedOnShotgunItem extends AbstractShotgunItem implements ISelectionAwareItem
+public class SawedOnShotgunItem extends AbstractShotgunItem
 {
 	protected int approxUseTime = -1;
 	private final AnimatableInstanceCache cache = AzureLibUtil.createInstanceCache(this);
@@ -312,6 +312,7 @@ public class SawedOnShotgunItem extends AbstractShotgunItem implements ISelectio
 	@Override
 	public void onSelect(PlayerEntity player)
 	{
+		super.onSelect(player);
 		IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
 		winged.attachMovingSound("SawIdle", SoundRegistry.SHOTGUN_SAW_IDLE.getId(), false, 0.6f);
 	}
@@ -319,6 +320,7 @@ public class SawedOnShotgunItem extends AbstractShotgunItem implements ISelectio
 	@Override
 	public void onUnselect(PlayerEntity player)
 	{
+		super.onUnselect(player);
 		IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
 		winged.removeMovingSound("SawIdle");
 		winged.removeMovingSound("SawActive");

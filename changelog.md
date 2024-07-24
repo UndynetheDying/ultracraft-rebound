@@ -60,6 +60,8 @@
 - Regular Machineswords now only drop During Cybergrind
   - Obtaining it so early on was throwing off the pacing a *lot*
 ## Settings & Config
+- Added `rememberVariant` Client Setting
+  - If disabled, switching off of a weapon will replace it with its first equipped variant. Enabled by default
 ## Commands
 ## Tweaks
 ## Minor Changes

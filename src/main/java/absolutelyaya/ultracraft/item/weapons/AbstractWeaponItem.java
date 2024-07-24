@@ -1,5 +1,6 @@
 package absolutelyaya.ultracraft.item.weapons;
 
+import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.Weapon;
@@ -8,7 +9,9 @@ import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.components.player.ILoadoutComponent;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
+import absolutelyaya.ultracraft.item.ISelectionAwareItem;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
+import absolutelyaya.ultracraft.util.InventoryUtil;
 import io.netty.buffer.Unpooled;
 import mod.azure.azurelib.core.keyframe.event.SoundKeyframeEvent;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -37,7 +40,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 
-public abstract class AbstractWeaponItem extends Item
+public abstract class AbstractWeaponItem extends Item implements ISelectionAwareItem
 {
 	protected final float recoil, altRecoil;
 	
@@ -195,6 +198,16 @@ public abstract class AbstractWeaponItem extends Item
 		return null;
 	}
 	
+	static Item getFirstVariant(ItemStack stack, IProgressionComponent progression, ILoadoutComponent loadout)
+	{
+		if(!(stack.getItem() instanceof AbstractWeaponItem weapon))
+			return null;
+		Identifier[] ids = loadout.getLoadoutForWeapon(weapon.getWeaponType());
+		if(ids.length > 0)
+			return Registries.ITEM.get(ids[0]);
+		return null;
+	}
+	
 	public static void cycleVariant(PlayerEntity player)
 	{
 		if(player.getWorld().isClient)
@@ -216,6 +229,40 @@ public abstract class AbstractWeaponItem extends Item
 		{
 			UltraComponents.WINGED.get(player).getGunCooldownManager().setCooldown(weapon, weapon.getSwitchCooldown(nextStack), GunCooldownManager.PRIMARY);
 			weapon.onSwitch(player.getWorld(), player, player.getInventory().selectedSlot);
+		}
+	}
+	
+	/**
+	 * replaces the Variant with the first equipped one
+	 */
+	public void resetVariant(PlayerEntity player, int slot)
+	{
+		if(slot == -1)
+			return;
+		if(player.getWorld().isClient)
+		{
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			buf.writeInt(slot);
+			ClientPlayNetworking.send(PacketRegistry.RESET_WEAPON_VARIANT_PACKET_ID, buf);
+			return;
+		}
+		ItemStack stack = player.getInventory().getStack(slot);
+		if(!(stack.getItem() instanceof AbstractWeaponItem))
+			return;
+		ILoadoutComponent loadout = UltraComponents.LOADOUT.get(player);
+		if(!(stack.getItem() instanceof AbstractWeaponItem lastWeapon && loadout.isInLoadout(lastWeapon)))
+			return;
+		lastWeapon.onBeforeSwitch(player.getWorld(), player, slot);
+		stack.getItem().onStoppedUsing(stack, player.getWorld(), player, 999);
+		IProgressionComponent progression = UltraComponents.PROGRESSION.get(player);
+		Item nextItem = getFirstVariant(stack, progression, loadout);
+		if(nextItem != null && nextItem.equals(this))
+			return;
+		ItemStack nextStack = replaceVariant(stack, player, slot, nextItem);
+		if(nextItem instanceof AbstractWeaponItem weapon)
+		{
+			UltraComponents.WINGED.get(player).getGunCooldownManager().setCooldown(weapon, weapon.getSwitchCooldown(nextStack), GunCooldownManager.PRIMARY);
+			weapon.onSwitch(player.getWorld(), player, slot);
 		}
 	}
 	
@@ -295,6 +342,19 @@ public abstract class AbstractWeaponItem extends Item
 	protected boolean isAlternate()
 	{
 		return false;
+	}
+	
+	@Override
+	public void onSelect(PlayerEntity player)
+	{
+	
+	}
+	
+	@Override
+	public void onUnselect(PlayerEntity player)
+	{
+		if(player.getWorld().isClient && !UltracraftClient.getConfig().rememberVariant)
+			resetVariant(player, InventoryUtil.getFirstSlotWithItem(player.getInventory().main, this));
 	}
 	
 	@Override
