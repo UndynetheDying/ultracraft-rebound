@@ -388,6 +388,7 @@ public class UltracraftClient implements ClientModInitializer
 		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.ZOOTYCOONCHAINLINKFENCE, RenderLayer.getCutout());
 		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.FAKE_LEAVES, RenderLayer.getTranslucent());
 		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.HYACINTH, RenderLayer.getCutout());
+		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.POTTED_HYACINTH, RenderLayer.getCutout());
 		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.DARKNESS, RenderLayer.getTranslucent());
 		
 		//TerminalCodeRegistry.registerCode("florp", t -> t.setTab(new PetTab()));
