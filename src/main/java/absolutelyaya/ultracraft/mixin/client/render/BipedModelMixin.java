@@ -6,6 +6,7 @@ import absolutelyaya.ultracraft.item.weapons.AbstractNailgunItem;
 import absolutelyaya.ultracraft.item.weapons.AbstractWeaponItem;
 import absolutelyaya.ultracraft.item.BlahajItem;
 import absolutelyaya.ultracraft.item.SwordsmachinePlushieItem;
+import absolutelyaya.ultracraft.registry.ItemRegistry;
 import com.chocohead.mm.api.ClassTinkerers;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
@@ -13,6 +14,7 @@ import net.minecraft.client.render.entity.model.AnimalModel;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.Arm;
 import net.minecraft.util.math.MathHelper;
@@ -97,7 +99,7 @@ public abstract class BipedModelMixin<T extends LivingEntity> extends AnimalMode
 		}
 		if(heldItem instanceof AbstractWeaponItem w && w.shouldAim())
 			genericAimPose(living);
-		if(heldItem instanceof AbstractNailgunItem)
+		if(heldItem instanceof AbstractNailgunItem || (living instanceof PlayerEntity player && player.isUsingItem() && player.getActiveItem().isOf(ItemRegistry.SAW_SHOTGUN)))
 			heavyAimPose(living);
 	}
 	
