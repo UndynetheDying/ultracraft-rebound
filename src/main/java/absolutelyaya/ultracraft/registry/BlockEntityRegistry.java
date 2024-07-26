@@ -44,6 +44,7 @@ public class BlockEntityRegistry
 	public static final BlockEntityType<MusicTriggerBlockEntity> MAP_MUSIC;
 	public static final BlockEntityType<MusicListenerBlockEntity> MAP_MUSIC_LISTENER;
 	public static final BlockEntityType<AbyssBlockEntity> MAP_ABYSS;
+	public static final BlockEntityType<ProgressionCheckTriggerBlockEntity> MAP_PROGRESSION_CHECK;
 	
 	public static void register() {
 	}
@@ -150,5 +151,8 @@ public class BlockEntityRegistry
 		MAP_ABYSS = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				Ultracraft.identifier("map_abyss"),
 				FabricBlockEntityTypeBuilder.create(AbyssBlockEntity::new, BlockRegistry.MAP_ABYSS).build());
+		MAP_PROGRESSION_CHECK = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				Ultracraft.identifier("map_progression_check"),
+				FabricBlockEntityTypeBuilder.create(ProgressionCheckTriggerBlockEntity::new, BlockRegistry.MAP_PROGRESSION_CHECK).build());
 	}
 }

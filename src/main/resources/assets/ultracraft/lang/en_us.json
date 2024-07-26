@@ -261,6 +261,7 @@
   "block.ultracraft.map_music": "Map Music Trigger",
   "block.ultracraft.map_music_listener": "Map Music Listener",
   "block.ultracraft.map_abyss": "Map Abyss",
+  "block.ultracraft.map_progression_check": "Map Progression Check Trigger",
   "block.ultracraft.sheetmetal": "Sheet Metal Block",
   "block.ultracraft.sheetmetal_sheet": "Sheet Metal Sheet Block",
   "block.ultracraft.sheetmetal_sheet_slab": "Sheet Metal Sheet Slab",

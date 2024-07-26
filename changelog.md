@@ -101,10 +101,16 @@
     - If there's no suitable ground block within 64 Blocks, the entity will just be spawned at the Blocks Position anyways
   - Removed Special Spawn Identifier `ultracraft:dummy`
 - Added `knockbackOnly` Attribute ot explosion listeners
-  - enabling this, will make the explosion listeners throw entities within its `explosionRadius` away from it
-  - the velocity is calculated using `(1f - (distance(entity, block) / explosionRadius)) * explosionDamage`
+  - Enabling this, will make the explosion listeners throw entities within its `explosionRadius` away from it
+  - The velocity is calculated using `(1f - (distance(entity, block) / explosionRadius)) * explosionDamage`
+  - This is used to launch V2 after spawning
 - Added Timer Listener
   - Starts//Stops the Timer for all players in its parent room when the flag bound to it is activated
+  - This is used to stop the Level Timer after V2 has been defeated
+- Added Unlock Check Trigger
+  - Sets the bound flag based on whether enough players with a specific Progression Entry are within the Blocks Area.
+  - The Attributes `checkUnlocked` and `checkObtained` define whether the target is required to have unlocked and//or obtained the progression entry
+  - This is used to ensure the Knuckleblaster is picked up before leaving limbo3 `Clair de Lune`
 ## Resource Changes
 - Changed Shotgun UVs(moved smoke to make room for the chainsaw)
 ## API Changes

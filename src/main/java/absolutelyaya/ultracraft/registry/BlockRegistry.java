@@ -195,6 +195,7 @@ public class BlockRegistry
 	public static final Block MAP_MUSIC = register("map_music", new MusicTriggerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_MUSIC_LISTENER = register("map_music_listener", new MusicListenerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_ABYSS = register("map_abyss", new AbyssBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
+	public static final Block MAP_PROGRESSION_CHECK = register("map_progression_check", new ProgressionCheckTriggerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	
 	private static Block register(String name, Block block, boolean item)
 	{

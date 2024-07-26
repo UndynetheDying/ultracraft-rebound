@@ -518,6 +518,7 @@ public class ItemRegistry
 			content.add(BlockRegistry.MAP_ENEMY_TRIGGER);
 			content.add(BlockRegistry.MAP_CHECKPOINT);
 			content.add(BlockRegistry.MAP_PROGRESSION);
+			content.add(BlockRegistry.MAP_PROGRESSION_CHECK);
 			content.add(BlockRegistry.MAP_TIMER);
 			content.add(BlockRegistry.MAP_TIMER_LISTENER);
 			content.add(BlockRegistry.MAP_TRAVEL);
