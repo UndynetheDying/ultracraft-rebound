@@ -1,6 +1,6 @@
 {
   "translation-key": "stylebonus.ultracraft.saw",
   "score": 60,
-  "damage": "ultracraft:saw",
-  "use-staleness": true
+  "use-staleness": true,
+  "impossible": true
 }

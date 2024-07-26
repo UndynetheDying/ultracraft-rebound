@@ -968,6 +968,8 @@
   "stylebonus.ultracraft.shieldbreak": "§a+ GUARD BREAK",
   "stylebonus.ultracraft.saw_melee": "+ GROOVY",
   "stylebonus.ultracraft.saw": "+ NO-NO",
+  "stylebonus.ultracraft.saw_parry": "+ RE-NO-NO",
+  "stylebonus.ultracraft.saw_unchained": "+ UNCHAINEDSAW",
 
   "category.ultracraft": "Ultracraft",
   "key.ultracraft.hivel_toggle": "Toggle High Velocity Mode",
