@@ -89,6 +89,7 @@
 - Fixed an issue that caused the music in limbo1 to switch back to `Mirage of Paradise` when it shouldn't
 - Added Hyacinth and//or Butterflies to old Limbo Levels
 - Music Sounds now get streamed, meaning they cause less lag
+- Made all ost Tracks mono because of an oddity related to how minecrafts sound system works
 - Progression Unlock Logic now uses the items UltraRecipe unlock list instead of being hard-coded
 - Progression Unlock checks now take Unlock Logic into account
   - That means, as long as you have obtained for example the Piercer Revolver, the Marksman and Sharpshooter are unlocked
