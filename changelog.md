@@ -64,6 +64,9 @@
 ## Settings & Config
 - Added `rememberVariant` Client Setting
   - If disabled, switching off of a weapon will replace it with its first equipped variant. Enabled by default
+- Moved `Repeat Intro` Setting to Debug Category
+  - This always was a debug setting for triggering the Intro to repeat as the name suggests
+  - If you want to disable the intro repeating after switching versions, use the `Don't show Intro after switching Versions` Setting
 ## Commands
 ## Tweaks
 - Reduced delay before Malicious Faces first attack

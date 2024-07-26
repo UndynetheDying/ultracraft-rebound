@@ -90,6 +90,7 @@ public class ClientConfig implements ConfigData
 	public boolean hideVanillaHotbar = false;
 	@ConfigEntry.Gui.Tooltip(count = 2)
 	public boolean rememberVariant = true;
+	@ConfigEntry.Category("debug")
 	public boolean repeatIntro = false;
 	public boolean neverIntro = false;
 	

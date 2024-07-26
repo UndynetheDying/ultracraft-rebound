@@ -1108,7 +1108,7 @@
   "text.autoconfig.ultracraft.option.safeVFX.@Tooltip": "Disable VFX that might affect photosensitive people negatively. (like flashing)",
 
   "text.autoconfig.ultracraft.option.repeatIntro": "Repeat Intro",
-  "text.autoconfig.ultracraft.option.neverIntro": "Don't show Intro after switching Versions.",
+  "text.autoconfig.ultracraft.option.neverIntro": "Don't show Intro after switching Versions",
 
   "text.autoconfig.ultracraft.option.goopDebug": "Goop Debug",
   "text.autoconfig.ultracraft.option.goopDebug.@Tooltip": "[WARNING] VERY LAGGY | Adds extra particles to show vertex info of goop puddles.",
