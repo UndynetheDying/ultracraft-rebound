@@ -633,7 +633,7 @@
   "message.ultracraft.fish.mania4": "THE SIZE 2 IS REAL!!",
   "message.ultracraft.fish.mania5": "...that's... \nthat's bigger than usual! \nI have to be getting close!!",
   "message.ultracraft.handswap-disabled": "[§4Ultracraft§r] This Server has disabled hand quick-swapping.",
-  "message.ultracraft.content": "Welcome to Ultracraft V2.1.3!\nThis Mod aims to recreate the game Ultrakill (by §6Arsi \"Hakita\" Patala§f) and its mechanics in Minecraft. This Update includes:\n- An OST adding Music to Levels and Cybergrind\n- Remake of the second Prelude Level\nFor the full changelog, please check any of the official download sites.\n\nPlease be sure to report Issues//Bugs and send any Feedback you have my way!\nRelevant Links are in the Mod Info.\nOh and join the Discord Community for teasers!\n\n☆ Absolutelyaya ☆",
+  "message.ultracraft.content": "Welcome to Ultracraft V2.2.0!\nThis Mod aims to recreate the game Ultrakill (by §6Arsi \"Hakita\" Patala§f) and its mechanics in Minecraft. This Update includes:\n- 2 New Tracks in the Ost\n- New Limbo Level \"Clair de Lune\"\n- Sawed-On Shotgun\n- Jumpstart Nailgun\nFor the full changelog, please check any of the official download sites.\n\nPlease be sure to report Issues//Bugs and send any Feedback you have my way!\nRelevant Links are in the Mod Info.\nOh and join the Discord Community for teasers!\n\n☆ Absolutelyaya ☆",
   "message.ultracraft.consent": "Understood",
   "message.ultracraft.intro-error": "Something went wrong with the Ultracraft intro sequence.\nThe issue: Sometimes detecting the asset reload being finished doesn't work.\nLuckily, we have a button that can solve any problem!",
   "message.ultracraft.fixer-button": "Fix that",
