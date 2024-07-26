@@ -61,7 +61,7 @@ public class ChainsawEntity extends ProjectileEntity implements GeoEntity, Proje
 	public void onTrackedDataSet(TrackedData<?> data)
 	{
 		super.onTrackedDataSet(data);
-		if(data.equals(CONNECTED))
+		if(data.equals(CONNECTED) && getWorld().isClient)
 		{
 			if(!dataTracker.get(CONNECTED))
 				UltracraftClient.HITSCAN_HANDLER.removeMoving(getUuid());
@@ -108,7 +108,7 @@ public class ChainsawEntity extends ProjectileEntity implements GeoEntity, Proje
 		if(getWorld().isClient)
 			return;
 		if(dataTracker.get(CONNECTED) && getOwner() != null &&
-				   getWorld().raycast(new RaycastContext(getPos(), getOwner().getPos(),
+				   getWorld().raycast(new RaycastContext(getPos(), getOwner().getEyePos(),
 						   RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, this)).getType().equals(HitResult.Type.BLOCK))
 		{
 			setVelocity(getVelocity().normalize());
