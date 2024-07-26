@@ -125,11 +125,6 @@ public class WingCustomizationScreen extends Screen
 		}
 		mainWidgets.add(patternTabButton = addDrawableChild(new OtherButton(width - 160, y, 150, 20, Text.translatable("screen.ultracraft.wing-settings.patterns.title"),
 				(button) -> openPatterns())));
-		if(safeVFX)
-		{
-			patternTabButton.setTooltip(Tooltip.of(Text.translatable("screen.ultracraft.wing-settings.patterns.safe-vfx")));
-			patternTabButton.active = false;
-		}
 		y += 25;
 		mainWidgets.add(addDrawableChild(new OtherButton(width - 160, y, 150, 20, Text.translatable("screen.ultracraft.wing-settings.presets.title"),
 				(button) -> openPresets())));
@@ -505,20 +500,24 @@ public class WingCustomizationScreen extends Screen
 			previewButtons.forEach((key, value) -> value.forEach(this::remove));
 			previewButtons.clear();
 		}
-		previewButtons.put(OVERLAY_KEY, new ArrayList<>());
-		previewButtons.put(ANIMATED_KEY, new ArrayList<>());
 		int startY = 42 + (subTitle.getString().isEmpty() ? 0 : textRenderer.fontHeight + 2);
-		int lastY = 0;
-		List<String> ids = WingPatterns.getAllAnimatedIDs();
-		for (int i = 0; i < ids.size(); i++)
+		int lastY = startY;
+		List<String> ids;
+		previewButtons.put(OVERLAY_KEY, new ArrayList<>());
+		if(!safeVFX)
 		{
-			boolean b = i % 2 == 0;
-			WingPatterns.Pattern pattern = WingPatterns.getAnimated(ids.get(i));
-			PreviewButton pb = addDrawableChild(new PreviewButton(width - ((b ? 160 : 80) + 4), lastY = startY + 24 * (i / 2), 76, 20,
-					this::applyPattern, ids.get(i), pattern, 0.5f + 0.1f * i));
-			previewButtons.get(ANIMATED_KEY).add(pb);
+			previewButtons.put(ANIMATED_KEY, new ArrayList<>());
+			ids = WingPatterns.getAllAnimatedIDs();
+			for (int i = 0; i < ids.size(); i++)
+			{
+				boolean b = i % 2 == 0;
+				WingPatterns.Pattern pattern = WingPatterns.getAnimated(ids.get(i));
+				PreviewButton pb = addDrawableChild(new PreviewButton(width - ((b ? 160 : 80) + 4), lastY = startY + 24 * (i / 2), 76, 20,
+						this::applyPattern, ids.get(i), pattern, 0.5f + 0.1f * i));
+				previewButtons.get(ANIMATED_KEY).add(pb);
+			}
+			lastY += 24 + textRenderer.fontHeight + 2;
 		}
-		lastY += 24 + textRenderer.fontHeight + 2;
 		ids = WingPatterns.getAllOverlayIDs();
 		for (int i = 0; i < ids.size(); i++)
 		{
@@ -560,8 +559,6 @@ public class WingCustomizationScreen extends Screen
 		subTitle = Text.empty();
 		setMainTabActive(true);
 		closeButton.setMessage(ScreenTexts.DONE);
-		if(safeVFX)
-			patternTabButton.active = false;
 	}
 	
 	void setMainTabActive(boolean b)
