@@ -10,6 +10,7 @@ import absolutelyaya.ultracraft.components.player.ILevelStatsComponent;
 import absolutelyaya.ultracraft.data.LevelDataManager;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.sound.*;
 import net.minecraft.sound.MusicSound;
 import net.minecraft.sound.SoundCategory;
@@ -39,6 +40,8 @@ public abstract class MusicTrackerMixin
 	@Shadow private @Nullable SoundInstance current;
 	
 	@Shadow public abstract void stop();
+	
+	@Shadow private int timeUntilNextSong;
 	
 	@Inject(method = "tick", at = @At("HEAD"), cancellable = true)
 	void onTick(CallbackInfo ci)
@@ -170,5 +173,19 @@ public abstract class MusicTrackerMixin
 			combat = null;
 		}
 		curLevelMusic = null;
+	}
+	
+	@Inject(method = "play", at = @At("HEAD"), cancellable = true)
+	void onPlay(MusicSound type, CallbackInfo ci)
+	{
+		if(client.currentScreen instanceof TitleScreen)
+		{
+			current = new FadingMusicInstance(type.getSound().value(), 1f, 0.2f);
+			if (current.getSound() != SoundManager.MISSING_SOUND)
+				client.getSoundManager().play(this.current);
+			
+			timeUntilNextSong = Integer.MAX_VALUE;
+			ci.cancel();
+		}
 	}
 }
