@@ -504,9 +504,9 @@ public class WingCustomizationScreen extends Screen
 		int lastY = startY;
 		List<String> ids;
 		previewButtons.put(OVERLAY_KEY, new ArrayList<>());
+		previewButtons.put(ANIMATED_KEY, new ArrayList<>());
 		if(!safeVFX)
 		{
-			previewButtons.put(ANIMATED_KEY, new ArrayList<>());
 			ids = WingPatterns.getAllAnimatedIDs();
 			for (int i = 0; i < ids.size(); i++)
 			{
@@ -516,8 +516,15 @@ public class WingCustomizationScreen extends Screen
 						this::applyPattern, ids.get(i), pattern, 0.5f + 0.1f * i));
 				previewButtons.get(ANIMATED_KEY).add(pb);
 			}
-			lastY += 24 + textRenderer.fontHeight + 2;
 		}
+		else
+		{
+			WingPatterns.Pattern pattern = WingPatterns.getAnimated("none");
+			PreviewButton pb = addDrawableChild(new PreviewButton(width - 122, startY, 76, 20,
+					this::applyPattern, "none", pattern, 0.5f + 0.1f));
+			previewButtons.get(ANIMATED_KEY).add(pb);
+		}
+		lastY += 24 + textRenderer.fontHeight + 2;
 		ids = WingPatterns.getAllOverlayIDs();
 		for (int i = 0; i < ids.size(); i++)
 		{
