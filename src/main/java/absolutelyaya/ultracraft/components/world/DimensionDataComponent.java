@@ -111,9 +111,10 @@ public class DimensionDataComponent implements IDimensionDataComponent
 				data.markRoomInvalid(pos);
 				continue;
 			}
-			if(room.isSuppressModifications() && room.getAreaBox().contains(pos.toCenterPos()))
+			if(room.isSuppressModifications() && room.getAreaBox().contains(pos.toCenterPos()) && provider.equals(room.getWorld()))
 			{
-				UltraDimensions.Instance.onSuppressedModification(player);
+				if(UltraDimensions.Instance != null)
+					UltraDimensions.Instance.onSuppressedModification(player);
 				return true;
 			}
 		}
