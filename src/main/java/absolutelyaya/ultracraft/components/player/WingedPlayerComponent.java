@@ -1,6 +1,7 @@
 package absolutelyaya.ultracraft.components.player;
 
 import absolutelyaya.ultracraft.client.gui.TitleHUD;
+import absolutelyaya.ultracraft.client.sound.SoundInstanceManager;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
@@ -302,6 +303,11 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	@Override
 	public void attachMovingSound(String id, Identifier sound, boolean warmUp, float volume)
 	{
+		if(provider.getWorld().isClient)
+		{
+			SoundInstanceManager.attachWeaponSoundInstance(id, sound, provider, warmUp, volume);
+			return;
+		}
 		if(!(provider instanceof ServerPlayerEntity serverPlayer))
 			return;
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
@@ -317,6 +323,11 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	@Override
 	public void removeMovingSound(String id)
 	{
+		if(provider.getWorld().isClient)
+		{
+			SoundInstanceManager.removeSoundInstance(id, provider);
+			return;
+		}
 		if(!(provider instanceof ServerPlayerEntity serverPlayer))
 			return;
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
@@ -324,6 +335,12 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 		buf.writeString(id);
 		buf.writeInt(provider.getId());
 		ServerPlayNetworking.send(serverPlayer, PacketRegistry.WEAPON_SOUND_PACKET_ID, buf);
+	}
+	
+	@Override
+	public boolean isMovingSoundAttached(String id)
+	{
+		return SoundInstanceManager.isAttached(provider, id);
 	}
 	
 	@Override

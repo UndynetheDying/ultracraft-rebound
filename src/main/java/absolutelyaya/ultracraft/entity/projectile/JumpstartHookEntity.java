@@ -27,6 +27,7 @@ import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec2f;
@@ -180,6 +181,7 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 					e.getPos().add(0f, e.getHeight() / 2f, 0f), ServerHitscanHandler.JUMPSTART_ARC);
 			e.damage(DamageSources.get(getWorld(), DamageSources.JUMPSTART, getOwner()), 10);
 		});
+		playSound(SoundEvents.ENTITY_GENERIC_EXPLODE, 1f, 1.2f);
 		kill();
 	}
 	

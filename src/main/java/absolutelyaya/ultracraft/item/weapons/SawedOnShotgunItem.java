@@ -11,7 +11,6 @@ import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.entity.demon.HideousMassEntity;
 import absolutelyaya.ultracraft.entity.demon.HideousPart;
 import absolutelyaya.ultracraft.entity.projectile.ChainsawEntity;
-import absolutelyaya.ultracraft.item.ISelectionAwareItem;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import mod.azure.azurelib.animatable.GeoItem;
 import mod.azure.azurelib.animatable.SingletonGeoAnimatable;
@@ -143,6 +142,15 @@ public class SawedOnShotgunItem extends AbstractShotgunItem
 				}
 			}
 		}
+		else
+		{
+			if(selected && entity instanceof PlayerEntity player && player.getWorld().isClient)
+			{
+				IWingedPlayerComponent winged = UltraComponents.WINGED.get(entity);
+				if(shouldPlayIdleSound(player, stack) && !winged.isMovingSoundAttached("SawIdle"))
+					winged.attachMovingSound("SawIdle", SoundRegistry.SHOTGUN_SAW_IDLE.getId(), false, 0.6f);
+			}
+		}
 		if(world.isClient && stack.hasNbt() && stack.getNbt().contains("charging") &&
 				   entity instanceof PlayerEntity player && player.equals(MinecraftClient.getInstance().player))
 			approxUseTime++;
@@ -175,6 +183,7 @@ public class SawedOnShotgunItem extends AbstractShotgunItem
 		if(user instanceof PlayerEntity player)
 		{
 			UltraComponents.WINGED.get(player).removeMovingSound("SawActive");
+			UltraComponents.WINGED.get(player).removeMovingSound("SawIdle");
 			player.playSound(SoundRegistry.SHOTGUN_SAW_END, 1f, 1f);
 		}
 	}
@@ -322,19 +331,18 @@ public class SawedOnShotgunItem extends AbstractShotgunItem
 	}
 	
 	@Override
-	public void onSelect(PlayerEntity player)
-	{
-		super.onSelect(player);
-		IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
-		winged.attachMovingSound("SawIdle", SoundRegistry.SHOTGUN_SAW_IDLE.getId(), false, 0.6f);
-	}
-	
-	@Override
 	public void onUnselect(PlayerEntity player)
 	{
 		super.onUnselect(player);
 		IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
 		winged.removeMovingSound("SawIdle");
 		winged.removeMovingSound("SawActive");
+	}
+	
+	boolean shouldPlayIdleSound(PlayerEntity player, ItemStack stack)
+	{
+		IWingedPlayerComponent winged = UltraComponents.WINGED.get(player);
+		GunCooldownManager cdm = winged.getGunCooldownManager();
+		return cdm.isUsable(this, GunCooldownManager.SECONDARY);
 	}
 }

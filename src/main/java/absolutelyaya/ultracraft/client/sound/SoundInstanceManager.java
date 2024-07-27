@@ -40,4 +40,11 @@ public class SoundInstanceManager
 		if(sound != null)
 			sound.setFinished();
 	}
+	
+	public static boolean isAttached(PlayerEntity target, String id)
+	{
+		if(!movingSounds.containsKey(target.getId()))
+			return false;
+		return movingSounds.get(target.getId()).containsKey(id);
+	}
 }
