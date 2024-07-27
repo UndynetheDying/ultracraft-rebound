@@ -48,6 +48,7 @@
 - Added Luna Sky Block variant
   - The old Night Sky Block variant now doesn't have a moon anymore
 - Style doesn't decay anymore while time is frozen
+- Added Malicious Statue Item
 - Level Timer now pauses while time is frozen
 - Fixed Level Timer Pausing not actually working at all lmao
 - Added Item to place decorative Malicious Faces more easily

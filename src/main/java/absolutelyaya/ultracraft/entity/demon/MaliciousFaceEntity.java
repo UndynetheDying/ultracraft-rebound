@@ -332,6 +332,14 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 	@Override
 	public boolean damage(DamageSource source, float amount)
 	{
+		if(!getWorld().isClient && source.getAttacker() instanceof PlayerEntity player && (!isInvulnerable() || player.isCreative()) &&
+				   isDecorative() && source.isOf(DamageTypes.PLAYER_ATTACK))
+		{
+			if(!player.isCreative())
+				dropStack(ItemRegistry.DECORATIVE_MAURICE.getDefaultStack());
+			remove(RemovalReason.KILLED);
+			return true;
+		}
 		if(source.isIn(DamageTypeTags.IS_EXPLOSION))
 			return false;
 		if(source.isOf(DamageSources.SLAM))
@@ -347,7 +355,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 				setHealth(0);
 				return true;
 			}
-			if(source.isOf(DamageSources.SLAM) && !isInvulnerable())
+			if(source.isOf(DamageSources.SLAM) && canTakeDamage())
 			{
 				setHealth(0);
 				for (int i = 0; i < 32; i++)
