@@ -100,6 +100,7 @@
   - Only the Version that isn't currently primarily playing is reset
 - Instead of locking Players out of the Patterns menu completely, the `Disable Flashy VFX` Setting now only removes animated patterns from there
   - Previously Wing Overlays would be inaccessible due to that
+- Updated LOLCAT translation (up to 2.1.3)
 ## Edit Mode Changes
 - Changes to Spawn Listeners
   - Added `noAI` Attribute
