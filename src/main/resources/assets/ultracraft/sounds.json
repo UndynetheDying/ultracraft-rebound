@@ -192,12 +192,12 @@
 
   "entity.v2.tell.core_eject": {
     "sounds": [
-      "ultracraft:item/core_charge_quick"
+      {"name":"ultracraft:placeholder","type":"event"}
     ]
   },
   "entity.v2.tell.piercer": {
     "sounds": [
-      "ultracraft:item/piercer_charge"
+      {"name":"ultracraft:placeholder","type":"event"}
     ]
   },
   "entity.v2.death": {
