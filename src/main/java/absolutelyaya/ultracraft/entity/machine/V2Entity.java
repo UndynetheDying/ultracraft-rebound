@@ -252,7 +252,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 				{
 					if(x == 0 && z == 0)
 						continue;
-					if(getWorld().isSpaceEmpty(getBoundingBox().expand(0.1).offset(movement).offset(x * 0.4, -Math.abs(hit.getPos().y - getY()) - 2, z * 0.4)))
+					if(getWorld().isSpaceEmpty(getBoundingBox().expand(0.1).offset(movement).offset(x * 0.4, -Math.abs(hit.getPos().y - getY()) - 5, z * 0.4).expand(0, 3, 0)))
 					{
 						movement = movement.multiply(1f - Math.abs(x), 1f, 1f - Math.abs(z));
 						setVelocity(getVelocity().multiply(1f - Math.abs(x), 1f, 1f - Math.abs(z)));
@@ -296,7 +296,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 			movementChangeCD--;
 			return;
 		}
-		if(ferocity <= 0 && target != null && targetDistance < 4f && target.getHealth() > target.getMaxHealth() / 3f )
+		if(ferocity <= 0 && target != null && targetDistance < 6f && target.getHealth() > target.getMaxHealth() / 3f )
 				setMovementMode(3);
 		if(getMovementMode() == 3)
 		{
@@ -309,9 +309,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 			changeOdds += 0.04f;
 		if(ferocity < 150 && random.nextFloat() < changeOdds)
 			setMovementMode(getMovementMode() == 0 ? 1 : 0);
-		else if(ferocity > 400 && random.nextFloat() < 0.05f)
-			setMovementMode(2);
-		else if(ferocity > 250 && random.nextFloat() < 0.01f)
+		else if((ferocity > 400 && random.nextFloat() < 0.05f) || (ferocity > 250 && random.nextFloat() < 0.01f))
 			setMovementMode(2);
 		else if(ferocity > 150 && random.nextFloat() < changeOdds)
 			setMovementMode(random.nextBetween(0, 2));
@@ -776,9 +774,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 		@Override
 		public boolean shouldContinue()
 		{
-			if(mob.isPlayingOutro())
-				return false;
-			return super.shouldContinue();
+			return canStart();
 		}
 	}
 	
@@ -981,10 +977,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 					}
 				}
 				if(targetDistance > 4f)
-				{
-					Vec3d dest = mob.getTarget().getPos();
-					mob.moveControl.moveTo(dest.x, dest.y, dest.z, 1.4f);
-				}
+					mob.getNavigation().startMovingTo(mob.getTarget(), 1.4f);
 				else //Circle Target
 				{
 					if(mob.getMoveControl() instanceof V2MoveControl moveControl)
@@ -1018,6 +1011,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 			if(mob.getAnimation() == ANIMATION_SLIDE)
 				mob.getDataTracker().set(ANIMATION, ANIMATION_IDLE);
 			mob.getMoveControl().strafeTo(0f, 0f);
+			mob.getNavigation().stop();
 		}
 	}
 	
@@ -1049,7 +1043,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 			super.start();
 			mob.addVelocity(mob.getPos().subtract(mob.getTarget().getPos()).normalize().multiply(2f));
 			mob.ferocity += 50;
-			timer = 10;
+			timer = 100;
 		}
 		
 		@Override
@@ -1058,11 +1052,10 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 			if(Ultracraft.isTimeFrozen())
 				return;
 			mob.getLookControl().lookAt(mob.getTarget(), 30.0f, 30.0f);
-			if(timer-- <= 0)
-				mob.setMovementMode(mob.getRandom().nextInt(2)); //either yellow or blue
-			if(mob.getWorld().raycast(new RaycastContext(mob.getEyePos(), mob.getEyePos().add(mob.getRotationVector().multiply(2f)),
-					RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, mob)).getType().equals(HitResult.Type.MISS))
-				mob.getMoveControl().moveTo(dest.x, dest.y, dest.z, 1.3f);
+			if((dest == null || dest.distanceTo(mob.getPos()) < 1.5f) && mob.getTarget() != null)
+				dest = NoPenaltyTargeting.findFrom(this.mob, 16, 7, mob.getTarget().getPos());
+			if(dest != null)
+				mob.getNavigation().startMovingTo(dest.x, dest.y, dest.z, 1.6f);
 			super.tick();
 		}
 		
@@ -1075,15 +1068,22 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 		@Override
 		public boolean shouldContinue()
 		{
-			return mob.getPos().distanceTo(dest) > 2f && mob.dataTracker.get(MOVEMENT_MODE) == 3 && mob.getTarget() != null && timer > 0 && super.shouldContinue();
+			return mob.getTarget() != null && mob.getPos().distanceTo(mob.getTarget().getPos()) < 12f && mob.dataTracker.get(MOVEMENT_MODE) == 3 && /*timer > 0 &&*/ mob.finishedIntro() && !mob.isPlayingOutro();
+		}
+		
+		@Override
+		public boolean canStop()
+		{
+			return !shouldContinue();
 		}
 		
 		@Override
 		public void stop()
 		{
 			super.stop();
-			mob.getMoveControl().moveTo(mob.getX(), mob.getY(), mob.getZ(), 1f);
 			dest = null;
+			mob.setMovementMode(mob.getRandom().nextInt(2)); //either yellow or blue
+			mob.getNavigation().stop();
 		}
 	}
 }
