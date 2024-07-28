@@ -101,6 +101,10 @@
 - Instead of locking Players out of the Patterns menu completely, the `Disable Flashy VFX` Setting now only removes animated patterns from there
   - Previously Wing Overlays would be inaccessible due to that
 - Updated LOLCAT translation (up to 2.1.3)
+- Improved UltraCredits Screen
+  - Added scrolling
+  - Fixed text overflow
+  - Changed Texture to be pure white instead of very light blue to make it consistent with the rest of the text
 ## Edit Mode Changes
 - Changes to Spawn Listeners
   - Added `noAI` Attribute
