@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 public class HitscanDamageSource extends DamageSource
 {
 	public final ServerHitscanHandler.Hitscan hitscan;
-	boolean alternate = false, resetHammers = false;
+	boolean alternate = false, resetHammers = false, ricoshot;
 	
 	public HitscanDamageSource(RegistryEntry<DamageType> type, @Nullable Entity attacker, ServerHitscanHandler.Hitscan hitscan)
 	{
@@ -53,5 +53,16 @@ public class HitscanDamageSource extends DamageSource
 		else if(getAttacker() instanceof PlayerEntity player)
 			return player;
 		return null;
+	}
+	
+	public HitscanDamageSource makeRicoshot()
+	{
+		ricoshot = true;
+		return this;
+	}
+	
+	public boolean isRicoshot()
+	{
+		return ricoshot;
 	}
 }

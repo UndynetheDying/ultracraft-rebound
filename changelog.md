@@ -62,6 +62,10 @@
 - Regular Machineswords now only drop During Cybergrind
   - Obtaining it so early on was throwing off the pacing a *lot*
 - (hopefully) Fixed entities sometimes not being Removed when level instances get destroyed
+- Coin fixes
+  - Players can now only deadcoin their own coins; meaning ricoshots won't be interrupted anymore by others throwing coins
+  - Fixed chained coins only doing damage as if 1 coin was hit
+  - Fixed logic error when getting valid nearby coins
 ## Settings & Config
 - Added `rememberVariant` Client Setting
   - If disabled, switching off of a weapon will replace it with its first equipped variant. Enabled by default
