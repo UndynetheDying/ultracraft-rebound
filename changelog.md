@@ -40,6 +40,7 @@
     - Added Hyacinth
   - limbo2 `Halls of the Blameless`
     - Fixed Checkpoint in Room `Funtain`
+    - Fixed Room `Funtain` resetting when left due to a misconfigured spawn trigger
     - Fixed Checkpoint in Room `TheBigRed` being too big, allowing it to be triggered before finishing the preceeding Room (`Funtain`)
     - Added Hyacinth
 - Fixed Fall Damage not working correctly for Players
