@@ -377,9 +377,14 @@
       "note/bit"
     ]
   },
-  "item.nailgun.jumpstart_hook.break": {
+  "item.nailgun.jumpstart.hook_break": {
     "sounds": [
       {"name": "block.lantern.break", "type": "event", "pitch": 0.9}
+    ]
+  },
+  "item.nailgun.jumpstart.warning_beep": {
+    "sounds": [
+      {"name":"block.note_block.bit","type":"event", "pitch":0.86 }
     ]
   },
 

@@ -94,7 +94,8 @@ public class SoundRegistry
 	public static final SoundEvent NAILGUN_FIRE = register("item.nailgun.fire");
 	public static final SoundEvent NAILGUN_MAGNET_FIRE = register("item.nailgun.magnet.fire");
 	public static final SoundEvent NAILGUN_MAGNET_BEEP = register("item.nailgun.magnet.beep");
-	public static final SoundEvent NAILGUN_JUMPSTART_HOOK_BREAK = register("item.nailgun.jumpstart_hook.break");
+	public static final SoundEvent NAILGUN_JUMPSTART_HOOK_BREAK = register("item.nailgun.jumpstart.hook_break");
+	public static final SoundEvent NAILGUN_JUMPSTART_WARNING = register("item.nailgun.jumpstart.warning_beep");
 	
 	public static final SoundEvent SKEWER_HIT_GROUND = register("entity.skewer.hit_ground");
 	public static final SoundEvent SKEWER_BREAK = register("entity.skewer.break");

@@ -140,6 +140,8 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 				if(stress + 1 >= 20)
 					kill();
 			}
+			else if(dataTracker.get(STRESS) > 0)
+				dataTracker.set(STRESS, 0);
 			else if(hasVictim)
 			{
 				int charge = dataTracker.get(CHARGE);
@@ -152,7 +154,8 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 						int explosionTicks = dataTracker.get(EXPLOSION_TICKS);
 						if(explosionTicks == 0)
 						{
-							ExplosionHandler.explosion(getVictim(), getWorld(), getVictim().getPos(), DamageSources.get(getWorld(), DamageSources.EXPLOSION), 0.001f, 0f, 0.01f, false);
+							ExplosionHandler.explosion(getVictim(), getWorld(), getVictim().getPos(), DamageSources.get(getWorld(), DamageSources.EXPLOSION),
+									0.001f, 0f, 0.01f, false);
 							if(!HeavyEntities.isHeavy(getVictim().getType()))
 								getVictim().addVelocity(new Vec3d(0f, 1.5f, 0f));
 							UltraComponents.WINGED.get(getOwner()).getGunCooldownManager().setCooldown(ItemRegistry.JUMPSTART_NAILGUN, 100, GunCooldownManager.SECONDARY);
@@ -165,10 +168,17 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 					{
 						UltraComponents.WINGED.get(getOwner()).getGunCooldownManager().setCooldown(ItemRegistry.JUMPSTART_NAILGUN, 100, GunCooldownManager.SECONDARY);
 						getVictim().damage(DamageSources.get(getWorld(), DamageSources.JUMPSTART, getOwner()), 20);
+						playSound(SoundEvents.ENTITY_GENERIC_EXPLODE, 1f, 1.2f);
 						kill();
 					}
 				}
 			}
+		}
+		else
+		{
+			int stress = dataTracker.get(STRESS);
+			if(stress > 0 && stress % 4 == 0)
+				getOwner().playSound(SoundRegistry.NAILGUN_JUMPSTART_WARNING, 1f, 1f);
 		}
 		tickMovement();
 	}
@@ -176,7 +186,7 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 	void nailExplosion()
 	{
 		getWorld().getOtherEntities(this,
-				getBoundingBox().expand(10f), e -> e != getOwner() && (getOwner() != null && !getOwner().isTeammate(e))).forEach(e -> {
+				getBoundingBox().expand(10f), e -> e instanceof LivingEntity && e != getOwner() && (getOwner() != null && !getOwner().isTeammate(e))).forEach(e -> {
 			ServerHitscanHandler.sendPacket((ServerWorld) getWorld(), getPos().addRandom(random, 0.1f),
 					e.getPos().add(0f, e.getHeight() / 2f, 0f), ServerHitscanHandler.JUMPSTART_ARC);
 			e.damage(DamageSources.get(getWorld(), DamageSources.JUMPSTART, getOwner()), 10);
@@ -208,7 +218,7 @@ public class JumpstartHookEntity extends ThrownEntity implements IIgnoreSharpsho
 				vel = vel.multiply(1f - Math.abs(dir.x), 1f - Math.abs(dir.y), 1f - Math.abs(dir.z)).add(dir.multiply(-distance * 0.05f, 0f, -distance * 0.05f));
 			else
 				vel = vel.multiply(0f, 1f - Math.abs(dir.y), 0f);
-			setVelocity(vel.subtract(vel.x * 0.05f, getGravity(), vel.z * 0.05f));;
+			setVelocity(vel.subtract(vel.x * 0.05f, getGravity(), vel.z * 0.05f));
 		}
 		else
 			super.tick();
