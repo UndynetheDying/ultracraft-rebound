@@ -1,6 +1,5 @@
 package absolutelyaya.ultracraft.item;
 
-import absolutelyaya.ultracraft.client.rendering.item.AbstractPlushieRenderer;
 import absolutelyaya.ultracraft.client.rendering.item.BlahajRenderer;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import mod.azure.azurelib.animatable.GeoItem;
