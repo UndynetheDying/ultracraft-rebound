@@ -355,7 +355,7 @@ public class MaliciousFaceEntity extends AbstractUltraFlyingEntity implements Me
 				setHealth(0);
 				return true;
 			}
-			if(source.isOf(DamageSources.SLAM) && canTakeDamage())
+			if(source.isOf(DamageSources.SLAM) && !isInvulnerable())
 			{
 				setHealth(0);
 				for (int i = 0; i < 32; i++)
