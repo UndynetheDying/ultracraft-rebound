@@ -110,6 +110,7 @@
   - Added scrolling
   - Fixed text overflow
   - Changed Texture to be pure white instead of very light blue to make it consistent with the rest of the text
+- Fixed an issue with Greater Filth enraging
 ## Edit Mode Changes
 - Changes to Spawn Listeners
   - Added `noAI` Attribute
