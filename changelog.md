@@ -7,6 +7,6 @@
 ## Tweaks
 ## Minor Changes
 ## Edit Mode Changes
-- Added special spawn `ultracraft:v2_skipintro` to Spawner Listener
+- Added special spawn `ultracraft:v2_nointro` to Spawner Listener
 ## Resource Changes
 ## API Changes

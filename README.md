@@ -12,7 +12,7 @@ I would not recommend putting this mod into modpacks (you can ofc, but it will p
 ## Content/Featues
 - UltraHUD
 - All Prologue and Limbo Enemies
-- 17 weapons
+- 19 weapons
   - Piercer Revolver
   - Marksman Revolver
   - Sharpshooter Revolver
@@ -26,7 +26,7 @@ I would not recommend putting this mod into modpacks (you can ofc, but it will p
   - Soap
   - Repulsive Skewer (Original)
 - Node//Block Based Scripting System to make functional Levels like in Ultrakill
-- 6 Levels
+- 7 Levels
 - Make, Share and Download your own Custom Levels via Datapacks
 - OST featuring Tracks by:
   - Efefski
