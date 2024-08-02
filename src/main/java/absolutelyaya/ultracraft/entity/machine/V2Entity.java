@@ -9,16 +9,14 @@ import absolutelyaya.ultracraft.damage.DamageTypeTags;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.entity.IAntiCheeseBoss;
+import absolutelyaya.ultracraft.entity.demon.CerberusEntity;
 import absolutelyaya.ultracraft.entity.goal.AntiCheeseProximityTargetGoal;
 import absolutelyaya.ultracraft.entity.other.ProgressionItemEntity;
 import absolutelyaya.ultracraft.entity.projectile.BeamProjectileEntity;
 import absolutelyaya.ultracraft.entity.projectile.EjectedCoreEntity;
 import absolutelyaya.ultracraft.entity.projectile.ShotgunPelletEntity;
 import absolutelyaya.ultracraft.particle.ParryIndicatorParticleEffect;
-import absolutelyaya.ultracraft.registry.ItemRegistry;
-import absolutelyaya.ultracraft.registry.ParticleRegistry;
-import absolutelyaya.ultracraft.registry.SoundRegistry;
-import absolutelyaya.ultracraft.registry.StatusEffectRegistry;
+import absolutelyaya.ultracraft.registry.*;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.NoPenaltyTargeting;
 import net.minecraft.entity.ai.control.MoveControl;
@@ -76,6 +74,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 	static protected final TrackedData<Integer> OUTRO_TICKS = DataTracker.registerData(V2Entity.class, TrackedDataHandlerRegistry.INTEGER);
 	static protected final TrackedData<Byte> MOVEMENT_MODE = DataTracker.registerData(V2Entity.class, TrackedDataHandlerRegistry.BYTE);
 	static protected final TrackedData<Boolean> ENRAGED = DataTracker.registerData(V2Entity.class, TrackedDataHandlerRegistry.BOOLEAN);
+	static protected final TrackedData<Boolean> SKIP_INTRO = DataTracker.registerData(V2Entity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	static protected final TrackedData<ItemStack> WEAPON = DataTracker.registerData(V2Entity.class, TrackedDataHandlerRegistry.ITEM_STACK);
 	private final AnimatableInstanceCache cache = AzureLibUtil.createInstanceCache(this);
 	protected static final byte ANIMATION_IDLE = 0;
@@ -115,6 +114,7 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 		dataTracker.startTracking(OUTRO_TICKS, 0);
 		dataTracker.startTracking(MOVEMENT_MODE, (byte)0);
 		dataTracker.startTracking(ENRAGED, false);
+		dataTracker.startTracking(SKIP_INTRO, false);
 		dataTracker.startTracking(WEAPON, ItemRegistry.CORE_SHOTGUN.getDefaultStack());
 	}
 	
@@ -140,6 +140,15 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 		
 		targetSelector.add(0, new AntiCheeseProximityTargetGoal<>(this, PlayerEntity.class, 20, 32));
 		targetSelector.add(1, new RevengeGoal(this, V2Entity.class));
+	}
+	
+	public static V2Entity spawnSkipIntro(World world, Vec3d pos)
+	{
+		V2Entity v2 = new V2Entity(EntityRegistry.V2, world);
+		v2.setPosition(pos.subtract(0f, 0.5f, 0f));
+		v2.dataTracker.set(SKIP_INTRO, true);
+		world.spawnEntity(v2);
+		return v2;
 	}
 	
 	@Override
@@ -169,10 +178,15 @@ public class V2Entity extends AbstractUltraHostileEntity implements IAntiCheeseB
 			dataTracker.set(IDLE_TIMER, 0);
 		if(!finishedIntro())
 		{
-			if(isOnGround() && getAnimation() != ANIMATION_INTRO)
-				dataTracker.set(ANIMATION, ANIMATION_INTRO);
-			if(getAnimation() == ANIMATION_INTRO)
-				dataTracker.set(INTRO_TICKS, dataTracker.get(INTRO_TICKS) + 1);
+			if(isOnGround() && dataTracker.get(SKIP_INTRO))
+				dataTracker.set(INTRO_TICKS, -1);
+			else
+			{
+				if(isOnGround() && getAnimation() != ANIMATION_INTRO)
+					dataTracker.set(ANIMATION, ANIMATION_INTRO);
+				if(getAnimation() == ANIMATION_INTRO)
+					dataTracker.set(INTRO_TICKS, dataTracker.get(INTRO_TICKS) + 1);
+			}
 		}
 		int outro;
 		if((outro = dataTracker.get(OUTRO_TICKS)) > 0)

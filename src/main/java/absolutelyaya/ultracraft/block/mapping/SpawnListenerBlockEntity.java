@@ -5,9 +5,9 @@ import absolutelyaya.ultracraft.entity.demon.CerberusEntity;
 import absolutelyaya.ultracraft.entity.demon.HideousMassEntity;
 import absolutelyaya.ultracraft.entity.demon.MaliciousFaceEntity;
 import absolutelyaya.ultracraft.entity.demon.RodentEntity;
-import absolutelyaya.ultracraft.entity.husk.FilthEntity;
 import absolutelyaya.ultracraft.entity.machine.DestinyBondSwordsmachineEntity;
 import absolutelyaya.ultracraft.entity.machine.SwordsmachineEntity;
+import absolutelyaya.ultracraft.entity.machine.V2Entity;
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -22,8 +22,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.BlockStateRaycastContext;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.RaycastContext;
 import org.joml.Vector4f;
 
@@ -74,6 +72,7 @@ public class SpawnListenerBlockEntity extends AbstractListenerBlockEntity
 				case "ultracraft:malicious_boss" -> entities.add(MaliciousFaceEntity.spawnAsBoss(world, pos));
 				case "ultracraft:cerberus_boss" -> entities.add(CerberusEntity.spawnAsBoss(world, pos, false));
 				case "ultracraft:half_cerberus_boss" -> entities.add(CerberusEntity.spawnAsBoss(world, pos, true));
+				case "ultracraft:v2_nointro" -> entities.add(V2Entity.spawnSkipIntro(world, pos));
 				default -> entities.add(Registries.ENTITY_TYPE.get(entityType).spawn((ServerWorld)world, this.pos, SpawnReason.SPAWNER));
 			}
 			entities.forEach(e -> {
