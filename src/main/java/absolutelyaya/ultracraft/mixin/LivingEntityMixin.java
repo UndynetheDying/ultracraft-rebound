@@ -193,7 +193,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 		List<PlayerEntity> nearby = getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(32), e -> !e.equals(this));
 		List<PlayerEntity> heal = getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(4), e -> !e.equals(this));
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-		buf.writeFloat(amount);
+		buf.writeFloat(amount * (source.isIn(DamageTypeTags.IS_PER_TICK) || (Ultracraft.isLikelyPerTickDamageType(source.getType())) ? 0.66f : 1f));
 		buf.writeDouble(pos.x);
 		buf.writeDouble(pos.y);
 		buf.writeDouble(pos.z);
