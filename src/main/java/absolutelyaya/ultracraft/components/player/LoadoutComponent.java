@@ -99,6 +99,23 @@ public class LoadoutComponent implements ILoadoutComponent
 	}
 	
 	@Override
+	public void addToLoadout(Weapon weapon, Identifier id)
+	{
+		Identifier[] loadout = loadouts.get(weapon);
+		if(loadout == null)
+			return;
+		List<Identifier> newLoadout = new ArrayList<>();
+		for (Identifier i : loadout)
+			if(i != null)
+				newLoadout.add(i);
+		if(!newLoadout.contains(id))
+		{
+			newLoadout.add(id);
+			loadouts.put(weapon, newLoadout.toArray(new Identifier[0]));
+		}
+	}
+	
+	@Override
 	public boolean isWeaponTypeHeld(Weapon weapon)
 	{
 		for (Identifier id : weapon.ids)
@@ -108,7 +125,7 @@ public class LoadoutComponent implements ILoadoutComponent
 			if(inv.offHand.get(0).isOf(outputItem))
 				return true;
 			DefaultedList<ItemStack> invList = inv.main;
-			if(outputItem != null && InventoryUtil.containsItem(invList, outputItem, 1))
+			if(InventoryUtil.containsItem(invList, outputItem, 1))
 				return true;
 		}
 		return false;

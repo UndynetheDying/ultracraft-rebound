@@ -61,7 +61,7 @@ public class WeaponsTab extends Tab
 		for (int i = 0; i < weaponCategories.length; i++)
 		{
 			String t = "terminal.weapon." + weaponCategories[i];
-			boolean locked = i >= 0 && !unlockedAny(weaponCategories[i]);
+			boolean locked = !unlockedAny(weaponCategories[i]);
 			Button b = new Button(t,
 					new Vector2i(-6 - textRenderer.getWidth(locked ? "???" : Text.translatable("terminal.weapon." + weaponCategories[i]).getString()),
 					2 + (i * (textRenderer.fontHeight + 5))), "select", i, false);
@@ -140,6 +140,7 @@ public class WeaponsTab extends Tab
 					if(selectedRecipe.canCraft(player) <= 1)
 						return true;
 					selectedRecipe.craft(player);
+					loadout.addToLoadout(selectedCategory, selectedCategory.ids[selectedWeapon]);
 				}
 				refreshTab();
 				return true;
@@ -244,7 +245,7 @@ public class WeaponsTab extends Tab
 					craftButton.setLabel(Text.translatable("terminal.craft").getString());
 			}
 		}
-		boolean clickable = selectedRecipe != null && !(loadout.isWeaponTypeHeld(selectedCategory) && progression.isOwned(weaponId)) && isResultItemInLoadout(loadout);
+		boolean clickable = selectedRecipe != null && !((loadout.isWeaponTypeHeld(selectedCategory) || !isResultItemInLoadout(loadout)) && progression.isOwned(weaponId));
 		craftButton.setClickable(clickable).setColor(clickable ? 0xffffffff : 0xff888888);
 		return true;
 	}

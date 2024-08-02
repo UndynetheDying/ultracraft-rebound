@@ -92,7 +92,7 @@ public class LoadoutTab extends Tab
 	{
 		Weapon weapon = Weapon.values()[activeWeaponIdx];
 		Identifier[] ids = new Identifier[3];
-		for (int i = 0; i < Math.min(3, ids.length); i++)
+		for (int i = 0; i < 3; i++)
 		{
 			if(order[i] == -1)
 				continue;
