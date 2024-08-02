@@ -18,10 +18,10 @@ import net.minecraft.util.Identifier;
 
 public class ArmFeature<T extends PlayerEntity, M extends PlayerEntityModel<T>> extends FeatureRenderer<T, M>
 {
-	static final Identifier FEEDBACKER_SLIM = Ultracraft.identifier("textures/entity/arms/feedbacker_slim.png");
-	static final Identifier KNUCKLEBLASTER_SLIM = Ultracraft.identifier("textures/entity/arms/knuckleblaster_slim.png");
-	static final Identifier FEEDBACKER = Ultracraft.identifier("textures/entity/arms/feedbacker.png");
-	static final Identifier KNUCKLEBLASTER = Ultracraft.identifier("textures/entity/arms/knuckleblaster.png");
+	static final Identifier FEEDBACKER_SLIM = Ultracraft.texIdentifier("textures/entity/arms/feedbacker_slim");
+	static final Identifier KNUCKLEBLASTER_SLIM = Ultracraft.texIdentifier("textures/entity/arms/knuckleblaster_slim");
+	static final Identifier FEEDBACKER = Ultracraft.texIdentifier("textures/entity/arms/feedbacker");
+	static final Identifier KNUCKLEBLASTER = Ultracraft.texIdentifier("textures/entity/arms/knuckleblaster");
 	
 	public ArmFeature(FeatureRendererContext<T, M> context)
 	{

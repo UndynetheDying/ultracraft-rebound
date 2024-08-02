@@ -43,6 +43,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	public LevelStatsComponent(PlayerEntity provider)
 	{
 		this.provider = provider;
+		Ultracraft.TIME_FREEZE_EVENT.register(this::setTimerPaused);
 	}
 	
 	@Override
@@ -134,11 +135,12 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	{
 		if(v && !isTimerPaused() && isTimerRunning())
 			timerPause = System.currentTimeMillis();
-		else if(isTimerPaused() && isTimerRunning())
+		else if(!v && isTimerPaused() && isTimerRunning())
 		{
 			timerStart += System.currentTimeMillis() - timerPause;
 			timerPause = -1;
 		}
+		UltraComponents.LEVEL_STATS.sync(provider);
 	}
 	
 	@Override
@@ -372,6 +374,11 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 			timerStart = tag.getLong("timerStart");
 		if(tag.contains("lastStoppedTime", NbtElement.LONG_TYPE))
 			lastStoppedTimer = tag.getLong("lastStoppedTime");
+		if(tag.contains("pauseTime", NbtElement.LONG_TYPE))
+		{
+			timerPause = tag.getLong("pauseTime");
+			setTimerPaused(isTimerPaused());
+		}
 		if(tag.contains("style", NbtElement.FLOAT_TYPE))
 			style = tag.getLong("style");
 		if(tag.contains("deaths", NbtElement.INT_TYPE))
@@ -420,6 +427,7 @@ public class LevelStatsComponent implements ILevelStatsComponent, AutoSyncedComp
 	{
 		tag.putLong("timerStart", timerStart);
 		tag.putLong("lastStoppedTime", lastStoppedTimer);
+		tag.putLong("pauseTime", timerPause);
 		tag.putFloat("style", style);
 		tag.putInt("deaths", deaths);
 		tag.putInt("kills", kills);

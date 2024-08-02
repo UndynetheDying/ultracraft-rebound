@@ -8,6 +8,8 @@ import mod.azure.azurelib.renderer.GeoItemRenderer;
 
 public class DroneMaskRenderer extends GeoItemRenderer<DroneMaskItem>
 {
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/item/drone_mask");
+	
 	public DroneMaskRenderer()
 	{
 		super(new DefaultedItemGeoModel<>(Ultracraft.identifier("drone_mask")));
@@ -16,6 +18,6 @@ public class DroneMaskRenderer extends GeoItemRenderer<DroneMaskItem>
 	@Override
 	public Identifier getTextureLocation(DroneMaskItem animatable)
 	{
-		return Ultracraft.identifier("textures/item/drone_mask.png");
+		return TEXTURE;
 	}
 }

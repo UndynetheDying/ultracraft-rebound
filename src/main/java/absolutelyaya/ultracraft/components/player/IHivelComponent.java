@@ -42,5 +42,13 @@ public interface IHivelComponent extends ComponentV3, AutoSyncedComponent, Commo
 	
 	void setMaxNoSlowdownVelocity(float f);
 	
+	void setSliding(boolean b);
+	
+	boolean isSliding();
+	
+	void setSlamming(boolean b);
+	
+	boolean isSlamming();
+	
 	void markDirty();
 }

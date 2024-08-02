@@ -10,7 +10,6 @@ import me.shedaniel.rei.api.client.registry.entry.CollapsibleEntryRegistry;
 import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +37,10 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 				EntryStacks.of(ItemRegistry.KNUCKLEBLASTER),
 				EntryStacks.of(ItemRegistry.PLACEHOLDER),
 				EntryStacks.of(ItemRegistry.FLORP),
-				EntryStacks.of(ItemRegistry.PITR_POIN)));
+				EntryStacks.of(ItemRegistry.PITR_POIN),
+				EntryStacks.of(ItemRegistry.BLAHAJ),
+				EntryStacks.of(BlockRegistry.MAURICE),
+				EntryStacks.of(BlockRegistry.CRACKED_MAURICE)));
 	}
 	
 	@Override
@@ -61,8 +63,10 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 				EntryStacks.of(BlockRegistry.MAP_EXPLOSION),
 				EntryStacks.of(BlockRegistry.MAP_SOUND),
 				EntryStacks.of(BlockRegistry.MAP_PROGRESSION),
+				EntryStacks.of(BlockRegistry.MAP_PROGRESSION_CHECK),
 				EntryStacks.of(BlockRegistry.MAP_LEVEL),
 				EntryStacks.of(BlockRegistry.MAP_TIMER),
+				EntryStacks.of(BlockRegistry.MAP_TIMER_LISTENER),
 				EntryStacks.of(BlockRegistry.MAP_TRAVEL),
 				EntryStacks.of(BlockRegistry.MAP_TITLE),
 				EntryStacks.of(BlockRegistry.MAP_TITLE_LISTENER),
@@ -107,7 +111,8 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 				EntryStacks.of(ItemRegistry.LIMBO2_DISK),
 				EntryStacks.of(ItemRegistry.LIMBO2_CALM_DISK),
 				EntryStacks.of(ItemRegistry.CYBERGRIND_DISK),
-				EntryStacks.of(ItemRegistry.CLAIR_DE_LUNE_DISK));
+				EntryStacks.of(ItemRegistry.CLAIR_DE_LUNE_DISK),
+				EntryStacks.of(ItemRegistry.VERSUS_DISK));
 		registry.group(Ultracraft.identifier("discs"), Text.translatable("rei-group.ultracraft.discs"), entries);
 	}
 }

@@ -7,11 +7,11 @@ import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityT
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
 
 public class BlockEntityRegistry
 {
 	public static final BlockEntityType<PedestalBlockEntity> PEDESTAL;
+	public static final BlockEntityType<HankBlockEntity> HANK;
 	public static final BlockEntityType<CerberusBlockEntity> CERBERUS;
 	public static final BlockEntityType<TerminalBlockEntity> TERMINAL;
 	public static final BlockEntityType<HellObserverBlockEntity> HELL_OBSERVER;
@@ -35,6 +35,7 @@ public class BlockEntityRegistry
 	public static final BlockEntityType<TitleListenerBlockEntity> MAP_TITLE_LISTENER;
 	public static final BlockEntityType<GlobalTitleListenerBlockEntity> MAP_GLOBAL_TITLE;
 	public static final BlockEntityType<TimerBlockEntity> MAP_TIMER;
+	public static final BlockEntityType<TimerListenerBlockEntity> MAP_TIMER_LISTENER;
 	public static final BlockEntityType<LevelUnlockBlockEntity> MAP_LEVEL;
 	public static final BlockEntityType<ForceTravelBlockEntity> MAP_TRAVEL;
 	public static final BlockEntityType<DamageBlockEntity> MAP_DAMAGE;
@@ -43,6 +44,7 @@ public class BlockEntityRegistry
 	public static final BlockEntityType<MusicTriggerBlockEntity> MAP_MUSIC;
 	public static final BlockEntityType<MusicListenerBlockEntity> MAP_MUSIC_LISTENER;
 	public static final BlockEntityType<AbyssBlockEntity> MAP_ABYSS;
+	public static final BlockEntityType<ProgressionCheckTriggerBlockEntity> MAP_PROGRESSION_CHECK;
 	
 	public static void register() {
 	}
@@ -52,6 +54,9 @@ public class BlockEntityRegistry
 		PEDESTAL = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				Ultracraft.identifier("pedestal"),
 				FabricBlockEntityTypeBuilder.create(PedestalBlockEntity::new, BlockRegistry.PEDESTAL).build());
+		HANK = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				Ultracraft.identifier("hank"),
+				FabricBlockEntityTypeBuilder.create(HankBlockEntity::new, BlockRegistry.HANK).build());
 		CERBERUS = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				Ultracraft.identifier("cerberus_block"),
 				FabricBlockEntityTypeBuilder.create(CerberusBlockEntity::new, BlockRegistry.CERBERUS).build());
@@ -119,6 +124,9 @@ public class BlockEntityRegistry
 		MAP_TIMER = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				Ultracraft.identifier("map_timer"),
 				FabricBlockEntityTypeBuilder.create(TimerBlockEntity::new, BlockRegistry.MAP_TIMER).build());
+		MAP_TIMER_LISTENER = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				Ultracraft.identifier("map_timer_listener"),
+				FabricBlockEntityTypeBuilder.create(TimerListenerBlockEntity::new, BlockRegistry.MAP_TIMER_LISTENER).build());
 		MAP_LEVEL = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				Ultracraft.identifier("map_level"),
 				FabricBlockEntityTypeBuilder.create(LevelUnlockBlockEntity::new, BlockRegistry.MAP_LEVEL).build());
@@ -143,5 +151,8 @@ public class BlockEntityRegistry
 		MAP_ABYSS = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				Ultracraft.identifier("map_abyss"),
 				FabricBlockEntityTypeBuilder.create(AbyssBlockEntity::new, BlockRegistry.MAP_ABYSS).build());
+		MAP_PROGRESSION_CHECK = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				Ultracraft.identifier("map_progression_check"),
+				FabricBlockEntityTypeBuilder.create(ProgressionCheckTriggerBlockEntity::new, BlockRegistry.MAP_PROGRESSION_CHECK).build());
 	}
 }

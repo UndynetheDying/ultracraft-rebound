@@ -1,0 +1,7 @@
+{
+  "translation-key": "stylebonus.ultracraft.saw_melee",
+  "score": 90,
+  "damage": "ultracraft:saw_melee",
+  "use-staleness": true,
+  "impossible": true
+}

@@ -1,7 +1,7 @@
 package absolutelyaya.ultracraft.client.rendering.item;
 
 import absolutelyaya.ultracraft.Ultracraft;
-import absolutelyaya.ultracraft.item.SharpshooterRevolverItem;
+import absolutelyaya.ultracraft.item.weapons.SharpshooterRevolverItem;
 import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.util.Identifier;
 import mod.azure.azurelib.model.DefaultedItemGeoModel;
@@ -26,10 +26,10 @@ public class SharpshooterRevolverRenderer extends GeoItemRenderer<SharpshooterRe
 		
 		return switch (charges)
 		{
-			case 0 -> Ultracraft.identifier("textures/item/sharpshooter_revolver2.png");
-			case 1 -> Ultracraft.identifier("textures/item/sharpshooter_revolver1.png");
-			case 2 -> Ultracraft.identifier("textures/item/sharpshooter_revolver0.png");
-			default -> Ultracraft.identifier("textures/item/sharpshooter_revolver.png");
+			case 0 -> Ultracraft.texIdentifier("textures/item/sharpshooter_revolver2");
+			case 1 -> Ultracraft.texIdentifier("textures/item/sharpshooter_revolver1");
+			case 2 -> Ultracraft.texIdentifier("textures/item/sharpshooter_revolver0");
+			default -> Ultracraft.texIdentifier("textures/item/sharpshooter_revolver");
 		};
 	}
 }

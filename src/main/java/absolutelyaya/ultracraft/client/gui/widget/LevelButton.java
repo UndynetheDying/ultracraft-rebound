@@ -36,7 +36,7 @@ import java.util.function.Consumer;
 public class LevelButton extends ClickableWidget
 {
 	final static String[] RANKS = new String[] { "P", "§4S", "§6A", "§eB", "§aC", "§bD", "§9E", "§8F" };
-	static final Identifier UPDATE_MARKER_TEXTURE = Ultracraft.identifier("textures/particle/shock.png");
+	static final Identifier UPDATE_MARKER_TEXTURE = Ultracraft.texIdentifier("textures/particle/shock");
 	static final TextRenderer tRenderer;
 	public final Identifier preview, destination;
 	final Text description, author;

@@ -16,7 +16,6 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.util.Identifier;
 
 public class BlockRegistry
 {
@@ -158,6 +157,17 @@ public class BlockRegistry
 			new StairsBlock(SHEETMETAL_SHEET.getDefaultState(), AbstractBlock.Settings.copy(SHEETMETAL).mapColor(MapColor.IRON_GRAY).sounds(BlockSoundGroup.LANTERN)), true);
 	public static final Block FAKE_LEAVES = register("fake_leaves",
 			new FakeLeavesBlock(AbstractBlock.Settings.copy(Blocks.OAK_LEAVES).mapColor(MapColor.GREEN).sounds(BlockSoundGroup.WOOL).breakInstantly()), true);
+	public static final Block HANK = register("hank",
+			new HankBlock(AbstractBlock.Settings.copy(Blocks.SKELETON_SKULL).mapColor(MapColor.WHITE_GRAY).sounds(BlockSoundGroup.BONE)), false);
+	public static final Block HYACINTH = register("hyacinth",
+			new ButterflyFlowerBlock(AbstractBlock.Settings.copy(Blocks.ALLIUM).mapColor(MapColor.DARK_GREEN).sounds(BlockSoundGroup.GRASS).breakInstantly().noCollision().offset(AbstractBlock.OffsetType.XZ).pistonBehavior(PistonBehavior.DESTROY)), true);
+	public static final Block POTTED_HYACINTH = register("potted_hyacinth", new ButterflyFlowerpotBlock(HYACINTH, AbstractBlock.Settings.copy(Blocks.POTTED_ALLIUM)), false);
+	public static final Block MAURICE = register("maurice",
+			new MauriceBlock(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.GRAY).sounds(BlockSoundGroup.STONE)), true);
+	public static final Block CRACKED_MAURICE = register("cracked_maurice",
+			new MauriceBlock(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.GRAY).sounds(BlockSoundGroup.STONE)), true);
+	public static final Block DARKNESS = register("darkness",
+			new DarknessBlock(AbstractBlock.Settings.copy(Blocks.BLACK_STAINED_GLASS).mapColor(MapColor.GRAY).sounds(BlockSoundGroup.STONE).requiresTool().strength(-1f, 3600000f).nonOpaque()), true);
 	
 	public static final Block MAP_ROOM = register("map_room", new RoomBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_TRIGGER = register("map_trigger", new TriggerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
@@ -176,6 +186,7 @@ public class BlockRegistry
 	public static final Block MAP_TITLE_LISTENER = register("map_title_listener", new TitleListenerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_GLOBAL_TITLE = register("map_global_title", new GlobalTitleListenerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_TIMER = register("map_timer", new TimerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
+	public static final Block MAP_TIMER_LISTENER = register("map_timer_listener", new TimerListenerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_LEVEL = register("map_level", new LevelUnlockBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_TRAVEL = register("map_travel", new ForceTravelBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_DAMAGE = register("map_damage", new DamageBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
@@ -184,6 +195,7 @@ public class BlockRegistry
 	public static final Block MAP_MUSIC = register("map_music", new MusicTriggerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_MUSIC_LISTENER = register("map_music_listener", new MusicListenerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	public static final Block MAP_ABYSS = register("map_abyss", new AbyssBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
+	public static final Block MAP_PROGRESSION_CHECK = register("map_progression_check", new ProgressionCheckTriggerBlock(AbstractBlock.Settings.copy(Blocks.COMMAND_BLOCK)), true);
 	
 	private static Block register(String name, Block block, boolean item)
 	{

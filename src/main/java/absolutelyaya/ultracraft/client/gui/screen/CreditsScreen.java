@@ -19,6 +19,7 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector4f;
@@ -29,14 +30,14 @@ public class CreditsScreen extends Screen
 {
 	static final Style ROLE_STYLE = Style.EMPTY.withUnderline(true);
 	static final Style NAME_STYLE = Style.EMPTY.withColor(Formatting.GOLD);
-	static final Identifier TEXTURE = Ultracraft.identifier("textures/gui/credits.png");
-	static final Identifier BG = Ultracraft.identifier("textures/block/flesh1.png");
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/gui/credits");
+	static final Identifier BG = Ultracraft.texIdentifier("textures/block/flesh1");
 	static final List<Text> supporters = new ArrayList<>();
 	static boolean initializedSupporters;
 	final Screen parent;
 	final List<ContributorElement> contributors = new ArrayList<>();
 	final LocalizerElement localizers;
-	float time;
+	float time, supporterScroll, supporterHeight, contributorScroll, targetContributorScroll, contributorHeight = 300;
 	
 	public CreditsScreen(Screen parent)
 	{
@@ -46,7 +47,7 @@ public class CreditsScreen extends Screen
 		contributors.add(new ContributorElement("build", "Talon_MC", "AshenWulf", "Marmalude"));
 		contributors.add(new ContributorElement("sound", "8BitBunny"));
 		contributors.add(new ContributorElement("test", "Talon_MC", "AshenWulf", "Athanes", "Marmalude"));
-		contributors.add(new ContributorElement("music", "Efefski", "Psykomatic", "Triage", "Oxblood"));
+		contributors.add(new ContributorElement("music", "Efefski", "Psykomatic", "Triage", "Oxblood", "Aavanitro", "ENNWAY"));
 		HashMap<String, List<String>> localizerMap = new HashMap<>();
 		localizerMap.put("LOLCAT", new ArrayList<>() { { add("Doggochleb"); } });
 		localizerMap.put("Russian", new ArrayList<>() { { add("closet748"); } });
@@ -76,6 +77,7 @@ public class CreditsScreen extends Screen
 			supporters.addAll(formerSupporters);
 			initializedSupporters = true;
 		}
+		supporterHeight = Math.max((24 + supporters.size() * 9) - 60, 0);
 	}
 	
 	@Override
@@ -95,12 +97,12 @@ public class CreditsScreen extends Screen
 		int marginH = 16, marginV = 32;
 		matrices.push();
 		time += MinecraftClient.getInstance().getLastFrameDuration() / 10f;
+		supporterScroll = (supporterScroll + MinecraftClient.getInstance().getLastFrameDuration() / 100f) % (float)Math.toRadians(360f);
 		RenderSystem.setShader(GameRenderer::getPositionTexProgram);
 		RenderSystem.setShaderTexture(0, BG);
 		RenderSystem.setShaderColor(0.8f, 0.6f, 0.6f, 0.8f);
 		for (int y = -1; y < height / 32 + 1; y++)
 		{
-			//if(Math.random() > 0.9f)
 			for (int x = -1; x < width / 32 + 1; x++)
 			{
 				RenderingUtil.drawTexture(matrices.peek().getPositionMatrix(),
@@ -118,11 +120,13 @@ public class CreditsScreen extends Screen
 		matrices.push();
 		matrices.translate(marginH, marginV, 0);
 		context.drawTexture(TEXTURE, width / 4 - marginH, 4, 0, 0, 0, 64, 16, 96, 96);
-		context.drawTexture(TEXTURE, (int)(width * 0.62), height / 3 - 24, 0, 0, 48, 64, 48, 96, 96);
+		context.enableScissor(marginH, marginV + 24, width - marginH * 2, height - marginV - 25);
 		
 		//Contributors
 		matrices.push();
-		matrices.translate(4, 24, 0);
+		contributorHeight = 0;
+		delta = MinecraftClient.getInstance().getLastFrameDuration();
+		matrices.translate(4, 24 + (int)(contributorScroll = MathHelper.lerp(delta, contributorScroll, targetContributorScroll)), 0);
 		matrices.push();
 		int lastHeight = 0;
 		for (int i = 0; i < contributors.size(); i++)
@@ -131,7 +135,9 @@ public class CreditsScreen extends Screen
 				matrices.translate((width - marginH) / 3f, 0, 0);
 			else if(i > 0)
 			{
-				matrices.translate((width - marginH) / -3f, textRenderer.fontHeight + lastHeight, 0);
+				float offset = textRenderer.fontHeight + lastHeight;
+				contributorHeight += offset;
+				matrices.translate((width - marginH) / -3f, offset, 0);
 				lastHeight = 0;
 			}
 			int h = contributors.get(i).render(context, textRenderer);
@@ -140,22 +146,38 @@ public class CreditsScreen extends Screen
 		}
 		if(contributors.size() % 2 == 0)
 			matrices.translate((width - marginH) / -3f, 0, 0);
-		matrices.translate(4, textRenderer.fontHeight * 3 + lastHeight, 0);
+		matrices.translate(4, textRenderer.fontHeight + lastHeight, 0);
 		localizers.render(context, textRenderer);
 		matrices.pop();
 		matrices.pop();
+		context.disableScissor();
 		
 		//Supporters
-		matrices.push();
 		matrices.translate((int)((width - marginH) * 0.8f), 0, 0);
 		context.drawTexture(TEXTURE, - 40, 4, 0, 16, 80, 19, 96, 96);
-		matrices.translate(0, 24, 0);
+		if(width > 450)
+			context.drawTexture(TEXTURE, (int)(-width * 0.22), (int)(height / 2.5f - 24), 0, 0, 48, 64, 48, 96, 96); //exremely cool
+		context.enableScissor(marginH, marginV + 24, width - marginH * 2, height - marginV - 25);
+		matrices.push();
+		int supporterScrollPixels = (int)((Math.sin(supporterScroll - Math.toRadians(90f)) / 2f + 0.5f) * -supporterHeight);
+		matrices.translate(0, 33 + supporterScrollPixels, 0);
 		supporters.forEach(i -> {
 			matrices.translate(0, textRenderer.fontHeight, 0);
 			context.drawText(textRenderer, i, - textRenderer.getWidth(i) / 2, 0, 0xffffffff, true);
 		});
 		matrices.pop();
 		matrices.pop();
+		context.disableScissor();
+	}
+	
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double amount)
+	{
+		if(mouseX > (width - 16) * 0.66)
+			supporterScroll = Math.min((((Math.abs(supporterScroll) * supporterHeight + (float)-amount * 10)) / supporterHeight), (float)Math.toRadians(180f));
+		else
+			targetContributorScroll = (float) MathHelper.clamp((targetContributorScroll + amount * 10f), -contributorHeight, 0f);
+		return super.mouseScrolled(mouseX, mouseY, amount);
 	}
 	
 	static class ContributorElement

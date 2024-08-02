@@ -17,12 +17,6 @@ public class FilthRenderer extends GeoEntityRenderer<FilthEntity>
 	}
 	
 	@Override
-	public Identifier getTexture(FilthEntity object)
-	{
-		return Ultracraft.identifier(object.isRare() ? "textures/entity/blue_filth.png" : "textures/entity/filth.png");
-	}
-	
-	@Override
 	public RenderLayer getRenderType(FilthEntity animatable, Identifier texture, VertexConsumerProvider bufferSource, float partialTick)
 	{
 		return RenderLayer.getEntityTranslucent(texture);

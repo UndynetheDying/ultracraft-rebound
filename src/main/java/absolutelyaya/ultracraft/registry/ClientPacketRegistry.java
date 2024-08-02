@@ -6,6 +6,7 @@ import absolutelyaya.goop.particles.GoopDropParticleEffect;
 import absolutelyaya.ultracraft.ExplosionHandler;
 import absolutelyaya.ultracraft.client.gui.CybergrindHUD;
 import absolutelyaya.ultracraft.client.gui.screen.*;
+import absolutelyaya.ultracraft.client.sound.SoundInstanceManager;
 import absolutelyaya.ultracraft.compat.TrinketUtil;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
@@ -21,7 +22,7 @@ import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.components.player.ProgressionComponent;
 import absolutelyaya.ultracraft.cybergrind.CybergrindData;
 import absolutelyaya.ultracraft.data.*;
-import absolutelyaya.ultracraft.item.AbstractWeaponItem;
+import absolutelyaya.ultracraft.item.weapons.AbstractWeaponItem;
 import absolutelyaya.ultracraft.particle.ParryIndicatorParticleEffect;
 import absolutelyaya.ultracraft.recipe.UltraRecipe;
 import com.google.common.collect.ImmutableMap;
@@ -460,13 +461,13 @@ public class ClientPacketRegistry
 			if(client.currentScreen instanceof AbstractTravelScreen travel)
 				travel.setShouldClose();
 		})));
-		ClientPlayNetworking.registerGlobalReceiver(ANNOUNCE_CYBERGRIND_ID, (((client, handler, buf, responseSender) -> {
+		ClientPlayNetworking.registerGlobalReceiver(ANNOUNCE_CYBERGRIND_PACKET_ID, (((client, handler, buf, responseSender) -> {
 			Text result = buf.readText();
 			CybergrindHUD hud = CybergrindHUD.Instance;
 			if(hud != null)
 				hud.startAnnouncementSequence(result);
 		})));
-		ClientPlayNetworking.registerGlobalReceiver(SYNC_CYBERGRIND_ID, (((client, handler, buf, responseSender) -> {
+		ClientPlayNetworking.registerGlobalReceiver(SYNC_CYBERGRIND_PACKET_ID, (((client, handler, buf, responseSender) -> {
 			byte mode = buf.readByte();
 			NbtCompound data = mode != CybergrindData.DESTROY_SYNC ? buf.readNbt() : new NbtCompound();
 			client.execute(() -> {
@@ -493,7 +494,7 @@ public class ClientPacketRegistry
 					last.setEnemies(data.getInt("enemies"));
 			});
 		})));
-		ClientPlayNetworking.registerGlobalReceiver(PICKUP_PROGRESSION_ITEM_ID, (((client, handler, buf, responseSender) -> {
+		ClientPlayNetworking.registerGlobalReceiver(PICKUP_PROGRESSION_ITEM_PACKET_ID, (((client, handler, buf, responseSender) -> {
 			int entityID = buf.readInt();
 			client.execute(() -> {
 				Entity e = client.world.getEntityById(entityID);
@@ -502,6 +503,22 @@ public class ClientPacketRegistry
 				client.particleManager.addParticle(new ItemPickupParticle(client.getEntityRenderDispatcher(), client.getBufferBuilders(),
 						client.world, e, client.player));
 				client.world.removeEntity(entityID, Entity.RemovalReason.DISCARDED);
+			});
+		})));
+		ClientPlayNetworking.registerGlobalReceiver(WEAPON_SOUND_PACKET_ID, (((client, handler, buf, responseSender) -> {
+			boolean add = buf.readBoolean();
+			String id = buf.readString();
+			Entity target = client.world.getEntityById(buf.readInt());
+			String sound = add ? buf.readString() : "";
+			boolean warmUp = add && buf.readBoolean();
+			float volume = add ? buf.readFloat() : 1f;
+			client.execute(() -> {
+				if(!(target instanceof PlayerEntity player))
+					return;
+				if(add)
+					SoundInstanceManager.attachWeaponSoundInstance(id, Identifier.tryParse(sound), player, warmUp, volume);
+				else
+					SoundInstanceManager.removeSoundInstance(id, player);
 			});
 		})));
 	}

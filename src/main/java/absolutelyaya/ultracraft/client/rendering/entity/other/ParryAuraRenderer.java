@@ -16,7 +16,7 @@ import org.joml.Vector2f;
 
 public class ParryAuraRenderer
 {
-	static final Identifier TEXTURE = Ultracraft.identifier("textures/misc/parry_auras.png");
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/misc/parry_auras");
 	static final Vec3i[] colors = new Vec3i[] {
 			new Vec3i(160, 19, 4), new Vec3i(198, 81, 18), new Vec3i(231, 143, 12), new Vec3i(239, 221, 57), new Vec3i(144, 239, 134),
 			new Vec3i(100, 233, 180), new Vec3i(76, 244, 227), new Vec3i(158, 255, 249), new Vec3i(130, 172, 255), new Vec3i(175, 161, 255),

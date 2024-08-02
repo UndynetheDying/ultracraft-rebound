@@ -29,7 +29,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(EntityRenderer.class)
 public abstract class EntityRendererMixin<T extends Entity>
 {
-	private static final Identifier BLOCKED_ICON = Ultracraft.identifier("textures/gui/blocked_wings.png");
+	private static final Identifier BLOCKED_ICON = Ultracraft.texIdentifier("textures/gui/blocked_wings");
 	
 	@Shadow public abstract TextRenderer getTextRenderer();
 	

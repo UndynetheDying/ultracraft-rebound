@@ -3,7 +3,6 @@ package absolutelyaya.ultracraft.entity.projectile;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
-import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.DamageTypeTags;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
@@ -81,11 +80,11 @@ public class MagnetEntity extends AbstractSkewerEntity implements GeoEntity, IIg
 			flashTimer = 0f;
 			playSound(SoundRegistry.NAILGUN_MAGNET_BEEP, 0.5f, 1.85f);
 		}
-		if(isRemoved() || (!isInGround() && victim == null))
+		if(isRemoved() || (!isInGround() && getVictim() == null))
 			return;
 		List<NailEntity> nails = getWorld().getEntitiesByType(TypeFilter.instanceOf(NailEntity.class), getBoundingBox().expand(8), n -> true);
 		List<MagnetEntity> magnets = getWorld().getEntitiesByType(TypeFilter.instanceOf(MagnetEntity.class), getBoundingBox().expand(8),
-				m -> (m.isInGround() || m.victim != null) && m != this);
+				m -> (m.isInGround() || m.getVictim() != null) && m != this);
 		Vec3d pos = getPos().add(getAttractOffset());
 		for (MagnetEntity magnet : magnets)
 			pos = pos.add(magnet.getPos().add(magnet.getAttractOffset()));
@@ -93,7 +92,7 @@ public class MagnetEntity extends AbstractSkewerEntity implements GeoEntity, IIg
 		for (NailEntity nail : nails)
 			nail.setVelocity(nail.getVelocity().lerp(pos.subtract(nail.getPos()).normalize(),
 					Math.max(1f - nail.distanceTo(this) / 6f, 0)));
-		if(isInGround() || victim != null)
+		if(isInGround() || getVictim() != null)
 		{
 			float strain = nails.size() / 42f / Math.max(magnets.size(), 1f);
 			dataTracker.set(GROUND_TIME, groundTime + strain);
@@ -138,7 +137,7 @@ public class MagnetEntity extends AbstractSkewerEntity implements GeoEntity, IIg
 	@Override
 	protected void onEntityHit(EntityHitResult entityHitResult)
 	{
-		if(victim != null)
+		if(getVictim() != null)
 			return;
 		//if(entityHitResult.getEntity() instanceof LivingEntity living)
 		//	living.damage(DamageSources.get(getWorld(), DamageSources.MAGNET, this, getOwner()), 3.5f);

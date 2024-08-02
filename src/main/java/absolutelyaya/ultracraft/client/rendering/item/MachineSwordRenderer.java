@@ -18,9 +18,9 @@ public class MachineSwordRenderer extends GeoItemRenderer<MachineSwordItem>
 	{
 		return switch(MachineSwordItem.getType(getCurrentItemStack()))
 		{
-			case NORMAL -> Ultracraft.identifier("textures/item/machinesword.png");
-			case TUNDRA -> Ultracraft.identifier("textures/item/machinesword_tundra.png");
-			case AGONY -> Ultracraft.identifier("textures/item/machinesword_agony.png");
+			case NORMAL -> Ultracraft.texIdentifier("textures/item/machinesword");
+			case TUNDRA -> Ultracraft.texIdentifier("textures/item/machinesword_tundra");
+			case AGONY -> Ultracraft.texIdentifier("textures/item/machinesword_agony");
 		};
 	}
 }

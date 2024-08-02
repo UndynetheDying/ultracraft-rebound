@@ -9,7 +9,7 @@ import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.damage.HitscanDamageSource;
 import absolutelyaya.ultracraft.entity.demon.MaliciousFaceEntity;
-import absolutelyaya.ultracraft.item.AbstractRevolverItem;
+import absolutelyaya.ultracraft.item.weapons.AbstractRevolverItem;
 import absolutelyaya.ultracraft.item.CoinItem;
 import absolutelyaya.ultracraft.registry.*;
 import absolutelyaya.ultracraft.util.AutoAimUtil;
@@ -183,11 +183,12 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 		}
 		if(realAge <= 1) //deadcoin period
 		{
-			if(source.isOf(DamageSources.RICOCHET))
+			if(source.isOf(DamageSources.RICOCHET) && attacker.equals(getOwner()))
 			{
 				damage = Math.round(amount + 1);
 				dataTracker.set(DEADCOINED, true);
 				dataTracker.set(STOPPED, false);
+				timeUntilRegen = 1;
 			}
 			return false;
 		}
@@ -207,19 +208,19 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 	boolean hitNext(HitscanDamageSource source, float amount, LivingEntity attacker)
 	{
 		boolean isDamageChargeback = source.isOf(DamageSources.CHARGEBACK);
-		boolean isDamageRicochet = source.isOf(DamageSources.RICOCHET) || isDamageChargeback;
+		boolean isDamageRicochet = source.isRicoshot() || isDamageChargeback;
 		boolean singleTarget = source.isAlternate() || source.hitscan.isCharged();
 		byte hitscanType = source.hitscan.type;
 		if(hitscanType == ServerHitscanHandler.NORMAL)
 			hitscanType = ServerHitscanHandler.COIN_RICOCHET;
-		if (realAge <= 2 && !isDamageChargeback) //deadcoin period
+		if (realAge <= 2 && !isDamageChargeback && isDeadCoined()) //deadcoin period
 			return false;
 		if (getWorld().isClient)
 			return true;
 		else
 			playSound(SoundRegistry.COIN_HIT_NEXT, 0.1f, 1.2f + (isDamageRicochet ? 0.05f * amount : 0f));
 		List<ThrownCoinEntity> coins = getWorld().getEntitiesByType(TypeFilter.instanceOf(ThrownCoinEntity.class), getBoundingBox().expand(16f),
-				e -> e.isUnused() && !e.isRemoved() && !(isDamageChargeback && e.age <= 2));
+				e -> e.isUnused() && !e.isRemoved() && !(isDamageChargeback || e.age <= 2));
 		if (coins.size() > 1 && !splitting)
 		{
 			if (hitTicks == 0)
@@ -251,7 +252,7 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 				closestCoin.dataTracker.set(CHARGEBACK, cb);
 				if (!splitting)
 					closestCoin.dataTracker.set(SPLITS, dataTracker.get(SPLITS));
-				closestCoin.damage(source, isDamageRicochet ? amount + 1 : 1);
+				closestCoin.damage(source.makeRicoshot(), isDamageRicochet ? amount + 1 : 1);
 			}
 			getWorld().sendEntityStatus(this, (byte) 3);
 			kill();
@@ -262,7 +263,7 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 			//remove every target that has blocks inbetween itself and the coin
 			potentialTargets = potentialTargets.stream().filter(e -> getWorld().raycast(new RaycastContext(getPos(), e.getPos(), RaycastContext.ShapeType.COLLIDER,
 							RaycastContext.FluidHandling.NONE, this)).getType().equals(HitResult.Type.MISS)).toList();
-			if (potentialTargets.size() > 0)
+			if (!potentialTargets.isEmpty())
 			{
 				if (hitTicks == 0)
 				{
@@ -348,6 +349,8 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 	@Override
 	public void tick()
 	{
+		if(timeUntilRegen > 0)
+			timeUntilRegen--;
 		if(age == 1 && !isRemoved())
 			if(getWorld().isClient)
 				UltracraftClient.TRAIL_RENDERER.createTrail(uuid, this::getPoint, new Vector4f(1f, 1f, 0f, 0.4f), 5);
@@ -392,7 +395,7 @@ public class ThrownCoinEntity extends ThrownItemEntity implements ProjectileEnti
 		ThrownCoinEntity coin = null;
 		List<Entity> potentialTargets = getWorld().getOtherEntities(parrier, getBoundingBox().expand(16f),
 				e -> isValidCoinPunchTarget(e, parrier));
-		if(potentialTargets.size() > 0)
+		if(!potentialTargets.isEmpty())
 		{
 			Entity closest = null;
 			float closestDistance = Float.MAX_VALUE;

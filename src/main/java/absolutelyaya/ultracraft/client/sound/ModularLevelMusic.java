@@ -5,16 +5,18 @@ import net.minecraft.util.Identifier;
 
 public class ModularLevelMusic
 {
-	final Identifier calmID, combatID;
-	final int combatThreshold;
+	final Identifier calmID, combatID, introID;
+	final int combatThreshold, introLength;
 	final boolean noCalmdown;
 	
-	public ModularLevelMusic(Identifier calmID, Identifier combatID, int combatThreshold, boolean noCalmdown)
+	public ModularLevelMusic(Identifier calmID, Identifier combatID, int combatThreshold, boolean noCalmdown, Identifier intoID, int introLength)
 	{
 		this.calmID = calmID;
 		this.combatID = combatID;
 		this.combatThreshold = combatThreshold;
 		this.noCalmdown = noCalmdown;
+		this.introID = intoID;
+		this.introLength = introLength;
 	}
 	
 	public SoundEvent getCalmSound()
@@ -29,6 +31,23 @@ public class ModularLevelMusic
 		if(combatID == null)
 			return null;
 		return SoundEvent.of(combatID);
+	}
+	
+	public SoundEvent getIntroSound()
+	{
+		if(introID == null)
+			return null;
+		return SoundEvent.of(introID);
+	}
+	
+	public boolean isHasIntro()
+	{
+		return introID != null;
+	}
+	
+	public int getIntroLength()
+	{
+		return introLength;
 	}
 	
 	public int getCombatThreshold()

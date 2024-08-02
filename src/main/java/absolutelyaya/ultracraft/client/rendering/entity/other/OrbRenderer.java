@@ -16,6 +16,8 @@ import org.joml.Quaternionf;
 
 public class OrbRenderer extends EntityRenderer<AbstractOrbEntity>
 {
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/entity/biglight");
+	
 	public OrbRenderer(EntityRendererFactory.Context ctx)
 	{
 		super(ctx);
@@ -31,7 +33,7 @@ public class OrbRenderer extends EntityRenderer<AbstractOrbEntity>
 		RenderSystem.setShader(GameRenderer::getPositionTexProgram);
 		Matrix3f normalMatrix = new Matrix3f(matrices.peek().getNormalMatrix());
 		VertexConsumer consumer = vertexConsumers.getBuffer(
-				RenderLayer.getEntityTranslucentEmissive(Ultracraft.identifier("textures/entity/biglight.png")));
+				RenderLayer.getEntityTranslucentEmissive(TEXTURE));
 		matrices.translate(0f, 0.5f, 0f);
 		Quaternionf camRot = new Quaternionf(MinecraftClient.getInstance().gameRenderer.getCamera().getRotation());
 		matrices.multiply(camRot.rotateY((float)Math.toRadians(180)));

@@ -25,8 +25,8 @@ public class LevelDataManager extends JsonDataLoader
 {
 	public static final LevelData ERR_DATA = new LevelData(Ultracraft.identifier("placeholder"),
 			"level.ultracraft.error.title", "level.ultracraft.error.description", "", "", null,
-			Ultracraft.identifier("textures/level/err.png"), BlockPos.ORIGIN, true, true);
-	public static final Identifier PLACEHOLDER_THUMB = Ultracraft.identifier("textures/level/placeholder.png");
+			Ultracraft.texIdentifier("textures/level/err"), BlockPos.ORIGIN, true, true);
+	public static final Identifier PLACEHOLDER_THUMB = Ultracraft.texIdentifier("textures/level/placeholder");
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 	public static LevelDataManager Instance;
 	public static Map<Identifier, LevelData> levels = new HashMap<>(), customLevels = new HashMap<>();
@@ -120,19 +120,23 @@ public class LevelDataManager extends JsonDataLoader
 				JsonObject music = json.getAsJsonObject("music");
 				for (Map.Entry<String, JsonElement> entry : music.entrySet())
 				{
-					Identifier calm = null, combat = null;
-					int combatThreshold = 0;
+					Identifier calm = null, combat = null, intro = null;
+					int combatThreshold = 0, introLength = 0;
 					boolean noCalmdown = false;
 					JsonObject elementt = entry.getValue().getAsJsonObject();
 					if(elementt.has("calm"))
 						calm = Identifier.tryParse(JsonHelper.getString(elementt, "calm"));
 					if(elementt.has("combat"))
 						combat = Identifier.tryParse(JsonHelper.getString(elementt, "combat"));
+					if(elementt.has("intro"))
+						intro = Identifier.tryParse(JsonHelper.getString(elementt, "intro"));
+					if(elementt.has("intro-length"))
+						introLength = JsonHelper.getInt(elementt, "intro-length");
 					if(elementt.has("combat-threshold"))
 						combatThreshold = JsonHelper.getInt(elementt, "combat-threshold");
 					if(elementt.has("no-calmdown"))
 						noCalmdown = JsonHelper.getBoolean(elementt, "no-calmdown");
-					level.putMusic(entry.getKey(), calm, combat, combatThreshold, noCalmdown);
+					level.putMusic(entry.getKey(), calm, combat, intro, introLength, combatThreshold, noCalmdown);
 				}
 			}
 			if(json.has("unimplemented"))

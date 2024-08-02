@@ -9,6 +9,7 @@ import absolutelyaya.ultracraft.components.player.IHivelComponent;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.config.HivelConfig;
 import absolutelyaya.ultracraft.cybergrind.CybergrindData;
+import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.registry.ParticleRegistry;
 import absolutelyaya.ultracraft.registry.TagRegistry;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
@@ -32,6 +33,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import java.util.function.Function;
@@ -60,6 +62,8 @@ public abstract class EntityMixin implements EntityAccessor
 	
 	@Shadow public abstract void move(MovementType movementType, Vec3d movement);
 	
+	@Shadow public abstract boolean isPlayer();
+	
 	Supplier<Boolean> isTargettableSupplier = this::isAlive;
 	Supplier<Vec3d> relativeTargetPointSupplier = () -> getBoundingBox().getCenter();
 	Function<Entity, Integer> targetPriorityFunction = entity -> 0;
@@ -81,7 +85,7 @@ public abstract class EntityMixin implements EntityAccessor
 	@ModifyArgs(method = "updateVelocity", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;movementInputToVelocity(Lnet/minecraft/util/math/Vec3d;FF)Lnet/minecraft/util/math/Vec3d;"))
 	public void onConvertMovementInputToVel(Args args)
 	{
-		if(getWorld().isClient() && this instanceof WingedPlayerEntity winged && winged.isSliding())
+		if(getWorld().isClient() && this instanceof WingedPlayerEntity winged && UltraComponents.HIVEL.get(this).isSliding())
 		{
 			float slideDirRot = (float)Math.toDegrees(Math.atan2(winged.getSlideDir().z, winged.getSlideDir().x));
 			float cappedYaw = ((float)args.get(2) + 90f) % 360f;

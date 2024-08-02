@@ -31,6 +31,23 @@
         },
         {
           "type": "minecraft:item",
+          "name": "ultracraft:blahaj",
+          "weight": 2,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{rare:true}",
+              "conditions": [
+                {
+                  "condition": "minecraft:random_chance",
+                  "chance": 0.05
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
           "name": "ultracraft:talon",
           "weight": 1
         }

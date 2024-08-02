@@ -36,12 +36,12 @@ public class CerberusBlock extends HorizontalFacingBlock implements BlockEntityP
 	public static final BooleanProperty EMPTY = BooleanProperty.of("empty");
 	public static final BooleanProperty SPAWNING = BooleanProperty.of("spawning");
 	public static final IntProperty BOSS = IntProperty.of("boss", 0, 2);
-	public static final IntProperty PROXIMITY = IntProperty.of("proximity", 0, 64);
+	public static final BooleanProperty FLIPPED = BooleanProperty.of("flipped");
 	
 	public CerberusBlock(Settings settings)
 	{
 		super(settings);
-		setDefaultState(getDefaultState().with(SPAWNING, false).with(EMPTY, false).with(PROXIMITY, 0).with(BOSS, 0));
+		setDefaultState(getDefaultState().with(SPAWNING, false).with(EMPTY, false).with(FLIPPED, false).with(BOSS, 0));
 	}
 	
 	@Nullable
@@ -53,7 +53,7 @@ public class CerberusBlock extends HorizontalFacingBlock implements BlockEntityP
 	
 	protected void appendProperties(StateManager.Builder<Block, BlockState> builder)
 	{
-		builder.add(FACING, EMPTY, SPAWNING, PROXIMITY, BOSS);
+		builder.add(FACING, EMPTY, SPAWNING, FLIPPED, BOSS);
 	}
 	
 	@Nullable
@@ -117,6 +117,20 @@ public class CerberusBlock extends HorizontalFacingBlock implements BlockEntityP
 	@Override
 	public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context)
 	{
+		if(state.get(FLIPPED))
+		{
+			return switch (state.get(FACING))
+			{
+				default -> VoxelShapes.union(VoxelShapes.cuboid(0f, 0f, 0f, 1f, 1f, 0.5f),
+						VoxelShapes.cuboid(0f, 0f, 0.5f, 0.5f, 0.5f, 1f));
+				case EAST -> VoxelShapes.union(VoxelShapes.cuboid(0f, 0f, 0f, 0.5f, 1f, 1f),
+						VoxelShapes.cuboid(0.5f, 0f, 0.5f, 1f, 0.5f, 1f));
+				case NORTH -> VoxelShapes.union(VoxelShapes.cuboid(0f, 0f, 0.5f, 1f, 1f, 1f),
+						VoxelShapes.cuboid(0.5f, 0f, 0f, 1f, 0.5f, 0.5f));
+				case WEST -> VoxelShapes.union(VoxelShapes.cuboid(0.5f, 0f, 0f, 1f, 1f, 1f),
+						VoxelShapes.cuboid(0f, 0f, 0f, 0.5f, 0.5f, 0.5f));
+			};
+		}
 		return switch (state.get(FACING))
 		{
 			default -> VoxelShapes.union(VoxelShapes.cuboid(0f, 0f, 0f, 1f, 1f, 0.5f),

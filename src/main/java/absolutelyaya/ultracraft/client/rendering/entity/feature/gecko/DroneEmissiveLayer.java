@@ -14,8 +14,8 @@ import mod.azure.azurelib.renderer.layer.GeoRenderLayer;
 
 public class DroneEmissiveLayer extends GeoRenderLayer<DroneEntity>
 {
-	private static final Identifier TEXTURE = Ultracraft.identifier("textures/entity/drone_emissive.png");
-	private static final Identifier TEXTURE2 = Ultracraft.identifier("textures/entity/drone2_emissive.png");
+	private static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/entity/drone_emissive");
+	private static final Identifier TEXTURE2 = Ultracraft.texIdentifier("textures/entity/drone2_emissive");
 	
 	public DroneEmissiveLayer(GeoRenderer<DroneEntity> entityRendererIn)
 	{

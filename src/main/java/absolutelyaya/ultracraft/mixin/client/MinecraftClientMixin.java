@@ -1,15 +1,13 @@
 package absolutelyaya.ultracraft.mixin.client;
 
+import absolutelyaya.ultracraft.block.*;
 import absolutelyaya.ultracraft.components.UltraComponents;
-import absolutelyaya.ultracraft.block.TerminalBlock;
-import absolutelyaya.ultracraft.block.TerminalBlockEntity;
-import absolutelyaya.ultracraft.block.TerminalDisplayBlock;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.screen.IntroScreen;
 import absolutelyaya.ultracraft.client.gui.screen.TravelScreen;
 import absolutelyaya.ultracraft.components.player.IWingedPlayerComponent;
 import absolutelyaya.ultracraft.config.ServerConfig;
-import absolutelyaya.ultracraft.item.AbstractWeaponItem;
+import absolutelyaya.ultracraft.item.weapons.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.BlockRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
@@ -74,7 +72,8 @@ public abstract class MinecraftClientMixin
 	
 	@Shadow @Nullable public abstract IntegratedServer getServer();
 	
-	boolean isShooting, wasBreaking;
+	@Shadow private volatile boolean paused;
+	boolean isShooting, wasBreaking, wasPaused;
 	
 	@WrapOperation(method = "handleInputEvents()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V"))
 	void OnHandSwap(ClientPlayNetworkHandler instance, Packet<?> packet, Operation<Void> original)
@@ -136,7 +135,8 @@ public abstract class MinecraftClientMixin
 		if(currentScreen == null && mouse.isCursorLocked())
 		{
 			if(options.attackKey.isPressed() != isShooting && player.getInventory().getMainHandStack().getItem() instanceof AbstractWeaponItem w &&
-					   !(crosshairTarget instanceof BlockHitResult bHit && world.getBlockState(bHit.getBlockPos()).isOf(BlockRegistry.PEDESTAL) && !isShooting))
+					   !(crosshairTarget instanceof BlockHitResult bHit &&
+								 world.getBlockState(bHit.getBlockPos()).getBlock() instanceof AbstractPedestalBlock && !isShooting))
 			{
 				PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 				buf.writeByte(options.attackKey.isPressed() ? 1 : 0);
@@ -175,7 +175,7 @@ public abstract class MinecraftClientMixin
 		if(player == null || player.isSpectator())
 			return;
 		HitResult hit = crosshairTarget;
-		boolean pedestal = hit instanceof BlockHitResult bhit && player.getWorld().getBlockState(bhit.getBlockPos()).isOf(BlockRegistry.PEDESTAL);
+		boolean pedestal = hit instanceof BlockHitResult bhit && player.getWorld().getBlockState(bhit.getBlockPos()).getBlock() instanceof AbstractPedestalBlock;
 		if(player.getInventory().getMainHandStack().getItem() instanceof AbstractWeaponItem w && w.shouldCancelPunching())
 		{
 			if(options.sneakKey.isPressed() && pedestal && !player.getMainHandStack().isOf(Items.DEBUG_STICK))
@@ -216,16 +216,8 @@ public abstract class MinecraftClientMixin
 				return;
 			}
 		}
-		if(UltraComponents.DIMENSION_DATA.get(world).isPosNotModifiable(player, ((BlockHitResult)hit).getBlockPos()))
-		{
-			player.swingHand(Hand.MAIN_HAND);
-			cir.setReturnValue(false);
-			return;
-		}
 		
-		if(!pedestal)
-			return;
-		if(player.isCreative())
+		if(pedestal && player.isCreative())
 		{
 			if(options.sneakKey.isPressed())
 			{
@@ -235,10 +227,18 @@ public abstract class MinecraftClientMixin
 			else
 				return;
 		}
-		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-		buf.writeBlockPos(((BlockHitResult)hit).getBlockPos());
-		buf.writeBoolean(true);
-		ClientPlayNetworking.send(PacketRegistry.PUNCH_BLOCK_PACKET_ID, buf);
+		if(world.getBlockState(bhit.getBlockPos()).getBlock() instanceof IPunchableBlock)
+		{
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			buf.writeBlockPos(((BlockHitResult)hit).getBlockPos());
+			buf.writeBoolean(true);
+			ClientPlayNetworking.send(PacketRegistry.PUNCH_BLOCK_PACKET_ID, buf);
+		}
+		if(!hit.getType().equals(HitResult.Type.MISS) && UltraComponents.DIMENSION_DATA.get(world).isPosNotModifiable(player, ((BlockHitResult)hit).getBlockPos()))
+		{
+			player.swingHand(Hand.MAIN_HAND);
+			cir.setReturnValue(false);
+		}
 	}
 	
 	@Inject(method = "handleBlockBreaking", at = @At("HEAD"), cancellable = true)
@@ -251,7 +251,7 @@ public abstract class MinecraftClientMixin
 			return;
 		BlockPos hitPos = bhit.getBlockPos();
 		BlockState state = player.getWorld().getBlockState(hitPos);
-		if(player.isCreative() && state.isOf(BlockRegistry.PEDESTAL) && options.sneakKey.isPressed())
+		if(player.isCreative() && state.getBlock() instanceof AbstractPedestalBlock && options.sneakKey.isPressed())
 			ci.cancel();
 		if(player.isCreative() && state.isOf(BlockRegistry.TERMINAL) && UltracraftClient.isTerminalProtEnabled())
 		{
@@ -271,7 +271,7 @@ public abstract class MinecraftClientMixin
 		}
 		if(player.getInventory().getMainHandStack().getItem() instanceof AbstractWeaponItem w && w.shouldCancelPunching())
 			ci.cancel();
-		if(bl && UltraComponents.DIMENSION_DATA.get(world).isPosNotModifiable(player, hitPos))
+		if(!hit.getType().equals(HitResult.Type.MISS) && bl && UltraComponents.DIMENSION_DATA.get(world).isPosNotModifiable(player, hitPos))
 			ci.cancel();
 		wasBreaking = bl;
 	}
@@ -297,6 +297,23 @@ public abstract class MinecraftClientMixin
 			setScreen(new TravelScreen(true));
 			UltracraftClient.setTravelling(false);
 			ci.cancel();
+		}
+	}
+	
+	@Inject(method = "render", at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;paused:Z"))
+	void beforeSetPaused(boolean tick, CallbackInfo ci)
+	{
+		wasPaused = paused;
+	}
+	
+	@Inject(method = "render", at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;paused:Z", shift = At.Shift.AFTER))
+	void afterSetPaused(boolean tick, CallbackInfo ci)
+	{
+		if(player != null && (wasPaused != paused))
+		{
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			buf.writeBoolean(paused);
+			ClientPlayNetworking.send(PacketRegistry.PAUSE_STATE_PACKET_ID, buf);
 		}
 	}
 }

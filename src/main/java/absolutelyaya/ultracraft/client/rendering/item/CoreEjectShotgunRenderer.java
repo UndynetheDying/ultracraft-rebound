@@ -4,7 +4,7 @@ import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.client.UltracraftClient;
-import absolutelyaya.ultracraft.item.CoreEjectShotgunItem;
+import absolutelyaya.ultracraft.item.weapons.CoreEjectShotgunItem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
@@ -29,28 +29,29 @@ public class CoreEjectShotgunRenderer extends GeoItemRenderer<CoreEjectShotgunIt
 	@Override
 	public Identifier getTextureLocation(CoreEjectShotgunItem animatable)
 	{
+		String tex = "textures/item/core_shotgun";
 		float useTime = 1f - (animatable.getMaxUseTime(null) - animatable.getApproxUseTime()) / (float)(animatable.getMaxUseTime(null));
 		if(useTime > 0.99f)
-			return Ultracraft.identifier("textures/item/core_shotgun7.png");
+			return Ultracraft.texIdentifier(tex + 7);
 		else if(useTime > 0.79f)
-			return Ultracraft.identifier("textures/item/core_shotgun6.png");
+			return Ultracraft.texIdentifier(tex + 6);
 		else if(useTime > 0.59f)
-			return Ultracraft.identifier("textures/item/core_shotgun5.png");
+			return Ultracraft.texIdentifier(tex + 5);
 		else if(useTime > 0.39f)
-			return Ultracraft.identifier("textures/item/core_shotgun4.png");
+			return Ultracraft.texIdentifier(tex + 4);
 		else if(useTime > 0f)
-			return Ultracraft.identifier("textures/item/core_shotgun3.png");
+			return Ultracraft.texIdentifier(tex + 3);
 		
 		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
 		float primaryCD = cdm.getCooldownPercent(animatable, 0);
 		if(primaryCD < 0.3f)
-			return Ultracraft.identifier("textures/item/core_shotgun2.png");
+			return Ultracraft.texIdentifier(tex + 2);
 		else if(primaryCD < 0.4f)
-			return Ultracraft.identifier("textures/item/core_shotgun1.png");
+			return Ultracraft.texIdentifier(tex + 1);
 		else if(primaryCD < 0.65f)
-			return Ultracraft.identifier("textures/item/core_shotgun0.png");
+			return Ultracraft.texIdentifier(tex + 0);
 		
-		return Ultracraft.identifier("textures/item/core_shotgun.png");
+		return Ultracraft.texIdentifier(tex);
 	}
 	
 	@Override

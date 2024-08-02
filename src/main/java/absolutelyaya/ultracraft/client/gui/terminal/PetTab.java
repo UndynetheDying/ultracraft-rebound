@@ -13,7 +13,7 @@ import org.joml.Vector2i;
 
 public class PetTab extends Tab
 {
-	public static final Identifier SPRITE_SHEET = Ultracraft.identifier("textures/gui/terminal/game.png");
+	public static final Identifier SPRITE_SHEET = Ultracraft.texIdentifier("textures/gui/terminal/game");
 	public static final String ID = "PET-GAME";
 	boolean mainMenu = true;
 	Button startGameButton;

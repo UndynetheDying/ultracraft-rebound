@@ -5,7 +5,7 @@ import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 
-public class MovingHuskScreamSoundInstance extends MovingPlayerSoundInstance
+public class MovingHuskScreamSoundInstance extends MovingEntitySoundInstance
 {
 	public MovingHuskScreamSoundInstance(AbstractHuskEntity owner)
 	{

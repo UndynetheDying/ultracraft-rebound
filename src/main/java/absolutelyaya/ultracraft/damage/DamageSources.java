@@ -7,7 +7,6 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
 public class DamageSources
@@ -50,6 +49,9 @@ public class DamageSources
 	public static final RegistryKey<DamageType> SKILL_ISSUE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Ultracraft.identifier("skill_issue"));
 	public static final RegistryKey<DamageType> HELL_BULLET = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Ultracraft.identifier("hell_bullet"));
 	public static final RegistryKey<DamageType> EXPLOSION = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Ultracraft.identifier("explosion"));
+	public static final RegistryKey<DamageType> SAW = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Ultracraft.identifier("saw"));
+	public static final RegistryKey<DamageType> SAW_MELEE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Ultracraft.identifier("saw_melee"));
+	public static final RegistryKey<DamageType> JUMPSTART = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Ultracraft.identifier("jumpstart"));
 	
 	public static DamageSource get(World world, RegistryKey<DamageType> type)
 	{

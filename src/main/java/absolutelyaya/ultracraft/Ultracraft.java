@@ -19,8 +19,8 @@ import absolutelyaya.ultracraft.data.UltraRecipeManager;
 import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.dimension.UltraDimensions;
 import absolutelyaya.ultracraft.cybergrind.CybergrindManager;
-import absolutelyaya.ultracraft.item.AbstractNailgunItem;
-import absolutelyaya.ultracraft.item.AbstractRevolverItem;
+import absolutelyaya.ultracraft.item.weapons.AbstractNailgunItem;
+import absolutelyaya.ultracraft.item.weapons.AbstractRevolverItem;
 import absolutelyaya.ultracraft.recipe.RecipeSerializers;
 import absolutelyaya.ultracraft.registry.*;
 import com.google.gson.JsonObject;
@@ -30,6 +30,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
@@ -58,6 +60,10 @@ public class Ultracraft implements ModInitializer
 {
     public static final String MOD_ID = "ultracraft";
     public static final Logger LOGGER = LogUtils.getLogger();
+    public static final Event<TimeFreeze> TIME_FREEZE_EVENT = EventFactory.createArrayBacked(TimeFreeze.class, callbacks -> (state) -> {
+        for (TimeFreeze callback : callbacks)
+            callback.onSetTimeFrozen(state);
+    });
     static final String SUPPORTER_LIST = "https://raw.githubusercontent.com/absolutelyaya/absolutelyaya/main/cool-people.json";
     public static String VERSION;
 	public static boolean DYN_LIGHTS, SERVER_SIDE, VIVECRAFT, TRINKETS;
@@ -161,6 +167,11 @@ public class Ultracraft implements ModInitializer
         return new Identifier(Ultracraft.MOD_ID, path);
     }
     
+    public static Identifier texIdentifier(String path)
+    {
+        return identifier(path + ".png");
+    }
+    
     void loadConfig(MinecraftServer server)
     {
         config = new ServerConfig(server);
@@ -197,6 +208,7 @@ public class Ultracraft implements ModInitializer
         }
         freezeTicks += ticks;
         LOGGER.info("Stopping time for " + ticks + " ticks.");
+        TIME_FREEZE_EVENT.invoker().onSetTimeFrozen(true);
     }
     
     public static void freeze(ServerWorld world, int ticks)
@@ -214,6 +226,7 @@ public class Ultracraft implements ModInitializer
         }
         freezeTicks += ticks;
         LOGGER.info("Stopping time for " + ticks + " ticks.");
+        TIME_FREEZE_EVENT.invoker().onSetTimeFrozen(true);
     }
     
     public static void cancelFreeze(ServerWorld world)
@@ -231,12 +244,17 @@ public class Ultracraft implements ModInitializer
         }
         freezeTicks = 0;
         LOGGER.info("Forcefully Unstopped time.");
+        TIME_FREEZE_EVENT.invoker().onSetTimeFrozen(false);
     }
     
     public static void tickFreeze()
     {
         if(freezeTicks > 0)
+        {
             freezeTicks--;
+            if(freezeTicks == 0)
+                TIME_FREEZE_EVENT.invoker().onSetTimeFrozen(false);
+        }
     }
     
     public static boolean checkSupporter(UUID uuid, boolean client)
@@ -318,5 +336,10 @@ public class Ultracraft implements ModInitializer
     public static void clearLikelyPerTickDamageTypes()
     {
         likelyPerTickDamageTypes.clear();
+    }
+    
+    public interface TimeFreeze
+    {
+        void onSetTimeFrozen(boolean state);
     }
 }

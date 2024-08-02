@@ -26,6 +26,7 @@ public class SoundRegistry
 	public static final SoundEvent MAURICE_BEAM_TELL = register("entity.malicious_face.tell.beam");
 	
 	public static final SoundEvent CERB_RISE = register("entity.cerberus.rise");
+	public static final SoundEvent CERB_CRACK = register("entity.cerberus.crack");
 	public static final SoundEvent CERB_RAM_TELL = register("entity.cerberus.tell.ram");
 	public static final SoundEvent CERB_THROW_TELL = register("entity.cerberus.tell.throw");
 	public static final SoundEvent CERB_STOMP_TELL = register("entity.cerberus.tell.stomp");
@@ -76,6 +77,9 @@ public class SoundRegistry
 	public static final SoundEvent SHOTGUN_OPEN = register("item.shotgun.open");
 	public static final SoundEvent SHOTGUN_CLOSE = register("item.shotgun.close");
 	public static final SoundEvent SHOTGUN_HISS = register("item.shotgun.hiss");
+	public static final SoundEvent SHOTGUN_SAW_IDLE = register("item.shotgun.saw_idle");
+	public static final SoundEvent SHOTGUN_SAW_ACTIVE = register("item.shotgun.saw_active");
+	public static final SoundEvent SHOTGUN_SAW_END = register("item.shotgun.saw_end");
 	
 	public static final SoundEvent MACHINESWORD_ATTACK = register("item.machinesword.attack");
 	
@@ -90,6 +94,8 @@ public class SoundRegistry
 	public static final SoundEvent NAILGUN_FIRE = register("item.nailgun.fire");
 	public static final SoundEvent NAILGUN_MAGNET_FIRE = register("item.nailgun.magnet.fire");
 	public static final SoundEvent NAILGUN_MAGNET_BEEP = register("item.nailgun.magnet.beep");
+	public static final SoundEvent NAILGUN_JUMPSTART_HOOK_BREAK = register("item.nailgun.jumpstart.hook_break");
+	public static final SoundEvent NAILGUN_JUMPSTART_WARNING = register("item.nailgun.jumpstart.warning_beep");
 	
 	public static final SoundEvent SKEWER_HIT_GROUND = register("entity.skewer.hit_ground");
 	public static final SoundEvent SKEWER_BREAK = register("entity.skewer.break");
@@ -117,6 +123,7 @@ public class SoundRegistry
 	public static final SoundEvent LUMPFISH_SELECT = register("item.lumpfish.select");
 	public static final SoundEvent LUMPFISH_UNSELECT = register("item.lumpfish.unselect");
 	public static final SoundEvent LUMPFISH_USE = register("item.lumpfish.use");
+	public static final SoundEvent BLAHAJ_USE = register("item.blahaj.use");
 	public static final SoundEvent ORB_AMBIENT = register("entity.orb.ambient");
 	public static final SoundEvent BARRIER_BREAK = register("entity.barrier_break");
 	public static final SoundEvent BLOOD_HEAL = register("entity.blood_heal");
@@ -131,6 +138,8 @@ public class SoundRegistry
 	public static final SoundEvent RECEIVE_BOX_TITLE = register("misc.box-title");
 	public static final SoundEvent HUSK_SCREAM_LOOP = register("misc.husk_scream");
 	public static final SoundEvent SPIN = register("misc.spin");
+	public static final SoundEvent SACRIFICE = register("misc.sacrifice");
+	public static final SoundEvent I_SAWED = register("misc.i_sawed");
 	public static final SoundEvent PLACEHOLDER = register("placeholder");
 	
 	//MUSIC
@@ -147,6 +156,10 @@ public class SoundRegistry
 	public static final RegistryEntry.Reference<SoundEvent> LIMBO1_CALM = registerReference("music.limbo1_calm");
 	public static final RegistryEntry.Reference<SoundEvent> LIMBO2 = registerReference("music.limbo2");
 	public static final RegistryEntry.Reference<SoundEvent> LIMBO2_CALM = registerReference("music.limbo2_calm");
+	public static final RegistryEntry.Reference<SoundEvent> VERSUS_INTRO = registerReference("music.versus.intro");
+	public static final RegistryEntry.Reference<SoundEvent> VERSUS = registerReference("music.versus");
+	public static final RegistryEntry.Reference<SoundEvent> LIMBO_FREEROAM = registerReference("music.limbo_freeroam");
+	public static final RegistryEntry.Reference<SoundEvent> COUNTERFEIT = registerReference("music.counterfeit");
 	public static final RegistryEntry.Reference<SoundEvent> CYBERGRIND = registerReference("music.cybergrind");
 	public static final RegistryEntry.Reference<SoundEvent> CYBERGRIND_DISK = registerReference("music.efefski_cybergrind");
 	

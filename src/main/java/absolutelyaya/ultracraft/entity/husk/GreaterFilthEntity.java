@@ -184,7 +184,7 @@ public class GreaterFilthEntity extends AbstractHuskEntity implements GeoEntity,
 		if(dataTracker.get(FRUSTRATION_TICKS) > 400 && !isEnraged())
 			enrage();
 		if(shouldBeEnraged() && isAlive())
-			addStatusEffect(new StatusEffectInstance(StatusEffectRegistry.ENRAGED, 1, 0, true, false));
+			addStatusEffect(new StatusEffectInstance(StatusEffectRegistry.ENRAGED, 5, 0, true, false));
 	}
 	
 	void enrage()
@@ -276,7 +276,7 @@ public class GreaterFilthEntity extends AbstractHuskEntity implements GeoEntity,
 	
 	public boolean isEnraged()
 	{
-		return hasStatusEffect(StatusEffectRegistry.ENRAGED);
+		return hasStatusEffect(StatusEffectRegistry.ENRAGED) && getStatusEffect(StatusEffectRegistry.ENRAGED).getDuration() > 0;
 	}
 	
 	public boolean shouldBeEnraged()

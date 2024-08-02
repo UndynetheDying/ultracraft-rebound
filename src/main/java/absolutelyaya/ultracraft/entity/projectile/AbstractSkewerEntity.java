@@ -28,14 +28,14 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 	protected static final TrackedData<Integer> HEALTH = DataTracker.registerData(AbstractSkewerEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	protected static final TrackedData<Integer> SHAKE = DataTracker.registerData(AbstractSkewerEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	
-	protected Entity victim;
+	Entity victim;
 	protected int unmovingTicks;
 	
 	protected AbstractSkewerEntity(EntityType<? extends PersistentProjectileEntity> entityType, World world)
 	{
 		super(entityType, world);
 		if(this instanceof ProjectileEntityAccessor proj)
-			proj.setIsParriable(() -> !(isInGround() || victim != null));
+			proj.setIsParriable(() -> !(isInGround() || getVictim() != null));
 	}
 	
 	@Override
@@ -55,15 +55,15 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 		super.tick();
 		if(dataTracker.get(GROUND_TIME) > 240)
 			despawn();
-		if(getVelocity().equals(Vec3d.ZERO) && !inGround && victim == null)
+		if(getVelocity().equals(Vec3d.ZERO) && !inGround && getVictim() == null)
 			unmovingTicks++;
 		else if(unmovingTicks > 0)
 			unmovingTicks = 0;
 		if(unmovingTicks > 20)
 			despawn();
-		if(victim != null)
+		if(getVictim() != null)
 		{
-			if(!victim.isAlive())
+			if(!getVictim().isAlive())
 			{
 				victim = null;
 				return;
@@ -72,11 +72,11 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 			lastRenderX = prevX = getX();
 			lastRenderY = prevY = getY();
 			lastRenderZ = prevZ = getZ();
-			setPosition(victim.getPos().add(0f, victim.getHeight() / 2, 0f));
+			setPosition(getVictim().getPos().add(0f, getVictim().getHeight() / 2, 0f));
 			setYaw(prevYaw = dataTracker.get(IMPACT_YAW));
 			setPitch(prevPitch = dataTracker.get(IMPACT_PITCH));
 		}
-		if(isRemoved() || (!isInGround() && victim == null))
+		if(isRemoved() || (!isInGround() && getVictim() == null))
 			return;
 		dataTracker.set(GROUND_TIME, dataTracker.get(GROUND_TIME) + 1f);
 		if(dataTracker.get(SHAKE) > 0)
@@ -139,7 +139,7 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 	@Override
 	protected void onEntityHit(EntityHitResult entityHitResult)
 	{
-		if(victim != null)
+		if(getVictim() != null)
 			return;
 		Entity entity = entityHitResult.getEntity();
 		if(entity.isPartOf(owner))
@@ -154,7 +154,7 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 	@Override
 	protected void onBlockHit(BlockHitResult blockHitResult)
 	{
-		if(victim != null)
+		if(getVictim() != null)
 			return;
 		super.onBlockHit(blockHitResult);
 	}
@@ -164,7 +164,7 @@ public abstract class AbstractSkewerEntity extends PersistentProjectileEntity
 	{
 		float mult = source.isOf(DamageSources.KNUCKLE_PUNCH) ? 2f : 1f;
 		dataTracker.set(SHAKE, dataTracker.get(SHAKE) + (int)(10 * mult));
-		if((isInGround() || victim != null) && (source.isIn(DamageTypeTags.MELEE) || source.isIn(DamageTypeTags.PUNCH)))
+		if((isInGround() || getVictim() != null) && (source.isIn(DamageTypeTags.MELEE) || source.isIn(DamageTypeTags.PUNCH)))
 		{
 			dataTracker.set(HEALTH, dataTracker.get(HEALTH) - (int)(1 * mult));
 			if(dataTracker.get(HEALTH) <= 0)

@@ -1,7 +1,9 @@
 package absolutelyaya.ultracraft.mixin.client;
 
+import absolutelyaya.ultracraft.client.sound.FadingMusicInstance;
 import absolutelyaya.ultracraft.client.sound.INonPausingSoundInstance;
 import net.minecraft.client.sound.*;
+import net.minecraft.sound.SoundCategory;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -25,7 +27,9 @@ public abstract class SoundSystemMixin
 	
 	@Shadow protected abstract float getAdjustedPitch(SoundInstance sound);
 	
-	@Shadow @Final private Channel channel;
+	@Shadow protected abstract void start();
+	
+	@Shadow private boolean started;
 	
 	@Inject(method = "tick(Z)V", at = @At("HEAD"))
 	void onTick(boolean paused, CallbackInfo ci)
@@ -64,5 +68,25 @@ public abstract class SoundSystemMixin
 			if(i instanceof INonPausingSoundInstance && sources.get(i) != null)
 				sources.get(i).run(Source::resume);
 		});
+	}
+	
+	@Inject(method = "updateSoundVolume", at = @At(value = "HEAD"), cancellable = true)
+	void onUpdateSoundVolume(SoundCategory category, float volume, CallbackInfo ci)
+	{
+		if(!started)
+			return;
+		if(category.equals(SoundCategory.MUSIC))
+		{
+			sources.forEach((source, sourceManager) -> {
+				float vol = getAdjustedVolume(source);
+				sourceManager.run((i) -> {
+					if (vol <= 0f && !(source instanceof FadingMusicInstance))
+						i.stop();
+					else
+						i.setVolume(vol);
+				});
+			});
+			ci.cancel();
+		}
 	}
 }

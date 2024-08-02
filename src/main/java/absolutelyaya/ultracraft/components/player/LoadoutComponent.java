@@ -2,7 +2,7 @@ package absolutelyaya.ultracraft.components.player;
 
 import absolutelyaya.ultracraft.Weapon;
 import absolutelyaya.ultracraft.components.UltraComponents;
-import absolutelyaya.ultracraft.item.AbstractWeaponItem;
+import absolutelyaya.ultracraft.item.weapons.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.util.InventoryUtil;
 import io.netty.buffer.Unpooled;

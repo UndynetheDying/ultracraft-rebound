@@ -144,9 +144,13 @@ public class LevelManager extends DimensionManager
 					});
 					List<Entity> list = world.getOtherEntities(null, new Box(box.getMinX(), box.getMinY(), box.getMinZ(), box.getMaxX(), box.getMaxY(), box.getMaxZ()));
 					list.forEach(e -> {
+						//safeguard; clean up entities that might've been left behind before
 						boolean decorative = e instanceof MaliciousFaceEntity malicious && malicious.isDecorative();
-						if(!(decorative || e instanceof PlayerEntity || e instanceof DisplayEntity || e instanceof AbstractDecorationEntity))
+						if(!(decorative || e instanceof PlayerEntity || e instanceof DisplayEntity || e instanceof AbstractDecorationEntity) ||
+								   e.getCommandTags().contains("levelEntity") && e.age > 10)
 							e.remove(Entity.RemovalReason.DISCARDED);
+						else if(!(e instanceof PlayerEntity))
+							e.addCommandTag("levelEntity");
 					});
 					LevelInstancePool pool = instances.computeIfAbsent(levelId, k -> {
 						nextLevelBaseX += box.getBlockCountX() + 128;
@@ -228,7 +232,7 @@ public class LevelManager extends DimensionManager
 		});
 		world.getGameRules().get(GameRules.DO_TILE_DROPS).set(prevTileDrops, world.getServer());
 		replaced.forEach(p -> world.updateNeighbors(p, world.getBlockState(p).getBlock()));
-		List<Entity> list = world.getOtherEntities(null, new Box(box.getMinX(), box.getMinY(), box.getMinZ(), box.getMaxX(), box.getMaxY(), box.getMaxZ()));
+		List<Entity> list = world.getOtherEntities(null, Box.from(box).offset(pos));
 		list.forEach(e -> {
 			if(!(e instanceof PlayerEntity))
 				e.remove(Entity.RemovalReason.DISCARDED);

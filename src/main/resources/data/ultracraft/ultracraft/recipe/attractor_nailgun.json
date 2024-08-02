@@ -6,5 +6,5 @@
   ],
   "result": "ultracraft:attractor_nailgun",
   "extra-output": [],
-  "unlocks": ["ultracraft:overheat_nailgun"]
+  "unlocks": ["ultracraft:overheat_nailgun","ultracraft:attractor_nailgun"]
 }

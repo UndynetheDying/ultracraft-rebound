@@ -4,7 +4,6 @@ import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.components.player.IProgressionComponent;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -30,12 +29,12 @@ import java.util.Map;
 public class UltraRecipe
 {
 	final Identifier id;
-	final Map<Item, Integer> material;
+	final List<Ingredient> material;
 	final Identifier result;
 	final List<ItemStack> extraOutput;
 	final List<Identifier> unlocks;
 	
-	public UltraRecipe(Identifier id, Map<Item, Integer> material, Identifier result, List<ItemStack> extraOutput, List<Identifier> unlocks)
+	public UltraRecipe(Identifier id, List<Ingredient> material, Identifier result, List<ItemStack> extraOutput, List<Identifier> unlocks)
 	{
 		this.id = id;
 		this.material = material;
@@ -54,21 +53,21 @@ public class UltraRecipe
 		if(player.isCreativeLevelTwoOp())
 			return 2;
 		int result = 2;
-		for(Item item : material.keySet())
+		for(Ingredient ingredient : material)
 		{
 			int count = 0;
 			for (ItemStack stack : player.getInventory().main)
 			{
-				if(stack.isOf(item))
+				if(stack.isOf(ingredient.item))
 				{
 					count += stack.getCount();
 					if(stack.hasCustomName() || stack.hasEnchantments())
 						result = 3; //can craft, but some items that could get consumed might not be intended to be used for it
-					if(count >= material.get(item))
+					if(count >= ingredient.amount)
 						break; //item count is sufficient, lets stop counting
 				}
 			}
-			if(count < material.get(item))
+			if(count < ingredient.amount)
 			{
 				player.sendMessage(Text.translatable("terminal.craft.err0"), true);
 				return 0; //an item is insufficient; cannot craft
@@ -100,12 +99,12 @@ public class UltraRecipe
 		if(player.isCreativeLevelTwoOp())
 			return;
 		//consume items
-		for(Item item : material.keySet())
+		for(Ingredient ingredient : material)
 		{
-			int count = material.get(item);
+			int count = ingredient.amount;
 			for (ItemStack stack : player.getInventory().main)
 			{
-				if(!stack.isOf(item))
+				if(!stack.isOf(ingredient.item))
 					continue;
 				int decrement = Math.min(count, stack.getCount());
 				stack.decrement(decrement);
@@ -117,11 +116,16 @@ public class UltraRecipe
 	public static UltraRecipe deserialize(Identifier id, JsonObject json)
 	{
 		JsonArray materialsIn = json.getAsJsonArray("materials");
-		ImmutableMap.Builder<Item, Integer> materialsBuilder = ImmutableMap.builder();
+		ImmutableList.Builder<Ingredient> materialsBuilder = ImmutableList.builder();
 		materialsIn.forEach(i -> {
 			JsonObject object = i.getAsJsonObject();
 			if(object.has("item") && object.has("count"))
-				materialsBuilder.put(JsonHelper.getItem(object, "item"), JsonHelper.getInt(object, "count"));
+			{
+				String spriteOverride = null;
+				if(object.has("sprite-override"))
+					spriteOverride = JsonHelper.getString(object, "sprite-override");
+				materialsBuilder.add(new Ingredient(JsonHelper.getItem(object, "item"), JsonHelper.getInt(object, "count"), spriteOverride));
+			}
 		});
 		Identifier result = Identifier.tryParse(json.get("result").getAsString());
 		JsonArray extraOutputsIn = json.getAsJsonArray("extra-outputs");
@@ -145,11 +149,12 @@ public class UltraRecipe
 	{
 		JsonObject json = new JsonObject();
 		JsonArray materials = new JsonArray();
-		for (Map.Entry<Item, Integer> entry : this.material.entrySet())
+		for (Ingredient entry : this.material)
 		{
 			JsonObject object = new JsonObject();
-			object.add("item", new JsonPrimitive(Registries.ITEM.getId(entry.getKey()).toString()));
-			object.add("count", new JsonPrimitive(entry.getValue()));
+			object.add("item", new JsonPrimitive(Registries.ITEM.getId(entry.item).toString()));
+			object.add("count", new JsonPrimitive(entry.amount));
+			object.add("sprite-override", new JsonPrimitive(entry.spriteOverride));
 		}
 		json.add("materials", materials);
 		json.add("result", new JsonPrimitive(result.toString()));
@@ -170,11 +175,13 @@ public class UltraRecipe
 		NbtCompound nbt = new NbtCompound();
 		nbt.putString("id", pair.getKey().toString());
 		NbtList materials = new NbtList();
-		for (Map.Entry<Item, Integer> entry : recipe.material.entrySet())
+		for (Ingredient entry : recipe.material)
 		{
 			NbtCompound mat = new NbtCompound();
-			mat.putString("item", Registries.ITEM.getId(entry.getKey()).toString());
-			mat.putInt("count", entry.getValue());
+			mat.putString("item", Registries.ITEM.getId(entry.item).toString());
+			mat.putInt("count", entry.amount);
+			if(entry.spriteOverride != null)
+				mat.putString("sprite-override", entry.spriteOverride);
 			materials.add(mat);
 		}
 		nbt.put("materials", materials);
@@ -199,11 +206,16 @@ public class UltraRecipe
 		NbtCompound nbt = buf.readNbt();
 		Identifier id = Identifier.tryParse(nbt.getString("id"));
 		NbtList materialsIn = nbt.getList("materials", NbtElement.COMPOUND_TYPE);
-		ImmutableMap.Builder<Item, Integer> materialsBuilder = ImmutableMap.builder();
+		ImmutableList.Builder<Ingredient> materialsBuilder = ImmutableList.builder();
 		materialsIn.forEach(i -> {
 			NbtCompound object = (NbtCompound)i;
 			if(object.contains("item") && object.contains("count"))
-				materialsBuilder.put(Registries.ITEM.get(Identifier.tryParse(object.getString("item"))), object.getInt("count"));
+			{
+				String spriteOverride = null;
+				if(object.contains("sprite-override"))
+					spriteOverride = object.getString("sprite-override");
+				materialsBuilder.add(new Ingredient(Registries.ITEM.get(Identifier.tryParse(object.getString("item"))), object.getInt("count"), spriteOverride));
+			}
 		});
 		Identifier result = Identifier.tryParse(nbt.getString("result"));
 		NbtList extraOutputsIn = nbt.getList("extra-outputs", NbtElement.COMPOUND_TYPE);
@@ -220,8 +232,18 @@ public class UltraRecipe
 		return new Pair<>(id, new UltraRecipe(id, materialsBuilder.build(), result, extraOutputsBuilder.build(), unlocksBuilder.build()));
 	}
 	
-	public Map<Item, Integer> getMaterials()
+	public List<Ingredient> getMaterials()
 	{
 		return material;
+	}
+	
+	public List<Identifier> getUnlocks()
+	{
+		return unlocks;
+	}
+	
+	public record Ingredient(Item item, int amount, String spriteOverride)
+	{
+	
 	}
 }

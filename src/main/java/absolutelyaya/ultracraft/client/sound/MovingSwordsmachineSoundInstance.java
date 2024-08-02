@@ -4,7 +4,7 @@ import absolutelyaya.ultracraft.entity.machine.SwordsmachineEntity;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.sound.SoundCategory;
 
-public class MovingSwordsmachineSoundInstance extends MovingPlayerSoundInstance
+public class MovingSwordsmachineSoundInstance extends MovingEntitySoundInstance
 {
 	public MovingSwordsmachineSoundInstance(SwordsmachineEntity owner)
 	{

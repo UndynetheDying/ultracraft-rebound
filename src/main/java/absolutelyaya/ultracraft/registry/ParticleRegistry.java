@@ -40,6 +40,8 @@ public class ParticleRegistry
 			Ultracraft.identifier("drone_charge"), FabricParticleTypes.simple());
 	public static final DefaultParticleType SHOCK = Registry.register(Registries.PARTICLE_TYPE,
 			Ultracraft.identifier("shock"), FabricParticleTypes.simple());
+	public static final DefaultParticleType BUTTERFLY = Registry.register(Registries.PARTICLE_TYPE,
+			Ultracraft.identifier("butterfly"), FabricParticleTypes.simple());
 	//complex
 	public static final ParticleType<ParryIndicatorParticleEffect> PARRY_INDICATOR = Registry.register(Registries.PARTICLE_TYPE,
 			Ultracraft.identifier("parry_indicator"), FabricParticleTypes.complex(new ParryIndicatorParticleEffect.Factory()));

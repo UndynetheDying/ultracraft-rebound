@@ -1,24 +1,37 @@
 package absolutelyaya.ultracraft.block;
 
 import absolutelyaya.ultracraft.item.SkyBlockItem;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class SkyBlock extends BlockWithEntity
 {
+	public static final IntProperty STYLE = IntProperty.of("style", 0, 2);
+	public static final BooleanProperty COLLISION = BooleanProperty.of("collision");
+	
 	public SkyBlock(Settings settings)
 	{
 		super(settings);
+	}
+	
+	@Override
+	protected void appendProperties(StateManager.Builder<Block, BlockState> builder)
+	{
+		super.appendProperties(builder);
+		builder.add(STYLE, COLLISION);
 	}
 	
 	@Override
@@ -64,5 +77,14 @@ public class SkyBlock extends BlockWithEntity
 		if(world.getBlockEntity(pos) instanceof SkyBlockEntity sky)
 			return SkyBlockItem.getStack(sky.type);
 		return super.getPickStack(world, pos, state);
+	}
+	
+	@Override
+	public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context)
+	{
+		if(state.get(COLLISION))
+			return super.getCollisionShape(state, world, pos, context);
+		else
+			return VoxelShapes.empty();
 	}
 }

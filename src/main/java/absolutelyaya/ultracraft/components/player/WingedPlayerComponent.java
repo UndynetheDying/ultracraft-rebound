@@ -1,18 +1,20 @@
 package absolutelyaya.ultracraft.components.player;
 
 import absolutelyaya.ultracraft.client.gui.TitleHUD;
+import absolutelyaya.ultracraft.client.sound.SoundInstanceManager;
 import absolutelyaya.ultracraft.components.UltraComponents;
 import absolutelyaya.ultracraft.Ultracraft;
-import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.cybergrind.CybergrindData;
-import absolutelyaya.ultracraft.item.AbstractWeaponItem;
+import absolutelyaya.ultracraft.entity.projectile.JumpstartHookEntity;
+import absolutelyaya.ultracraft.item.weapons.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -38,6 +40,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	RegistryKey<World> checkpointDimension;
 	float checkpointRot;
 	CybergrindData cybergrindData;
+	JumpstartHookEntity hook;
 	
 	public WingedPlayerComponent(PlayerEntity provider)
 	{
@@ -59,13 +62,11 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	public void updateWingState()
 	{
 		IHivelComponent hivel = UltraComponents.HIVEL.get(provider);
-		if(!(provider instanceof WingedPlayerEntity winged))
-			return;
 		if(hivel.isDashing())
 			setWingState((byte)0);
-		if (winged.isSliding())
+		if (hivel.isSliding())
 			setWingState((byte)2);
-		else if ((wingState == 0 && provider.isOnGround()) || (wingState == 2 && !winged.isSliding()))
+		else if ((wingState == 0 && provider.isOnGround()) || (wingState == 2 && !hivel.isSliding()))
 			setWingState((byte)1);
 	}
 	
@@ -259,7 +260,7 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 				buf.writeByte(CybergrindData.FULL_SYNC);
 				buf.writeNbt(v.serialize());
 			}
-			ServerPlayNetworking.send(serverPlayer, PacketRegistry.SYNC_CYBERGRIND_ID, buf);
+			ServerPlayNetworking.send(serverPlayer, PacketRegistry.SYNC_CYBERGRIND_PACKET_ID, buf);
 		}
 	}
 	
@@ -267,6 +268,79 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 	public CybergrindData getCybergrindData()
 	{
 		return cybergrindData;
+	}
+	
+	@Override
+	public Entity getHookedEntity()
+	{
+		if(hook == null)
+			return null;
+		return hook.getVictim();
+	}
+	
+	@Override
+	public boolean isHasHookedEntity()
+	{
+		Entity hooked = getHookedEntity();
+		return hooked != null && !hooked.isRemoved() && hooked.isAlive();
+	}
+	
+	@Override
+	public JumpstartHookEntity getHook()
+	{
+		if(hook == null || hook.isRemoved())
+			return null;
+		return hook;
+	}
+	
+	@Override
+	public void setHook(JumpstartHookEntity hook)
+	{
+		this.hook = hook;
+		UltraComponents.WINGED.sync(provider);
+	}
+	
+	@Override
+	public void attachMovingSound(String id, Identifier sound, boolean warmUp, float volume)
+	{
+		if(provider.getWorld().isClient)
+		{
+			SoundInstanceManager.attachWeaponSoundInstance(id, sound, provider, warmUp, volume);
+			return;
+		}
+		if(!(provider instanceof ServerPlayerEntity serverPlayer))
+			return;
+		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeBoolean(true);
+		buf.writeString(id);
+		buf.writeInt(provider.getId());
+		buf.writeString(sound.toString());
+		buf.writeBoolean(warmUp);
+		buf.writeFloat(volume);
+		ServerPlayNetworking.send(serverPlayer, PacketRegistry.WEAPON_SOUND_PACKET_ID, buf);
+	}
+	
+	@Override
+	public void removeMovingSound(String id)
+	{
+		if(provider.getWorld().isClient)
+		{
+			SoundInstanceManager.removeSoundInstance(id, provider);
+			return;
+		}
+		if(!(provider instanceof ServerPlayerEntity serverPlayer))
+			return;
+		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeBoolean(false);
+		buf.writeString(id);
+		buf.writeInt(provider.getId());
+		ServerPlayNetworking.send(serverPlayer, PacketRegistry.WEAPON_SOUND_PACKET_ID, buf);
+	}
+	
+	@Override
+	public boolean isMovingSoundAttached(String id)
+	{
+		return SoundInstanceManager.isAttached(provider, id);
 	}
 	
 	@Override
@@ -286,6 +360,14 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			checkpointRot = 0f;
 			checkpointDimension = null;
 		}
+		if(tag.contains("hook", NbtElement.INT_TYPE))
+		{
+			Entity e = provider.getWorld().getEntityById(tag.getInt("hook"));
+			if(e instanceof JumpstartHookEntity h)
+				hook = h;
+		}
+		else
+			hook = null;
 	}
 	
 	@Override
@@ -303,6 +385,8 @@ public class WingedPlayerComponent implements IWingedPlayerComponent, AutoSynced
 			checkpoint.putString("dimension", getCheckpointDimension().getValue().toString());
 			tag.put("checkpoint", checkpoint);
 		}
+		if(hook != null)
+			tag.putInt("hook", hook.getId());
 	}
 	
 	@Override

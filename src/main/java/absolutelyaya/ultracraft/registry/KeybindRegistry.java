@@ -8,7 +8,7 @@ import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.client.gui.screen.WingCustomizationScreen;
 import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.player.IArmComponent;
-import absolutelyaya.ultracraft.item.AbstractWeaponItem;
+import absolutelyaya.ultracraft.item.weapons.AbstractWeaponItem;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -156,7 +156,7 @@ public class KeybindRegistry
 		{
 			boolean flip = player.getMainArm().equals(Arm.LEFT);
 			int anim;
-			if(player instanceof WingedPlayerEntity winged && winged.isSliding())
+			if(UltraComponents.HIVEL.get(player).isSliding())
 				anim = flip ? PlayerAnimator.SLIDE_PUNCH_FLIPPED : PlayerAnimator.SLIDE_PUNCH;
 			else
 				anim = flip ? PlayerAnimator.PUNCH_FLIPPED : PlayerAnimator.PUNCH;

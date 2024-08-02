@@ -40,6 +40,9 @@
     "ultracraft:concrete_smooth_slab",
     "ultracraft:concrete_tile",
     "ultracraft:concrete_tile_stairs",
-    "ultracraft:concrete_tile_slab"
+    "ultracraft:concrete_tile_slab",
+    "ultracraft:hank",
+    "ultracraft:maurice",
+    "ultracraft:cracked_maurice"
   ]
 }

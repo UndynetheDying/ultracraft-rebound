@@ -9,6 +9,17 @@ import mod.azure.azurelib.renderer.GeoItemRenderer;
 
 public abstract class AbstractPlushieRenderer<P extends PlushieItem & GeoAnimatable> extends GeoItemRenderer<P>
 {
+	static final Identifier V1 = Ultracraft.texIdentifier("textures/item/plushie/v1");
+	static final Identifier YAYA = Ultracraft.texIdentifier("textures/item/plushie/yaya");
+	static final Identifier HAKITA = Ultracraft.texIdentifier("textures/item/plushie/hakita");
+	static final Identifier PITR = Ultracraft.texIdentifier("textures/item/plushie/pitr");
+	static final Identifier SWORDSMACHINE = Ultracraft.texIdentifier("textures/item/plushie/swordsmachine");
+	static final Identifier TUNDRA = Ultracraft.texIdentifier("textures/item/plushie/swordsmachine_tundra");
+	static final Identifier AGONY = Ultracraft.texIdentifier("textures/item/plushie/swordsmachine_agony");
+	static final Identifier TALON = Ultracraft.texIdentifier("textures/item/plushie/talon");
+	static final Identifier V2 = Ultracraft.texIdentifier("textures/item/plushie/v2");
+	static final Identifier ASHEN = Ultracraft.texIdentifier("textures/item/plushie/ashenwulf");
+	
 	public AbstractPlushieRenderer(DefaultedItemGeoModel<P> model)
 	{
 		super(model);
@@ -19,16 +30,16 @@ public abstract class AbstractPlushieRenderer<P extends PlushieItem & GeoAnimata
 	{
 		return switch(animatable.getType())
 		{
-			default -> Ultracraft.identifier("textures/item/plushie/v1.png");
-			case YAYA -> Ultracraft.identifier("textures/item/plushie/yaya.png");
-			case HAKITA -> Ultracraft.identifier("textures/item/plushie/hakita.png");
-			case PITR, PITRPOIN -> Ultracraft.identifier("textures/item/plushie/pitr.png");
-			case SWORDSMACHINE -> Ultracraft.identifier("textures/item/plushie/swordsmachine.png");
-			case SWORDSMACHINE_TUNDRA -> Ultracraft.identifier("textures/item/plushie/swordsmachine_tundra.png");
-			case SWORDSMACHINE_AGONY -> Ultracraft.identifier("textures/item/plushie/swordsmachine_agony.png");
-			case TALON -> Ultracraft.identifier("textures/item/plushie/talon.png");
-			case V2 -> Ultracraft.identifier("textures/item/plushie/v2.png");
-			case ASHEN -> Ultracraft.identifier("textures/item/plushie/ashenwulf.png");
+			default -> V1;
+			case YAYA -> YAYA;
+			case HAKITA -> HAKITA;
+			case PITR, PITRPOIN -> PITR;
+			case SWORDSMACHINE -> SWORDSMACHINE;
+			case SWORDSMACHINE_TUNDRA -> TUNDRA;
+			case SWORDSMACHINE_AGONY -> AGONY;
+			case TALON -> TALON;
+			case V2 -> V2;
+			case ASHEN -> ASHEN;
 		};
 	}
 }

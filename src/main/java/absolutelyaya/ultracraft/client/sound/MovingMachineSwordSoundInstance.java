@@ -3,7 +3,7 @@ package absolutelyaya.ultracraft.client.sound;
 import absolutelyaya.ultracraft.entity.projectile.ThrownMachineSwordEntity;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
 
-public class MovingMachineSwordSoundInstance extends MovingPlayerSoundInstance
+public class MovingMachineSwordSoundInstance extends MovingEntitySoundInstance
 {
 	public MovingMachineSwordSoundInstance(ThrownMachineSwordEntity owner)
 	{

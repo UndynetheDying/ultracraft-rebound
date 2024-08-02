@@ -1,14 +1,14 @@
 package absolutelyaya.ultracraft.client.rendering.item;
 
 import absolutelyaya.ultracraft.Ultracraft;
-import absolutelyaya.ultracraft.item.AttractorNailgunItem;
+import absolutelyaya.ultracraft.item.weapons.AttractorNailgunItem;
 import net.minecraft.util.Identifier;
 import mod.azure.azurelib.model.DefaultedItemGeoModel;
 import mod.azure.azurelib.renderer.GeoItemRenderer;
 
 public class AttractorNailgunRenderer extends GeoItemRenderer<AttractorNailgunItem>
 {
-	static final Identifier TEXTURE = Ultracraft.identifier("textures/item/nailgun.png");
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/item/nailgun");
 	
 	public AttractorNailgunRenderer()
 	{

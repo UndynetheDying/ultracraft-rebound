@@ -16,7 +16,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -26,11 +25,10 @@ import org.joml.Vector2i;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class WeaponsTab extends Tab
 {
-	static final Identifier TEXTURE = Ultracraft.identifier("textures/gui/weapon_icons.png");
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/gui/weapon_icons");
 	static final Vector2i TEXTURE_SIZE = new Vector2i(384, 384);
 	
 	Button returnButton = new Button(Button.RETURN_LABEL,
@@ -220,20 +218,30 @@ public class WeaponsTab extends Tab
 			selectedRecipe = UltraRecipeManager.getRecipe(weaponId);
 			if (selectedRecipe != null)
 			{
-				Map<Item, Integer> materials = selectedRecipe.getMaterials();
-				materials.forEach((item, amount) ->
+				List<UltraRecipe.Ingredient> materials = selectedRecipe.getMaterials();
+				materials.forEach(i ->
 				{
-					Identifier id = Registries.ITEM.getId(item);
-					ingredients.add(new Pair<>(new Sprite(new Identifier(id.getNamespace(), "textures/item/" + id.getPath() + ".png"),
+					Identifier id = Registries.ITEM.getId(i.item());
+					Identifier sprite = null;
+					if(i.spriteOverride() != null)
+						sprite = Identifier.tryParse(i.spriteOverride());
+					if(sprite == null)
+						sprite = new Identifier(id.getNamespace(), "textures/item/" + id.getPath() + ".png");
+					ingredients.add(new Pair<>(new Sprite(sprite,
 							new Vector2i(0, 0), 0.001f, new Vector2i(16, 16), new Vector2i(0, 0), new Vector2i(16, 16)),
-							amount + " " + Text.translatable(item.getTranslationKey()).getString() + (amount > 0 ? "s" : "")));
+							i.amount() + " " + Text.translatable(i.item().getTranslationKey()).getString() + (i.amount() > 0 ? "s" : "")));
 				});
-				if (loadout.isWeaponTypeHeld(selectedCategory) && progression.isOwned(weaponId))
-					craftButton.setLabel(Text.translatable("terminal.held").getString());
-				else if (!isResultItemInLoadout(loadout))
-					craftButton.setLabel(Text.translatable("terminal.not-equipped").getString());
+				if(progression.isOwned(weaponId))
+				{
+					if (loadout.isWeaponTypeHeld(selectedCategory))
+						craftButton.setLabel(Text.translatable("terminal.held").getString());
+					else if (!isResultItemInLoadout(loadout))
+						craftButton.setLabel(Text.translatable("terminal.not-equipped").getString());
+					else
+						craftButton.setLabel(Text.translatable("terminal.dispense").getString());
+				}
 				else
-					craftButton.setLabel(Text.translatable("terminal." + (progression.isOwned(weaponId) ? "dispense" : "craft")).getString());
+					craftButton.setLabel(Text.translatable("terminal.craft").getString());
 			}
 		}
 		boolean clickable = selectedRecipe != null && !(loadout.isWeaponTypeHeld(selectedCategory) && progression.isOwned(weaponId)) && isResultItemInLoadout(loadout);

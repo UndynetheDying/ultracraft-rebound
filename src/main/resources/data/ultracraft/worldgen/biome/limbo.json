@@ -14,10 +14,10 @@
       "offset": 2
     },
     "music": {
-      "sound": "ultracraft:music.limbo.calm",
+      "sound": "ultracraft:music.limbo_freeroam",
       "min_delay": 12000,
       "max_delay": 24000,
-      "replace_current_music": false
+      "replace_current_music": true
     }
   },
   "spawners": {},
@@ -61,7 +61,8 @@
       "minecraft:patch_grass_forest",
       "ultracraft:flowerbed",
       "ultracraft:fake_tree",
-      "ultracraft:rock"
+      "ultracraft:rock",
+      "ultracraft:hyacinth"
     ]
   ]
 }

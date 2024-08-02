@@ -19,6 +19,7 @@ import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
 import absolutelyaya.ultracraft.entity.IAntiCheeseBoss;
 import absolutelyaya.ultracraft.entity.machine.V2Entity;
+import absolutelyaya.ultracraft.entity.projectile.NailEntity;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.SoundRegistry;
@@ -142,6 +143,8 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	void beforeDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir)
 	{
 		lastHealth = getHealth();
+		if(source.getSource() instanceof NailEntity || source.getAttacker() instanceof NailEntity)
+			UltraComponents.LIVING.get(this).incrementNails();
 	}
 	
 	@Inject(method = "damage", at = @At("RETURN"), cancellable = true)
@@ -189,17 +192,15 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	{
 		List<PlayerEntity> nearby = getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(32), e -> !e.equals(this));
 		List<PlayerEntity> heal = getWorld().getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), getBoundingBox().expand(4), e -> !e.equals(this));
+		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		buf.writeFloat(amount * (source.isIn(DamageTypeTags.IS_PER_TICK) || (Ultracraft.isLikelyPerTickDamageType(source.getType())) ? 0.66f : 1f));
+		buf.writeDouble(pos.x);
+		buf.writeDouble(pos.y);
+		buf.writeDouble(pos.z);
+		buf.writeDouble(halfheight);
+		buf.writeBoolean(source.isOf(DamageSources.SHOTGUN));
 		for (PlayerEntity player : nearby)
-		{
-			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-			buf.writeFloat(amount);
-			buf.writeDouble(pos.x);
-			buf.writeDouble(pos.y);
-			buf.writeDouble(pos.z);
-			buf.writeDouble(halfheight);
-			buf.writeBoolean(source.isOf(DamageSources.SHOTGUN));
 			ServerPlayNetworking.send((ServerPlayerEntity)player, PacketRegistry.BLEED_PACKET_ID, buf);
-		}
 		RegenSetting healRule = ServerConfig.INSTANCE.bloodHeal.getValue();
 		if(!healRule.equals(RegenSetting.NEVER))
 		{
@@ -251,7 +252,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 		if(!isTouchingWater() || shouldSwimInFluids() || canWalkOnFluid(fluidState))
 			return;
 		IHivelComponent hivel = UltraComponents.HIVEL.get(winged);
-		float f = winged.isSliding() ? 0.9F : getBaseMovementSpeedMultiplier();
+		float f = hivel.isSliding() ? 0.9F : getBaseMovementSpeedMultiplier();
 		float g = 0.03f;
 		if(fluidState.isIn(FluidTags.WATER))
 		{
@@ -319,7 +320,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	@ModifyReturnValue(method = "computeFallDamage", at = @At("RETURN"))
 	private int onComputeFallDamage(int original)
 	{
-		if(isPlayer() && !(this instanceof WingedPlayerEntity winged && winged.isSliding()))
+		if(isPlayer() && UltraComponents.HIVEL.get(this).isSliding())
 			return 0;
 		return original;
 	}
@@ -346,7 +347,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 	@ModifyReturnValue(method = "canWalkOnFluid", at = @At("RETURN"))
 	boolean onCanWalkOnFluid(boolean original)
 	{
-		return original || (this instanceof WingedPlayerEntity winged && winged.isSliding());
+		return original || (this instanceof WingedPlayerEntity && UltraComponents.HIVEL.get(this).isSliding());
 	}
 	
 	@Inject(method = "onDamaged", at = @At("HEAD"))
@@ -527,7 +528,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 					DamageSources.KNUCKLE_BLAST, player), 1f, 0.75f, 6, true);
 		else
 		{
-			if(player instanceof WingedPlayerEntity winged && winged.isSliding())
+			if(player instanceof WingedPlayerEntity && UltraComponents.HIVEL.get(this).isSliding())
 				PlayerAnimator.playAnimation(player, player.getMainArm().equals(Arm.LEFT) ? PlayerAnimator.SLIDE_KNUCKLE_BLAST_FLIPPED : PlayerAnimator.SLIDE_KNUCKLE_BLAST,
 						0, false, false);
 			else

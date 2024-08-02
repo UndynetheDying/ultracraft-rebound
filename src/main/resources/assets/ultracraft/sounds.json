@@ -61,6 +61,11 @@
       {"name":"ultracraft:placeholder","type":"event"}
     ]
   },
+  "entity.cerberus.crack": {
+    "sounds": [
+      {"name":"block.deepslate.break","type":"event"}
+    ]
+  },
   "entity.cerberus.tell.ram": {
     "sounds": [
       {"name":"ultracraft:placeholder","type":"event"}
@@ -187,12 +192,12 @@
 
   "entity.v2.tell.core_eject": {
     "sounds": [
-      "ultracraft:item/core_charge_quick"
+      {"name":"ultracraft:placeholder","type":"event"}
     ]
   },
   "entity.v2.tell.piercer": {
     "sounds": [
-      "ultracraft:item/piercer_charge"
+      {"name":"ultracraft:placeholder","type":"event"}
     ]
   },
   "entity.v2.death": {
@@ -303,6 +308,21 @@
       {"name":"block.iron_trapdoor.close","type":"event","pitch": 0.9}
     ]
   },
+  "item.shotgun.saw_idle": {
+    "sounds": [
+      "ultracraft:item/saw_idle"
+    ]
+  },
+  "item.shotgun.saw_active": {
+    "sounds": [
+      "ultracraft:item/saw_active"
+    ]
+  },
+  "item.shotgun.saw_end": {
+    "sounds": [
+      "ultracraft:item/saw_end"
+    ]
+  },
 
   "item.machinesword.attack": {
     "sounds": [
@@ -355,6 +375,16 @@
   "item.nailgun.magnet.beep": {
     "sounds": [
       "note/bit"
+    ]
+  },
+  "item.nailgun.jumpstart.hook_break": {
+    "sounds": [
+      {"name": "block.lantern.break", "type": "event", "pitch": 0.9}
+    ]
+  },
+  "item.nailgun.jumpstart.warning_beep": {
+    "sounds": [
+      {"name":"block.note_block.bit","type":"event", "pitch":0.86 }
     ]
   },
 
@@ -452,6 +482,12 @@
       "ultracraft:item/lumpfish3"
     ]
   },
+  "item.blahaj.use": {
+    "sounds": [
+      "ultracraft:item/toy_squeak1",
+      "ultracraft:item/toy_squeak2"
+    ]
+  },
   "entity.orb.ambient": {
     "sounds": [
       {"name": "block.beacon.ambient", "type": "event"}
@@ -522,6 +558,18 @@
       "ultracraft:misc/spin"
     ]
   },
+  "misc.sacrifice": {
+    "sounds": [
+      "minecraft:mob/evocation_illager/fangs"
+    ],
+    "pitch": 0.4273
+  },
+  "misc.i_sawed": {
+    "sounds": [
+      "ultracraft:misc/i_sawed"
+    ],
+    "pitch": 0.4273
+  },
   "placeholder": {
     "sounds": [
       "ultracraft:placeholder"
@@ -532,76 +580,116 @@
   "music.the_fire_is_gone": {
     "sounds": [
       "ultracraft:music/the_fire_is_gone"
-    ]
+    ],
+    "stream": true
   },
   "music.clair_de_lune": {
     "sounds": [
       "ultracraft:music/clair_de_lune"
-    ]
+    ],
+    "stream": true
   },
   "music.prelude1": {
     "sounds": [
       "ultracraft:music/triage/beyondthefire"
-    ]
+    ],
+    "stream": true
   },
   "music.prelude1_calm": {
     "sounds": [
       "ultracraft:music/triage/beyondthefire_calm"
-    ]
+    ],
+    "stream": true
   },
   "music.prelude2": {
     "sounds": [
       "ultracraft:music/efefski/prelude2"
-    ]
+    ],
+    "stream": true
   },
   "music.prelude2_calm": {
     "sounds": [
       "ultracraft:music/efefski/prelude2_calm"
-    ]
+    ],
+    "stream": true
   },
   "music.cerberus": {
     "sounds": [
       "ultracraft:music/psykomatic/cerbfight"
-    ]
+    ],
+    "stream": true
   },
   "music.cerberus_calm": {
     "sounds": [
       "ultracraft:music/psykomatic/cerbcalm"
-    ]
+    ],
+    "stream": true
   },
   "music.limbo1_illusion": {
     "sounds": [
       "ultracraft:music/oxblood/limbo1_illusion"
-    ]
+    ],
+    "stream": true
   },
   "music.limbo1": {
     "sounds": [
       "ultracraft:music/oxblood/limbo1"
-    ]
+    ],
+    "stream": true
   },
   "music.limbo1_calm": {
     "sounds": [
       "ultracraft:music/oxblood/limbo1_calm"
-    ]
+    ],
+    "stream": true
   },
   "music.limbo2": {
     "sounds": [
       "ultracraft:music/efefski/limbo2"
-    ]
+    ],
+    "stream": true
   },
   "music.limbo2_calm": {
     "sounds": [
       "ultracraft:music/efefski/limbo2_calm"
-    ]
+    ],
+    "stream": true
+  },
+  "music.versus": {
+    "sounds": [
+      "ultracraft:music/aavanitro/versus"
+    ],
+    "stream": true
+  },
+  "music.versus.intro": {
+    "sounds": [
+      "ultracraft:music/aavanitro/versus_intro"
+    ],
+    "stream": true
+  },
+  "music.counterfeit": {
+    "sounds": [
+      "ultracraft:music/ennway/counterfeit"
+    ],
+    "stream": true
+  },
+  "music.limbo_freeroam": {
+    "sounds": [
+      "ultracraft:music/ennway/counterfeit",
+      "ultracraft:music/oxblood/limbo1_illusion"
+    ],
+    "stream": true
   },
   "music.efefski_cybergrind": {
     "sounds": [
       "ultracraft:music/efefski/cybergrind"
-    ]
+    ],
+    "stream": true
   },
   "music.cybergrind": {
     "sounds": [
       "ultracraft:music/efefski/cybergrind"
-    ]
+    ],
+    "stream": true
   }
 }

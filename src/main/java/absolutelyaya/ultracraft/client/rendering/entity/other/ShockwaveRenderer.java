@@ -13,6 +13,8 @@ import org.joml.Matrix4f;
 
 public class ShockwaveRenderer extends EntityRenderer<ShockwaveEntity>
 {
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/particle/generic_stripe");
+	
 	public ShockwaveRenderer(EntityRendererFactory.Context ctx)
 	{
 		super(ctx);
@@ -21,7 +23,7 @@ public class ShockwaveRenderer extends EntityRenderer<ShockwaveEntity>
 	@Override
 	public Identifier getTexture(ShockwaveEntity entity)
 	{
-		return Ultracraft.identifier("textures/particle/generic_stripe.png");
+		return TEXTURE;
 	}
 	
 	@Override

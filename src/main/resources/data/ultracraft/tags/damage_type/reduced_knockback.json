@@ -2,6 +2,8 @@
   "replace": false,
   "values": [
     "ultracraft:gun",
-    "ultracraft:nail"
+    "ultracraft:nail",
+    "ultracraft:saw_melee",
+    "ultracraft:jumpstart"
   ]
 }

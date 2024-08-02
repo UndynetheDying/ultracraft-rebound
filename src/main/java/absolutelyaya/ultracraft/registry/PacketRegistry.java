@@ -5,7 +5,7 @@ import absolutelyaya.ultracraft.accessor.*;
 import absolutelyaya.ultracraft.api.HeavyEntities;
 import absolutelyaya.ultracraft.block.HellObserverBlockEntity;
 import absolutelyaya.ultracraft.block.IPunchableBlock;
-import absolutelyaya.ultracraft.block.PedestalBlock;
+import absolutelyaya.ultracraft.block.AbstractPedestalBlock;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
 import absolutelyaya.ultracraft.compat.TrinketUtil;
 import absolutelyaya.ultracraft.components.UltraComponents;
@@ -22,9 +22,10 @@ import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.cybergrind.CybergrindManager;
 import absolutelyaya.ultracraft.entity.machine.DroneEntity;
 import absolutelyaya.ultracraft.entity.projectile.AbstractSkewerEntity;
+import absolutelyaya.ultracraft.entity.projectile.ChainsawEntity;
 import absolutelyaya.ultracraft.entity.projectile.ThrownCoinEntity;
-import absolutelyaya.ultracraft.item.AbstractWeaponItem;
-import absolutelyaya.ultracraft.item.SoapItem;
+import absolutelyaya.ultracraft.item.weapons.AbstractWeaponItem;
+import absolutelyaya.ultracraft.item.weapons.SoapItem;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.bytes.ByteArrayList;
 import net.fabricmc.fabric.api.dimension.v1.FabricDimensions;
@@ -75,13 +76,13 @@ public class PacketRegistry
 	public static final Identifier THROW_COIN_PACKET_ID = Ultracraft.identifier("throw_coin");
 	public static final Identifier LOCK_PEDESTAL_ID = Ultracraft.identifier("lock_pedestal");
 	public static final Identifier ANIMATION_C2S_PACKET_ID = Ultracraft.identifier("animation_c2s");
-	public static final Identifier FISH_PACKET_ID = Ultracraft.identifier("fish");
 	public static final Identifier TERMINAL_SYNC_C2S_PACKET_ID = Ultracraft.identifier("terminal_c2s");
 	public static final Identifier GRAFFITI_C2S_PACKET_ID = Ultracraft.identifier("graffiti_c2s");
 	public static final Identifier TERMINAL_REDSTONE_PACKET_ID = Ultracraft.identifier("terminal_redstone");
 	public static final Identifier TERMINAL_WEAPON_CRAFT_PACKET_ID = Ultracraft.identifier("terminal_weapon_craft");
 	public static final Identifier TERMINAL_WEAPON_DISPENSE_PACKET_ID = Ultracraft.identifier("terminal_weapon_dispense");
 	public static final Identifier CYCLE_WEAPON_VARIANT_PACKET_ID = Ultracraft.identifier("cycle_weapon_variant");
+	public static final Identifier RESET_WEAPON_VARIANT_PACKET_ID = Ultracraft.identifier("reset_weapon_variant");
 	public static final Identifier HELL_OBSERVER_C2S_PACKET_ID = Ultracraft.identifier("hell_observer_c2s");
 	public static final Identifier REQUEST_GRAFFITI_WHITELIST_PACKET_ID = Ultracraft.identifier("request_graffiti_whitelist");
 	public static final Identifier ARM_CYCLE_PACKET_ID = Ultracraft.identifier("arm_cycle");
@@ -100,6 +101,7 @@ public class PacketRegistry
 	public static final Identifier SWITCH_SLOT_PACKET_ID = Ultracraft.identifier("slot_c2s");
 	public static final Identifier SUBMIT_BEST_RANK_PACKET_ID = Ultracraft.identifier("rank_c2s");
 	public static final Identifier SUBMIT_BEST_TIME_PACKET_ID = Ultracraft.identifier("time_c2s");
+	public static final Identifier PAUSE_STATE_PACKET_ID = Ultracraft.identifier("pause_c2s");
 	
 	public static final Identifier FREEZE_PACKET_ID = Ultracraft.identifier("freeze");
 	public static final Identifier HITSCAN_PACKET_ID = Ultracraft.identifier("scan");
@@ -137,9 +139,10 @@ public class PacketRegistry
 	public static final Identifier SEND_LEVELS_PACKET_ID = Ultracraft.identifier("levels_s2c");
 	public static final Identifier SEND_LEVEL_INSTANCES_PACKET_ID = Ultracraft.identifier("instances_s2c");
 	public static final Identifier FINISH_TRAVELLING_PACKET_ID = Ultracraft.identifier("travel_end");
-	public static final Identifier ANNOUNCE_CYBERGRIND_ID = Ultracraft.identifier("announce_cybergrind");
-	public static final Identifier SYNC_CYBERGRIND_ID = Ultracraft.identifier("sync_cybergrind");
-	public static final Identifier PICKUP_PROGRESSION_ITEM_ID = Ultracraft.identifier("pickup_progression");
+	public static final Identifier ANNOUNCE_CYBERGRIND_PACKET_ID = Ultracraft.identifier("announce_cybergrind");
+	public static final Identifier SYNC_CYBERGRIND_PACKET_ID = Ultracraft.identifier("sync_cybergrind");
+	public static final Identifier PICKUP_PROGRESSION_ITEM_PACKET_ID = Ultracraft.identifier("pickup_progression");
+	public static final Identifier WEAPON_SOUND_PACKET_ID = Ultracraft.identifier("weapon_sound");
 	
 	public static void registerC2S()
 	{
@@ -237,7 +240,14 @@ public class PacketRegistry
 					return;
 				}
 				if(!arm.isFeedbacker())
+				{
+					if(parried instanceof ChainsawEntity chainsaw)
+					{
+						Ultracraft.freeze(player, 10);
+						chainsaw.onKnucklePunch(player);
+					}
 					return;
+				}
 				if(parried == null || !parried.isParriable())
 					return;
 				boolean heal = !player.equals(parried.getParriableOwner());
@@ -251,6 +261,8 @@ public class PacketRegistry
 					else
 						return;
 				}
+				else if(parried instanceof ChainsawEntity)
+					Ultracraft.freeze(player, 5);
 				else if(!(parried instanceof ThrownCoinEntity))
 				{
 					Ultracraft.freeze(player, 10);
@@ -432,8 +444,8 @@ public class PacketRegistry
 			BlockPos pos = buf.readBlockPos();
 			Boolean b = buf.readBoolean();
 			server.execute(() -> {
-				if(player.getWorld().getBlockState(pos).isOf(BlockRegistry.PEDESTAL))
-					player.getWorld().setBlockState(pos, player.getWorld().getBlockState(pos).with(PedestalBlock.LOCKED, b));
+				if(player.getWorld().getBlockState(pos).getBlock() instanceof AbstractPedestalBlock)
+					player.getWorld().setBlockState(pos, player.getWorld().getBlockState(pos).with(AbstractPedestalBlock.LOCKED, b));
 			});
 		});
 		ServerPlayNetworking.registerGlobalReceiver(ANIMATION_C2S_PACKET_ID, (server, player, handler, buf, sender) -> {
@@ -446,11 +458,6 @@ public class PacketRegistry
 				if(p != player)
 					ServerPlayNetworking.send((ServerPlayerEntity)p, ANIMATION_S2C_PACKET_ID, cbuf);
 			});
-		});
-		ServerPlayNetworking.registerGlobalReceiver(FISH_PACKET_ID, (server, player, handler, buf, sender) -> {
-			int data = buf.readInt();
-			server.execute(() -> player.getWorld().playSound(null, player.getBlockPos(),
-					FishPacket.values()[data].sound, SoundCategory.PLAYERS, 1f, 1f));
 		});
 		ServerPlayNetworking.registerGlobalReceiver(TERMINAL_SYNC_C2S_PACKET_ID, (server, player, handler, buf, sender) -> {
 			BlockPos pos = buf.readBlockPos();
@@ -515,6 +522,13 @@ public class PacketRegistry
 		ServerPlayNetworking.registerGlobalReceiver(CYCLE_WEAPON_VARIANT_PACKET_ID, (server, player, handler, buf, sender) -> {
 			server.execute(() -> AbstractWeaponItem.cycleVariant(player));
 		});
+		ServerPlayNetworking.registerGlobalReceiver(RESET_WEAPON_VARIANT_PACKET_ID, (server, player, handler, buf, sender) -> {
+			int slot = buf.readInt();
+			server.execute(() -> {
+				if(player.getInventory().getStack(slot).getItem() instanceof AbstractWeaponItem weapon)
+					weapon.resetVariant(player, slot);
+			});
+		});
 		ServerPlayNetworking.registerGlobalReceiver(HELL_OBSERVER_C2S_PACKET_ID, (server, player, handler, buf, sender) -> {
 			BlockPos pos = buf.readBlockPos();
 			int playerCount = buf.readInt();
@@ -571,24 +585,22 @@ public class PacketRegistry
 		});
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.HIVEL_DATA_PACKET_ID, (server, player, handler, buf, sender) -> {
 			boolean ignoreSlowdown = buf.readBoolean();
+			boolean sliding = buf.readBoolean();
+			boolean slamming = buf.readBoolean();
 			server.execute(() -> {
 				IHivelComponent hivel = UltraComponents.HIVEL.get(player);
 				hivel.setIgnoreSlowdown(ignoreSlowdown);
+				hivel.setSliding(sliding);
+				hivel.setSlamming(slamming);
 			});
 		});
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.SLIDE_STATE_PACKET_ID, (server, player, handler, buf, sender) -> {
 			boolean slide = buf.readBoolean();
-			server.execute(() -> {
-				if(player instanceof WingedPlayerEntity winged)
-					winged.setSliding(slide);
-			});
+			server.execute(() -> UltraComponents.HIVEL.get(player).setSliding(slide));
 		});
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.SLAM_STATE_PACKET_ID, (server, player, handler, buf, sender) -> {
 			boolean slam = buf.readBoolean();
-			server.execute(() -> {
-				if(player instanceof WingedPlayerEntity winged)
-					winged.setSlamming(slam);
-			});
+			server.execute(() -> UltraComponents.HIVEL.get(player).setSlamming(slam));
 		});
 		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.SYNC_LOADOUT_PACKET_ID, (server, player, handler, buf, sender) -> {
 			Weapon weapon = Weapon.values()[buf.readInt()];
@@ -723,6 +735,10 @@ public class PacketRegistry
 			boolean perfect = buf.readBoolean();
 			server.execute(() -> UltraComponents.LEVEL_STATS.get(player).setBestTime(levelId, perfect, time));
 		});
+		ServerPlayNetworking.registerGlobalReceiver(PacketRegistry.PAUSE_STATE_PACKET_ID, (server, player, handler, buf, sender) -> {
+			boolean state = buf.readBoolean();
+			server.execute(() -> UltraComponents.LEVEL_STATS.get(player).setTimerPaused(state));
+		});
 	}
 	
 	static IParriable getNearestParriable(Set<Entity> parriables, Vec3d to)
@@ -755,8 +771,7 @@ public class PacketRegistry
 	static void onTravelFinished(ServerPlayerEntity player)
 	{
 		ServerPlayNetworking.send(player, FINISH_TRAVELLING_PACKET_ID, new PacketByteBuf(Unpooled.buffer()));
-		if(player instanceof WingedPlayerEntity winged)
-			winged.setSlamming(false);
+		UltraComponents.HIVEL.get(player).setSlamming(false);
 	}
 	
 	static HashSet<Entity> fetchParryCandidates(ServerPlayerEntity player, Vec3d pos, Vec3d forward, float dist, Vector3f clientVel,

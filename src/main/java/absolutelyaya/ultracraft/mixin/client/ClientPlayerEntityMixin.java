@@ -12,7 +12,7 @@ import absolutelyaya.ultracraft.compat.PlayerAnimator;
 import absolutelyaya.ultracraft.components.player.IHivelComponent;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
 import absolutelyaya.ultracraft.config.HivelConfig;
-import absolutelyaya.ultracraft.item.AbstractWeaponItem;
+import absolutelyaya.ultracraft.item.weapons.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.KeybindRegistry;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.registry.StatusEffectRegistry;
@@ -184,7 +184,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			setVelocity(dir);
 			dashDir = dir;
 			hivel.onDash();
-			if(isSliding())
+			if(hivel.isSliding())
 				setSliding(false, true);
 		}
 	}
@@ -258,12 +258,12 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 					if(isMainPlayer())
 						PlayerAnimator.playAnimation(client.player, PlayerAnimator.SLAM_LOOP, 5, false);
 				}
-				else if(!jumping && !hivel.isDashing() && !isSliding()) //start slide if possible
+				else if(!jumping && !hivel.isDashing() && !hivel.isSliding()) //start slide if possible
 				{
 					BlockPos pos = posToBlock(getPos().add(Vec3d.fromPolar(0f, getYaw()).normalize()));
-					setSliding((isGrounded(slideStartGroundTolerance) || verticalCollision) && isUnSolid(pos), isSliding());
+					setSliding((isGrounded(slideStartGroundTolerance) || verticalCollision) && isUnSolid(pos), hivel.isSliding());
 				}
-				else if(isSliding()) //cancel slide cause it's not even possible rn
+				else if(hivel.isSliding()) //cancel slide cause it's not even possible rn
 					setSlidingClient(false);
 			}
 			//cancel strong slam
@@ -314,7 +314,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 					disableJumpTicks = slamDisableJumpTicks;
 			}
 			//slide tick
-			if(isSliding())
+			if(hivel.isSliding())
 			{
 				if(jumping && !wasJumping && canJump()) //slide jump
 				{
@@ -329,7 +329,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 				slideTicks++;
 				if(!(slidePressed && !slamming && moved && !jumping))
 				{
-					setSliding(false, isSliding()); //stop slide
+					setSliding(false, hivel.isSliding()); //stop slide
 					if(!jumping)
 						curSlidePreservationTicks = slidePreservationTicks;
 				}
@@ -340,7 +340,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			//skim on liquids
 			BlockPos belowPos = posToBlock(getPos().subtract(0f, 0.1f, 0f));
 			FluidState fluidBelow = getWorld().getBlockState(belowPos).getFluidState();
-			if(isSliding() && !fluidBelow.getFluid().equals(Fluids.EMPTY) && !fluidBelow.isIn(TagRegistry.UNSKIMMABLE_FLUIDS) &&
+			if(hivel.isSliding() && !fluidBelow.getFluid().equals(Fluids.EMPTY) && !fluidBelow.isIn(TagRegistry.UNSKIMMABLE_FLUIDS) &&
 					   getWorld().getFluidState(posToBlock(getPos().add(0f, 0.1f, 0f))).getFluid().equals(Fluids.EMPTY))
 			{
 				Vec3d vel = getVelocity();
@@ -356,14 +356,14 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			getWorld().getBlockCollisions(this, getBoundingBox().expand(0.1f, 0, 0f)).forEach(touchingWalls::add); //x-axis wall check
 			getWorld().getBlockCollisions(this, getBoundingBox().expand(0f, 0, 0.1f)).forEach(touchingWalls::add); //z-axis wall check
 			boolean isTouchingWall = touchingWalls.size() > 0;
-			if(!slamming && !isSliding() && isTouchingWall && !grounded)
+			if(!slamming && !hivel.isSliding() && isTouchingWall && !grounded)
 			{
 				Vec3d vel = getVelocity();
 				setVelocity(new Vec3d(vel.x, Math.max(vel.y, -wallSlideVelocity), vel.z));
 			}
 			//wall jump
 			if(curWallJumps > 0 && !isGrounded(0.5f) && jumping && !wasJumping && !lastOnGround && isTouchingWall &&
-					   (UltracraftClient.isSlamStorageEnabled() || !slamming) && !isSliding())
+					   (UltracraftClient.isSlamStorageEnabled() || !slamming) && !hivel.isSliding())
 				wallJump(touchingWalls, hivel);
 			
 			//stop ignoring slowdown and increasing slowdown
@@ -398,14 +398,14 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 				}
 				wasSlamming = slamming;
 			}
-			if(isSliding() && slideVelocity > baseSlideVelocity && slideTicks > slideSlowdownTicks)
+			if(hivel.isSliding() && slideVelocity > baseSlideVelocity && slideTicks > slideSlowdownTicks)
 				slideVelocity = Math.max(baseSlideVelocity, slideVelocity * slideSlowdownMultiplier);
 			wasJumping = jumping;
 			lastOnGround = isOnGround();
 			wasDashPressed = dashPressed;
 			wasSlidePressed = slidePressed;
 			grounded = newGrounded;
-			if(curSlidePreservationTicks > 0 && !isSliding())
+			if(curSlidePreservationTicks > 0 && !hivel.isSliding())
 			{
 				curSlidePreservationTicks--;
 				if(curSlidePreservationTicks == 0)
@@ -418,7 +418,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		{
 			if (hivel.shouldIgnoreSlowdown())
 				hivel.setIgnoreSlowdown(false);
-			if((!wasHivel || getAbilities().flying || isSpectator()) && isSliding())
+			if((!wasHivel || getAbilities().flying || isSpectator()) && hivel.isSliding())
 				setSliding(false, true);
 			if(slamming)
 				cancelSlam();
@@ -660,7 +660,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	
 	public void setSlidingClient(boolean v)
 	{
-		setSliding(v);
+		UltraComponents.HIVEL.get(this).setSliding(v);
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeBoolean(v);
 		ClientPlayNetworking.send(PacketRegistry.SLIDE_STATE_PACKET_ID, buf);

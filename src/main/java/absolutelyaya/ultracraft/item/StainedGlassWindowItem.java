@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.item;
 
 import absolutelyaya.ultracraft.entity.other.StainedGlassWindow;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,6 +16,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Locale;
 
 public class StainedGlassWindowItem extends DecorationItem
 {
@@ -24,11 +29,12 @@ public class StainedGlassWindowItem extends DecorationItem
 		super(type, settings);
 	}
 	
-	public static ItemStack getStack(boolean reinforced)
+	public static ItemStack getStack(boolean reinforced, StainedGlassWindow.Variant variant)
 	{
 		ItemStack stack = new ItemStack(ItemRegistry.STAINED_GLASS_WINDOW);
 		if(reinforced)
-			stack.getOrCreateNbt().putBoolean("reinforced", reinforced);
+			stack.getOrCreateNbt().putBoolean("reinforced", true);
+		stack.getOrCreateNbt().putByte("variant", (byte)variant.ordinal());
 		return stack;
 	}
 	
@@ -49,7 +55,7 @@ public class StainedGlassWindowItem extends DecorationItem
 		if (player != null && !canPlaceOn(player, direction, stack, pos))
 			return ActionResult.FAIL;
 		World world = context.getWorld();
-		window = StainedGlassWindow.place(world, pos, direction);
+		window = StainedGlassWindow.place(world, pos, direction, getVariant(stack));
 		if (window == null)
 			return ActionResult.CONSUME;
 		if (window.canStayAttached())
@@ -72,5 +78,20 @@ public class StainedGlassWindowItem extends DecorationItem
 		if(!stack.hasNbt() || !stack.getNbt().contains("reinforced", NbtElement.BYTE_TYPE))
 			return false;
 		return stack.getNbt().getBoolean("reinforced");
+	}
+	
+	StainedGlassWindow.Variant getVariant(ItemStack stack)
+	{
+		if(!stack.hasNbt() || !stack.getNbt().contains("variant", NbtElement.BYTE_TYPE))
+			return StainedGlassWindow.Variant.DOVE;
+		return StainedGlassWindow.Variant.values()[stack.getNbt().getByte("variant") % StainedGlassWindow.Variant.values().length];
+	}
+	
+	@Override
+	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
+	{
+		super.appendTooltip(stack, world, tooltip, context);
+		tooltip.add(Text.translatable("item.ultracraft.stained_glass_window.variant",
+				Text.translatable("item.ultracraft.stained_glass_window." + getVariant(stack).name().toLowerCase(Locale.ROOT))));
 	}
 }

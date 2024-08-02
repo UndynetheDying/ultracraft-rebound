@@ -52,7 +52,7 @@ public abstract class TitleScreenMixin extends Screen
     
     @Shadow private @Nullable SplashTextRenderer splashText;
     private static final ClientConfig config = UltracraftClient.getConfig();
-    private static final Identifier BG_ICON_TEXTURE = Ultracraft.identifier("textures/misc/bg_icons.png");
+    private static final Identifier BG_ICON_TEXTURE = Ultracraft.texIdentifier("textures/misc/bg_icons");
     RotatingCubeMapRenderer ultraBG, defaultBG, limboBG;
     SoundInstance ambience;
     int ambienceTicks;
@@ -131,7 +131,10 @@ public abstract class TitleScreenMixin extends Screen
         }
         Text t = Text.translatable("screen.ultracraft.credits.title");
         addDrawableChild(new PressableTextWidget(2, height - 33, textRenderer.getWidth(t), 10, t,
-                button -> client.setScreen(new CreditsScreen(this)), textRenderer));
+                button -> {
+                    client.setScreen(new CreditsScreen(this));
+                    client.getSoundManager().stop(ambience);
+                }, textRenderer));
     }
     
     @Inject(method = "render", at = @At("TAIL"))

@@ -2,10 +2,13 @@ package absolutelyaya.ultracraft.components.player;
 
 import absolutelyaya.ultracraft.client.GunCooldownManager;
 import absolutelyaya.ultracraft.cybergrind.CybergrindData;
+import absolutelyaya.ultracraft.entity.projectile.JumpstartHookEntity;
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
 import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
+import net.minecraft.entity.Entity;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -62,4 +65,24 @@ public interface IWingedPlayerComponent extends ComponentV3, CommonTickingCompon
 	void setCybergrindData(CybergrindData v);
 	
 	CybergrindData getCybergrindData();
+	
+	/***
+	 * hooked means the entity that this providers jumpstart cable is attached to
+	 */
+	Entity getHookedEntity();
+	
+	/***
+	 * hooked means the entity that this providers jumpstart cable is attached to
+	 */
+	boolean isHasHookedEntity();
+	
+	JumpstartHookEntity getHook();
+	
+	void setHook(JumpstartHookEntity hook);
+	
+	void attachMovingSound(String id, Identifier sound, boolean warmUp, float volume);
+	
+	void removeMovingSound(String id);
+	
+	boolean isMovingSoundAttached(String id);
 }

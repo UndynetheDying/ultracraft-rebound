@@ -1,18 +1,12 @@
 package absolutelyaya.ultracraft.mixin;
 
-import absolutelyaya.ultracraft.block.PortalBlock;
-import absolutelyaya.ultracraft.block.mapping.RoomBlockEntity;
-import absolutelyaya.ultracraft.components.UltraComponents;
-import absolutelyaya.ultracraft.components.world.IDimensionDataComponent;
 import absolutelyaya.ultracraft.entity.demon.HideousMassEntity;
 import absolutelyaya.ultracraft.entity.demon.HideousPart;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.function.LazyIterationConsumer;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.minecraft.world.entity.EntityLookup;

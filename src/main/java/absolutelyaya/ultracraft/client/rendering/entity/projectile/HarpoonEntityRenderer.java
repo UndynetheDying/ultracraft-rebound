@@ -21,6 +21,7 @@ import org.joml.Quaternionf;
 
 public class HarpoonEntityRenderer extends ProjectileEntityRenderer<HarpoonEntity>
 {
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/item/harpoon_long");
 	final Random random;
 	
 	public HarpoonEntityRenderer(EntityRendererFactory.Context context)
@@ -32,7 +33,7 @@ public class HarpoonEntityRenderer extends ProjectileEntityRenderer<HarpoonEntit
 	@Override
 	public Identifier getTexture(HarpoonEntity entity)
 	{
-		return Ultracraft.identifier("textures/item/harpoon_long.png");
+		return TEXTURE;
 	}
 	
 	@Override

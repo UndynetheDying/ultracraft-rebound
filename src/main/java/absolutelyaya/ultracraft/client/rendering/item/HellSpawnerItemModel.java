@@ -7,6 +7,8 @@ import mod.azure.azurelib.model.GeoModel;
 
 public class HellSpawnerItemModel extends GeoModel<HellSpawnerItem>
 {
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/block/hell_spawner");
+	
 	@Override
 	public Identifier getModelResource(HellSpawnerItem animatable)
 	{
@@ -16,7 +18,7 @@ public class HellSpawnerItemModel extends GeoModel<HellSpawnerItem>
 	@Override
 	public Identifier getTextureResource(HellSpawnerItem animatable)
 	{
-		return Ultracraft.identifier("textures/block/hell_spawner.png");
+		return TEXTURE;
 	}
 	
 	@Override

@@ -53,6 +53,7 @@ public class ServerHitscanHandler
 	public static final byte COIN_RICOCHET = 6;
 	public static final byte SHARPSHOOTER = 7;
 	public static final byte SLAB = 8;
+	public static final byte JUMPSTART_ARC = 9;
 	
 	static final Queue<IScheduledHitscan> scheduleAdditions = new ArrayDeque<>();
 	static final List<IScheduledHitscan> schedule = new ArrayList<>();
@@ -377,25 +378,24 @@ public class ServerHitscanHandler
 					ExplosionHandler.explosion(owner, world, proj.getPos(), DamageSources.get(world, DamageSources.EXPLOSION, owner), 5f, 1f, 7.5f, true);
 					proj.kill();
 					explodeProjectile = false;
-					if(winged != null)
-						winged.setSharpshooterCooldown(5);
+					winged.setSharpshooterCooldown(5);
 				}
 				if(e instanceof ThrownCoinEntity)
 					disableExplosion = true;
 			}
-			if(explosion != null && ((bHit != null && !bHit.getType().equals(HitResult.Type.MISS)) || finalEHit != null) && !disableExplosion)
+			if(explosion != null && ((!bHit.getType().equals(HitResult.Type.MISS)) || finalEHit != null) && !disableExplosion)
 				ExplosionHandler.explosion(null, world, new Vec3d(modifiedTo.x, modifiedTo.y, modifiedTo.z), DamageSources.get(world, DamageSources.EXPLOSION, owner),
 						explosion.damage, explosion.falloff, explosion.radius, explosion.breakBlocks);
-			if(entities.size() == 0 && owner instanceof PlayerEntity p)
+			if(entities.isEmpty() && owner instanceof PlayerEntity p)
 			{
 				BlockState state = world.getBlockState(bHit.getBlockPos());
 				if(state.getBlock() instanceof BellBlock bell)
 					bell.ring(world, state, bHit, p, false);
 			}
 			sendPacket((ServerWorld)owner.getWorld(), visualFrom, modifiedTo, type);
-			if(bHit != null && !(entities.size() > 0 && maxHits == 0))
+			if(!(!entities.isEmpty() && maxHits == 0))
 				return new HitscanResult(bHit, dir, entities.size()); //BlockHit
-			else if(entities.size() > 0 && finalEHit != null)
+			else if(finalEHit != null)
 				return new HitscanResult(finalEHit, dir, entities.size()); //EntityHit
 			else
 				return null; //miss

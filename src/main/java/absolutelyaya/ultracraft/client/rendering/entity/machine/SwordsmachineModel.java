@@ -13,6 +13,10 @@ import mod.azure.azurelib.model.data.EntityModelData;
 
 public class SwordsmachineModel extends GeoModel<SwordsmachineEntity>
 {
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/entity/swordsmachine");
+	static final Identifier TUNDRA = Ultracraft.texIdentifier("textures/entity/swordsmachine_tundra");
+	static final Identifier AGONY = Ultracraft.texIdentifier("textures/entity/swordsmachine_agony");
+	
 	@Override
 	public Identifier getModelResource(SwordsmachineEntity object)
 	{
@@ -24,10 +28,9 @@ public class SwordsmachineModel extends GeoModel<SwordsmachineEntity>
 	{
 		if(object instanceof DestinyBondSwordsmachineEntity destinyBondSM)
 		{
-			return destinyBondSM.getVariant() == 0 ? Ultracraft.identifier("textures/entity/swordsmachine_tundra.png") :
-						   Ultracraft.identifier("textures/entity/swordsmachine_agony.png");
+			return destinyBondSM.getVariant() == 0 ? TUNDRA : AGONY;
 		}
-		return Ultracraft.identifier("textures/entity/swordsmachine.png");
+		return TEXTURE;
 	}
 	
 	@Override

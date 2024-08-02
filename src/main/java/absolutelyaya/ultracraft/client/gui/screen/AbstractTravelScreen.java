@@ -36,7 +36,7 @@ import java.util.*;
 
 public abstract class AbstractTravelScreen extends Screen
 {
-	protected static final Identifier TEXTURE = Ultracraft.identifier("textures/gui/travel.png");
+	protected static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/gui/travel");
 	public static final TitleBGRenderer BG = new TitleBGRenderer(new CubeMapRenderer(Ultracraft.identifier("aaa")));
 	protected float openAnimTime, closeAnimTime;
 	protected boolean shouldClose, awaitingFeedback;

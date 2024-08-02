@@ -23,6 +23,8 @@ public class TagRegistry
 	public static final TagKey<Fluid> BLOOD_FLUID = TagKey.of(RegistryKeys.FLUID, Ultracraft.identifier("blood"));
 	
 	public static final TagKey<Item> PUNCH_FLAMES = TagKey.of(RegistryKeys.ITEM, Ultracraft.identifier("punch_flames"));
+	public static final TagKey<Item> HANKABLE = TagKey.of(RegistryKeys.ITEM, Ultracraft.identifier("hankable"));
+	public static final TagKey<Item> MAURICE_FOOD = TagKey.of(RegistryKeys.ITEM, Ultracraft.identifier("maurice_food"));
 	
 	public static void register()
 	{

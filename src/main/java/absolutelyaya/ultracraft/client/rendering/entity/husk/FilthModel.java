@@ -12,6 +12,9 @@ import mod.azure.azurelib.model.data.EntityModelData;
 
 public class FilthModel extends GeoModel<FilthEntity>
 {
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/entity/filth");
+	static final Identifier TEXTURE_RARE = Ultracraft.texIdentifier("textures/entity/blue_filth");
+	
 	@Override
 	public Identifier getModelResource(FilthEntity object)
 	{
@@ -21,7 +24,7 @@ public class FilthModel extends GeoModel<FilthEntity>
 	@Override
 	public Identifier getTextureResource(FilthEntity object)
 	{
-		return Ultracraft.identifier(object.isRare() ? "textures/entity/blue_filth.png" : "textures/entity/filth.png");
+		return object.isRare() ? TEXTURE_RARE : TEXTURE;
 	}
 	
 	@Override

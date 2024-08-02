@@ -11,6 +11,7 @@ import absolutelyaya.ultracraft.components.player.IStyleComponent;
 import absolutelyaya.ultracraft.components.player.IWingDataComponent;
 import absolutelyaya.ultracraft.components.player.ProgressionComponent;
 import absolutelyaya.ultracraft.item.*;
+import absolutelyaya.ultracraft.item.weapons.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.ItemRegistry;
 import absolutelyaya.ultracraft.util.RenderingUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -48,10 +49,10 @@ public class UltraHudRenderer
 {
 	private static final Vector3f[] STYLE_OFFSETS = new Vector3f[] { new Vector3f(-43, -5, 40), new Vector3f(-2, -5, 20), new Vector3f(2, 0, 0) };
 	private static final ClientConfig config = UltracraftClient.getConfig();
-	final Identifier GUI_TEXTURE = Ultracraft.identifier("textures/gui/ultrahud.png");
-	final Identifier STYLE_TEXTURE = Ultracraft.identifier("textures/gui/style.png");
-	final Identifier WEAPONS_TEXTURE = Ultracraft.identifier("textures/gui/weapon_icons.png");
-	final Identifier CROSSHAIR_TEXTURE = Ultracraft.identifier("textures/gui/crosshair_stats.png");
+	final Identifier GUI_TEXTURE = Ultracraft.texIdentifier("textures/gui/ultrahud");
+	final Identifier STYLE_TEXTURE = Ultracraft.texIdentifier("textures/gui/style");
+	final Identifier WEAPONS_TEXTURE = Ultracraft.texIdentifier("textures/gui/weapon_icons");
+	final Identifier CROSSHAIR_TEXTURE = Ultracraft.texIdentifier("textures/gui/crosshair_stats");
 	float healthPercent, staminaPercent, absorptionPercent, yOffset;
 	static float fishTimer, coinTimer, coinRot = 0, coinRotDest = 0, wingHintDisplayTimer, whitelistHintDisplayTimer, styleTimer;
 	static ItemStack lastCatch;
@@ -323,7 +324,7 @@ public class UltraHudRenderer
 			{
 				int i = count;
 				List<Pair<String, Long>> bonusList = new ArrayList<>(style.getBonusQueue());
-				if(bonusList.size() > 0)
+				if(!bonusList.isEmpty())
 					Collections.reverse(bonusList);
 				for (Pair<String, Long> p : bonusList)
 				{
@@ -336,7 +337,7 @@ public class UltraHudRenderer
 			}
 		}
 		matrices.pop();
-		if(style.getChain() > 0 || style.getBonusQueue().size() > 0)
+		if(style.getChain() > 0 || !style.getBonusQueue().isEmpty())
 			styleTimer = 1f;
 		else if(styleTimer > 0f)
 			styleTimer -= delta / 2f;
@@ -371,7 +372,7 @@ public class UltraHudRenderer
 			matrices.scale(aspect, 1f, 1f);
 			matrices.push();
 			matrices.scale(0.001f, -0.001f, 0.001f);
-			drawText(matrices, Text.translatable("message.ultracraft.fish.caught", lastCatch.getName()),
+			drawText(matrices, Text.translatable("message.ultracraft.fish.caught", lastCatch.getName().getString()),
 					0, -32f, 1f, true);
 			drawText(matrices, Text.translatable("message.ultracraft.fish.size", fishCaught == 69 ? "1.5" : "1"),
 					0, 16f, 1f, true);
@@ -442,7 +443,7 @@ public class UltraHudRenderer
 	
 	boolean shouldRenderSpriteInstead(Item item)
 	{
-		return (item instanceof AbstractWeaponItem weapon && weapon.getHUDTexture() != null) || item instanceof MachineSwordItem || item instanceof PlushieItem || item instanceof FlorpItem;
+		return (item instanceof AbstractWeaponItem weapon && weapon.getHUDTexture() != null) || item instanceof MachineSwordItem || item instanceof PlushieItem || item instanceof BlahajItem || item instanceof FlorpItem;
 	}
 	
 	void drawItem(MatrixStack matrices, Matrix4f textureMatrix, MinecraftClient client, VertexConsumerProvider immediate, ItemStack stack, boolean hand)
@@ -457,7 +458,7 @@ public class UltraHudRenderer
 				uv = weapon.getHUDTexture();
 			else if (item.equals(ItemRegistry.MACHINE_SWORD))
 				uv = new Vector2i(MachineSwordItem.getType(stack).ordinal(), 5);
-			else if (item instanceof PlushieItem)
+			else if (item instanceof PlushieItem || item instanceof BlahajItem)
 				uv = new Vector2i(3, 0);
 			else if (item instanceof FlorpItem)
 				uv = new Vector2i(3, 3);

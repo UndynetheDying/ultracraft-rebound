@@ -16,9 +16,9 @@ import mod.azure.azurelib.renderer.GeoEntityRenderer;
 
 public class MagnetEntityRenderer extends GeoEntityRenderer<MagnetEntity>
 {
-	static final Identifier GREEN = Ultracraft.identifier("textures/entity/magnet.png");
-	static final Identifier YELLOW = Ultracraft.identifier("textures/entity/magnet1.png");
-	static final Identifier RED = Ultracraft.identifier("textures/entity/magnet2.png");
+	static final Identifier GREEN = Ultracraft.texIdentifier("textures/entity/magnet");
+	static final Identifier YELLOW = Ultracraft.texIdentifier("textures/entity/magnet1");
+	static final Identifier RED = Ultracraft.texIdentifier("textures/entity/magnet2");
 	
 	final Random random;
 	

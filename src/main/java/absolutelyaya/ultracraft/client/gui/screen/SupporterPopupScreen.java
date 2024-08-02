@@ -20,6 +20,8 @@ import java.net.URL;
 
 public class SupporterPopupScreen extends InfoPopupScreen
 {
+	static final Identifier UR_EPIC_TEXTURE = Ultracraft.texIdentifier("textures/gui/urepic");
+	
 	protected SupporterPopupScreen(Screen parent)
 	{
 		super(Text.translatable("screen.ultracraft.info.supporter.title"), Text.translatable("screen.ultracraft.info.supporter.text"), parent);
@@ -54,7 +56,7 @@ public class SupporterPopupScreen extends InfoPopupScreen
 	{
 		context.fill(0, 0, width, height, 0xbb000000);
 		super.render(context, mouseX, mouseY, delta);
-		RenderSystem.setShaderTexture(0, Ultracraft.identifier("textures/gui/urepic.png"));
+		RenderSystem.setShaderTexture(0, UR_EPIC_TEXTURE);
 		RenderSystem.setShader(GameRenderer::getPositionTexProgram);
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		RenderingUtil.drawTexture(context.getMatrices().peek().getPositionMatrix(), new Vector4f(width / 2f - 174 / 2f, height / 2f + 5, 175, 43),

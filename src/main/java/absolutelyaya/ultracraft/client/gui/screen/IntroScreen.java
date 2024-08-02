@@ -28,6 +28,7 @@ public class IntroScreen extends Screen
 	boolean waitingForInput, waitingForButton, hurry, popupGrow;
 	int timer, step;
 	String goalText, curText = "";
+	Text popupText;
 	float closeButtonAlpha = 0f, popupSize = 0f;
 	ClientConfig config;
 	
@@ -56,8 +57,6 @@ public class IntroScreen extends Screen
 			button.active = false;
 			button.visible = false;
 		}).dimensions(width / 2 - 49, height - 36, 98, 20).build());
-		closeButton.active = waitingForButton;
-		closeButton.visible = waitingForButton;
 		GameOptions options = MinecraftClient.getInstance().options;
 		if(!config.startedBefore && options.swapHandsKey.isDefault())
 		{
@@ -119,12 +118,13 @@ public class IntroScreen extends Screen
 		if(popupSize >= 1f)
 		{
 			context.getMatrices().translate(0, 0, 10);
-			lines = textRenderer.wrapLines(Text.translatable("message.ultracraft.content"), width - 60);
+			lines = textRenderer.wrapLines(popupText, width - 60);
 			for (int i = 0; i < lines.size(); i++)
 				context.drawTextWithShadow(textRenderer, lines.get(i), 28, 38 + i * (textRenderer.fontHeight + 2), Color.WHITE.getRGB());
 			context.fill(width / 2 - 51, height - 35, width / 2 + 51, height - 14, Color.WHITE.getRGB());
 			closeButton.render(context, mouseX, mouseY, delta);
 		}
+		closeButton.active = closeButton.visible = waitingForButton;
 		context.getMatrices().pop();
 	}
 	
@@ -140,7 +140,7 @@ public class IntroScreen extends Screen
 		}
 		if(goalText == null)
 			return;
-		if(goalText.length() > 0 && !waitingForInput && popupSize <= 0f && timer-- <= 0)
+		if(!goalText.isEmpty() && !waitingForInput && popupSize <= 0f && timer-- <= 0)
 		{
 			char c = goalText.charAt(0);
 			if(c == '\n' && curText.charAt(curText.length() - 1) != '\n')
@@ -154,25 +154,35 @@ public class IntroScreen extends Screen
 				hurry = false;
 			}
 		}
-		if(goalText.length() == 0 && !waitingForInput && !waitingForButton)
+		if(goalText.isEmpty() && !waitingForInput && !waitingForButton)
 		{
 			switch (++step)
 			{
-				case 0, 3, 5 -> waitingForInput = true;
+				case 0, 4, 6 -> waitingForInput = true;
 				case 1 -> {
+					if(config.showEpilepsyWarning)
+					{
+						popupText = Text.translatable("screen.ultracraft.info.epilepsy.text");
+						popupGrow = true;
+						waitingForButton = true;
+						config.showEpilepsyWarning = false;
+					}
+				}
+				case 2 -> {
+					popupText = Text.translatable("message.ultracraft.content");
 					popupGrow = true;
 					waitingForButton = true;
 				}
-				case 2 -> {
+				case 3 -> {
 					popupGrow = false;
 					goalText += Text.translatable("intro.ultracraft.calibration-complete").getString();
 				}
-				case 4 -> {
+				case 5 -> {
 					curText = "";
 					goalText = Text.translatable("intro.ultracraft.status", MinecraftClient.getInstance().getSession().getUsername()).getString();
 					goalText += "\n" + Text.translatable("intro.ultracraft.catchphrase").getString();
 				}
-				case 6 -> {
+				case 7 -> {
 					SEQUENCE_FINISHED = true;
 					MinecraftClient.getInstance().setScreen(new TitleScreen(true));
 					INSTANCE = null;
@@ -196,7 +206,7 @@ public class IntroScreen extends Screen
 			return false;
 		if(waitingForInput && step != 2)
 			waitingForInput = false;
-		if(!waitingForInput && goalText.length() > 0)
+		if(!waitingForInput && !goalText.isEmpty())
 			hurry = true;
 		return super.keyPressed(keyCode, scanCode, modifiers);
 	}

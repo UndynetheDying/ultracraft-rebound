@@ -7,7 +7,7 @@ import absolutelyaya.ultracraft.registry.SoundRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 
-public class MovingWindSoundInstance extends MovingPlayerSoundInstance
+public class MovingWindSoundInstance extends MovingEntitySoundInstance
 {
 	float desiredVolume, desiredPitch;
 	
@@ -20,17 +20,20 @@ public class MovingWindSoundInstance extends MovingPlayerSoundInstance
 	public void tick()
 	{
 		if(owner == null || owner.isRemoved() || !UltracraftClient.getConfig().movementSounds)
+		{
 			setDone();
+			return;
+		}
 		if(!UltraComponents.WING_DATA.get(owner).isActive())
 		{
-			desiredVolume = volume = 0;
+			setDone();
 			return;
 		}
 		x = owner.getX();
 		y = owner.getY();
 		z = owner.getZ();
 		float speed = (float)owner.getVelocity().length();
-		if(owner instanceof WingedPlayerEntity winged && winged.isSlamming())
+		if(owner instanceof WingedPlayerEntity winged && UltraComponents.HIVEL.get(owner).isSlamming())
 		{
 			pitch = 1f;
 			desiredVolume = 0.75f;

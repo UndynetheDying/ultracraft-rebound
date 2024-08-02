@@ -6,12 +6,14 @@ import absolutelyaya.ultracraft.block.SkyBlockEntity;
 import absolutelyaya.ultracraft.block.TerminalBlockEntity;
 import absolutelyaya.ultracraft.entity.other.BloodOrbEntity;
 import absolutelyaya.ultracraft.entity.other.SoulOrbEntity;
+import absolutelyaya.ultracraft.entity.other.StainedGlassWindow;
 import absolutelyaya.ultracraft.entity.projectile.CancerBulletEntity;
 import absolutelyaya.ultracraft.entity.projectile.CerberusBallEntity;
 import absolutelyaya.ultracraft.entity.projectile.HellBulletEntity;
 import absolutelyaya.ultracraft.entity.projectile.ThrownSoapEntity;
 import absolutelyaya.ultracraft.item.SkullItem;
 import absolutelyaya.ultracraft.item.*;
+import absolutelyaya.ultracraft.item.weapons.*;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -77,6 +79,10 @@ public class ItemRegistry
 			new Item(new FabricItemSettings().food(new FoodComponent.Builder().alwaysEdible().hunger(-1).build())));
 	public static final LumpFishItem LUMPFISH = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("lumpfish"), new LumpFishItem(new FabricItemSettings().maxCount(64)));
+	public static final BlahajItem BLAHAJ = Registry.register(Registries.ITEM,
+			Ultracraft.identifier("blahaj"), new BlahajItem(new FabricItemSettings().maxCount(1)));
+	public static final DecorativeMauriceItem DECORATIVE_MAURICE = Registry.register(Registries.ITEM,
+			Ultracraft.identifier("maurice_deco"), new DecorativeMauriceItem(new FabricItemSettings().maxCount(1)));
 	
 	//Progression Items
 	public static final Item FEEDBACKER = Registry.register(Registries.ITEM,
@@ -101,6 +107,8 @@ public class ItemRegistry
 			Ultracraft.identifier("core_shotgun"), new CoreEjectShotgunItem(new FabricItemSettings().maxCount(1)));
 	public static final PumpShotgunItem PUMP_SHOTGUN = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("pump_shotgun"), new PumpShotgunItem(new FabricItemSettings().maxCount(1)));
+	public static final SawedOnShotgunItem SAW_SHOTGUN = Registry.register(Registries.ITEM,
+			Ultracraft.identifier("saw_shotgun"), new SawedOnShotgunItem(new FabricItemSettings().maxCount(1)));
 	public static final MachineSwordItem MACHINE_SWORD = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("machinesword"), new MachineSwordItem(ToolMaterials.IRON, 4, -2.4f,
 					new FabricItemSettings().maxCount(1)));
@@ -117,6 +125,8 @@ public class ItemRegistry
 			Ultracraft.identifier("attractor_nailgun"), new AttractorNailgunItem(new FabricItemSettings().maxCount(1)));
 	public static final OverheatNailgunItem OVERHEAT_NAILGUN = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("overheat_nailgun"), new OverheatNailgunItem(new FabricItemSettings().maxCount(1)));
+	public static final JumpstartNailgunItem JUMPSTART_NAILGUN = Registry.register(Registries.ITEM,
+			Ultracraft.identifier("jumpstart_nailgun"), new JumpstartNailgunItem(new FabricItemSettings().maxCount(1)));
 	public static final AlternatePiercerItem ALTERNATE_PIERCER = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("alternate_piercer"), new AlternatePiercerItem(new FabricItemSettings().maxCount(1)));
 	public static final AlternateMarksmanItem ALTERNATE_MARKSMAN = Registry.register(Registries.ITEM,
@@ -191,6 +201,9 @@ public class ItemRegistry
 	public static final TerminalItem TERMINAL = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("terminal"),
 			new TerminalItem(BlockRegistry.TERMINAL, new FabricItemSettings()));
+	public static final HankItem HANK = Registry.register(Registries.ITEM,
+			Ultracraft.identifier("hank"),
+			new HankItem(BlockRegistry.HANK, new FabricItemSettings().rarity(Rarity.EPIC)));
 	public static final FlorpItem FLORP = (FlorpItem)Registry.register(Registries.ITEM,
 			Ultracraft.identifier("florp"), new FlorpItem(new FabricItemSettings().rarity(Rarity.EPIC).maxCount(1))
 																.putLore(true, new String[] { "item.ultracraft.florp.hiddenlore" }));
@@ -239,6 +252,12 @@ public class ItemRegistry
 	public static final MusicDiscItem LIMBO2_CALM_DISK = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("disc/limbo2_calm"),
 			new MusicDiscItem(15, SoundRegistry.LIMBO2_CALM.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 176));
+	public static final MusicDiscItem VERSUS_DISK = Registry.register(Registries.ITEM,
+			Ultracraft.identifier("disc/versus"),
+			new MusicDiscItem(15, SoundRegistry.VERSUS.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 128));
+	public static final MusicDiscItem LIMBO_FREEROAM_DISK = Registry.register(Registries.ITEM,
+			Ultracraft.identifier("disc/counterfeit"),
+			new MusicDiscItem(15, SoundRegistry.COUNTERFEIT.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 196));
 	public static final MusicDiscItem CYBERGRIND_DISK = Registry.register(Registries.ITEM,
 			Ultracraft.identifier("disc/cybergrind"),
 			new MusicDiscItem(15, SoundRegistry.CYBERGRIND_DISK.value(), new FabricItemSettings().maxCount(1).rarity(Rarity.RARE), 269));
@@ -295,8 +314,14 @@ public class ItemRegistry
 			content.add(BlockRegistry.MAUERWERK2.asItem());
 			content.add(BlockRegistry.ORNATE_WAINSCOT.asItem());
 			content.add(BlockRegistry.ADORNED_RAILING.asItem());
-			content.add(StainedGlassWindowItem.getStack(false));
-			content.add(StainedGlassWindowItem.getStack(true));
+			content.add(StainedGlassWindowItem.getStack(false, StainedGlassWindow.Variant.DOVE));
+			content.add(StainedGlassWindowItem.getStack(false, StainedGlassWindow.Variant.GABRIEL));
+			content.add(StainedGlassWindowItem.getStack(false, StainedGlassWindow.Variant.SAINT));
+			content.add(StainedGlassWindowItem.getStack(false, StainedGlassWindow.Variant.TREE));
+			content.add(StainedGlassWindowItem.getStack(true, StainedGlassWindow.Variant.DOVE));
+			content.add(StainedGlassWindowItem.getStack(true, StainedGlassWindow.Variant.GABRIEL));
+			content.add(StainedGlassWindowItem.getStack(true, StainedGlassWindow.Variant.SAINT));
+			content.add(StainedGlassWindowItem.getStack(true, StainedGlassWindow.Variant.TREE));
 			content.add(BlockRegistry.SLAB_BLOCK.asItem());
 			content.add(BlockRegistry.RED_CARPET.asItem());
 			content.add(BlockRegistry.ORANGE_CARPET.asItem());
@@ -315,6 +340,7 @@ public class ItemRegistry
 			content.add(BlockRegistry.LIGHT_GRAY_CARPET.asItem());
 			content.add(BlockRegistry.WHITE_CARPET.asItem());
 			content.add(BlockRegistry.FLOWERBED.asItem());
+			content.add(BlockRegistry.HYACINTH.asItem());
 			content.add(BlockRegistry.SHEETMETAL.asItem());
 			content.add(BlockRegistry.SHEETMETAL_SHEET.asItem());
 			content.add(BlockRegistry.SHEETMETAL_SHEET_STAIRS.asItem());
@@ -345,8 +371,10 @@ public class ItemRegistry
 			content.add(ALTERNATE_SHARPSHOOTER);
 			content.add(CORE_SHOTGUN);
 			content.add(PUMP_SHOTGUN);
+			content.add(SAW_SHOTGUN);
 			content.add(ATTRACTOR_NAILGUN);
 			content.add(OVERHEAT_NAILGUN);
+			content.add(JUMPSTART_NAILGUN);
 			content.add(MACHINE_SWORD.getDefaultStack(MachineSwordItem.Type.NORMAL));
 			content.add(MACHINE_SWORD.getDefaultStack(MachineSwordItem.Type.TUNDRA));
 			content.add(MACHINE_SWORD.getDefaultStack(MachineSwordItem.Type.AGONY));
@@ -378,6 +406,7 @@ public class ItemRegistry
 			content.add(GREATERFILTH_SPAWN_EGG);
 			content.add(SOUL_ORB);
 			content.add(BLOOD_ORB);
+			content.add(DECORATIVE_MAURICE);
 			content.add(PLUSHIE.getDefaultStack("yaya"));
 			content.add(TALON.getDefaultStack("talon"));
 			content.add(ASHEN.getDefaultStack("ashenwulf"));
@@ -396,10 +425,14 @@ public class ItemRegistry
 			content.add(BlockRegistry.HELL_SPAWNER.asItem());
 			content.add(HELL_MASS);
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.DAY));
+			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.FIRE));
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.EVENING));
 			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.NIGHT));
+			content.add(SkyBlockItem.getStack(SkyBlockEntity.SkyType.LUNA));
 			content.add(BlockRegistry.FAKE_LEAVES.asItem());
+			content.add(HANK);
 			content.add(PORTAL);
+			content.add(BlockRegistry.DARKNESS);
 		});
 		//Dispenser Behaviors
 		DispenserBlock.registerBehavior(HELL_BULLET, new ProjectileDispenserBehavior(){
@@ -485,7 +518,9 @@ public class ItemRegistry
 			content.add(BlockRegistry.MAP_ENEMY_TRIGGER);
 			content.add(BlockRegistry.MAP_CHECKPOINT);
 			content.add(BlockRegistry.MAP_PROGRESSION);
+			content.add(BlockRegistry.MAP_PROGRESSION_CHECK);
 			content.add(BlockRegistry.MAP_TIMER);
+			content.add(BlockRegistry.MAP_TIMER_LISTENER);
 			content.add(BlockRegistry.MAP_TRAVEL);
 			content.add(BlockRegistry.MAP_ABYSS);
 			content.add(BlockRegistry.MAP_TITLE);
@@ -522,6 +557,8 @@ public class ItemRegistry
 			content.add(ItemRegistry.LIMBO2_CALM_DISK);
 			content.add(ItemRegistry.LIMBO2_DISK);
 			content.add(ItemRegistry.CLAIR_DE_LUNE_DISK);
+			content.add(ItemRegistry.VERSUS_DISK);
+			content.add(ItemRegistry.LIMBO_FREEROAM_DISK);
 			content.add(ItemRegistry.CYBERGRIND_DISK);
 		});
 	}

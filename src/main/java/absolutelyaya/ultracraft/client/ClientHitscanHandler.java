@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.client.rendering.HitscanRenderer;
 import com.google.common.collect.Queues;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
@@ -12,6 +13,7 @@ import java.awt.*;
 import java.util.Queue;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class ClientHitscanHandler
 {
@@ -30,9 +32,11 @@ public class ClientHitscanHandler
 		added.add(new MovingHitscan(from, to, id, type));
 	}
 	
-	public void addConnector(Function<Float, Vec3d> from, Function<Float, Vec3d> to, UUID id, Vec2f girth, float girthOverDistance, int color, int layers)
+	public Connector addConnector(Function<Float, Vec3d> from, Function<Float, Vec3d> to, UUID id, Vec2f girth, float girthOverDistance, Supplier<Integer> color, int layers)
 	{
-		added.add(new Connector(from, to, id, girth, girthOverDistance, color, layers));
+		Connector connector = new Connector(from, to, id, girth, girthOverDistance, color, layers);
+		added.add(connector);
+		return connector;
 	}
 	
 	public void removeMoving(UUID id)
@@ -42,8 +46,8 @@ public class ClientHitscanHandler
 	
 	public void tick()
 	{
-		if(hitscans.size() == 0)
-			if(hitscans.size() == 0 && added.size() == 0 && removed.size() == 0)
+		if(hitscans.isEmpty())
+			if(added.isEmpty() && removed.isEmpty())
 				return;
 		for (Object o : hitscans.toArray())
 		{
@@ -54,7 +58,7 @@ public class ClientHitscanHandler
 		for (MovingHitscan moving : movingHitscans.values())
 			moving.tick();
 		hitscans.removeIf(hitscan -> !hitscan.tick());
-		while(added.size() > 0)
+		while(!added.isEmpty())
 		{
 			Hitscan scan = added.remove();
 			if(scan instanceof MovingHitscan moving)
@@ -62,7 +66,7 @@ public class ClientHitscanHandler
 			else
 				hitscans.add(scan);
 		}
-		while(removed.size() > 0)
+		while(!removed.isEmpty())
 		{
 			UUID id = removed.remove();
 			movingHitscans.remove(id);
@@ -81,6 +85,7 @@ public class ClientHitscanHandler
 		final Vec3d from, to;
 		final HitscanType type;
 		int age;
+		boolean electric;
 		
 		public Hitscan(Vec3d from, Vec3d to, byte type)
 		{
@@ -92,6 +97,11 @@ public class ClientHitscanHandler
 		public boolean tick()
 		{
 			return age++ <= getMaxAge();
+		}
+		
+		public int getAge()
+		{
+			return age;
 		}
 		
 		public int getMaxAge()
@@ -124,26 +134,48 @@ public class ClientHitscanHandler
 			return 3;
 		}
 		
+		public boolean isElectic()
+		{
+			return type.electric;
+		}
+		
+		public Hitscan markElectric()
+		{
+			electric = true;
+			return this;
+		}
+		
 		public enum HitscanType
 		{
 			REVOLVER_SHOT(0xdff6f5, 3, 0.1f),
 			REVOLVER_PIERCE(0x8aebf1, 20, 0.2f),
-			RAILGUN_ELEC(0x2ee9ff, 60, 0.3f),
+			RAILGUN_ELEC(0x2ee9ff, 60, 0.3f, true),
 			RAILGUN_DRILL(0x30ff72, 60, 0.3f),
 			RAILGUN_MALICIOUS(0xff4530, 60, 0.3f),
 			MALICIOUS(0xf4d81b, 60, 0.3f),
 			RICOCHET(0xf4d81b, 5, 0.1f),
 			SHARPSHOOTER(0xdf2828, 60, 0.1f),
-			SLAB(0xf4d81b, 4, 0.1f);;
+			SLAB(0xf4d81b, 4, 0.1f),
+			JUMPSTART_ARC(0x2ee9ff, 8, 0.1f, true);
 			
 			public final int color, maxAge;
 			public final float startGirth;
+			public final boolean electric;
+			
+			HitscanType(int color, int maxAge, float startGirth, boolean electric)
+			{
+				this.color = color;
+				this.maxAge = maxAge;
+				this.startGirth = startGirth;
+				this.electric = electric;
+			}
 			
 			HitscanType(int color, int maxAge, float startGirth)
 			{
 				this.color = color;
 				this.maxAge = maxAge;
 				this.startGirth = startGirth;
+				this.electric = false;
 			}
 		}
 	}
@@ -186,14 +218,16 @@ public class ClientHitscanHandler
 		final int layers;
 		final Vec2f girth;
 		final float girthOverDistance;
-		final Color color;
+		final Supplier<Integer> color;
+		Identifier spark;
+		Supplier<Float> sparkPos;
 		
-		public Connector(Function<Float, Vec3d> from, Function<Float, Vec3d> to, UUID id, Vec2f girth, float girthOverDistance, int color, int layers)
+		public Connector(Function<Float, Vec3d> from, Function<Float, Vec3d> to, UUID id, Vec2f girth, float girthOverDistance, Supplier<Integer> color, int layers)
 		{
 			super(from, to, id, (byte)0);
 			this.girth = girth;
 			this.girthOverDistance = girthOverDistance;
-			this.color = new Color(color);
+			this.color = color;
 			this.layers = layers;
 		}
 		
@@ -206,13 +240,30 @@ public class ClientHitscanHandler
 		@Override
 		public Color getColor()
 		{
-			return color;
+			return new Color(color.get());
 		}
 		
 		@Override
 		public int getLayers()
 		{
 			return layers;
+		}
+		
+		public Connector setSpark(Identifier tex, Supplier<Float> posSupplier)
+		{
+			spark = tex;
+			sparkPos = posSupplier;
+			return this;
+		}
+		
+		public Identifier getSpark()
+		{
+			return spark;
+		}
+		
+		public Supplier<Float> getSparkPos()
+		{
+			return sparkPos;
 		}
 	}
 }

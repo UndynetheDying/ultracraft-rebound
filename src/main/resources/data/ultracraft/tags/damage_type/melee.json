@@ -5,6 +5,7 @@
     "minecraft:mob_attack_no_aggro",
     "minecraft:player_attack",
     "minecraft:generic",
-    "ultracraft:swordsmachine"
+    "ultracraft:swordsmachine",
+    "ultracraft:saw_melee"
   ]
 }

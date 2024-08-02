@@ -1,12 +1,12 @@
 package absolutelyaya.ultracraft.client.sound;
 
-import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.client.UltracraftClient;
+import absolutelyaya.ultracraft.components.UltraComponents;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 
-public class MovingSlideSoundInstance extends MovingPlayerSoundInstance
+public class MovingSlideSoundInstance extends MovingEntitySoundInstance
 {
 	public MovingSlideSoundInstance(PlayerEntity owner)
 	{
@@ -17,12 +17,17 @@ public class MovingSlideSoundInstance extends MovingPlayerSoundInstance
 	@Override
 	public void tick()
 	{
-		if(owner.isRemoved() || !UltracraftClient.getConfig().movementSounds)
+		if(owner == null || owner.isRemoved() || !UltracraftClient.getConfig().movementSounds)
+		{
+			setDone();
+			return;
+		}
+		if(!UltraComponents.WING_DATA.get(owner).isActive())
 			setDone();
 		x = owner.getX();
 		y = owner.getY();
 		z = owner.getZ();
-		if(owner instanceof WingedPlayerEntity winged && winged.isSliding() && owner.isOnGround())
+		if(UltraComponents.HIVEL.get(owner).isSliding() && owner.isOnGround())
 		{
 			float speed = (float)owner.getVelocity().length();
 			pitch = speed * 4f;

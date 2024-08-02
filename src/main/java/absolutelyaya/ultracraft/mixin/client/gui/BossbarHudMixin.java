@@ -28,7 +28,7 @@ public abstract class BossbarHudMixin
 	@Shadow protected abstract void renderBossBar(DrawContext context, int x, int y, BossBar bossBar);
 	
 	@Shadow @Final private MinecraftClient client;
-	private static final Identifier TEXTURE = Ultracraft.identifier("textures/gui/bossbar.png");
+	private static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/gui/bossbar");
 	
 	@Inject(method = "render", at = @At("HEAD"), cancellable = true)
 	void onRenderBossBar(DrawContext context, CallbackInfo ci)

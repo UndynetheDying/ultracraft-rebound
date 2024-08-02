@@ -4,6 +4,7 @@ import absolutelyaya.ultracraft.entity.IAntiCheeseBoss;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.List;
 
@@ -44,10 +45,7 @@ public class AntiCheeseProximityTargetGoal<T extends LivingEntity> extends Goal
 	@Override
 	public void start()
 	{
-		LivingEntity cur = mob.getTarget();
-		if(cur != null && (cur.isDead() || cur.isRemoved() || mob.distanceTo(cur) > radius))
-			mob.setTarget(null);
-		List<T> list = mob.getWorld().getEntitiesByClass(targetClass, mob.getBoundingBox().expand(radius), i -> true);
+		List<T> list = mob.getWorld().getEntitiesByClass(targetClass, mob.getBoundingBox().expand(radius), i -> !i.isDead() && !i.isRemoved() && i.canTakeDamage());
 		T closest = null;
 		float closestDistance = Float.MAX_VALUE;
 		for (T living : list)
@@ -64,12 +62,27 @@ public class AntiCheeseProximityTargetGoal<T extends LivingEntity> extends Goal
 		if(closest != null)
 			target = closest;
 		//target = mob.getWorld().getClosestEntity(list, TargetPredicate.DEFAULT.ignoreVisibility(), mob, pos.x, pos.y, pos.z);
-		if(!forceTargetSwitch || (forceTargetSwitch && target != null))
+		if(!forceTargetSwitch || target != null)
 		{
 			mob.setTarget(target);
 			if(forceTargetSwitch && mob instanceof IAntiCheeseBoss boss)
 				boss.resetFrustration();
 		}
 		forceTargetSwitch = false;
+		if(!shouldContinue())
+			mob.setTarget(null);
+	}
+	
+	@Override
+	public boolean shouldContinue()
+	{
+		return mob.getTarget() != null && mob.getTarget().canTakeDamage() && mob.distanceTo(mob.getTarget()) < radius;
+	}
+	
+	@Override
+	public void stop()
+	{
+		if(mob.getTarget() != null)
+			mob.setTarget(null);
 	}
 }

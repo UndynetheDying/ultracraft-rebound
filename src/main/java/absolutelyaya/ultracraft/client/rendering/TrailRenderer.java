@@ -159,7 +159,7 @@ public class TrailRenderer
 	{
 		if(client.world == null)
 		{
-			if(trails.size() > 0)
+			if(!trails.isEmpty())
 			{
 				trails.clear();
 				deletionQueue.clear();

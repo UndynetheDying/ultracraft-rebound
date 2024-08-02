@@ -1,10 +1,14 @@
 {
   "variants": {
-    "glitch=false": {
-      "model": "ultracraft:block/fake_leaves"
-    },
-    "glitch=true": {
-      "model": "ultracraft:block/fake_leaves_glitch"
-    }
+    "": [
+      {
+        "weight": 4,
+        "model": "ultracraft:block/fake_leaves"
+      },
+      {
+        "weight": 1,
+        "model": "ultracraft:block/fake_leaves_glitch"
+      }
+    ]
   }
 }

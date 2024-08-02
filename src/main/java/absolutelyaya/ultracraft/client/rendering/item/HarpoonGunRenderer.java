@@ -1,7 +1,7 @@
 package absolutelyaya.ultracraft.client.rendering.item;
 
 import absolutelyaya.ultracraft.Ultracraft;
-import absolutelyaya.ultracraft.item.HarpoonGunItem;
+import absolutelyaya.ultracraft.item.weapons.HarpoonGunItem;
 import net.minecraft.util.Identifier;
 import mod.azure.azurelib.model.DefaultedItemGeoModel;
 import mod.azure.azurelib.renderer.GeoItemRenderer;
@@ -17,10 +17,10 @@ public class HarpoonGunRenderer extends GeoItemRenderer<HarpoonGunItem>
 	public Identifier getTextureLocation(HarpoonGunItem animatable)
 	{
 		return switch(animatable.texture) {
-			default -> Ultracraft.identifier("textures/item/harpoon_gun.png");
-			case 1 -> Ultracraft.identifier("textures/item/harpoon_gun0.png");
-			case 2 -> Ultracraft.identifier("textures/item/harpoon_gun1.png");
-			case 3 -> Ultracraft.identifier("textures/item/harpoon_gun2.png");
+			default -> Ultracraft.texIdentifier("textures/item/harpoon_gun");
+			case 1 -> Ultracraft.texIdentifier("textures/item/harpoon_gun0");
+			case 2 -> Ultracraft.texIdentifier("textures/item/harpoon_gun1");
+			case 3 -> Ultracraft.texIdentifier("textures/item/harpoon_gun2");
 		};
 	}
 }

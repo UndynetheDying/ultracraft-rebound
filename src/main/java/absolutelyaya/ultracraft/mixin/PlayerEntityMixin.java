@@ -15,6 +15,7 @@ import absolutelyaya.ultracraft.damage.DamageTypeTags;
 import absolutelyaya.ultracraft.dimension.LevelManager;
 import absolutelyaya.ultracraft.entity.other.BackTank;
 import absolutelyaya.ultracraft.item.IOverrideMeleeDamageType;
+import absolutelyaya.ultracraft.item.ISelectionAwareItem;
 import absolutelyaya.ultracraft.registry.*;
 import com.chocohead.mm.api.ClassTinkerers;
 import com.google.common.collect.HashMultimap;
@@ -32,12 +33,12 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.damage.DamageTypes;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.projectile.thrown.SnowballEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.world.ServerWorld;
@@ -79,16 +80,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	
 	@Shadow public abstract void sendMessage(Text message, boolean overlay);
 	
+	@Shadow @Final private PlayerInventory inventory;
 	Multimap<EntityAttribute, EntityAttributeModifier> curSpeedMod;
 	BackTank backtank;
 	int parryIFrames, damageTypeChain;
 	long lastDamageAge = 0;
 	DamageType lastDamageType;
+	Item lastHeldItem;
 	
 	private final Vec3d[] curWingPose = new Vec3d[] {new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f), new Vec3d(0.0f, 0.0f, 0.0f)};
 	
-	private static final TrackedData<Boolean> SLIDING = DataTracker.registerData(PlayerEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-	private static final TrackedData<Boolean> SLAMMING = DataTracker.registerData(PlayerEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	
 	protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world)
 	{
@@ -103,13 +104,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 		((EntityAccessor)this).setTargettableSupplier(() -> !isCreative() && !isSpectator());
 	}
 	
-	@Inject(method = "initDataTracker", at = @At("TAIL"))
-	void onInitDatatracker(CallbackInfo ci)
-	{
-		dataTracker.startTracking(SLIDING, false);
-		dataTracker.startTracking(SLAMMING, false);
-	}
-	
 	@WrapOperation(method = "updatePose", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;setPose(Lnet/minecraft/entity/EntityPose;)V"))
 	void onUpdatePose(PlayerEntity instance, EntityPose entityPose, Operation<Void> original)
 	{
@@ -120,7 +114,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 			IHivelComponent hivel = UltraComponents.HIVEL.get(winged);
 			if(hivel.isDashing())
 				setPose(ClassTinkerers.getEnum(EntityPose.class, "DASH"));
-			else if(isSliding())
+			else if(hivel.isSliding())
 				setPose(ClassTinkerers.getEnum(EntityPose.class, "SLIDE"));
 			else
 				original.call(instance, entityPose);
@@ -155,7 +149,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	{
 		if(cir.getReturnValue() && amount > 0)
 		{
-			if(getHealth() - amount <= 0)
+			if(getHealth() <= 0)
 				UltraComponents.STYLE.get(this).resetScore();
 			else
 				UltraComponents.STYLE.get(this).takeDamage(amount);
@@ -283,14 +277,14 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	@Override
 	public void startSlam()
 	{
-		setSlamming(true);
+		UltraComponents.HIVEL.get(this).setSlamming(true);
 	}
 	
 	@Override
 	public void endSlam(boolean strong)
 	{
 		IHivelComponent hivel = UltraComponents.HIVEL.get(this);
-		setSlamming(false);
+		hivel.setSlamming(false);
 		if(!isOnGround())
 			return;
 		getWorld().playSound(null, getBlockPos(), SoundRegistry.SLAM, SoundCategory.PLAYERS,
@@ -344,6 +338,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 		}
 		if(parryIFrames > 0)
 			parryIFrames--;
+		
+		ItemStack stack = inventory.getMainHandStack();
+		if(!stack.getItem().equals(lastHeldItem))
+		{
+			if(lastHeldItem instanceof ISelectionAwareItem aware)
+				aware.onUnselect((PlayerEntity)((Object)this));
+			lastHeldItem = stack.isEmpty() ? null : stack.getItem();
+			if(stack.getItem() instanceof ISelectionAwareItem aware)
+				aware.onSelect((PlayerEntity)((Object)this));
+		}
 	}
 	
 	@Inject(method = "tick", at = @At("TAIL"))
@@ -365,7 +369,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 					random.nextDouble() * getHeight(), (random.nextDouble() - 0.5) * getWidth()).add(dir.multiply(0.25));
 			getWorld().addParticle(ParticleRegistry.DASH, true, pos.x, pos.y, pos.z, particleVel.x, particleVel.y, particleVel.z);
 		}
-		if(isSliding())
+		if(hivel.isSliding())
 		{
 			Vec3d dir = getVelocity().multiply(1.0, 0.0, 1.0).normalize();
 			Vec3d particleVel = new Vec3d(-dir.x, -dir.y, -dir.z).multiply(random.nextDouble() * 0.1 + 0.025);
@@ -373,7 +377,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 			getWorld().addParticle(ParticleRegistry.SLIDE, true, pos.x, pos.y + 0.1, pos.z, particleVel.x, particleVel.y, particleVel.z);
 			incrementStat(StatisticRegistry.SLIDE);
 		}
-		if(isSlamming())
+		if(hivel.isSlamming())
 		{
 			Vec3d particleVel = new Vec3d(0, 1, 0);
 			for (int i = 0; i < random.nextInt(4) + 8; i++)
@@ -515,32 +519,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 	}
 	
 	@Override
-	public void setSliding(boolean v)
-	{
-		dataTracker.set(SLIDING, v);
-	}
-	
-	@Override
-	public boolean isSliding()
-	{
-		return UltraComponents.WING_DATA.get(this).isActive() && dataTracker.get(SLIDING);
-	}
-	
-	@Override
-	public void setSlamming(boolean v)
-	{
-		dataTracker.set(SLAMMING, v);
-	}
-	
-	@Override
 	public void onParry()
 	{
 		timeUntilRegen = 11 + HivelConfig.INSTANCE.iFrames.getValue();
-	}
-	
-	@Override
-	public boolean isSlamming()
-	{
-		return UltraComponents.WING_DATA.get(this).isActive() && dataTracker.get(SLAMMING);
 	}
 }

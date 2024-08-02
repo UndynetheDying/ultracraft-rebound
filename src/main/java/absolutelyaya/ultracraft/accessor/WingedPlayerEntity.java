@@ -37,13 +37,5 @@ public interface WingedPlayerEntity
 	
 	void addScreenshake(float val);
 	
-	boolean isSliding();
-	
-	void setSliding(boolean v);
-	
-	boolean isSlamming();
-	
-	void setSlamming(boolean v);
-	
 	void onParry();
 }

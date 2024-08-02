@@ -14,9 +14,9 @@ import net.minecraft.util.Identifier;
 
 public class MagnetEmissiveLayer extends GeoRenderLayer<MagnetEntity>
 {
-	static final Identifier GREEN = Ultracraft.identifier("textures/entity/magnet_e.png");
-	static final Identifier YELLOW = Ultracraft.identifier("textures/entity/magnet1_e.png");
-	static final Identifier RED = Ultracraft.identifier("textures/entity/magnet2_e.png");
+	static final Identifier GREEN = Ultracraft.texIdentifier("textures/entity/magnet_e");
+	static final Identifier YELLOW = Ultracraft.texIdentifier("textures/entity/magnet1_e");
+	static final Identifier RED = Ultracraft.texIdentifier("textures/entity/magnet2_e");
 	
 	public MagnetEmissiveLayer(GeoRenderer<MagnetEntity> entityRendererIn)
 	{

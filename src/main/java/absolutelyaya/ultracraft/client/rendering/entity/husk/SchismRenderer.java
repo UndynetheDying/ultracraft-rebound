@@ -17,12 +17,6 @@ public class SchismRenderer extends GeoEntityRenderer<SchismEntity>
 	}
 	
 	@Override
-	public Identifier getTexture(SchismEntity object)
-	{
-		return Ultracraft.identifier("textures/entity/schism.png");
-	}
-	
-	@Override
 	public RenderLayer getRenderType(SchismEntity animatable, Identifier texture, VertexConsumerProvider bufferSource, float partialTick)
 	{
 		return RenderLayer.getEntityTranslucent(texture);

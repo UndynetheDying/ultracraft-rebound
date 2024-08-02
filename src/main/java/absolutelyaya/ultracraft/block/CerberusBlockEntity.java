@@ -2,6 +2,7 @@ package absolutelyaya.ultracraft.block;
 
 import absolutelyaya.ultracraft.registry.BlockEntityRegistry;
 import absolutelyaya.ultracraft.registry.BlockRegistry;
+import absolutelyaya.ultracraft.registry.SoundRegistry;
 import mod.azure.azurelib.animatable.GeoBlockEntity;
 import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
 import mod.azure.azurelib.core.animation.AnimatableManager;
@@ -31,9 +32,12 @@ public class CerberusBlockEntity extends BlockEntity implements GeoBlockEntity
 	private final AnimatableInstanceCache cache = AzureLibUtil.createInstanceCache(this);
 	
 	private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
-	private static final RawAnimation IDLE_EMPTY_ANIM = RawAnimation.begin().thenLoop("idle_empty");
+	private static final RawAnimation IDLE_FLIP_ANIM = RawAnimation.begin().thenLoop("idle_flipped");
 	private static final RawAnimation STAND_UP_ANIM = RawAnimation.begin().thenPlay("stand_up").thenLoop("idle_empty");
-	int cooldown;
+	private static final RawAnimation STAND_UP_FLIP_ANIM = RawAnimation.begin().thenPlay("stand_up_flipped").thenLoop("idle_empty");
+	private static final RawAnimation IDLE_EMPTY_ANIM = RawAnimation.begin().thenLoop("idle_empty");
+	private static final RawAnimation IDLE_EMPTY_FLIP_ANIM = RawAnimation.begin().thenLoop("idle_empty_flipped");
+	int cooldown, proximity;
 	
 	public CerberusBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -42,7 +46,7 @@ public class CerberusBlockEntity extends BlockEntity implements GeoBlockEntity
 	
 	public static <T extends BlockEntity> void tick(World world, BlockPos pos, BlockState state, T blockEntity)
 	{
-		if(state.get(CerberusBlock.SPAWNING) || state.get(CerberusBlock.EMPTY) || state.get(CerberusBlock.PROXIMITY) == 0)
+		if(state.get(CerberusBlock.SPAWNING) || state.get(CerberusBlock.EMPTY) || (blockEntity instanceof CerberusBlockEntity cerb && cerb.proximity == 0))
 			return;
 		if(blockEntity instanceof CerberusBlockEntity cerb)
 		{
@@ -50,8 +54,8 @@ public class CerberusBlockEntity extends BlockEntity implements GeoBlockEntity
 				cerb.cooldown--;
 			if(cerb.cooldown <= 0)
 			{
-				if(world.getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), new Box(pos).expand(16),
-						e -> !e.isCreative() && !e.isSpectator()).size() > 0)
+				if(!world.getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), new Box(pos).expand(cerb.proximity),
+						e -> !e.isCreative() && !e.isSpectator()).isEmpty())
 				{
 					world.setBlockState(pos, state.with(CerberusBlock.SPAWNING, true), Block.NOTIFY_LISTENERS);
 					world.scheduleBlockTick(pos, BlockRegistry.CERBERUS, 60);
@@ -65,21 +69,24 @@ public class CerberusBlockEntity extends BlockEntity implements GeoBlockEntity
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers)
 	{
 		controllers.add(new AnimationController<>(this, state -> {
+			if(state.getAnimatable().getWorld() == null)
+				return PlayState.STOP;
 			BlockState bstate = state.getAnimatable().getWorld().getBlockState(pos);
 			if(!bstate.isOf(BlockRegistry.CERBERUS))
 				return PlayState.STOP;
 			boolean empty = bstate.get(CerberusBlock.EMPTY);
 			boolean spawning = bstate.get(CerberusBlock.SPAWNING);
 			if(!empty && spawning)
-				return state.setAndContinue(STAND_UP_ANIM);
+				return state.setAndContinue(isFlipped() ? STAND_UP_FLIP_ANIM: STAND_UP_ANIM);
 			if (empty)
-				return state.setAndContinue(IDLE_EMPTY_ANIM);
+				return state.setAndContinue(isFlipped() ? IDLE_EMPTY_FLIP_ANIM : IDLE_EMPTY_ANIM);
 			else
-				return state.setAndContinue(IDLE_ANIM);
+				return state.setAndContinue(isFlipped() ? IDLE_FLIP_ANIM: IDLE_ANIM);
 		}).setParticleKeyframeHandler(event -> {
 			if(event.getKeyframeData().getEffect().equals("dust") && world != null)
 			{
-				world.playSound(null, pos, SoundEvents.BLOCK_DEEPSLATE_BREAK, SoundCategory.HOSTILE, 2f, 0.5f);
+				world.getEntitiesByType(TypeFilter.instanceOf(PlayerEntity.class), new Box(getPos()).expand(16f), p -> true)
+						.forEach(p -> world.playSound(p, getPos(), SoundRegistry.CERB_CRACK, SoundCategory.HOSTILE, 1f, 0.95f + world.random.nextFloat()));
 				for (int i = 0; i < 16; i++)
 				{
 					Vec3d ppos = new Vec3d(pos.getX() + world.random.nextDouble() * 1.25, pos.getY() + 1f + world.random.nextDouble() * 2,
@@ -89,6 +96,13 @@ public class CerberusBlockEntity extends BlockEntity implements GeoBlockEntity
 				}
 			}
 		}));
+	}
+	
+	boolean isFlipped()
+	{
+		if(world != null && world.getBlockState(getPos()).isOf(BlockRegistry.CERBERUS))
+			return world.getBlockState(getPos()).get(CerberusBlock.FLIPPED);
+		return false;
 	}
 	
 	@Override
@@ -101,14 +115,14 @@ public class CerberusBlockEntity extends BlockEntity implements GeoBlockEntity
 	public void readNbt(NbtCompound nbt)
 	{
 		super.readNbt(nbt);
-		if(nbt.contains("proximity", NbtElement.INT_TYPE) && world != null)
-			world.setBlockState(getPos(), getCachedState().with(CerberusBlock.PROXIMITY, nbt.getInt("proximity")));
+		if(nbt.contains("proximity", NbtElement.INT_TYPE))
+			proximity =  nbt.getInt("proximity");
 	}
 	
 	@Override
 	protected void writeNbt(NbtCompound nbt)
 	{
 		super.writeNbt(nbt);
-		nbt.putInt("proximity", getCachedState().get(CerberusBlock.PROXIMITY));
+		nbt.putInt("proximity", proximity);
 	}
 }

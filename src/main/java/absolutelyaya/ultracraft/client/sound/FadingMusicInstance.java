@@ -11,11 +11,19 @@ public class FadingMusicInstance extends PositionedSoundInstance implements Tick
 {
 	boolean fadingIn = true, fadingOut;
 	float fadeInVolume = 0.01f;
+	float fadeSpeed = 1f;
 	
 	public FadingMusicInstance(SoundEvent sound, float volume)
 	{
 		super(sound.getId(), SoundCategory.MUSIC, volume, 1f, SoundInstance.createRandom(), true, 0,
 				AttenuationType.NONE, 0.0, 0.0, 0.0, true);
+	}
+	
+	public FadingMusicInstance(SoundEvent sound, float volume, float fadeSpeed)
+	{
+		super(sound.getId(), SoundCategory.MUSIC, volume, 1f, SoundInstance.createRandom(), true, 0,
+				AttenuationType.NONE, 0.0, 0.0, 0.0, true);
+		this.fadeSpeed = fadeSpeed;
 	}
 	
 	public void setVolume(float volume)
@@ -41,12 +49,18 @@ public class FadingMusicInstance extends PositionedSoundInstance implements Tick
 		MinecraftClient client = MinecraftClient.getInstance();
 		if(fadingOut && fadingIn)
 			fadingIn = false;
-		if(fadingOut && (volume -= 0.05f) <= 0)
+		if(fadingOut && (volume -= 0.05f * fadeSpeed) <= 0)
 			client.getSoundManager().stop(this);
 		if(fadingIn && fadeInVolume < 1f)
-			fadeInVolume = Math.min(fadeInVolume + 0.05f, 1f);
+			fadeInVolume = Math.min(fadeInVolume + 0.05f * fadeSpeed, 1f);
 		else
 			fadingIn = false;
+	}
+	
+	public void skipFadein()
+	{
+		fadingIn = false;
+		fadeInVolume = 1f;
 	}
 	
 	public void startFadeout()

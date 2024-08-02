@@ -2,7 +2,6 @@ package absolutelyaya.ultracraft.entity.projectile;
 
 import absolutelyaya.ultracraft.ServerHitscanHandler;
 import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
-import absolutelyaya.ultracraft.client.ClientHitscanHandler;
 import absolutelyaya.ultracraft.client.UltracraftClient;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.registry.EntityRegistry;
@@ -19,11 +18,10 @@ import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-public class BeamProjectileEntity extends ProjectileEntity
+public class BeamProjectileEntity extends ProjectileEntity implements IIgnoreSharpshooter
 {
 	public static final TrackedData<Byte> HITSCAN_TYPE = DataTracker.registerData(BeamProjectileEntity.class, TrackedDataHandlerRegistry.BYTE);
 	Vec3d startPos = Vec3d.ZERO;
@@ -43,12 +41,18 @@ public class BeamProjectileEntity extends ProjectileEntity
 	
 	public static BeamProjectileEntity spawn(World world, LivingEntity owner, float vel, byte hitscanType)
 	{
+		BeamProjectileEntity beam = spawn(world, owner, Vec3d.ZERO, hitscanType);
+		beam.setVelocity(owner, owner.getPitch(), owner.getYaw(), 0, vel, 0);
+		return beam;
+	}
+	
+	public static BeamProjectileEntity spawn(World world, LivingEntity owner, Vec3d vel, byte hitscanType)
+	{
 		BeamProjectileEntity beam = new BeamProjectileEntity(EntityRegistry.BEAM, world);
 		beam.setOwner(owner);
 		beam.setNoGravity(true);
 		beam.setPosition(owner.getEyePos());
-		beam.setVelocity(owner.getRotationVector().multiply(vel));
-		beam.setVelocity(owner, owner.getPitch(), owner.getYaw(), 0, 8f, 0);
+		beam.setVelocity(vel);
 		beam.startPos = beam.getPos();
 		beam.setHitscanType(hitscanType);
 		world.spawnEntity(beam);
@@ -60,9 +64,9 @@ public class BeamProjectileEntity extends ProjectileEntity
 	{
 		super.onSpawnPacket(packet);
 		startPos = getPos();
-		ClientHitscanHandler.Hitscan.HitscanType type = ClientHitscanHandler.Hitscan.HitscanType.values()[dataTracker.get(HITSCAN_TYPE)];
-		UltracraftClient.HITSCAN_HANDLER.addConnector(f -> getStartPos().equals(Vec3d.ZERO) ? getLerpedPos(f) : getStartPos(), this::getLerpedPos, getUuid(),
-				new Vec2f(type.startGirth, 0f), 0f, type.color, 3);
+		//ClientHitscanHandler.Hitscan.HitscanType type = ClientHitscanHandler.Hitscan.HitscanType.values()[dataTracker.get(HITSCAN_TYPE)];
+		//UltracraftClient.HITSCAN_HANDLER.addConnector(f -> getStartPos().equals(Vec3d.ZERO) ? getLerpedPos(f) : getStartPos(), this::getLerpedPos, getUuid(),
+		//		new Vec2f(type.startGirth, 0f), 0f, () -> type.color, 3);
 	}
 	
 	@Override
@@ -110,6 +114,11 @@ public class BeamProjectileEntity extends ProjectileEntity
 	public Vec3d getStartPos()
 	{
 		return startPos;
+	}
+	
+	public byte getHitscanType()
+	{
+		return dataTracker.get(HITSCAN_TYPE);
 	}
 	
 	@Override

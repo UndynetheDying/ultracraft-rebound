@@ -1,172 +1,135 @@
 ## Major Changes
-- Added an OST composed by various Ultrakill Fan//UST Composers
-  - Prelude 1 - `Beyond the Fire` by [Triage](https://www.youtube.com/@triageGremlin)
-  - Prelude 2 - `Inferno` by [Efefski](https://www.youtube.com/@efefski)
-  - Prelude 3 - `Wardens of Hell` by [Psykomatic](https://www.youtube.com/@psykomatic0)
-  - Limbo 1 (intro) - `Mirage of Paradise` by [Oxblood](https://www.youtube.com/@OxbloodXIX)
-  - Limbo 1 - `Truth of the Broken Screen` by [Oxblood](https://www.youtube.com/@OxbloodXIX)
-  - Limbo 2 - `Blameless` by [Efefski](https://www.youtube.com/@efefski)
-  - Cybergrind - `Infinite` by [Efefski](https://www.youtube.com/@efefski)
-  - And more Tracks to come!! (very exciting)
-  - All Tracks have Music disks for both their calm and combat version (if applicable)
-    - These currently cannot be obtained in survival. I'll think of something for that.
-  - Everyone involved has done a fantastic Job and were a joy to work with. If you like their work, please consider supporting them!
-- Remade limbo2
-- Made slight changes to limbo1
-- Fixed a soft-lock in prelude1
-- Fixed the Level Unlock Trigger in prelude1 being too big
-- Major Improvements to the Music System
-  - When the Game is paused or the local player is dead, the music will lower in pitch and volume
-  - Combat Music is now triggered by all Hostile entities, not just ultracraft enemies
-  - It's now possible to set multiple Tracks per Level
-  - Added a Popup that shows up whenever a new Track starts playing, and it has sufficient metadata
-    - It says the Name and Author of the Track along with a neat colored stripe
-    - To add credit pop-ups for non-ultracraft music, make a resourcepack containing a `music.json` file in the same directory that the `sounds.json` would go in
-  - Music will fade out when the Level is finished (or in other words, when a Force Travel Trigger is entered)
-  - For more info on the specifics, refer to the `Resource Changes` Segment
-- Added Music to Cybergrind
-  - You can put your own cybergrind playlist in the game using a Resourcepack that replaces the sound `ultracraft:music.cybergrind`
-- Added Support for Custom Layers // Level Collections using Datapacks
-- Rage is now a Potion Effect
-  - Doesn't alter any stats by itself
-  - Makes any living entity have the rage halo
-  - Makes any living entity red
-    - except for those in the entity type tag `ultracraft:no_rage_tint`
-  - If applicable, Enemies Enraged Behavior will be used while having the Effect, regardless of other requirements like Health
-- Added Emissive Layer to Hideous Mass Enraged and Dying Textures
-- Added separate Emissive Texture for Enraged Swordsmachine
-- Changed Pixel [42,45] of the Uncracked Cerberus Entity Texture from #7c7c7c to #7d7d7d
-- Added New Progression Unlock Items
-  - Feedbacker - Unlocks the Feedbacker Arm
-  - Hivel Wings - Unlocks Ability to toggle High Velocity Mode
-  - Absorbant Plating - Unlocks Blood Healing Ability
-  - All of these Items are unobtainable in Survival per default; They were just added for map and modpack creators pretty much
-  - If Trinkets is installed, these Items lose their Progression Unlock Functionality and are used as equippable Trinkets instead.
-    - If the Gamerule `ultra-startAsV1` is enabled, then the basic mechanics always work regardless of whether the Trinkets are equipped or not!
-- Added Trinkets Support (optional)
-  - This is mainly for Modpack Creators that want more control over ultracraft core mechanic unlocking//progression.
-- Added Fancy Carpet Variants in all Colors
-- Fixed players that kept their inventory due to a checkpoint still dropping XP
-- Added System that automatically detects whether a damage type is applied every tick
-  - This only affects IFrames in Hivel Mode
-  - The List of detected Damage Types isn't saved; it'll be cleared when the server//world is closed
-  - Damage Types that were detected as per tick will use iframes as if the player wasn't in hivel
-- Schisms can now be interrupted by punching them with the feedbacker while they're firing; this kills them instantly
-- Fixed the `carry on` Mod allowing picking up and placing blocks within modification suppressed areas
-- Edit Mode Blocks can no longer be picked up using the `carry on` Mod
-- Changed how respawning is handled again
-- Fixed the `You're in Grave Danger` Mod still clearing the Inventory and placing a Grave for Players in Levels or with an active Checkpoint
-- When being rescued from a Level (which shouldn't normally be necessary), you now get teleported to your own Spawn Point instead of World Spawn
-- Added Fake Leaves Block
-- Fixed Swordsmachine seething with rage so hard that it doesn't actually do anything
-- Replaced all leaves and.. "leaves" in limbo dimension and structures belonging there with Fake Leaves
-  - This change doesn't change old worlds retrospectively ofc
-- Replaced all Levels kill planes with the new Edit Mode Abyss Triggers
-  - aside from the abyss at the end of prelude3 because funi
-- Fixed Tundra//Agony stun animation not playing
-- Fixed Thrown Machineswords not saving Sword Item data
-- Fixed Swordsmachine getting stuck in a interruptible state when interrupted
+- Added `Versus` by [Aavanitro](https://www.youtube.com/@Aavanitro) to OST
+- Added `Counterfeit` by [ENNWAY](https://www.youtube.com/@ENNWAY) to OST
+  - Played in Limbo Freeroam Dimension as long as you're not in creative mode
+- Added Level `Clair de Lune`
+- Improved V2 Boss Fight
+  - Buffed Speed slightly
+  - Decreased Attack Cooldowns
+  - Fixed Wing Rendering
+  - Beam Projectiles aren't Sharpshooter hittable anymore
+  - Fixed Movement after Death issue
+  - Fixed V2 ascension issue
+  - Fixed V2 running off of ledges
+  - Fixed V2 trying to chase after dead and or creative//spectator targets
+  - Sort of fixed V2s Green Movement (fleeing)
+- Added Sawed-On Shotgun
+- Added Jumpstart Nailgun
+- Added new ████
+- Added Hank
+- Added new varians of Stained Glass Windows
+- Removed "glitched" Blockstate from Fake Leaves
+  - The Glitch visuals still appear, but it's random now
+- Removed Proximity Blockstate from Cerberus Block
+  - Proximity triggered Cerberi now use the nbt tag `proximity` instead
+- Added `intro` Attribute to level music data
+  - This allows setting an intro sound played before the actual track starts
+- Added Flipped state to Cerberus Block
+- Added `sacrificial` nbt tag to Pedestals
+- Added Hyacinth
+- Added Hyacinth patches to Limbo worldgen
+- Added Butteflies :3
+- Changes to old levels
+  - Replaced all Black Stained Glass with Darkness Blocks
+  - limbo1 `Illusionary Paradise`
+    - Fixed enemies not spawning again after dying in `room-62`
+    - Fixed the room where you obtain the red skull not actually being a room and thus not being protected
+    - Fixed red pedestal in `room-67` not being locked
+    - Fixed checkpoint in Room `filthyStaircase` being parented to Room `HallOfNails` instead
+    - Added Tutorial Message on Pedestals
+    - Added Hyacinth
+  - limbo2 `Halls of the Blameless`
+    - Fixed Checkpoint in Room `Funtain`
+    - Fixed Room `Funtain` resetting when left due to a misconfigured spawn trigger
+    - Fixed Checkpoint in Room `TheBigRed` being too big, allowing it to be triggered before finishing the preceeding Room (`Funtain`)
+    - Added Hyacinth
+- Fixed Fall Damage not working correctly for Players
+- Fixed Deadcoins not being shootable
+- Added Fire Sky Block variant
+- Added Luna Sky Block variant
+  - The old Night Sky Block variant now doesn't have a moon anymore
+- Style doesn't decay anymore while time is frozen
+- Added Malicious Statue Item
+- Level Timer now pauses while time is frozen
+- Fixed Level Timer Pausing not actually working at all lmao
+- Added Item to place decorative Malicious Faces more easily
+- Fixed sprint and sneak states tending to get stuck when enabling hivel mode
+- Changed how slide and slam states are handled
+- Changed how movement sounds are handled
+- Reinforced Stained Glass windows don't need to be supported by blocks anymore once they've been placed successfully
+- Improved Beam Projectiles
+- Fixed Punchable Blocks (like Pedestals) not reaction to Main Hand punches in protected Areas
+- Added `style` and `collision` Properties to Sky Blocks
+- Regular Machineswords now only drop During Cybergrind
+  - Obtaining it so early on was throwing off the pacing a *lot*
+- Fixed entities sometimes not being Removed when level instances get destroyed
+- Coin fixes
+  - Players can now only deadcoin their own coins; meaning ricoshots won't be interrupted anymore by others throwing coins
+  - Fixed chained coins only doing damage as if 1 coin was hit
+  - Fixed logic error when checking whether nearby coins are valid targets
 ## Settings & Config
-- Added Server Config `DisableModificationSuppression` which allows disabling Edit Mode Room Modification Suppression; Default is `false`
-  - Or in other Words, it lets you break and place Blocks in otherwise protected Areas, like Levels
-- Added Server Config `ProtectNature` which disables natural blocks like flowers and grass to be broken by ultracraft explosions; Default is `false`
-- Changed default value for `UnlockCustomLevels` Server Config to `false`
-  - If your Server//World is set to the old default value, the config will update to reflect this change automatically upon loading next.
-- Added a new Gamerule `ultra-startAsV1`; Default is `true`
-  - Whether Hivel Wings, Blood Healing and the Feedbacker are unlocked per default
-  - This Gamerule can be used in conjunction with the new Progression Unlock Items to add more progression to maps//modpacks
-- Added Client Setting `armSkinFirstPerson`; Default is `true`
-  - Whether the First Person offhand arm skin is replaced by that of the equipped ultracraft arm
-- Added Client Setting `onlyShowarmWhilePunching`; Default is `false`
-  - Whether the First Person offhand arm is always visible when holding an item and an ultracraft arm is equipped
-- Added Client Setting `hideVanillaHotbar`; Default is `false`
-  - Whether the Vanilla Hotbar is hidden; all other HUD elements stay.
-- Due to an Internal name change, your Third Person ultracraft Arm Skin Setting might be reset to its default value
+- Added `rememberVariant` Client Setting
+  - If disabled, switching off of a weapon will replace it with its first equipped variant. Enabled by default
+- Moved `Repeat Intro` Setting to Debug Category
+  - This always was a debug setting for triggering the Intro to repeat as the name suggests
+  - If you want to disable the intro repeating after switching versions, use the `Don't show Intro after switching Versions` Setting
 ## Commands
-- Added new Debug Command `/ultracraft debug clearLikelyPerTickDamageTypes`
-  - Clears the List of automatically identified per-tick damage types
 ## Tweaks
-- Nerfed Nailgun Damage a little
-  - Heatsink Nails against Enemies (0.3 -> 0.25)
-  - Heatsink Nails against Players (0.3 -> 0.1875)
-  - Regular Nails against Players (0.3 -> 0.225)
+- Reduced delay before Malicious Faces first attack
 ## Minor Changes
-- Crops now break from slamming//explosions
-- Slam block breaking area was extended upwards by one Block
-- Made Bright Panels actually bright (they now emit Light Level 6)
-- Removed Clair de Lune Music Disc from V2s Loot Table
-- Fixed Wing Customization Screen messing up FoV Effect Scale Setting
-- Progression Unlock Items now don't get consumed upon use while in creative
-- Progression Unlock Items now use Ultracraft Titles instead of Vanilla ones
-- Knuckleblaster Unlcok Item is no longer Stackable
-- Edit Mode HUD now renders behind chat
-- Fancy Carpet is no longer Waterloggable
-- Fancy Carpet is no longer Flammable
-- Added Band-Aid fix for sky block textures getting messed up when using Sodium
-  - Shaders still make the skybox invisible tho unfortunately
-- Finally added some missing Icons to the `/ultracraft config` screen
-- Changed Interruptable Charge rendering
-- Changed Schism Interruption-Explosion positioning slightly
-- Changed Stray Interruption-Explosion positioning slightly
-- Added Dispenser Behavior to Blood Buckets
-  - You'd think that stuff would just kinda work automatically, but I guess not
-- Fancy Carpet now doesn't break when placement conditions aren't met anymore
-- Fancy Carpet can now be placed on any Block that isn't Air
-- Machinesword is no longer a two-handed weapon when using Better Combat
-- Hideous Mass doesn't contribute to the Music State while it's hidden
+- Fixed Cerberus Cracking Sounds not playing
+- Fixed the modification suppression message in limbo showing up when it shouldn't
+- Fixed fake trees being able to generate on any block
+- Moved photosensitivity warning to Intro Sequence
+- Fixed Style resetting when taking damage equal to or greater than half of the players Health
+- Fixed Malicious Face not being immune to explosions anymore
+- Opening the UltraCredits Screen now stops main menu ambience sounds
+  - This fixes an issue where they'd stack when opening and closing the credits
+- Fixed Nailgun alt-fire animation not being interrupted by rapid uses while not primary firing
+- Fixed Weapons that weren't obtained yet, but aren't already equipped in the weapons loadout, being uncraftable
+  - Normally all weapons are equipped by default, the unobtained ones just were skipped when switching weapons; newly added weapons weren't in previously saved loadouts though, revealing this issue
+- Added `sprite-override` Attribute to UltraRecipes
+- Changed how Fishes are handled
+- Fixed a minor issue with Malicious Faces rotation
+- Kinda fixed transparency layering issues with visual effects (only works with `Fabulous!` graphics enabled)
+- Fixed an issue that caused the music in limbo1 to switch back to `Mirage of Paradise` when it shouldn't
+- Added Hyacinth and//or Butterflies to old Limbo Levels
+- Music Sounds now get streamed, meaning they cause less lag
+- Progression Unlock Logic now uses the items UltraRecipe unlock list instead of being hard-coded
+- Progression Unlock checks now take Unlock Logic into account
+  - That means, as long as you have obtained for example the Piercer Revolver, the Marksman and Sharpshooter are unlocked
+- Added Darkness Block
+- Stained Glass Windows in Levels no longer drop when broken
+- Fixed Level Music (half) restarting when changing volume
+  - Only the Version that isn't currently primarily playing is reset
+- Instead of locking Players out of the Patterns menu completely, the `Disable Flashy VFX` Setting now only removes animated patterns from there
+  - Previously Wing Overlays would be inaccessible due to that
+- Updated LOLCAT translation provided by Doggochleb (up to 2.1.3)
+- Updated Russian translation provided by closet748 (up to RIGHT NOW)
+- Improved UltraCredits Screen
+  - Added scrolling
+  - Fixed text overflow
+  - Changed Texture to be pure white instead of very light blue to make it consistent with the rest of the text
+- Fixed an issue with Greater Filth enraging
+- Reduced volume of Blood-Heal noise from per-tick damage
 ## Edit Mode Changes
-- Rooms can now be Parented to Rooms (yay, recursion)
-  - Added `/edit config recursiveRooms`, which toggles whether Rooms you place while having another Room focused, will be parented to the selected Room or just be placed as new Root.
-  - Focusing a Room that's part of a Room Hierarchy, the entire Hierarchy is rendered
-    - Added `/edit config showRelations`, which toggles whether colored lines between related Rooms are shown (default: true)
-  - Rooms will tick regardless of whether their parent room is active (or in other words, the hierarchy doesn't affect Rooms Ticking)
-  - Recoursive Rooms are disabled by default for convenience
-- Changed the Edit Mode Renderer a lot to make rendering the Room Hierarchies easier//possible without more bloat
-- Added new Edit Mode Blocks to control Music in Levels
-  - Music Listener
-    - Changes the currently playing Soundtrack Key of everyone in the Room while the bound **local** flag activates
-    - If `stopOnDisable` is enabled, the currently playing Soundtrack Key of Players will be cleared (meaning the music stops) upon the bound **local** flag deactivating.
-  - Music Trigger
-    - Changes the currently playing Soundtrack Key of Players that enter its Area IF the bound **local** flag is active
-    - If the Track Key is already playing for the Player, it won't do anything
-  - To stop the currently playing music, either set the key to an unused value, or leave it empty
-  - When a Track Switches, the last one will fade out and the next one will Fade in to make for a smooth transition
-- Added Attribute `forceDestination` to ForceTravelTriggers
-  - If this value is set, the player won't get a choice on where they travel
-  - If `openRanking` is enabled, they'll still be shown the Ranking Screen; however, the next Level button will always lead to the forced Destination and the Select Level Button is Disabled
-  - If `openRanking` is disabled, they'll travel to the forced Destination immediately after the Travel Screen intro Animation finished
-  - It takes an Identifier being either a level or layer dimension id (in other words a valid destination) and its Default Value is `none`
-  - The Default value can be restored by setting it to any of the following: [`null`, `none`, `default`]
-- Improved Edit Mode Block removal handling
-  - In other words, all children // the parent of a broken Block now immediately know that it was removed
-- Added new Edit Mode Block "Abyss"
-  - Acts as a Trigger that applies damage and teleports players that enter its Area to its Block Position (or rather the first solid Block below it (in a range of 16 Blocks))
+- Changes to Spawn Listeners
+  - Added `noAI` Attribute
+  - Added `onGround` Attribute
+    - Tries to spawn the entity on the first Solid Block directly below the spawner instead of at its Blocks Center position
+    - If there's no suitable ground block within 64 Blocks, the entity will just be spawned at the Blocks Position anyways
+  - Removed Special Spawn Identifier `ultracraft:dummy`
+- Added `knockbackOnly` Attribute ot explosion listeners
+  - Enabling this, will make the explosion listeners throw entities within its `explosionRadius` away from it
+  - The velocity is calculated using `(1f - (distance(entity, block) / explosionRadius)) * explosionDamage`
+  - This is used to launch V2 after spawning
+- Added Timer Listener
+  - Starts//Stops the Timer for all players in its parent room when the flag bound to it is activated
+  - This is used to stop the Level Timer after V2 has been defeated
+- Added Unlock Check Trigger
+  - Sets the bound flag based on whether enough players with a specific Progression Entry are within the Blocks Area.
+  - The Attributes `checkUnlocked` and `checkObtained` define whether the target is required to have unlocked and//or obtained the progression entry
+  - This is used to ensure the Knuckleblaster is picked up before leaving limbo3 `Clair de Lune`
 ## Resource Changes
-- The Icon for the Sound Listener Mapping Block is now used for Music Listeners instead
-- Changed how Music in the Level Metadata works
-  - You can now set multiple Tracks for the same Level
-    - Their Key (value in quotes `""` before the colon `:`) will be their Track ID
-    - Any String works as a track Key. If you set the key to be `default`, it will start playing immediately upon entering the level
-  - Added `title`, `author` and `color` Fields 
-    - These will be used for a pop-up that shows up whenever the Track starts playing, IF an author is set
-  - Added `combat-threshold` Field
-    - The music will automatically switch to the combat version if there are more enemies than the combat-threshold around the local player
-    - Default is 0, so if there's 1 Enemy, the Combat track variant will play
-  - Added `no-calmdown` Field
-    - Setting this to true makes it so that once the combat track is playing, it won't go back to the calm track anymore
-    - This is used in Limbo3 for example
-- Added `unlocked` Field to Level Metadata
-  - This defines whether a Level should always be unlocked. The default is `false`
-- Changed the order Clair de Lunes Music disc description to be more uniform with minecraft (it's now `Author - Title` and not the other way around)
-- Added `fragile_nature` Block Tag
-  - Fragile Plants like Flowers and Leaves were separated into this tag to allow for nature to be protected from ultracarnage using the new `ProtectNature` Server Config
-- Crops were added to the `fragile_nature` Block Tag
-- Translation Keys for Layer Buttons changed (`screen.ultracraft.travel.layer<index>` -> `layer.ultracraft.<layer-name>`)
-- Clair de Lune (Music Disc) Identifier changed (`ultracraft:clair_de_lune` -> `ultracraft:disc/clair_de_lune`)
-- Changed Progression Item Tooltip color (`item.ultracraft.progression-item.lore` | §8 -> §7)
-- Renamed Fancy Carpet Block (`block.ultracraft.carpet` | `Fancy Carpet` -> `Blue Fancy Carpet`)
-- Added missing translation key for Server-Join-Info (`message.ultracraft.parry-chaining`)
-- Fixed typo in translation key for Server-Join-Info (`message.ultracraft.fall-drowning` -> `message.ultracraft.drowning`)
-- Changed Level Rescue Messages
-- Fixed Culling issue in Pedestal Model
+- Changed Shotgun UVs(moved smoke to make room for the chainsaw)
 ## API Changes

@@ -36,5 +36,6 @@
       "combat": "ultracraft:music.limbo2"
     }
   },
-  "version": 2
+  "version": 3,
+  "next-level": "ultracraft:luna"
 }

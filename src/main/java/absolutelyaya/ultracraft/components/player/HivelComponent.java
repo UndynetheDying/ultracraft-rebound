@@ -19,7 +19,7 @@ public class HivelComponent implements IHivelComponent
 {
 	private final PlayerEntity provider;
 	
-	boolean ignoreSlowdown, airControlIncreased, dirty;
+	boolean ignoreSlowdown, airControlIncreased, dirty, sliding, slamming;
 	float stamina, lastStamina, staminaRegen = 1.5f, maxNoSlowdownVelocity;
 	int dashingTicks = -2, slamDamageCooldown;
 	
@@ -111,7 +111,7 @@ public class HivelComponent implements IHivelComponent
 	{
 		ignoreSlowdown = b;
 		maxNoSlowdownVelocity = (float)provider.getVelocity().horizontalLength();
-		dirty = true;
+		markDirty();
 	}
 	
 	@Override
@@ -152,6 +152,32 @@ public class HivelComponent implements IHivelComponent
 	}
 	
 	@Override
+	public void setSliding(boolean b)
+	{
+		sliding = b;
+		markDirty();
+	}
+	
+	@Override
+	public boolean isSliding()
+	{
+		return UltraComponents.WING_DATA.get(provider).isActive() && sliding;
+	}
+	
+	@Override
+	public void setSlamming(boolean b)
+	{
+		slamming = b;
+		markDirty();
+	}
+	
+	@Override
+	public boolean isSlamming()
+	{
+		return UltraComponents.WING_DATA.get(provider).isActive() && slamming;
+	}
+	
+	@Override
 	public void markDirty()
 	{
 		dirty = true;
@@ -179,8 +205,7 @@ public class HivelComponent implements IHivelComponent
 		if(slamDamageCooldown > 0)
 			slamDamageCooldown--;
 		StatusEffectInstance chilled = provider.getStatusEffect(StatusEffectRegistry.CHILLED);
-		if(stamina < 90 && !(provider instanceof WingedPlayerEntity winged && winged.isSliding()) &&
-				   !(chilled != null && provider.age % (chilled.getAmplifier() + 1) != 0))
+		if(stamina < 90 && !UltraComponents.HIVEL.get(provider).isSliding() && !(chilled != null && provider.age % (chilled.getAmplifier() + 1) != 0))
 		{
 			lastStamina = stamina;
 			stamina += staminaRegen;
@@ -194,6 +219,8 @@ public class HivelComponent implements IHivelComponent
 			{
 				PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 				buf.writeBoolean(ignoreSlowdown);
+				buf.writeBoolean(sliding);
+				buf.writeBoolean(slamming);
 				ClientPlayNetworking.send(PacketRegistry.HIVEL_DATA_PACKET_ID, buf);
 			}
 			else

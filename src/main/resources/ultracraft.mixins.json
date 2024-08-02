@@ -6,8 +6,10 @@
   "mixins": [
     "BlockItemMixin",
     "BlockMixin",
+    "BoatEntityMixin",
     "EntityMixin",
     "ExplosiveProjectileMixin",
+    "FallingBlockEntityMixin",
     "FishingBobberMixin",
     "FluidBlockMixin",
     "HungerManagerMixin",

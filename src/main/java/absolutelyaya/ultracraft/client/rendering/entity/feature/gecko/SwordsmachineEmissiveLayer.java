@@ -18,10 +18,10 @@ import mod.azure.azurelib.renderer.layer.GeoRenderLayer;
 
 public class SwordsmachineEmissiveLayer extends GeoRenderLayer<SwordsmachineEntity>
 {
-	private static final Identifier TEXTURE = Ultracraft.identifier("textures/entity/swordsmachine_emissive.png");
-	private static final Identifier TEXTURE_RAGE = Ultracraft.identifier("textures/entity/swordsmachine_emissive_rage.png");
-	private static final Identifier TEXTURE_TUNDRA = Ultracraft.identifier("textures/entity/swordsmachine_emissive_tundra.png");
-	private static final Identifier TEXTURE_AGONY = Ultracraft.identifier("textures/entity/swordsmachine_emissive_agony.png");
+	private static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/entity/swordsmachine_emissive");
+	private static final Identifier TEXTURE_RAGE = Ultracraft.texIdentifier("textures/entity/swordsmachine_emissive_rage");
+	private static final Identifier TEXTURE_TUNDRA = Ultracraft.texIdentifier("textures/entity/swordsmachine_emissive_tundra");
+	private static final Identifier TEXTURE_AGONY = Ultracraft.texIdentifier("textures/entity/swordsmachine_emissive_agony");
 	
 	public SwordsmachineEmissiveLayer(GeoRenderer<SwordsmachineEntity> entityRendererIn)
 	{

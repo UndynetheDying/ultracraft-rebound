@@ -12,6 +12,8 @@
     "ultracraft:flame",
     "ultracraft:shotgun_pellet",
     "ultracraft:ejected_core",
-    "ultracraft:beam"
+    "ultracraft:beam",
+    "ultracraft:chainsaw",
+    "ultracraft:jumpstart_hook"
   ]
 }

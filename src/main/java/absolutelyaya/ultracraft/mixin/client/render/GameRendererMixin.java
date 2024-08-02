@@ -40,7 +40,7 @@ public class GameRendererMixin
 		if(client.player == null)
 			return;
 		IHivelComponent hivel = UltraComponents.HIVEL.get(client.player);
-		if(client.player instanceof WingedPlayerEntity winged && winged.isSliding() || hivel.isDashing())
+		if(hivel.isSliding() || hivel.isDashing())
 			ci.cancel();
 		if(Ultracraft.isTimeFrozen())
 			ci.cancel();
@@ -51,7 +51,7 @@ public class GameRendererMixin
 	{
 		float f = UltracraftClient.getConfig().slideTilt;
 		ClientPlayerEntity player = MinecraftClient.getInstance().player;
-		if(player instanceof WingedPlayerEntity winged && winged.isSliding() && player != null && !camera.isThirdPerson() && f > 0)
+		if(player != null && UltraComponents.HIVEL.get(player).isSliding() && !camera.isThirdPerson() && f > 0)
 		{
 			float side = MinecraftClient.getInstance().player.input.movementSideways;
 			slideViewTilt = MathHelper.lerp(tickDelta, slideViewTilt, f * -side);

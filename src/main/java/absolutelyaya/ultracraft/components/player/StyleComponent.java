@@ -7,7 +7,7 @@ import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
-import absolutelyaya.ultracraft.item.AbstractWeaponItem;
+import absolutelyaya.ultracraft.item.weapons.AbstractWeaponItem;
 import absolutelyaya.ultracraft.registry.PacketRegistry;
 import absolutelyaya.ultracraft.data.StyleBonus;
 import absolutelyaya.ultracraft.registry.ScoreboardCriteria;
@@ -315,7 +315,9 @@ public class StyleComponent implements IStyleComponent
 	@Override
 	public void tick()
 	{
-		if(bonusQueue.size() > 0 && provider.getWorld().getTime() - bonusQueue.peek().getRight() > 60)
+		if(Ultracraft.isTimeFrozen())
+			return;
+		if(!bonusQueue.isEmpty() && provider.getWorld().getTime() - bonusQueue.peek().getRight() > 60)
 			bonusQueue.remove();
 		if(chain > 0)
 			chain = Math.max(chain - getChainDecay() / 2f, 0);
@@ -324,7 +326,7 @@ public class StyleComponent implements IStyleComponent
 			UltraComponents.STYLE.sync(provider);
 			dirty = false;
 		}
-		if(UltraComponents.WING_DATA.get(provider).isActive() && (!provider.isOnGround() || (provider instanceof WingedPlayerEntity winged && winged.isSliding())))
+		if(UltraComponents.WING_DATA.get(provider).isActive() && (!provider.isOnGround() || (UltraComponents.HIVEL.get(provider).isSliding())))
 			movementMultiplier = MathHelper.clamp(movementMultiplier + 0.126f, 1f, 3f);
 		else if(movementMultiplier > 0)
 			movementMultiplier = MathHelper.clamp(movementMultiplier - 0.126f, 1f, 3f);

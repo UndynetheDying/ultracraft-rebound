@@ -7,6 +7,8 @@ import mod.azure.azurelib.model.GeoModel;
 
 public class SchismModel extends GeoModel<SchismEntity>
 {
+	static final Identifier TEXTURE = Ultracraft.texIdentifier("textures/entity/schism");
+	
 	@Override
 	public Identifier getModelResource(SchismEntity object)
 	{
@@ -16,7 +18,7 @@ public class SchismModel extends GeoModel<SchismEntity>
 	@Override
 	public Identifier getTextureResource(SchismEntity object)
 	{
-		return Ultracraft.identifier("textures/entity/schism.png");
+		return TEXTURE;
 	}
 	
 	@Override
