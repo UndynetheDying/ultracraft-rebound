@@ -5,6 +5,7 @@
     "#minecraft:flowers",
     "#minecraft:tall_flowers",
     "#c:crops",
-    "minecraft:grass"
+    "minecraft:grass",
+    "#c:flowers"
   ]
 }
