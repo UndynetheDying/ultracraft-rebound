@@ -1,4 +1,11 @@
 ## Major Changes
+- Added fragile Skulls
+  - Disappear when leaving a level to prevent keeping skulls from levels
+- Level Changes
+  - limbo1 `Illusionary Paradise`
+    - Fixed an unprotected gap inbetween Room `Hall of Nails` and Room `Filthy Staircase`
+    - Fixed a bunch of Spawner Listeners `yaw` Attribute
+    - Replaced Skulls with fragile Skulls
 - Fixed Bucket Items being usable to both take and place fluids in protected Areas
 - Fixed Flint and Steel being usable to place fire in protected Areas
 - `Disable Flashy VFX` Setting is now disabled by default

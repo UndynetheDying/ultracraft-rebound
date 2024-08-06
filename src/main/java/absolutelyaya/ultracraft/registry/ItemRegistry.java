@@ -290,7 +290,9 @@ public class ItemRegistry
 				FabricItemGroup.builder().displayName(Text.translatable("itemGroup.ultracraft.item")).icon(() -> new ItemStack(BLUE_SKULL)).build());
 		ItemGroupEvents.modifyEntriesEvent(ULTRACRAFT_TAB).register(content -> {
 			content.add(BLUE_SKULL);
+			content.add(BLUE_SKULL.getFragileStack());
 			content.add(RED_SKULL);
+			content.add(RED_SKULL.getFragileStack());
 			content.add(HELL_BULLET);
 			content.add(CERBERUS_BALL);
 			content.add(CANCER_BULLET);

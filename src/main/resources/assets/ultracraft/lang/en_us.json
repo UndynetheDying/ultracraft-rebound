@@ -1,6 +1,7 @@
 {
   "item.ultracraft.blue_skull": "Blue Skull",
   "item.ultracraft.red_skull": "Red Skull",
+  "item.ultracraft.skull.fragile-lore": "§8This crumbles to dust when leaving the Level",
   "item.ultracraft.hell_bullet": "Hell Bullet",
   "item.ultracraft.hell_bullet.hiddenlore": "§4Look upon my stack-size ye mighty and despair!",
   "item.ultracraft.cerberus_ball": "Cerberus Ball",
@@ -448,6 +449,8 @@
   "command.ultracraft.progression.grant-all-multi-success": "Granted all progression entries in list %1$s to %2$s targets",
   "command.ultracraft.progression.revoke-success": "Revoked progression entry '%1$s' in list %2$s from %3$s targets",
   "command.ultracraft.progression.revoke-multi-success": "Revoked progression entry '%1$s' in list %2$s from %3$s targets",
+  "command.ultracraft.progression.revoke-all-success": "Revoked all progression entries in list %1$s from %2$s",
+  "command.ultracraft.progression.revoke-all-multi-success": "Revoked all progression entries in list %1$s from %2$s targets",
   "command.ultracraft.progression.reset-success": "Reset progression for %s",
   "command.ultracraft.progression.reset-multi-success": "Reset progression for %s",
   "command.ultracraft.whitelist.check": "Whitelist '%1$s' is %2$s",

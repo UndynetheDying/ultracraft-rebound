@@ -24,6 +24,7 @@ import absolutelyaya.ultracraft.entity.machine.DroneEntity;
 import absolutelyaya.ultracraft.entity.projectile.AbstractSkewerEntity;
 import absolutelyaya.ultracraft.entity.projectile.ChainsawEntity;
 import absolutelyaya.ultracraft.entity.projectile.ThrownCoinEntity;
+import absolutelyaya.ultracraft.item.SkullItem;
 import absolutelyaya.ultracraft.item.weapons.AbstractWeaponItem;
 import absolutelyaya.ultracraft.item.weapons.SoapItem;
 import io.netty.buffer.Unpooled;
@@ -53,6 +54,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.*;
 import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
@@ -772,6 +774,18 @@ public class PacketRegistry
 	{
 		ServerPlayNetworking.send(player, FINISH_TRAVELLING_PACKET_ID, new PacketByteBuf(Unpooled.buffer()));
 		UltraComponents.HIVEL.get(player).setSlamming(false);
+		//remove fragile skulls
+		if(player.isCreative())
+			return;
+		DefaultedList<ItemStack> items = player.getInventory().main;
+		for (int i = 0; i < items.size(); i++)
+		{
+			if(items.get(i).getItem() instanceof SkullItem && SkullItem.isFragile(items.get(i)))
+				player.getInventory().setStack(i, ItemStack.EMPTY);
+		}
+		ItemStack offhand = player.getStackInHand(Hand.OFF_HAND);
+		if(offhand.getItem() instanceof SkullItem && SkullItem.isFragile(offhand))
+			player.getInventory().offHand.set(0, ItemStack.EMPTY);
 	}
 	
 	static HashSet<Entity> fetchParryCandidates(ServerPlayerEntity player, Vec3d pos, Vec3d forward, float dist, Vector3f clientVel,
