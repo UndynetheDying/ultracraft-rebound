@@ -5,6 +5,8 @@
 ## Commands
 ## Tweaks
 ## Minor Changes
+- Fixed Shotgun Pump Animation
 ## Edit Mode Changes
 ## Resource Changes
+- Reverted some unintended changes to the shotgun model in 2.2.0 (mainly animation related)
 ## API Changes
