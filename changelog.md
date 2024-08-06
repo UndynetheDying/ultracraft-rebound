@@ -1,6 +1,8 @@
 ## Major Changes
 - Fixed Bucket Items being usable to both take and place fluids in protected Areas
 - Fixed Flint and Steel being usable to place fire in protected Areas
+- `Disable Flashy VFX` Setting is now disabled by default
+  - it was enabled by accident
 ## Settings & Config
 ## Commands
 - Fixed `/ultracraft progression level grant-all` not unlocking Level `clair de lune`

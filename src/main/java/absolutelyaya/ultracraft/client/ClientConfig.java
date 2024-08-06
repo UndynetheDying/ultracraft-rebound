@@ -78,7 +78,7 @@ public class ClientConfig implements ConfigData
 	@ConfigEntry.Gui.Tooltip
 	public boolean showPunchArea = false;
 	@ConfigEntry.Gui.Tooltip
-	public boolean safeVFX = true;
+	public boolean safeVFX = false;
 	@ConfigEntry.Gui.Tooltip
 	public boolean deathScreen = false;
 	@ConfigEntry.Gui.Tooltip
