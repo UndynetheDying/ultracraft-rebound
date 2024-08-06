@@ -4,6 +4,8 @@
 - `Disable Flashy VFX` Setting is now disabled by default
   - It was enabled by accident
 - Knuckleblaster punches and blasts can now break cracked stone bricks
+- Ultracraft Explosion Knockback will now always go upwards
+  - As in, it takes the absolute value of y; it still applies velocity on the x and z axis of course 
 ## Settings & Config
 ## Commands
 - Fixed `/ultracraft progression level grant-all` not unlocking Level `clair de lune`

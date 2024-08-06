@@ -104,7 +104,8 @@ public class ExplosionHandler
 				if((e instanceof LivingEntityAccessor living && (applyKnockbackToIgnored || !e.equals(ignored)) && living.takePunchKnockback()))
 				{
 					float vel = (float)(Math.min(radius * 0.75, 1.75f) * (normalizedDistance == 0f ? 0.75f : Math.min(1.5f - normalizedDistance, 1f)));
-					e.addVelocity(e.getPos().subtract(pos).add(0.0, 1f - normalizedDistance, 0.0).normalize().multiply(vel));
+					Vec3d vec = e.getPos().subtract(pos).add(0.0, 1f - normalizedDistance, 0.0).normalize().multiply(vel);
+					e.addVelocity(vec.x, Math.abs(vec.y), vec.z);
 				}
 				if(e != ignored)
 				{
