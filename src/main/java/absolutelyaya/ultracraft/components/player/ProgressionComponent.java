@@ -43,6 +43,9 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 			add(FEEDBACKER);
 			add(KNUCKLEBLASTER);
 			add(SLAB);
+			add(HIVEL);
+			add(BLOODHEAL);
+			add(ULTRAHUD);
 		}
 	};
 	
@@ -60,6 +63,12 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 	public void lock(Identifier id)
 	{
 		unlocked.remove(id);
+	}
+	
+	@Override
+	public void lockAll()
+	{
+		unlocked.clear();
 	}
 	
 	@Override
@@ -99,6 +108,12 @@ public class ProgressionComponent implements IProgressionComponent, AutoSyncedCo
 	public void disown(Identifier id)
 	{
 		owned.remove(id);
+	}
+	
+	@Override
+	public void disownAll()
+	{
+		owned.clear();
 	}
 	
 	@Override

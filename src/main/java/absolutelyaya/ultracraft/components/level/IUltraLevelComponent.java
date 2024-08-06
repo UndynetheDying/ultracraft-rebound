@@ -36,6 +36,8 @@ public interface IUltraLevelComponent extends ComponentV3
 	
 	void lockDestination(Identifier id);
 	
+	void lockAllDestinations();
+	
 	void setDestinations(List<Identifier> ids);
 	
 	List<Identifier> getUnlockedDestinationList();

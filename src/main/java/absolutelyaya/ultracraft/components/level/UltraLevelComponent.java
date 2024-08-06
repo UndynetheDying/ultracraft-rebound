@@ -121,6 +121,7 @@ public class UltraLevelComponent implements IUltraLevelComponent
 		unlockDestination(Ultracraft.identifier("limbo1"));
 		unlockDestination(Ultracraft.identifier("dimension.limbo"));
 		unlockDestination(Ultracraft.identifier("limbo2"));
+		unlockDestination(Ultracraft.identifier("luna"));
 	}
 	
 	@Override
@@ -128,6 +129,12 @@ public class UltraLevelComponent implements IUltraLevelComponent
 	{
 		if(isDestinationUnlocked(id))
 			unlockedDestinations.remove(id);
+	}
+	
+	@Override
+	public void lockAllDestinations()
+	{
+		unlockedDestinations.clear();
 	}
 	
 	@Override

@@ -100,7 +100,8 @@ public class Commands
 					.then(literal("list").then(argument("target", player()).executes(Commands::executeProgressionList)))
 					.then(literal("grant").then(argument("target", players()).then(argument("entry", identifier()).suggests(Commands::progressionOptionsProvider).executes(Commands::executeProgressionGrant))))
 					.then(literal("grant-all").then(argument("target", players()).executes(Commands::executeProgressionGrantAll)))
-					.then(literal("revoke").then(argument("target", players()).then(argument("entry", identifier()).suggests(Commands::progressionListProvider).executes(Commands::executeProgressionRevoke)))))
+					.then(literal("revoke").then(argument("target", players()).then(argument("entry", identifier()).suggests(Commands::progressionListProvider).executes(Commands::executeProgressionRevoke))))
+					.then(literal("revoke-all").then(argument("target", players()).executes(Commands::executeProgressionRevokeAll))))
 				.then(literal("reset").then(argument("target", players()).executes(Commands::executeProgressionReset))))
 			.then(literal("ultrabossbar").requires(source -> source.hasPermissionLevel(2)).then(argument("id", identifier()).executes(Commands::executeUltraBossbar)))
 			.then(literal("style").then(argument("target", players()).then(argument("entry", identifier()).suggests(Commands::styleBonusProvider).executes(Commands::executeStyle))))
@@ -378,6 +379,37 @@ public class Commands
 					((ServerPlayerEntity)targets.toArray()[0]).getName()), true);
 		else
 			context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.progression.grant-all-multi-success", type, size), true);
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static int executeProgressionRevokeAll(CommandContext<ServerCommandSource> context) throws CommandSyntaxException
+	{
+		Collection<ServerPlayerEntity> targets = EntityArgumentType.getPlayers(context, "target");
+		String type = context.getArgument("list", String.class);
+		for (ServerPlayerEntity target : targets)
+		{
+			IProgressionComponent progression = UltraComponents.PROGRESSION.get(target);
+			switch(type)
+			{
+				case "unlocked" -> progression.lockAll();
+				case "obtained" -> progression.disownAll();
+				case "level" -> {
+					IUltraLevelComponent global = UltraComponents.GLOBAL.get(target.getWorld().getLevelProperties());
+					global.lockAllDestinations();
+				}
+				default -> {
+					context.getSource().sendError(Text.translatable("command.ultracraft.progression.invalid_list"));
+					return Command.SINGLE_SUCCESS;
+				}
+			}
+			progression.sync();
+		}
+		int size = targets.size();
+		if(size == 1)
+			context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.progression.revoke-all-success", type,
+					((ServerPlayerEntity)targets.toArray()[0]).getName()), true);
+		else
+			context.getSource().sendFeedback(() -> Text.translatable("command.ultracraft.progression.revoke-all-multi-success", type, size), true);
 		return Command.SINGLE_SUCCESS;
 	}
 	
