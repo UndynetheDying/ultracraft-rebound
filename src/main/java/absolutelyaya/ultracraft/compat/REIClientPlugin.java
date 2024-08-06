@@ -112,7 +112,8 @@ public class REIClientPlugin implements me.shedaniel.rei.api.client.plugins.REIC
 				EntryStacks.of(ItemRegistry.LIMBO2_CALM_DISK),
 				EntryStacks.of(ItemRegistry.CYBERGRIND_DISK),
 				EntryStacks.of(ItemRegistry.CLAIR_DE_LUNE_DISK),
-				EntryStacks.of(ItemRegistry.VERSUS_DISK));
+				EntryStacks.of(ItemRegistry.VERSUS_DISK),
+				EntryStacks.of(ItemRegistry.COUNTERFEIT_DISK));
 		registry.group(Ultracraft.identifier("discs"), Text.translatable("rei-group.ultracraft.discs"), entries);
 	}
 }

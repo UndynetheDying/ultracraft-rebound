@@ -31,6 +31,7 @@
 - Buffed Knuckleblaster Explosion Damage (1.0 -> 2.0)
 ## Minor Changes
 - Fixed Shotgun Pump Animation
+- Fixed the Counterfeit Music Disc not being in the REI Music Disc Item Group
 ## Edit Mode Changes
 ## Resource Changes
 - Reverted some unintended changes to the shotgun model in 2.2.0 (mainly animation related)
