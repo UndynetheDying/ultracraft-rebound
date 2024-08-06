@@ -11,6 +11,9 @@
     - Fixed an unprotected gap in Room `Hideous Court`
     - Replaced Skulls with fragile Skulls
     - Added some more Stained Glass Windows
+  - limbo3 `Clair de Lune`
+    - Fixed an unprotected gap right outside the Entrance Elevator
+    - Replaced Skulls with fragile Skulls
 - Fixed Bucket Items being usable to both take and place fluids in protected Areas
 - Fixed Flint and Steel being usable to place fire in protected Areas
 - `Disable Flashy VFX` Setting is now disabled by default
