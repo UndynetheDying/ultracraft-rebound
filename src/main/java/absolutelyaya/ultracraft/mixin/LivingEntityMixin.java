@@ -525,7 +525,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityAc
 			return;
 		if(!getWorld().isClient)
 			ExplosionHandler.explosion(player, player.getWorld(), player.getPos(), DamageSources.get(player.getWorld(),
-					DamageSources.KNUCKLE_BLAST, player), 1f, 0.75f, 6, true);
+					DamageSources.KNUCKLE_BLAST, player), 2f, 0.75f, 6, true);
 		else
 		{
 			if(player instanceof WingedPlayerEntity && UltraComponents.HIVEL.get(this).isSliding())

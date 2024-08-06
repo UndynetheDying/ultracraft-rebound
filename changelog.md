@@ -2,7 +2,8 @@
 - Fixed Bucket Items being usable to both take and place fluids in protected Areas
 - Fixed Flint and Steel being usable to place fire in protected Areas
 - `Disable Flashy VFX` Setting is now disabled by default
-  - it was enabled by accident
+  - It was enabled by accident
+- Knuckleblaster punches and blasts can now break cracked stone bricks
 ## Settings & Config
 ## Commands
 - Fixed `/ultracraft progression level grant-all` not unlocking Level `clair de lune`
@@ -10,6 +11,7 @@
 - Added `/ultracraft progression <list> revoke-all <target>`
   - Clears the given progression list on given targets (level unlocks are still global, so any target will affect everyone)
 ## Tweaks
+- Buffed Knuckleblaster Explosion Damage (1.0 -> 2.0)
 ## Minor Changes
 - Fixed Shotgun Pump Animation
 ## Edit Mode Changes
