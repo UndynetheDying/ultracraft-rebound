@@ -6,6 +6,11 @@
     - Fixed an unprotected gap inbetween Room `Hall of Nails` and Room `Filthy Staircase`
     - Fixed a bunch of Spawner Listeners `yaw` Attribute
     - Replaced Skulls with fragile Skulls
+  - limbo2 `Halls of the Blameless`
+    - Fixed an unprotected gap in Room `Lava`
+    - Fixed an unprotected gap in Room `Hideous Court`
+    - Replaced Skulls with fragile Skulls
+    - Added some more Stained Glass Windows
 - Fixed Bucket Items being usable to both take and place fluids in protected Areas
 - Fixed Flint and Steel being usable to place fire in protected Areas
 - `Disable Flashy VFX` Setting is now disabled by default
