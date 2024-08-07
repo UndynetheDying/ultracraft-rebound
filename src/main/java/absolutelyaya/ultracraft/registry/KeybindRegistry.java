@@ -173,7 +173,8 @@ public class KeybindRegistry
 			{
 				BlockHitResult hit = ((BlockHitResult)crosshairTarget);
 				BlockState state = player.getWorld().getBlockState(hit.getBlockPos());
-				if(state.getBlock() instanceof IPunchableBlock || state.isIn(TagRegistry.FRAGILE) || state.getBlock() instanceof BellBlock)
+				if(state.getBlock() instanceof IPunchableBlock || state.isIn(TagRegistry.PUNCH_BREAKABLE) || state.isIn(TagRegistry.KNUCKLE_BREAKABLE) ||
+						   state.getBlock() instanceof BellBlock)
 				{
 					PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 					buf.writeBlockPos(hit.getBlockPos());

@@ -295,8 +295,7 @@ public class PacketRegistry
 					if(state.getBlock() instanceof BellBlock bell)
 						bell.ring(player, player.getWorld(), target, player.getHorizontalFacing().getOpposite());
 					IArmComponent arm = UltraComponents.ARMS.get(player);
-					if(state.isIn(TagRegistry.PUNCH_BREAKABLE) || (arm.isKnuckleblaster() && state.isIn(TagRegistry.KNUCKLE_BREAKABLE)) &&
-																		  player.canModifyAt(world, target))
+					if(state.isIn(TagRegistry.PUNCH_BREAKABLE) || (arm.isKnuckleblaster() && state.isIn(TagRegistry.KNUCKLE_BREAKABLE)))
 						player.getWorld().breakBlock(target, true, player);
 				}
 			});

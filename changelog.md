@@ -18,6 +18,7 @@
 - Fixed Flint and Steel being usable to place fire in protected Areas
 - `Disable Flashy VFX` Setting is now disabled by default
   - It was enabled by accident
+- Fixed `punch_breakable` and `knuckle_breakable` block tags not working properly
 - Knuckleblaster punches and blasts can now break cracked stone bricks
 - Ultracraft Explosion Knockback will now always go upwards
   - As in, it takes the absolute value of y; it still applies velocity on the x and z axis of course 

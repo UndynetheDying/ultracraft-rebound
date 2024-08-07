@@ -314,8 +314,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements WingedPl
 					for (int z = -1; z <= 1; z++)
 					{
 						BlockPos pos = getSteppingPos().add(new Vec3i(x, y, z));
-						if(!canModifyAt(world, pos))
-							continue;
 						if(!(ServerConfig.INSTANCE.protectNature.getValue() && world.getBlockState(pos).isIn(TagRegistry.FRAGILE_NATURE)) &&
 								   world.getBlockState(pos).isIn(TagRegistry.SLAM_BREAKABLE))
 							world.breakBlock(pos, true, this);
