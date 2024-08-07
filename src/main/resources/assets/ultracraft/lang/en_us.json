@@ -488,6 +488,7 @@
   "command.ultracraft.edit.nothing-focused": "Nothing focused with key '%s'",
   "command.ultracraft.edit.no-room": "No Room Selected",
   "command.ultracraft.edit.room-but-no-room": "Error: focused room pos is not a room",
+  "command.ultracraft.edit.no-player": "This Command can only be run by Players.",
   "command.ultracraft.edit.ping.room-found": "Room found: '%1$s' at [%2$s,%3$s,%4$s]",
   "command.ultracraft.edit.ping.orphan-found": "Orphan %1$s found: '%2$s' at [%3$s,%4$s,%5$s]",
   "command.ultracraft.edit.ping.no-results": "No Rooms :(",

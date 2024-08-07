@@ -64,7 +64,10 @@ public class EditModeCommands
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		if(player == null)
+		{
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.no-player"));
 			return Command.SINGLE_SUCCESS;
+		}
 		IEditorComponent editor = UltraComponents.EDITOR.get(player);
 		editor.toggleEditMode();
 		editor.sync();
@@ -77,7 +80,10 @@ public class EditModeCommands
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		if(player == null)
+		{
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.no-player"));
 			return Command.SINGLE_SUCCESS;
+		}
 		List<BlockPos> roomBlocks = new ArrayList<>();
 		List<BlockPos> orphans = new ArrayList<>();
 		BlockPos center = player.getBlockPos();
@@ -125,7 +131,10 @@ public class EditModeCommands
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		if(player == null)
+		{
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.no-player"));
 			return Command.SINGLE_SUCCESS;
+		}
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeInt(0);
 		buf.writeInt(0);
@@ -138,7 +147,10 @@ public class EditModeCommands
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		if(player == null)
+		{
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.no-player"));
 			return Command.SINGLE_SUCCESS;
+		}
 		String key = context.getArgument("key", String.class);
 		String name = context.getArgument("name", String.class);
 		BlockPos pos = UltraComponents.EDITOR.get(player).getEditFocus(key);
@@ -156,7 +168,10 @@ public class EditModeCommands
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		if(player == null)
+		{
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.no-player"));
 			return Command.SINGLE_SUCCESS;
+		}
 		String key = context.getArgument("key", String.class);
 		IEditorComponent editor = UltraComponents.EDITOR.get(player);
 		BlockPos pos = editor.getEditFocus(key);
@@ -186,7 +201,10 @@ public class EditModeCommands
 	{
 		PlayerEntity player = context.getSource().getPlayer();
 		if(player == null)
+		{
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.no-player"));
 			return Command.SINGLE_SUCCESS;
+		}
 		BlockPos roomPos = getSelectedRoom(player);
 		if(roomPos == null)
 		{
@@ -208,7 +226,10 @@ public class EditModeCommands
 	{
 		PlayerEntity player = context.getSource().getPlayer();
 		if(player == null)
+		{
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.no-player"));
 			return Command.SINGLE_SUCCESS;
+		}
 		BlockPos roomPos = getSelectedRoom(player);
 		if(roomPos == null)
 		{
@@ -227,7 +248,10 @@ public class EditModeCommands
 	{
 		PlayerEntity player = context.getSource().getPlayer();
 		if(player == null)
+		{
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.no-player"));
 			return Command.SINGLE_SUCCESS;
+		}
 		BlockPos roomPos = getSelectedRoom(player);
 		if(roomPos == null)
 		{
@@ -252,7 +276,10 @@ public class EditModeCommands
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		if(player == null)
+		{
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.no-player"));
 			return Command.SINGLE_SUCCESS;
+		}
 		String key = context.getArgument("key", String.class);
 		String flag = context.getArgument("flag", String.class);
 		BlockPos pos = UltraComponents.EDITOR.get(player).getEditFocus(key);
@@ -271,7 +298,10 @@ public class EditModeCommands
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		if(player == null)
+		{
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.no-player"));
 			return Command.SINGLE_SUCCESS;
+		}
 		String key = context.getArgument("key", String.class);
 		IEditorComponent editor = UltraComponents.EDITOR.get(player);
 		if(key.equals("room") && !editor.isAllowRecursiveRooms())
@@ -299,7 +329,10 @@ public class EditModeCommands
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		if(player == null)
+		{
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.no-player"));
 			return Command.SINGLE_SUCCESS;
+		}
 		float speed = context.getArgument("speed", Float.class);
 		IEditorComponent editor = UltraComponents.EDITOR.get(player);
 		editor.setFlySpeed(speed);
@@ -312,7 +345,10 @@ public class EditModeCommands
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		if(player == null)
+		{
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.no-player"));
 			return Command.SINGLE_SUCCESS;
+		}
 		IEditorComponent editor = UltraComponents.EDITOR.get(player);
 		boolean b = editor.toggleNoClip();
 		editor.sync();
@@ -324,7 +360,10 @@ public class EditModeCommands
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		if(player == null)
+		{
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.no-player"));
 			return Command.SINGLE_SUCCESS;
+		}
 		IEditorComponent editor = UltraComponents.EDITOR.get(player);
 		boolean b = editor.toggleShowAreaOwner();
 		editor.sync();
@@ -336,7 +375,10 @@ public class EditModeCommands
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		if(player == null)
+		{
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.no-player"));
 			return Command.SINGLE_SUCCESS;
+		}
 		IEditorComponent editor = UltraComponents.EDITOR.get(player);
 		boolean b = editor.toggleGhost();
 		editor.sync();
@@ -348,7 +390,10 @@ public class EditModeCommands
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		if(player == null)
+		{
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.no-player"));
 			return Command.SINGLE_SUCCESS;
+		}
 		IEditorComponent editor = UltraComponents.EDITOR.get(player);
 		boolean b = editor.toggleRecursiveRooms();
 		editor.sync();
@@ -360,7 +405,10 @@ public class EditModeCommands
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		if(player == null)
+		{
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.no-player"));
 			return Command.SINGLE_SUCCESS;
+		}
 		IEditorComponent editor = UltraComponents.EDITOR.get(player);
 		boolean b = editor.toggleShowRelations();
 		editor.sync();
@@ -384,7 +432,10 @@ public class EditModeCommands
 	{
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		if(player == null)
+		{
+			context.getSource().sendMessage(Text.translatable("command.ultracraft.edit.no-player"));
 			return Command.SINGLE_SUCCESS;
+		}
 		String key = context.getArgument("key", String.class);
 		String attribute = context.getArgument("attribute", String.class);
 		String value = context.getArgument("value", String.class);
