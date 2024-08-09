@@ -30,6 +30,7 @@
   - Clears the given progression list on given targets (level unlocks are still global, so any target will affect everyone)
 ## Tweaks
 - Buffed Knuckleblaster Explosion Damage (1.0 -> 2.0)
+- Increased Style decay rate
 ## Minor Changes
 - Fixed Shotgun Pump Animation
 - Fixed the Counterfeit Music Disc not being in the REI Music Disc Item Group

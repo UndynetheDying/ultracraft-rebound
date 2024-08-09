@@ -3,7 +3,6 @@ package absolutelyaya.ultracraft.components.player;
 import absolutelyaya.ultracraft.Ultracraft;
 import absolutelyaya.ultracraft.api.HeavyEntities;
 import absolutelyaya.ultracraft.components.UltraComponents;
-import absolutelyaya.ultracraft.accessor.WingedPlayerEntity;
 import absolutelyaya.ultracraft.damage.DamageSources;
 import absolutelyaya.ultracraft.data.StyleBonusManager;
 import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
@@ -196,20 +195,9 @@ public class StyleComponent implements IStyleComponent
 	@Override
 	public int getRank()
 	{
-		if(chain > getStyleForRank(7))
-			return 7;
-		else if(chain > getStyleForRank(6))
-			return 6;
-		else if(chain > getStyleForRank(5))
-			return 5;
-		else if(chain > getStyleForRank(4))
-			return 4;
-		else if(chain > getStyleForRank(3))
-			return 3;
-		else if(chain > getStyleForRank(2))
-			return 2;
-		else if(chain > getStyleForRank(1))
-			return 1;
+		for (int i = 7; i > 0; i--)
+			if(chain > getStyleForRank(i))
+				return i;
 		return 0;
 	}
 	
@@ -233,13 +221,13 @@ public class StyleComponent implements IStyleComponent
 		return switch(getRank())
 		{
 			default -> 1f;
-			case 1 -> 1.25f;
-			case 2 -> 1.5f;
-			case 3 -> 2f;
-			case 4 -> 3f;
-			case 5 -> 4f;
-			case 6 -> 6f;
-			case 7 -> 8f;
+			case 1 -> 2f;
+			case 2 -> 3f;
+			case 3 -> 4f;
+			case 4 -> 6f;
+			case 5 -> 8f;
+			case 6 -> 12f;
+			case 7 -> 16f;
 		};
 	}
 	
