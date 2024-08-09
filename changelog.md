@@ -23,6 +23,7 @@
 - Ultracraft Explosion Knockback will now always go upwards
   - As in, it takes the absolute value of y; it still applies velocity on the x and z axis of course 
 - Fixed Magnet Slots not being freed up when a Magnet is removed
+- Updated Russian Translation provided by closet748
 ## Settings & Config
 ## Commands
 - Fixed `/ultracraft progression level grant-all` not unlocking Level `clair de lune`
