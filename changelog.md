@@ -22,6 +22,7 @@
 - Knuckleblaster punches and blasts can now break cracked stone bricks
 - Ultracraft Explosion Knockback will now always go upwards
   - As in, it takes the absolute value of y; it still applies velocity on the x and z axis of course 
+- Fixed Magnet Slots not being freed up when a Magnet is removed
 ## Settings & Config
 ## Commands
 - Fixed `/ultracraft progression level grant-all` not unlocking Level `clair de lune`

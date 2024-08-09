@@ -119,7 +119,7 @@ public class MagnetEntity extends AbstractSkewerEntity implements GeoEntity, IIg
 		if(!getWorld().isClient())
 		{
 			List<MagnetEntity> magnets = getWorld().getEntitiesByType(TypeFilter.instanceOf(MagnetEntity.class), getBoundingBox().expand(8), n -> n != this);
-			if(magnets.size() == 0)
+			if(magnets.isEmpty())
 				getWorld().getEntitiesByType(TypeFilter.instanceOf(NailEntity.class), getBoundingBox().expand(8), n -> true)
 					 .forEach(n -> n.setVelocity(Vec3d.ZERO.addRandom(random, 1f).normalize().multiply((float)n.getVelocity().length())));
 			if(getOwner() instanceof PlayerEntity player)
@@ -186,5 +186,15 @@ public class MagnetEntity extends AbstractSkewerEntity implements GeoEntity, IIg
 	void onPunchBroken()
 	{
 		despawn();
+	}
+	
+	@Override
+	public void remove(RemovalReason reason)
+	{
+		if(!isRemoved())
+		{
+			setRemoved(reason);
+			despawn();
+		}
 	}
 }
