@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/inner_stairs",
-  "textures": {
-    "bottom": "ultracraft:block/sheetmetal_sheet",
-    "side": "ultracraft:block/sheetmetal_sheet",
-    "top": "ultracraft:block/sheetmetal_sheet_stairs_top"
-  }
-}

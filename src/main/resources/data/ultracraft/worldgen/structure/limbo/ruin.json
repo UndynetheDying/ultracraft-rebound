@@ -1,7 +1,0 @@
-{
-  "type": "ultracraft:limbo_ruin",
-  "biomes": "ultracraft:limbo",
-  "step": "surface_structures",
-  "spawn_overrides": {},
-  "terrain_adaptation": "beard_thin"
-}

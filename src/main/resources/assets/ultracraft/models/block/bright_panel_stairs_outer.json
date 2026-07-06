@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/outer_stairs",
-  "textures": {
-    "bottom": "ultracraft:block/bright_panel_end",
-    "side": "ultracraft:block/bright_panel_stairs",
-    "top": "ultracraft:block/bright_panel_stairs_top"
-  }
-}

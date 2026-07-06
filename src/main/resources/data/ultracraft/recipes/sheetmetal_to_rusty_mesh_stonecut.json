@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "ingredient": {
-    "tag": "ultracraft:sheetmetal_blocks"
-  },
-  "result": "ultracraft:rusty_mesh",
-  "count": 1
-}

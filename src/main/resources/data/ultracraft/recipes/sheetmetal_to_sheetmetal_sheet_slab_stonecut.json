@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "ingredient": {
-    "item": "ultracraft:sheetmetal_sheet"
-  },
-  "result": "ultracraft:sheetmetal_sheet_slab",
-  "count": 2
-}

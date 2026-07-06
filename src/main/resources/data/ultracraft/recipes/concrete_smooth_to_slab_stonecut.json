@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "ingredient": {
-    "item": "ultracraft:concrete_smooth"
-  },
-  "result": "ultracraft:concrete_smooth_slab",
-  "count": 2
-}

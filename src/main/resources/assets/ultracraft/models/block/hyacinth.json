@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/cross",
-  "textures": {
-    "cross": "ultracraft:block/hyacinth",
-    "particles": "ultracraft:block/hyacinth"
-  }
-}

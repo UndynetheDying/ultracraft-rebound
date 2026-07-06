@@ -1,7 +1,0 @@
-{
-	"parent": "ultracraft:block/carpet/fill",
-	"textures": {
-		"0": "ultracraft:block/orange_carpet",
-		"particle": "ultracraft:block/orange_carpet_round"
-	}
-}

@@ -1,7 +1,0 @@
-{
-  "type": "ultracraft:abandoned_facility",
-  "biomes": "#ultracraft:has_abandoned_facility",
-  "step": "surface_structures",
-  "spawn_overrides": {},
-  "terrain_adaptation": "none"
-}

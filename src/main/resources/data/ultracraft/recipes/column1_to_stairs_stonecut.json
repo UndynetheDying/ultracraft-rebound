@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "ingredient": {
-    "item": "ultracraft:column1"
-  },
-  "result": "ultracraft:column1_stairs",
-  "count": 1
-}
