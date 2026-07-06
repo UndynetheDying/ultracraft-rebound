@@ -1,0 +1,7 @@
+{
+	"parent": "ultracraft:block/carpet/edge_inverted",
+	"textures": {
+		"0": "ultracraft:block/green_carpet",
+		"particle": "ultracraft:block/green_carpet_round"
+	}
+}

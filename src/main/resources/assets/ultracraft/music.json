@@ -1,0 +1,92 @@
+{
+  "ultracraft:music/the_fire_is_gone": {
+    "title": "music.ultracraft.fire_is_gone",
+    "author": "Heaven Pierce Her",
+    "color": "ff0000"
+  },
+  "ultracraft:music/clair_de_lune": {
+    "title": "music.ultracraft.clair_de_lune",
+    "author": "Claude Debussy",
+    "color": "60ccce"
+  },
+  "ultracraft:music/triage/beyondthefire": {
+    "group": "prelude1",
+    "author": "Triage",
+    "title": "music.ultracraft.prelude1",
+    "color": "ff0000"
+  },
+  "ultracraft:music/triage/beyondthefire_calm": {
+    "group": "prelude1",
+    "author": "Triage",
+    "title": "music.ultracraft.prelude1",
+    "color": "ff0000"
+  },
+  "ultracraft:music/efefski/prelude2": {
+    "group": "prelude2",
+    "author": "Efefski",
+    "title": "music.ultracraft.prelude2",
+    "color": "ff0000"
+  },
+  "ultracraft:music/efefski/prelude2_calm": {
+    "group": "prelude2",
+    "author": "Efefski",
+    "title": "music.ultracraft.prelude2",
+    "color": "ff0000"
+  },
+  "ultracraft:music/psykomatic/cerbcalm": {
+    "group": "prelude3",
+    "author": "Psykomatic",
+    "title": "music.ultracraft.cerberus",
+    "color": "ff0000"
+  },
+  "ultracraft:music/psykomatic/cerbfight": {
+    "group": "prelude3",
+    "author": "Psykomatic",
+    "title": "music.ultracraft.cerberus",
+    "color": "ff0000"
+  },
+  "ultracraft:music/oxblood/limbo1_illusion": {
+    "author": "Oxblood",
+    "title": "music.ultracraft.limbo1_illusion",
+    "color": "60ccce"
+  },
+  "ultracraft:music/oxblood/limbo1": {
+    "group": "limbo1",
+    "author": "Oxblood",
+    "title": "music.ultracraft.limbo1",
+    "color": "60ccce"
+  },
+  "ultracraft:music/oxblood/limbo1_calm": {
+    "group": "limbo1",
+    "author": "Oxblood",
+    "title": "music.ultracraft.limbo1",
+    "color": "60ccce"
+  },
+  "ultracraft:music/efefski/limbo2": {
+    "group": "limbo2",
+    "author": "Efefski",
+    "title": "music.ultracraft.limbo2",
+    "color": "60ccce"
+  },
+  "ultracraft:music/efefski/limbo2_calm": {
+    "group": "limbo2",
+    "author": "Efefski",
+    "title": "music.ultracraft.limbo2",
+    "color": "60ccce"
+  },
+  "ultracraft:music/aavanitro/versus": {
+    "author": "Aavanitro",
+    "title": "music.ultracraft.versus",
+    "color": "60ccce"
+  },
+  "ultracraft:music/ennway/counterfeit": {
+    "author": "ENNWAY",
+    "title": "music.ultracraft.counterfeit",
+    "color": "60ccce"
+  },
+  "ultracraft:music/efefski/cybergrind": {
+    "author": "Efefski",
+    "title": "music.ultracraft.cybergrind",
+    "color": "ff0000"
+  }
+}

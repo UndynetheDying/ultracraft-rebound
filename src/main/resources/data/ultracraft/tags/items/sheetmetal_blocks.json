@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "ultracraft:sheetmetal",
+    "ultracraft:sheetmetal_sheet",
+    "ultracraft:circuity",
+    "ultracraft:column1",
+    "ultracraft:column2",
+    "ultracraft:bright_panel",
+    "ultracraft:mesh",
+    "ultracraft:rusty_mesh",
+    "ultracraft:rusty_pipe"
+  ]
+}

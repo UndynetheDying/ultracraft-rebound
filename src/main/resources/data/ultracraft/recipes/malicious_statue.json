@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "#H#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:stone"
+    },
+    "H": {
+      "item": "ultracraft:hell_mass"
+    }
+  },
+  "result": {
+    "item": "ultracraft:maurice_deco",
+    "count": 1
+  }
+}

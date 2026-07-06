@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "invisible=false": {
+      "model": "ultracraft:block/hyacinth"
+    },
+    "invisible=true": {
+      "model": "minecraft:block/air"
+    }
+  }
+}

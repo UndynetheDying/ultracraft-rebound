@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#  ",
+    "## ",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "ultracraft:column1"
+    }
+  },
+  "result": {
+    "item": "ultracraft:column1_stairs",
+    "count": 4
+  }
+}

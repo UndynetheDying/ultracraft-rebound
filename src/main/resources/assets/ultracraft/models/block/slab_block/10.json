@@ -1,0 +1,7 @@
+{
+	"credit": "Made by Absolutelyaya",
+	"parent": "ultracraft:block/slab_block/1",
+	"textures": {
+		"0": "ultracraft:block/slab_block/slab_block_side11"
+	}
+}

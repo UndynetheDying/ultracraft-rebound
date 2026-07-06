@@ -1,0 +1,280 @@
+package absolutelyaya.ultracraft.entity.projectile;
+
+import absolutelyaya.ultracraft.ExplosionHandler;
+import absolutelyaya.ultracraft.ServerHitscanHandler;
+import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.accessor.ChainParryAccessor;
+import absolutelyaya.ultracraft.accessor.ProjectileEntityAccessor;
+import absolutelyaya.ultracraft.config.ServerConfig;
+import absolutelyaya.ultracraft.damage.DamageSources;
+import absolutelyaya.ultracraft.entity.AbstractUltraHostileEntity;
+import absolutelyaya.ultracraft.registry.EntityRegistry;
+import absolutelyaya.ultracraft.registry.ItemRegistry;
+import dev.lambdaurora.lambdynlights.DynamicLightSource;
+import dev.lambdaurora.lambdynlights.LambDynLights;
+import dev.lambdaurora.lambdynlights.api.DynamicLightHandlers;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.entity.projectile.ProjectileUtil;
+import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
+import net.minecraft.item.Item;
+import net.minecraft.particle.ItemStackParticleEffect;
+import net.minecraft.particle.ParticleTypes;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
+import net.minecraft.world.event.GameEvent;
+
+import java.util.List;
+
+public class HellBulletEntity extends ThrownItemEntity implements ProjectileEntityAccessor
+{
+	PlayerEntity parrier;
+	Class<? extends LivingEntity> ignore;
+	private boolean shot;
+	protected boolean difficultySpeed;
+	protected DamageSource damageSource = DamageSources.get(getWorld(), DamageSources.HELL_BULLET, this, this.getOwner());
+	
+	public HellBulletEntity(EntityType<? extends ThrownItemEntity> entityType, World world)
+	{
+		super(entityType, world);
+	}
+	
+	protected HellBulletEntity(LivingEntity owner, World world)
+	{
+		super(EntityRegistry.HELL_BULLET, owner, world);
+	}
+	
+	protected HellBulletEntity(EntityType<? extends HellBulletEntity> type, LivingEntity owner, World world)
+	{
+		super(type, owner, world);
+	}
+	
+	public static HellBulletEntity spawn(LivingEntity owner, World world)
+	{
+		return new HellBulletEntity(owner, world);
+	}
+	
+	@Override
+	protected Item getDefaultItem()
+	{
+		return ItemRegistry.HELL_BULLET;
+	}
+	
+	@Override
+	public boolean hasNoGravity()
+	{
+		return true;
+	}
+	
+	@Override
+	protected void onEntityHit(EntityHitResult entityHitResult)
+	{
+		super.onEntityHit(entityHitResult);
+		Entity entity = entityHitResult.getEntity();
+		float amount = 5f;
+		if(entity instanceof AbstractUltraHostileEntity)
+			amount *= 0.25f;
+		if(!entity.getClass().equals(ignore) && !((ProjectileEntityAccessor)this).isParried())
+			entity.damage(damageSource, amount);
+	}
+	
+	@Override
+	public void setVelocity(Vec3d velocity)
+	{
+		if(getOwner() instanceof PlayerEntity || !difficultySpeed)
+			super.setVelocity(velocity);
+		else
+			super.setVelocity(velocity.multiply(1f + Math.max(getWorld().getDifficulty().getId() - 1, 0) * 0.1f));
+	}
+	
+	@Override
+	protected void onCollision(HitResult hitResult)
+	{
+		if(hitResult instanceof EntityHitResult eHit && !eHit.getEntity().canBeHitByProjectile())
+			return;
+		if (!getWorld().isClient && !isRemoved())
+		{
+			getWorld().sendEntityStatus(this, (byte)3);
+			discard();
+		}
+		super.onCollision(hitResult);
+	}
+	
+	public void setIgnored(Class<? extends LivingEntity> ignore)
+	{
+		this.ignore = ignore;
+	}
+	
+	@Override
+	public void slowMovement(BlockState state, Vec3d multiplier)
+	{
+	
+	}
+	
+	@Override
+	public void tick()
+	{
+		if(isRemoved() || (getWorld().isClient && Ultracraft.isTimeFrozen()))
+			return;
+		if (!shot) {
+			emitGameEvent(GameEvent.PROJECTILE_SHOOT, getOwner());
+			shot = true;
+		}
+		
+		HitResult hitResult = ProjectileUtil.getCollision(this, this::canHit);
+		
+		if (hitResult.getType() != HitResult.Type.MISS)
+			onCollision(hitResult);
+		checkBlockCollision();
+		Vec3d vec3d = getVelocity();
+		double x = getX() + vec3d.x;
+		double y = getY() + vec3d.y;
+		double z = getZ() + vec3d.z;
+		updateRotation();
+		setPosition(x, y, z);
+		
+		if(age > getMaxAge())
+		{
+			getWorld().addParticle(new ItemStackParticleEffect(ParticleTypes.ITEM, getStack()),
+					getX(), getY(), getZ(), 0f, 0f, 0f);
+			if(!getWorld().isClient())
+				discard();
+		}
+		
+		if(age == 1)
+		{
+			List<Entity> entities = getWorld().getOtherEntities(getOwner(), getBoundingBox().stretch(this.getVelocity()), this::canHit);
+			if(entities.size() > 0)
+				onCollision(new EntityHitResult(entities.get(0)));
+		}
+		
+		if (Ultracraft.DYN_LIGHTS && getWorld().isClient() && this instanceof DynamicLightSource light)
+		{
+			if (!light.shouldUpdateDynamicLight())
+				light.setDynamicLightEnabled(false);
+			else
+			{
+				light.dynamicLightTick();
+				if (!(Boolean)LambDynLights.get().config.getEntitiesLightSource().get() || !DynamicLightHandlers.canLightUp((Entity)this))
+					light.resetDynamicLight();
+				LambDynLights.updateTracking(light);
+			}
+		}
+	}
+	
+	protected int getMaxAge()
+	{
+		return 400;
+	}
+	
+	protected boolean canHit(Entity entity)
+	{
+		if(!entity.canHit() && !entity.canBeHitByProjectile())
+			return false;
+		boolean parried = isParried();
+		if(entity.getClass().equals(ignore) && !parried && getKnockbackExplosionCauser() == null)
+			return false;
+		boolean val = super.canHit(entity);
+		if(val)
+			return val;
+		if(isOwner(entity))
+		{
+			if(getKnockbackExplosionCauser() != null)
+				return true;
+			else if(parried && !entity.equals(getParrier()))
+				return true;
+		}
+		return !isOwner(entity) && !(entity instanceof ProjectileEntity);
+	}
+	
+	@Override
+	public void onParriedCollision(HitResult hitResult)
+	{
+		int parries = ((ChainParryAccessor)this).getParryCount() - 1;
+		float damageMult = 1f + parries * 0.2f;
+		float rangeMult = 1f + parries * 0.1f;
+		Vec3d pos = hitResult.getPos();
+		Entity owner = getOwner();
+		if(owner == null)
+		{
+			ExplosionHandler.explosion(null, getWorld(), pos, DamageSources.get(getWorld(), DamageSources.PARRYAOE, parrier),
+					5f * damageMult, 1f, 3f * rangeMult, true);
+			return;
+		}
+		Entity hit = null;
+		if(hitResult.getType().equals(HitResult.Type.ENTITY))
+			hit = ((EntityHitResult)hitResult).getEntity();
+		if(owner.equals(hit))
+			owner.damage(DamageSources.get(getWorld(), DamageSources.PARRY, parrier), 15 * damageMult);
+		ExplosionHandler.explosion(owner.equals(hit) ? hit : null, getWorld(), pos, DamageSources.get(getWorld(), DamageSources.PARRYAOE, parrier),
+				5f * damageMult, 1f, 3f * rangeMult, true);
+	}
+	
+	@Override
+	public boolean isHitscanHittable(byte type)
+	{
+		return type == ServerHitscanHandler.SHARPSHOOTER;
+	}
+	
+	@Override
+	public PlayerEntity getParrier()
+	{
+		return parrier;
+	}
+	
+	@Override
+	public void setParrier(PlayerEntity p)
+	{
+		parrier = p;
+	}
+	
+	@Override
+	public void setParried(boolean val, PlayerEntity parrier)
+	{
+		if(val)
+			this.parrier = parrier;
+		else
+			this.parrier = null;
+		if(val && this instanceof ChainParryAccessor chainer)
+			chainer.setParryCount(chainer.getParryCount() + 1);
+		age = 0;
+	}
+	
+	@Override
+	public boolean isParried()
+	{
+		return parrier != null;
+	}
+	
+	@Override
+	public boolean isParriable()
+	{
+		return true;
+	}
+	
+	@Override
+	public boolean isBoostable()
+	{
+		return switch(ServerConfig.INSTANCE.projboost.getValue())
+		{
+			case ALLOW_ALL -> true;
+			case ENTITY_TAG -> getType().isIn(EntityRegistry.PROJBOOSTABLE);
+			case LIMITED -> this instanceof ShotgunPelletEntity;
+			case DISALLOW -> false;
+		} && age < 4;
+	}
+	
+	@Override
+	public void onKnockedBackbyExplosion(Entity exploder)
+	{
+		ProjectileEntityAccessor.super.onKnockedBackbyExplosion(exploder);
+		setIgnored(null);
+	}
+}

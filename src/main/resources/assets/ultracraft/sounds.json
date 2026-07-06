@@ -1,0 +1,695 @@
+{
+  "entity.generic.spawn": {
+    "sounds": [
+      "block/end_portal/eyeplace1",
+      "block/end_portal/eyeplace2",
+      "block/end_portal/eyeplace3"
+    ]
+  },
+  "entity.generic.fire": {
+    "sounds": [
+      "random/bow"
+    ]
+  },
+  "entity.generic.machine.death": {
+    "sounds": [
+      {"name":"ultracraft:placeholder","type":"event"}
+    ]
+  },
+  "entity.generic.husk.damage": {
+    "sounds": [
+      "damage/hit1",
+      "damage/hit2",
+      "damage/hit3"
+    ]
+  },
+  "entity.generic.husk.death": {
+    "sounds": [
+      {"name":"ultracraft:placeholder","type":"event"}
+    ]
+  },
+  "entity.generic.enrage": {
+    "sounds": [
+      "mob/zombie/remedy"
+    ]
+  },
+  "entity.generic.enraged_loop": {
+    "sounds": [
+      {"name":"ultracraft:placeholder","type":"event"}
+    ]
+  },
+  "entity.generic.interrupt": {
+    "sounds": [
+      {"name": "block.anvil.land", "type": "event"}
+    ]
+  },
+
+  "entity.filth.attack": {
+    "sounds": [
+      {"name":"entity.evoker_fangs.attack","type":"event"}
+    ]
+  },
+
+  "entity.malicious_face.tell.beam": {
+    "sounds": [
+      {"name":"block.note_block.pling","type":"event"}
+    ]
+  },
+
+  "entity.cerberus.rise": {
+    "sounds": [
+      {"name":"ultracraft:placeholder","type":"event"}
+    ]
+  },
+  "entity.cerberus.crack": {
+    "sounds": [
+      {"name":"block.deepslate.break","type":"event"}
+    ]
+  },
+  "entity.cerberus.tell.ram": {
+    "sounds": [
+      {"name":"ultracraft:placeholder","type":"event"}
+    ]
+  },
+  "entity.cerberus.tell.throw": {
+    "sounds": [
+      {"name":"ultracraft:placeholder","type":"event"}
+    ]
+  },
+  "entity.cerberus.tell.stomp": {
+    "sounds": [
+      {"name":"ultracraft:placeholder","type":"event"}
+    ]
+  },
+  "entity.cerberus.death": {
+    "sounds": [
+      {"name":"ultracraft:placeholder","type":"event"}
+    ]
+  },
+
+  "entity.swordsmachine.enrage": {
+    "sounds": [
+      "mob/zombie/remedy"
+    ]
+  },
+  "entity.swordsmachine.damage": {
+    "sounds": [
+      "damage/hit1",
+      "damage/hit2",
+      "damage/hit3"
+    ]
+  },
+  "entity.swordsmachine.death": {
+    "sounds": [
+      {"name":"ultracraft:placeholder","type":"event"}
+    ]
+  },
+
+
+  "entity.drone.charge": {
+    "sounds": [
+      {"name":"ultracraft:placeholder","type":"event"}
+    ]
+  },
+  "entity.drone.death": {
+    "sounds": [
+      {"name":"ultracraft:placeholder","type":"event"}
+    ]
+  },
+
+  "entity.street_cleaner.breathe": {
+    "sounds": [
+      "random/breath"
+    ]
+  },
+
+  "entity.hideous_mass.emerge_step": {
+    "sounds": [
+      {"name":"minecraft:block.calcite.break","type":"event","pitch": 0.5}
+    ]
+  },
+  "entity.hideous_mass.turn": {
+    "sounds": [
+      {"name":"minecraft:entity.spider.step","type":"event","pitch": 0.75}
+    ]
+  },
+  "entity.hideous_mass.mortar": {
+    "sounds": [
+      {"name":"minecraft:entity.arrow.shoot","type":"event","pitch": 0.05}
+    ]
+  },
+  "entity.hideous_mass.tell.stomp": {
+    "sounds": [
+      "ultracraft:entity/hideous_mass/laugh2"
+    ]
+  },
+  "entity.hideous_mass.tell.clap": {
+    "sounds": [
+      "ultracraft:entity/hideous_mass/laugh1"
+    ]
+  },
+  "entity.hideous_mass.tell.harpoon": {
+    "sounds": [
+      "ultracraft:entity/hideous_mass/gross-wet-noise"
+    ]
+  },
+  "entity.hideous_mass.impact": {
+    "sounds": [
+      "ultracraft:entity/hideous_mass/impact"
+    ]
+  },
+  "entity.hideous_mass.clap_impact": {
+    "sounds": [
+      "ultracraft:entity/hideous_mass/clap-impact"
+    ]
+  },
+  "entity.hideous_mass.enraged_loop": {
+    "sounds": [
+      {"name":"ultracraft:placeholder","type":"event"}
+    ]
+  },
+  "entity.hideous_mass.death": {
+    "sounds": [
+      {"name":"ultracraft:placeholder","type":"event"}
+    ]
+  },
+
+  "entity.skewer.hit_ground": {
+    "sounds": [
+      {"name":"item.trident.hit_ground","type":"event"}
+    ]
+  },
+  "entity.skewer.break": {
+    "sounds": [
+      "random/break"
+    ]
+  },
+  "entity.skewer.disown": {
+    "sounds": [
+      {"name":"entity.leash_knot.break","type":"event"}
+    ]
+  },
+
+  "entity.v2.tell.core_eject": {
+    "sounds": [
+      {"name":"ultracraft:placeholder","type":"event"}
+    ]
+  },
+  "entity.v2.tell.piercer": {
+    "sounds": [
+      {"name":"ultracraft:placeholder","type":"event"}
+    ]
+  },
+  "entity.v2.death": {
+    "sounds": [
+      {"name":"ultracraft:placeholder","type":"event"}
+    ]
+  },
+
+
+  "item.revolver.fire": {
+    "sounds": [
+      {"name":"entity.firework_rocket.blast","type":"event"}
+    ]
+  },
+  "item.alt_revolver.fire": {
+    "sounds": [
+      {"name":"entity.firework_rocket.large_blast_far","type":"event"}
+    ]
+  },
+  "item.alt_revolver.fire_ding": {
+    "sounds": [
+      {"name":"item.trident.return","type":"event","pitch": 0.85}
+    ]
+  },
+  "item.alt_revolver.click": {
+    "sounds": [
+      {"name":"block.iron_trapdoor.open","type":"event","pitch": 1.3}
+    ]
+  },
+  "item.revolver.alt_charge": {
+    "sounds": [
+      {"name":"block.note_block.pling","type":"event"}
+    ]
+  },
+  "item.piercer.charge": {
+    "sounds": [
+      {"name":"ultracraft:placeholder","type":"event"}
+    ]
+  },
+  "item.piercer.fire": {
+    "sounds": [
+      {"name":"entity.firework_rocket.large_blast","type":"event"}
+    ]
+  },
+  "item.marksman.coin_toss": {
+    "sounds": [
+      {"name":"ultracraft:placeholder","type":"event"}
+    ]
+  },
+  "entity.coin.hit_next": {
+    "sounds": [
+      {"name":"entity.experience_orb.pickup","type":"event"}
+    ]
+  },
+  "entity.coin.warning": {
+    "sounds": [
+      {"name":"entity.warden.sonic_charge","type":"event"}
+    ]
+  },
+  "item.sharpshooter.spin": {
+    "sounds": [
+      {"name":"entity.player.attack.sweep","type":"event"}
+    ]
+  },
+  "item.sharpshooter.fire": {
+    "sounds": [
+      {"name":"entity.firework_rocket.large_blast","type":"event"}
+    ]
+  },
+
+  "item.shotgun.fire": {
+    "sounds": [
+      {"name":"entity.firework_rocket.large_blast","type":"event"}
+    ]
+  },
+  "item.shotgun.parry": {
+    "sounds": [
+      {"name":"entity.item.break","type":"event"}
+    ]
+  },
+  "item.shotgun.pump": {
+    "sounds": [
+      {"name":"block.piston.contract","type":"event","volume":0.5}
+    ]
+  },
+  "item.shotgun.overpump_beep": {
+    "sounds": [
+      {"name":"block.note_block.bit","type":"event"}
+    ]
+  },
+  "item.shotgun.core_charge": {
+    "sounds": [
+      {"name":"ultracraft:placeholder","type":"event"}
+    ]
+  },
+  "item.shotgun.hiss": {
+    "sounds": [
+      {"name": "entity.generic.extinguish_fire","type":"event","volume":0.75}
+    ]
+  },
+  "item.shotgun.open": {
+    "sounds": [
+      {"name":"block.iron_trapdoor.open","type":"event","pitch": 0.9}
+    ]
+  },
+  "item.shotgun.close": {
+    "sounds": [
+      {"name":"block.iron_trapdoor.close","type":"event","pitch": 0.9}
+    ]
+  },
+  "item.shotgun.saw_idle": {
+    "sounds": [
+      "ultracraft:item/saw_idle"
+    ]
+  },
+  "item.shotgun.saw_active": {
+    "sounds": [
+      "ultracraft:item/saw_active"
+    ]
+  },
+  "item.shotgun.saw_end": {
+    "sounds": [
+      "ultracraft:item/saw_end"
+    ]
+  },
+
+  "item.machinesword.attack": {
+    "sounds": [
+      "ultracraft:item/machinesword_attack"
+    ]
+  },
+
+  "item.flamethrower.start": {
+    "sounds": [
+      {"name": "random/click", "pitch": 0.6}
+    ]
+  },
+  "item.flamethrower.loop": {
+    "sounds": [
+      "mob/ghast/fireball4"
+    ]
+  },
+  "item.flamethrower.end": {
+    "sounds": [
+      {"name": "random/click", "pitch": 0.5}
+    ]
+  },
+  "item.flamethrower.overheat": {
+    "sounds": [
+      "random/fizz"
+    ]
+  },
+
+  "item.repulsive_skewer.shoot": {
+    "sounds": [
+      {"name": "item.crossbow.shoot", "type": "event"}
+    ]
+  },
+  "item.repulsive_skewer.reel": {
+    "sounds": [
+      "item/trident/riptide2"
+    ]
+  },
+
+  "item.nailgun.fire": {
+    "sounds": [
+      {"name": "block.stone.hit", "type": "event"}
+    ]
+  },
+  "item.nailgun.magnet.fire": {
+    "sounds": [
+      {"name": "item.crossbow.shoot", "type": "event"}
+    ]
+  },
+  "item.nailgun.magnet.beep": {
+    "sounds": [
+      "note/bit"
+    ]
+  },
+  "item.nailgun.jumpstart.hook_break": {
+    "sounds": [
+      {"name": "block.lantern.break", "type": "event", "pitch": 0.9}
+    ]
+  },
+  "item.nailgun.jumpstart.warning_beep": {
+    "sounds": [
+      {"name":"block.note_block.bit","type":"event", "pitch":0.86 }
+    ]
+  },
+
+  "arm.switch": {
+    "sounds": [
+      {"name": "item.armor.equip_iron", "type": "event"}
+    ]
+  },
+  "arm.feedbacker.punch": {
+    "sounds": [
+      {"name": "entity.player.attack.nodamage", "type": "event"}
+    ]
+  },
+  "arm.knuckleblaster.punch": {
+    "sounds": [
+      {"name": "entity.player.attack.strong", "type": "event"}
+    ]
+  },
+  "arm.knuckleblaster.reload": {
+    "sounds": [
+      {"name": "ultracraft:placeholder", "type": "event"}
+    ]
+  },
+
+
+  "blocks.stained_glass_window.place": {
+    "sounds": [
+      {"name": "block.glass.place", "type": "event"}
+    ]
+  },
+  "blocks.stained_glass_window.break": {
+    "sounds": [
+      {"name": "block.glass.break", "type": "event"}
+    ]
+  },
+  "blocks.checkpoint.get": {
+    "sounds": [
+      {"name": "block.bell.resonate", "type": "event", "pitch": 2}
+    ]
+  },
+  "blocks.slab_block.activate": {
+    "sounds": [
+      {"name": "block.beacon.power_select", "type": "event", "pitch": 1.25}
+    ]
+  },
+  "blocks.slab_block.deactivate": {
+    "sounds": [
+      {"name": "block.redstone_torch.burnout", "type": "event"}
+    ]
+  },
+
+
+  "misc.elevator_fall": {
+    "sounds": [
+      "ultracraft:misc/elevator_fall"
+    ]
+  },
+  "misc.wind_loop": {
+    "sounds": [
+      "ultracraft:misc/wind_seemless"
+    ]
+  },
+  "misc.bad_explosion": {
+    "sounds": [
+      "ultracraft:misc/badexplosion"
+    ]
+  },
+  "entity.machinesword_loop": {
+    "sounds": [
+      "ultracraft:misc/lawn_mower_seemless"
+    ]
+  },
+  "item.killerfish.select": {
+    "sounds": [
+      "ultracraft:item/killer_fish2"
+    ]
+  },
+  "item.killerfish.use": {
+    "sounds": [
+      "ultracraft:item/killer_fish1"
+    ]
+  },
+  "item.lumpfish.select": {
+    "sounds": [
+      "ultracraft:item/lumpfish1"
+    ]
+  },
+  "item.lumpfish.unselect": {
+    "sounds": [
+      "ultracraft:item/lumpfish2"
+    ]
+  },
+  "item.lumpfish.use": {
+    "sounds": [
+      "ultracraft:item/lumpfish3"
+    ]
+  },
+  "item.blahaj.use": {
+    "sounds": [
+      "ultracraft:item/toy_squeak1",
+      "ultracraft:item/toy_squeak2"
+    ]
+  },
+  "entity.orb.ambient": {
+    "sounds": [
+      {"name": "block.beacon.ambient", "type": "event"}
+    ]
+  },
+  "entity.barrier_break": {
+    "sounds": [
+      "ultracraft:entity/barrier_break"
+    ]
+  },
+  "entity.blood_heal": {
+    "sounds": [
+      "ultracraft:misc/bloodheal"
+    ]
+  },
+  "entity.dash": {
+    "sounds": [
+      {"name": "entity.ender_dragon.flap", "type": "event"}
+    ]
+  },
+  "entity.dash_jump": {
+    "sounds": [
+      {"name": "entity.ender_dragon.flap", "type": "event"}
+    ]
+  },
+  "misc.insufficient_stamina": {
+    "sounds": [
+      {"name": "block.anvil.land", "type": "event"}
+    ]
+  },
+  "misc.stamina_regen": {
+    "sounds": [
+      {"name": "entity.experience_orb.pickup", "type": "event"}
+    ]
+  },
+  "misc.slam": {
+    "sounds": [
+      {"name": "entity.generic.explode", "type": "event"}
+    ]
+  },
+  "misc.parry": {
+    "sounds": [
+      {"name": "block.anvil.land", "type": "event"}
+    ]
+  },
+  "misc.water_skim": {
+    "sounds": [
+      {"name": "entity.salmon.flop", "type": "event"}
+    ]
+  },
+  "misc.laugh": {
+    "sounds": [
+      {"name": "ultracraft:placeholder", "type": "event"}
+    ]
+  },
+  "misc.box-title": {
+    "sounds": [
+      {"name": "ultracraft:placeholder", "type": "event"}
+    ]
+  },
+  "misc.husk_scream": {
+    "sounds": [
+      "ultracraft:misc/husk_scream_seemless"
+    ]
+  },
+  "misc.spin": {
+    "sounds": [
+      "ultracraft:misc/spin"
+    ]
+  },
+  "misc.sacrifice": {
+    "sounds": [
+      "minecraft:mob/evocation_illager/fangs"
+    ],
+    "pitch": 0.4273
+  },
+  "misc.i_sawed": {
+    "sounds": [
+      "ultracraft:misc/i_sawed"
+    ],
+    "pitch": 0.4273
+  },
+  "placeholder": {
+    "sounds": [
+      "ultracraft:placeholder"
+    ]
+  },
+
+
+  "music.the_fire_is_gone": {
+    "sounds": [
+      "ultracraft:music/the_fire_is_gone"
+    ],
+    "stream": true
+  },
+  "music.clair_de_lune": {
+    "sounds": [
+      "ultracraft:music/clair_de_lune"
+    ],
+    "stream": true
+  },
+  "music.prelude1": {
+    "sounds": [
+      "ultracraft:music/triage/beyondthefire"
+    ],
+    "stream": true
+  },
+  "music.prelude1_calm": {
+    "sounds": [
+      "ultracraft:music/triage/beyondthefire_calm"
+    ],
+    "stream": true
+  },
+  "music.prelude2": {
+    "sounds": [
+      "ultracraft:music/efefski/prelude2"
+    ],
+    "stream": true
+  },
+  "music.prelude2_calm": {
+    "sounds": [
+      "ultracraft:music/efefski/prelude2_calm"
+    ],
+    "stream": true
+  },
+  "music.cerberus": {
+    "sounds": [
+      "ultracraft:music/psykomatic/cerbfight"
+    ],
+    "stream": true
+  },
+  "music.cerberus_calm": {
+    "sounds": [
+      "ultracraft:music/psykomatic/cerbcalm"
+    ],
+    "stream": true
+  },
+  "music.limbo1_illusion": {
+    "sounds": [
+      "ultracraft:music/oxblood/limbo1_illusion"
+    ],
+    "stream": true
+  },
+  "music.limbo1": {
+    "sounds": [
+      "ultracraft:music/oxblood/limbo1"
+    ],
+    "stream": true
+  },
+  "music.limbo1_calm": {
+    "sounds": [
+      "ultracraft:music/oxblood/limbo1_calm"
+    ],
+    "stream": true
+  },
+  "music.limbo2": {
+    "sounds": [
+      "ultracraft:music/efefski/limbo2"
+    ],
+    "stream": true
+  },
+  "music.limbo2_calm": {
+    "sounds": [
+      "ultracraft:music/efefski/limbo2_calm"
+    ],
+    "stream": true
+  },
+  "music.versus": {
+    "sounds": [
+      "ultracraft:music/aavanitro/versus"
+    ],
+    "stream": true
+  },
+  "music.versus.intro": {
+    "sounds": [
+      "ultracraft:music/aavanitro/versus_intro"
+    ],
+    "stream": true
+  },
+  "music.counterfeit": {
+    "sounds": [
+      "ultracraft:music/ennway/counterfeit"
+    ],
+    "stream": true
+  },
+  "music.limbo_freeroam": {
+    "sounds": [
+      "ultracraft:music/ennway/counterfeit",
+      "ultracraft:music/oxblood/limbo1_illusion"
+    ],
+    "stream": true
+  },
+  "music.efefski_cybergrind": {
+    "sounds": [
+      "ultracraft:music/efefski/cybergrind"
+    ],
+    "stream": true
+  },
+  "music.cybergrind": {
+    "sounds": [
+      "ultracraft:music/efefski/cybergrind"
+    ],
+    "stream": true
+  }
+}

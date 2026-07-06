@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "ultracraft:item/egg/stray"
+  },
+  "gui_light": "front"
+}

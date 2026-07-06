@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "tag": "c:iron_bars"
+  },
+  "result": "ultracraft:zootycoonchainlinkfence",
+  "count": 1
+}

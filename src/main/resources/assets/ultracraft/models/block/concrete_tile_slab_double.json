@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "ultracraft:block/concrete_tile",
+    "side": "ultracraft:block/concrete_tile_slab"
+  }
+}

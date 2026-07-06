@@ -1,0 +1,8 @@
+{
+	"credit": "Made by Absolutelyaya",
+	"parent": "ultracraft:item/nail",
+	"textures": {
+		"0": "ultracraft:item/nail_hot",
+		"particle": "ultracraft:item/nail_hot"
+	}
+}

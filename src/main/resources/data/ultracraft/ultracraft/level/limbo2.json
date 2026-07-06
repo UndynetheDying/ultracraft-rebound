@@ -1,0 +1,41 @@
+{
+  "builtin": true,
+  "title": "level.ultracraft.1-2",
+  "author": "yaya",
+  "structure": "ultracraft:level/limbo2",
+  "thumbnail": "ultracraft:textures/level/1_2.png",
+  "ranking": {
+    "time": [
+    "5:30:00",
+    "6:00:00",
+    "7:00:00",
+    "10:00:00"
+  ],
+    "kills": [
+      70,
+      65,
+      55,
+      35
+    ],
+    "style": [
+      4750,
+      3500,
+      2750,
+      1500
+    ]
+  },
+  "spawn-offset":{
+    "x": 68,
+    "y": 60,
+    "z": 16
+  },
+  "spawn-rot": 0,
+  "music": {
+    "main": {
+      "calm": "ultracraft:music.limbo2_calm",
+      "combat": "ultracraft:music.limbo2"
+    }
+  },
+  "version": 3,
+  "next-level": "ultracraft:luna"
+}

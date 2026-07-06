@@ -1,0 +1,6 @@
+{
+    "parent": "minecraft:block/carpet",
+    "textures": {
+        "wool": "ultracraft:block/lime_carpet_round"
+    }
+}

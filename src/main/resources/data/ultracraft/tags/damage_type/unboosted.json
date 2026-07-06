@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "ultracraft:overcharge",
+    "ultracraft:overcharge_self",
+    "ultracraft:swordsmachine",
+    "ultracraft:flamethrower",
+    "ultracraft:back_tank",
+    "ultracraft:soap",
+    "ultracraft:harpoon",
+    "ultracraft:harpoon_rip"
+  ]
+}

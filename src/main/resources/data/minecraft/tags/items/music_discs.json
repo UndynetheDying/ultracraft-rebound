@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "ultracraft:disc/fire_is_gone",
+    "ultracraft:disc/clair_de_lune",
+    "ultracraft:disc/prelude1",
+    "ultracraft:disc/prelude1_calm",
+    "ultracraft:disc/prelude2",
+    "ultracraft:disc/prelude2_calm",
+    "ultracraft:disc/cerberus",
+    "ultracraft:disc/cerberus_calm",
+    "ultracraft:disc/limbo1_illusion",
+    "ultracraft:disc/limbo1",
+    "ultracraft:disc/limbo1_calm",
+    "ultracraft:disc/limbo2",
+    "ultracraft:disc/limbo2_calm",
+    "ultracraft:disc/versus",
+    "ultracraft:disc/counterfeit",
+    "ultracraft:disc/cybergrind"
+  ]
+}

@@ -1,0 +1,203 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "ultracraft:block/carpet/edge_black"
+      },
+      "when": {
+        "north": "false",
+        "east": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "ultracraft:block/carpet/edge_inverted_black"
+      },
+      "when": {
+        "north": "true",
+        "east": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ultracraft:block/carpet/line_black"
+      },
+      "when": {
+        "north": "true",
+        "east": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "ultracraft:block/carpet/line_alt_black"
+      },
+      "when": {
+        "north": "false",
+        "east": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ultracraft:block/carpet/fill_black"
+      },
+      "when": {
+        "north": "true",
+        "east": "true",
+        "ne": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ultracraft:block/carpet/edge_black",
+        "y": 90
+      },
+      "when": {
+        "east": "false",
+        "south": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "ultracraft:block/carpet/edge_inverted_black",
+        "y": 90
+      },
+      "when": {
+        "east": "true",
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ultracraft:block/carpet/line_black",
+        "y": 90
+      },
+      "when": {
+        "east": "true",
+        "south": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "ultracraft:block/carpet/line_alt_black",
+        "y": 90
+      },
+      "when": {
+        "east": "false",
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ultracraft:block/carpet/fill_black",
+        "y": 90
+      },
+      "when": {
+        "east": "true",
+        "south": "true",
+        "es": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ultracraft:block/carpet/edge_black",
+        "y": 180
+      },
+      "when": {
+        "south": "false",
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "ultracraft:block/carpet/edge_inverted_black",
+        "y": 180
+      },
+      "when": {
+        "south": "true",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ultracraft:block/carpet/line_black",
+        "y": 180
+      },
+      "when": {
+        "south": "true",
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "ultracraft:block/carpet/line_alt_black",
+        "y": 180
+      },
+      "when": {
+        "south": "false",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ultracraft:block/carpet/fill_black",
+        "y": 180
+      },
+      "when": {
+        "south": "true",
+        "west": "true",
+        "sw": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ultracraft:block/carpet/edge_black",
+        "y": 270
+      },
+      "when": {
+        "west": "false",
+        "north": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "ultracraft:block/carpet/edge_inverted_black",
+        "y": 270
+      },
+      "when": {
+        "west": "true",
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ultracraft:block/carpet/line_black",
+        "y": 270
+      },
+      "when": {
+        "west": "true",
+        "north": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "ultracraft:block/carpet/line_alt_black",
+        "y": 270
+      },
+      "when": {
+        "west": "false",
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ultracraft:block/carpet/fill_black",
+        "y": 270
+      },
+      "when": {
+        "west": "true",
+        "north": "true",
+        "wn": "true"
+      }
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "ultracraft:block/column2_top",
+    "side": "ultracraft:block/column2"
+  }
+}

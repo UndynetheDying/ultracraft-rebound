@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " #",
+    "GH",
+    " #"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:stone"
+    },
+    "G": {
+      "item": "ultracraft:cerberus_ball"
+    },
+    "H": {
+      "item": "ultracraft:hell_mass"
+    }
+  },
+  "result": {
+    "item": "ultracraft:cerberus_block",
+    "count": 1
+  }
+}

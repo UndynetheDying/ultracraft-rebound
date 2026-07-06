@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "ultracraft:bright_panel"
+  },
+  "result": "ultracraft:bright_panel_stairs",
+  "count": 1
+}

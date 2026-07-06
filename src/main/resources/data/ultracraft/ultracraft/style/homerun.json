@@ -1,0 +1,6 @@
+{
+  "translation-key": "stylebonus.ultracraft.homerun",
+  "score": 75,
+  "entity": "ultracraft:drone",
+  "damage": "ultracraft:interrupt"
+}

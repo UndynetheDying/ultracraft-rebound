@@ -1,0 +1,42 @@
+{
+  "builtin": true,
+  "title": "level.ultracraft.0-2",
+  "par-time": "4:20:69",
+  "author": "yaya",
+  "structure": "ultracraft:level/prelude2",
+  "thumbnail": "ultracraft:textures/level/0_2.png",
+  "ranking": {
+    "time": [
+      "6:00:00",
+      "7:00:00",
+      "8:00:00",
+      "10:00:00"
+    ],
+    "kills": [
+      96,
+      85,
+      74,
+      60
+    ],
+    "style": [
+      3000,
+      2500,
+      1250,
+      750
+    ]
+  },
+  "spawn-offset":{
+    "x": 3,
+    "y": 55,
+    "z": 86
+  },
+  "spawn-rot": -90,
+  "music": {
+    "main": {
+      "calm": "ultracraft:music.prelude2_calm",
+      "combat": "ultracraft:music.prelude2"
+    }
+  },
+  "version": 2,
+  "next-level": "ultracraft:prelude3"
+}

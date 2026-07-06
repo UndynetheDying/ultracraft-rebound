@@ -1,0 +1,73 @@
+package absolutelyaya.ultracraft.client.rendering.item;
+
+import absolutelyaya.ultracraft.components.UltraComponents;
+import absolutelyaya.ultracraft.Ultracraft;
+import absolutelyaya.ultracraft.client.GunCooldownManager;
+import absolutelyaya.ultracraft.client.UltracraftClient;
+import absolutelyaya.ultracraft.item.weapons.CoreEjectShotgunItem;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
+import mod.azure.azurelib.model.DefaultedItemGeoModel;
+import mod.azure.azurelib.renderer.GeoItemRenderer;
+
+import java.util.Random;
+
+public class CoreEjectShotgunRenderer extends GeoItemRenderer<CoreEjectShotgunItem>
+{
+	final Random random = new Random();
+	
+	public CoreEjectShotgunRenderer()
+	{
+		super(new DefaultedItemGeoModel<>(Ultracraft.identifier("shotgun")));
+	}
+	
+	@Override
+	public Identifier getTextureLocation(CoreEjectShotgunItem animatable)
+	{
+		String tex = "textures/item/core_shotgun";
+		float useTime = 1f - (animatable.getMaxUseTime(null) - animatable.getApproxUseTime()) / (float)(animatable.getMaxUseTime(null));
+		if(useTime > 0.99f)
+			return Ultracraft.texIdentifier(tex + 7);
+		else if(useTime > 0.79f)
+			return Ultracraft.texIdentifier(tex + 6);
+		else if(useTime > 0.59f)
+			return Ultracraft.texIdentifier(tex + 5);
+		else if(useTime > 0.39f)
+			return Ultracraft.texIdentifier(tex + 4);
+		else if(useTime > 0f)
+			return Ultracraft.texIdentifier(tex + 3);
+		
+		GunCooldownManager cdm = UltraComponents.WINGED.get(MinecraftClient.getInstance().player).getGunCooldownManager();
+		float primaryCD = cdm.getCooldownPercent(animatable, 0);
+		if(primaryCD < 0.3f)
+			return Ultracraft.texIdentifier(tex + 2);
+		else if(primaryCD < 0.4f)
+			return Ultracraft.texIdentifier(tex + 1);
+		else if(primaryCD < 0.65f)
+			return Ultracraft.texIdentifier(tex + 0);
+		
+		return Ultracraft.texIdentifier(tex);
+	}
+	
+	@Override
+	public void render(ItemStack stack, ModelTransformationMode transformType, MatrixStack poseStack, VertexConsumerProvider bufferSource, int packedLight, int packedOverlay)
+	{
+		if(!transformType.isFirstPerson())
+		{
+			super.render(stack, transformType, poseStack, bufferSource, packedLight, packedOverlay);
+			return;
+		}
+		poseStack.push();
+		float useTime = 1f - (stack.getItem().getMaxUseTime(stack) - ((CoreEjectShotgunItem)stack.getItem()).getApproxUseTime()) / (float)(stack.getItem().getMaxUseTime(stack));
+		useTime = MathHelper.clamp(useTime, 0f, 1f);
+		float f = UltracraftClient.getConfig().safeVFX ? 0.01f : 0.025f;
+		poseStack.translate((random.nextFloat() - 0.5f) * useTime * f, (random.nextFloat() - 0.5f) * useTime * f, (random.nextFloat() - 0.5f) * useTime * f);
+		super.render(stack, transformType, poseStack, bufferSource, packedLight, packedOverlay);
+		poseStack.pop();
+	}
+}

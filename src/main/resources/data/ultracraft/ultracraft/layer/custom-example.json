@@ -1,0 +1,10 @@
+{
+  "title": "layer.ultracraft.example.title",
+  "description": "layer.ultracraft.example.description",
+  "author": "yaya",
+  "levels": [
+    "ultracraft:custom-example",
+    "ultracraft:prelude1",
+    "ultracraft:limbo2"
+  ]
+}
