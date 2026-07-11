@@ -83,6 +83,8 @@ public class LoadoutTab extends Tab
 				idx -= weapon.ids.length / 2;
 				alt = progression.isOwned(weapon.altId);
 			}
+			if(!progression.isOwned(weapon.ids[idx]))
+				continue;
 			state[idx] = alt ? 2 : 1;
 			order[idx] = i;
 		}
@@ -99,7 +101,12 @@ public class LoadoutTab extends Tab
 			int ii = state[i];
 			if(ii == 0)
 				continue;
-			ids[order[i]] = weapon.ids[ii == 2 ? 3 + i : i];
+			Identifier id = weapon.ids[ii == 2 ? 3 + i : i];
+			boolean owned = progression.isOwned(weapon.ids[i]) &&
+				(ii != 2 || (weapon.altId != null && progression.isOwned(weapon.altId)));
+			if(!owned)
+				continue;
+			ids[order[i]] = id;
 		}
 		loadout.setLoadoutForWeapon(weapon, ids);
 	}

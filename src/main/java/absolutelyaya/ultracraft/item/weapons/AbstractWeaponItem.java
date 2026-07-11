@@ -203,8 +203,13 @@ public abstract class AbstractWeaponItem extends Item implements ISelectionAware
 		if(!(stack.getItem() instanceof AbstractWeaponItem weapon))
 			return null;
 		Identifier[] ids = loadout.getLoadoutForWeapon(weapon.getWeaponType());
-		if(ids.length > 0)
-			return Registries.ITEM.get(ids[0]);
+		for (Identifier id : ids)
+		{
+			Item item = Registries.ITEM.get(id);
+			if(item instanceof AbstractWeaponItem w && progression.isOwned(w.getProgressionEntry()) &&
+					   (!w.isAlternate() || w.getWeaponType().altId == null || progression.isOwned(w.getWeaponType().altId)))
+				return item;
+		}
 		return null;
 	}
 	
