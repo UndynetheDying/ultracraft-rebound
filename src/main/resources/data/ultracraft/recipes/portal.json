@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "item": "ultracraft:sheetmetal"
+    },
+    "X": {
+      "item": "minecraft:redstone"
+    },
+    "A": {
+      "item": "ultracraft:sheetmetal_sheet"
+    }
+  },
+  "pattern": [
+    "###",
+    "AXA",
+    "###"
+  ],
+  "result": {
+    "item": "ultracraft:portal",
+    "count": 1
+  }
+}
